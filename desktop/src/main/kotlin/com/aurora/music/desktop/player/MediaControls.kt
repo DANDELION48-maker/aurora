@@ -2,10 +2,13 @@ package com.aurora.music.desktop.player
 
 import com.aurora.music.data.artwork.ArtworkRepository
 import com.aurora.music.data.artwork.ArtworkUrls
+import com.aurora.music.desktop.linux.MprisSession
+import com.aurora.music.desktop.natives.MediaSession
 import com.aurora.music.desktop.natives.SmtcButton
 import com.aurora.music.desktop.natives.SmtcRepeat
 import com.aurora.music.desktop.natives.SmtcSession
 import com.aurora.music.desktop.natives.SmtcStatus
+import com.aurora.music.desktop.platform.HostPlatform
 import com.aurora.music.util.AppLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,14 +32,22 @@ class MediaControls internal constructor(
     private val scope: CoroutineScope,
     private val artwork: suspend (String) -> ByteArray?,
 ) : AutoCloseable {
-    @Volatile private var session: SmtcSession? = null
+    @Volatile private var session: MediaSession? = null
     private val metadataLock = Any()
     private var job: Job? = null
+    @Volatile private var raise: () -> Unit = {}
 
-    fun attach(hwnd: Long) {
+    fun attach(hwnd: Long, onRaise: () -> Unit = {}) {
         if (session != null) return
-        val created = runCatching { SmtcSession.create(hwnd, Callbacks()) }
-            .onFailure { AppLog.w(TAG, "Windows media controls are unavailable", it) }
+        raise = onRaise
+        val created = runCatching {
+            when {
+                HostPlatform.isWindows -> SmtcSession.create(hwnd, Callbacks())
+                HostPlatform.isLinux -> MprisSession.create(Callbacks())
+                else -> null
+            }
+        }
+            .onFailure { AppLog.w(TAG, "System media controls are unavailable", it) }
             .getOrNull() ?: return
         session = created
         job = scope.launch(Dispatchers.IO) {
@@ -84,7 +95,7 @@ class MediaControls internal constructor(
     }
 
     // a stalled artwork fetch is abandoned rather than joined so the next title shows at once
-    private suspend fun publishMetadata(target: SmtcSession) = coroutineScope {
+    private suspend fun publishMetadata(target: MediaSession) = coroutineScope {
         var thumbnail: Job? = null
         player.state.map { it.current }.distinctUntilChanged().collect { song ->
             thumbnail?.cancel()
@@ -108,7 +119,7 @@ class MediaControls internal constructor(
     }
 
     // native callbacks arrive on the aurora-native thread and must return quickly
-    private inner class Callbacks : SmtcSession.Callbacks {
+    private inner class Callbacks : MediaSession.Callbacks {
         override fun onButton(button: SmtcButton) {
             scope.launch {
                 when (button) {
@@ -141,6 +152,8 @@ class MediaControls internal constructor(
                 })
             }
         }
+
+        override fun onRaise() = raise()
     }
 
     private companion object {

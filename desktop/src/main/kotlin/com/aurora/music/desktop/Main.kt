@@ -1,5 +1,6 @@
 package com.aurora.music.desktop
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -20,17 +21,21 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import coil3.SingletonImageLoader
 import com.aurora.music.desktop.audio.DesktopPlaybackEngine
-import com.aurora.music.desktop.natives.WindowNative
+import com.aurora.music.desktop.linux.LinuxDesktop
 import com.aurora.music.desktop.platform.BuildInfo
 import com.aurora.music.desktop.platform.DesktopPaths
 import com.aurora.music.desktop.platform.DesktopRuntime
+import com.aurora.music.desktop.platform.HostPlatform
+import com.aurora.music.desktop.platform.SystemAccent
 import com.aurora.music.desktop.player.DesktopPlayer
 import com.aurora.music.desktop.player.playerDependencies
 import com.aurora.music.desktop.resources.AuroraLogo
 import com.aurora.music.desktop.ui.AppTray
 import com.aurora.music.desktop.ui.AuroraRoot
+import com.aurora.music.desktop.ui.LocalTrayAvailable
 import com.aurora.music.desktop.ui.Shortcut
 import com.aurora.music.desktop.ui.WindowChrome
+import com.aurora.music.desktop.ui.claimsSpace
 import com.aurora.music.desktop.ui.shortcut
 import com.aurora.music.localization.AppStrings
 import com.aurora.music.ui.AuroraApp
@@ -39,12 +44,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import java.awt.Dimension
 import java.awt.Frame
 import java.awt.GraphicsEnvironment
 import java.awt.Rectangle
+import java.awt.SystemTray
 import kotlin.math.roundToInt
 import com.aurora.music.desktop.platform.WindowPlacement as SavedWindow
 
@@ -53,6 +60,7 @@ private const val TAG = "AuroraMain"
 fun main() {
     val paths = DesktopPaths.default()
     val instance = DesktopRuntime.init(paths) ?: return
+    if (HostPlatform.isLinux) LinuxDesktop.applyWindowClass()
     AppLog.d(TAG, "Starting Aurora ${BuildInfo.VERSION_NAME} on Java ${Runtime.version()}")
     val container = DesktopContainer(paths)
     SingletonImageLoader.setSafe { container.imageLoader }
@@ -63,6 +71,7 @@ fun main() {
     AppStrings.setLocale(language)
     val player = DesktopPlayer(DesktopPlaybackEngine(), container.playerDependencies())
     val shortcuts = MutableSharedFlow<Shortcut>(extraBufferCapacity = 8)
+    val raises = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     Runtime.getRuntime().addShutdownHook(Thread { container.folderLibrary.close(); container.queueStore.flushNow(); container.playHistory.flushNow() })
 
     application {
@@ -76,10 +85,11 @@ fun main() {
         var visible by remember { mutableStateOf(true) }
         var quitting by remember { mutableStateOf(false) }
         val closeToTray by settings.closeToTray.collectAsState(false)
+        val trayAvailable = remember { runCatching { SystemTray.isSupported() }.getOrDefault(false) }
         val icon = rememberVectorPainter(AuroraLogo)
-        var systemAccent by remember { mutableStateOf(runCatching { WindowNative.accentColor() }.getOrNull()?.let { Color(it) }) }
+        var systemAccent by remember { mutableStateOf(SystemAccent.current()?.let { Color(it) }) }
         DisposableEffect(Unit) {
-            val watch = runCatching { WindowNative.addAccentListener { systemAccent = Color(it) } }.getOrNull()
+            val watch = SystemAccent.listen { systemAccent = Color(it) }
             onDispose { watch?.close() }
         }
 
@@ -126,14 +136,15 @@ fun main() {
             }
         }
 
-        AppTray(icon, player, onShow = ::show, onQuit = ::quit)
+        if (trayAvailable) AppTray(icon, player, onShow = ::show, onQuit = ::quit)
 
         Window(
-            onCloseRequest = { if (closeToTray) visible = false else quit() },
+            onCloseRequest = { if (closeToTray && trayAvailable) visible = false else quit() },
             state = windowState,
             visible = visible,
             title = "Aurora",
             icon = icon,
+            onPreviewKeyEvent = { it.claimsSpace() },
             onKeyEvent = { event -> event.shortcut()?.let(shortcuts::tryEmit) == true },
         ) {
             var windowHandle by remember { mutableStateOf(0L) }
@@ -141,11 +152,11 @@ fun main() {
                 window.minimumSize = Dimension(960, 600)
                 while (!window.isDisplayable) delay(16)
                 windowHandle = window.windowHandle
-                player.mediaControls.attach(windowHandle)
+                player.mediaControls.attach(windowHandle) { raises.tryEmit(Unit) }
                 AppLog.d(TAG, "Window shown")
             }
             LaunchedEffect(window) {
-                instance.activations.collect {
+                merge(instance.activations, raises).collect {
                     show()
                     // toFront only takes effect once compose has shown and restored the window
                     withTimeoutOrNull(1_000) { while (!window.isVisible || (window.extendedState and Frame.ICONIFIED) != 0) delay(16) }
@@ -153,13 +164,15 @@ fun main() {
                     window.requestFocus()
                 }
             }
-            AuroraRoot(container, player, initialPrefs, systemAccent) {
-                WindowChrome(windowHandle)
-                AuroraApp(
-                    shortcuts = shortcuts,
-                    fullscreen = windowState.placement == WindowPlacement.Fullscreen,
-                    onFullscreenChange = ::setFullscreen,
-                )
+            CompositionLocalProvider(LocalTrayAvailable provides trayAvailable) {
+                AuroraRoot(container, player, initialPrefs, systemAccent) {
+                    WindowChrome(windowHandle)
+                    AuroraApp(
+                        shortcuts = shortcuts,
+                        fullscreen = windowState.placement == WindowPlacement.Fullscreen,
+                        onFullscreenChange = ::setFullscreen,
+                    )
+                }
             }
         }
     }

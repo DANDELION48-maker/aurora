@@ -65,6 +65,7 @@ import com.aurora.music.data.SignalPath
 import com.aurora.music.desktop.platform.BuildInfo
 import com.aurora.music.desktop.ui.LocalDesktopContainer
 import com.aurora.music.desktop.ui.LocalPlayer
+import com.aurora.music.desktop.ui.LocalTrayAvailable
 import com.aurora.music.localization.AppStrings
 import com.aurora.music.localization.localizedSignalLabel
 import com.aurora.music.navigation.Routes
@@ -175,6 +176,21 @@ fun SettingsScreen(
                         SettingsNavRow(Icons.Filled.Language, appString(R.string.language_title),
                             subtitle = when (language.substringBefore('-')) {
                                 "ru" -> "Русский"
+                                "tr" -> "Türkçe"
+                                "es" -> "Español"
+                                "fr" -> "Français"
+                                "zh" -> "简体中文"
+                                "pt" -> "Português"
+                                "hi" -> "हिन्दी"
+                                "ur" -> "اردو"
+                                "de" -> "Deutsch"
+                                "it" -> "Italiano"
+                                "nl" -> "Nederlands"
+                                "pl" -> "Polski"
+                                "id", "in" -> "Bahasa Indonesia"
+                                "ja" -> "日本語"
+                                "ko" -> "한국어"
+                                "ar" -> "العربية"
                                 "en" -> "English"
                                 else -> appString(R.string.language_system)
                             }, selected = LocalSelectedSettingsRoute.current == Routes.SETTINGS_LANGUAGE, onClick = onOpenLanguage)
@@ -199,10 +215,12 @@ fun SettingsScreen(
                             appString(R.string.simple_mode_description), simpleMode) { enabled ->
                             scope.launch { container.settingsStore.setSimpleMode(enabled) }
                         }
-                        SettingsRowDivider()
-                        SettingsSwitchRow(Icons.Filled.Minimize, appString(R.string.text_close_to_tray_f91cc6),
-                            appString(R.string.text_keep_aurora_playing_in_the_notification_area_when_the_window_clos_e5fed5), closeToTray) { enabled ->
-                            scope.launch { container.desktopSettings.setCloseToTray(enabled) }
+                        if (LocalTrayAvailable.current) {
+                            SettingsRowDivider()
+                            SettingsSwitchRow(Icons.Filled.Minimize, appString(R.string.text_close_to_tray_f91cc6),
+                                appString(R.string.text_keep_aurora_playing_in_the_notification_area_when_the_window_clos_e5fed5), closeToTray) { enabled ->
+                                scope.launch { container.desktopSettings.setCloseToTray(enabled) }
+                            }
                         }
                         if (onReplayTour != null) {
                             SettingsRowDivider()

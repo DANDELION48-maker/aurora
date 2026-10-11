@@ -7,6 +7,7 @@ import com.aurora.music.desktop.natives.OutputEncoding
 import com.aurora.music.desktop.natives.OutputStatus
 import com.aurora.music.desktop.natives.SystemNative
 import com.aurora.music.desktop.natives.WasapiOutput
+import com.aurora.music.desktop.platform.HostPlatform
 
 interface AudioOutput : AutoCloseable {
     val id: Long
@@ -22,9 +23,11 @@ interface AudioOutput : AutoCloseable {
 }
 
 interface OutputBackend {
+    val exclusiveAvailable: Boolean get() = true
     fun devices(): List<AudioDevice>
     fun mixRate(deviceId: String?): Int?
     fun supportsExclusive(deviceId: String?, sampleRate: Int, encoding: OutputEncoding): Boolean
+    fun exclusiveUnavailableReason(deviceId: String?): String? = null
     fun open(deviceId: String?, exclusive: Boolean, sampleRate: Int, encoding: OutputEncoding, bufferMs: Int): AudioOutput
     fun listen(listener: (DeviceEvent) -> Unit): AutoCloseable
     fun keepAwake(enabled: Boolean)
@@ -42,6 +45,24 @@ class WasapiAudioOutput(private val output: WasapiOutput) : AudioOutput {
     override fun flush() = output.flush()
     override fun status() = output.status()
     override fun close() = output.close()
+}
+
+fun defaultOutputBackend(): OutputBackend = when {
+    HostPlatform.isWindows -> WasapiBackend
+    HostPlatform.isLinux -> LinuxOutputBackend.instance
+    else -> JavaSoundBackend
+}
+
+fun outputApis(): String = when {
+    HostPlatform.isWindows -> "WASAPI"
+    HostPlatform.isLinux && LinuxOutputBackend.instance.exclusiveAvailable -> "Java Sound · ALSA"
+    else -> "Java Sound"
+}
+
+fun outputApi(exclusive: Boolean): String = when {
+    HostPlatform.isWindows -> "WASAPI"
+    exclusive -> "ALSA"
+    else -> "Java Sound"
 }
 
 object WasapiBackend : OutputBackend {

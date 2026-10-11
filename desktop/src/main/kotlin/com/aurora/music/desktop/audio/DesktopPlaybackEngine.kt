@@ -10,7 +10,7 @@ import com.aurora.music.desktop.natives.AudioDevice
 import com.aurora.music.desktop.natives.DeviceEvent
 import com.aurora.music.desktop.natives.OutputEncoding
 import com.aurora.music.desktop.natives.OutputStatus
-import com.aurora.music.desktop.natives.WasapiException
+import com.aurora.music.desktop.natives.OutputException
 import com.aurora.music.localization.appString
 import com.aurora.music.mix.MixMath
 import com.aurora.music.model.Song
@@ -50,7 +50,7 @@ import java.util.concurrent.locks.LockSupport
 import kotlin.random.Random
 
 class DesktopPlaybackEngine(
-    private val backend: OutputBackend = WasapiBackend,
+    private val backend: OutputBackend = defaultOutputBackend(),
     private val resolver: StreamResolver = StreamResolver.Default,
     config: EngineConfig = EngineConfig(),
     random: Random = Random.Default,
@@ -63,6 +63,7 @@ class DesktopPlaybackEngine(
     override val events: SharedFlow<EngineEvent> = mutableEvents.asSharedFlow()
     private val mutableOutputs = MutableStateFlow<List<AudioDevice>>(emptyList())
     override val outputs: StateFlow<List<AudioDevice>> = mutableOutputs.asStateFlow()
+    override val exclusiveAvailable: Boolean get() = backend.exclusiveAvailable
     override val beforeMeter = PcmLevelMeter()
     override val afterMeter = PcmLevelMeter()
     @Volatile override var visualizer: VisualizerController? = null
@@ -225,6 +226,13 @@ class DesktopPlaybackEngine(
 
     override fun pause() = post {
         pauseInternal()
+        // some drivers never ask for data again when a stopped exclusive stream restarts, so resume like a seek
+        if (output?.exclusive == true) {
+            val now = System.nanoTime()
+            refreshStatus(now)
+            heard(now)
+            restartAtHeard()
+        }
         publish()
     }
 
@@ -794,7 +802,7 @@ class DesktopPlaybackEngine(
                 current.resume()
                 running = true
                 lastStatus = null
-            } catch (e: WasapiException) {
+            } catch (e: OutputException) {
                 if (e.deviceInvalidated) reopenAtHeard() else failOutput(e)
                 return false
             } catch (e: Exception) {
@@ -812,7 +820,7 @@ class DesktopPlaybackEngine(
     private fun write(current: AudioOutput): Boolean {
         val written = try {
             current.write(bytes, pendingOffset, pendingLength, WRITE_TIMEOUT_MS)
-        } catch (e: WasapiException) {
+        } catch (e: OutputException) {
             if (e.deviceInvalidated) reopenAtHeard() else failOutput(e)
             return false
         } catch (e: Exception) {

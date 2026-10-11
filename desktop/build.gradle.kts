@@ -12,6 +12,20 @@ val appVersion = Properties().apply {
     rootProject.file("version.properties").inputStream().use { load(it) }
 }
 
+val hostOs: String = System.getProperty("os.name")
+val hostWindows = hostOs.startsWith("Windows")
+val hostLinux = hostOs.startsWith("Linux")
+
+if (!hostWindows && !hostLinux) {
+    gradle.taskGraph.whenReady {
+        if (allTasks.any { it.project == project }) {
+            throw GradleException("The Aurora desktop app builds on Windows and Linux only; $hostOs is not supported yet.")
+        }
+    }
+}
+val nativeClassifier = if (hostWindows) "windows-x86_64" else "linux-x86_64"
+val resourcesTarget = if (hostWindows) "windows-x64" else "linux-x64"
+
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
@@ -23,7 +37,7 @@ kotlin {
 
 dependencies {
     implementation(project(":core"))
-    implementation(compose.desktop.windows_x64)
+    implementation(if (hostWindows) compose.desktop.windows_x64 else compose.desktop.linux_x64)
     implementation(compose.material3)
     implementation(compose.materialIconsExtended)
     implementation(libs.compose.ui.backhandler)
@@ -35,8 +49,15 @@ dependencies {
     implementation(libs.coil3.network.okhttp)
     implementation(libs.javacpp)
     implementation(libs.ffmpeg)
-    runtimeOnly(variantOf(libs.javacpp) { classifier("windows-x86_64") })
-    runtimeOnly(variantOf(libs.ffmpeg) { classifier("windows-x86_64") })
+    runtimeOnly(variantOf(libs.javacpp) { classifier(nativeClassifier) })
+    runtimeOnly(variantOf(libs.ffmpeg) { classifier(nativeClassifier) })
+    if (hostWindows) {
+        compileOnly(libs.dbus.java.core)
+        testImplementation(libs.dbus.java.core)
+    } else {
+        implementation(libs.dbus.java.core)
+        runtimeOnly(libs.dbus.java.transport.unixsocket)
+    }
     testImplementation(libs.junit)
     testImplementation(libs.okhttp.mockwebserver)
 }
@@ -45,44 +66,77 @@ val nativeSource = rootProject.layout.projectDirectory.dir("native")
 val nativeBuildDir = layout.buildDirectory.dir("native")
 val appResources = layout.buildDirectory.dir("appResources")
 
-val configureNative by tasks.registering(Exec::class) {
-    inputs.file(nativeSource.file("CMakeLists.txt"))
-    outputs.file(nativeBuildDir.map { it.file("CMakeCache.txt") })
-    commandLine("cmake", "-S", nativeSource.asFile.path, "-B", nativeBuildDir.get().asFile.path, "-A", "x64")
-}
+if (hostWindows) {
+    val configureNative by tasks.registering(Exec::class) {
+        inputs.file(nativeSource.file("CMakeLists.txt"))
+        outputs.file(nativeBuildDir.map { it.file("CMakeCache.txt") })
+        commandLine("cmake", "-S", nativeSource.asFile.path, "-B", nativeBuildDir.get().asFile.path, "-A", "x64")
+    }
 
-val buildNative by tasks.registering(Exec::class) {
-    dependsOn(configureNative)
-    inputs.dir(nativeSource)
-    outputs.dir(nativeBuildDir.map { it.dir("bin") })
-    commandLine("cmake", "--build", nativeBuildDir.get().asFile.path, "--config", "Release", "--parallel")
-}
+    val buildNative by tasks.registering(Exec::class) {
+        dependsOn(configureNative)
+        inputs.dir(nativeSource)
+        outputs.dir(nativeBuildDir.map { it.dir("bin") })
+        commandLine("cmake", "--build", nativeBuildDir.get().asFile.path, "--config", "Release", "--parallel")
+    }
 
-val syncNative by tasks.registering(Sync::class) {
-    dependsOn(buildNative)
-    from(nativeBuildDir.map { it.dir("bin") }) { include("*.dll") }
-    into(appResources.map { it.dir("windows-x64") })
-}
+    val syncNative by tasks.registering(Sync::class) {
+        dependsOn(buildNative)
+        from(nativeBuildDir.map { it.dir("bin") }) { include("*.dll") }
+        into(appResources.map { it.dir(resourcesTarget) })
+    }
 
-tasks.matching { it.name == "prepareAppResources" }.configureEach { dependsOn(syncNative) }
+    tasks.matching { it.name == "prepareAppResources" }.configureEach { dependsOn(syncNative) }
+    tasks.test { dependsOn(syncNative) }
+} else if (hostLinux) {
+    val alsaSource = nativeSource.dir("alsa")
+    val alsaBuildDir = layout.buildDirectory.dir("native-alsa")
+
+    val configureAlsa by tasks.registering(Exec::class) {
+        inputs.file(alsaSource.file("CMakeLists.txt"))
+        outputs.file(alsaBuildDir.map { it.file("CMakeCache.txt") })
+        commandLine("cmake", "-S", alsaSource.asFile.path, "-B", alsaBuildDir.get().asFile.path, "-DCMAKE_BUILD_TYPE=Release")
+    }
+
+    val buildAlsa by tasks.registering(Exec::class) {
+        dependsOn(configureAlsa)
+        inputs.dir(alsaSource)
+        outputs.dir(alsaBuildDir.map { it.dir("bin") })
+        commandLine("cmake", "--build", alsaBuildDir.get().asFile.path, "--parallel")
+    }
+
+    val syncAlsa by tasks.registering(Sync::class) {
+        dependsOn(buildAlsa)
+        from(alsaBuildDir.map { it.dir("bin") }) { include("*.so") }
+        into(appResources.map { it.dir(resourcesTarget) })
+    }
+
+    tasks.matching { it.name == "prepareAppResources" }.configureEach { dependsOn(syncAlsa) }
+    tasks.test { dependsOn(syncAlsa) }
+}
 
 tasks.test {
-    dependsOn(syncNative)
-    systemProperty("compose.application.resources.dir", appResources.get().dir("windows-x64").asFile.path)
+    systemProperty("compose.application.resources.dir", appResources.get().dir(resourcesTarget).asFile.path)
+    if (hostLinux) {
+        environment("LC_ALL", "C.UTF-8")
+        environment("DBUS_SESSION_BUS_ADDRESS", "unix:path=/nonexistent/aurora-test-bus")
+    }
 }
 
 compose.desktop {
     application {
         mainClass = "com.aurora.music.desktop.MainKt"
         jvmArgs += listOf("-XX:+UseZGC", "-XX:+ZGenerational", "-Dfile.encoding=UTF-8")
+        if (hostLinux) jvmArgs += "--add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED"
         nativeDistributions {
-            targetFormats(TargetFormat.Msi, TargetFormat.Exe)
+            if (hostWindows) targetFormats(TargetFormat.Msi, TargetFormat.Exe)
             packageName = "Aurora"
             packageVersion = appVersion.getProperty("versionName")
             description = "Aurora music player"
             vendor = "Aurora"
             appResourcesRootDir.set(appResources)
             modules("java.management", "java.naming", "java.sql", "jdk.crypto.ec", "jdk.unsupported")
+            if (hostLinux) modules("jdk.security.auth")
             windows {
                 menuGroup = "Aurora"
                 upgradeUuid = "67dc3d5a-e732-4a4a-b9a6-d1126d48bca5"
@@ -91,9 +145,14 @@ compose.desktop {
                 shortcut = true
                 menu = true
             }
+            linux {
+                iconFile.set(project.file("packaging/aurora.png"))
+            }
         }
     }
 }
+
+if (hostLinux) apply(from = "linux-packaging.gradle.kts")
 
 val androidRes = rootProject.layout.projectDirectory.dir("app/src/main/res")
 val desktopRes = layout.projectDirectory.dir("src/main/res")
@@ -150,7 +209,8 @@ abstract class GenerateAndroidStrings : DefaultTask() {
     private fun localeTag(dir: String): String? =
         if (dir == "values") "default"
         else Regex("values-([a-z]{2,3})(?:-r([A-Z]{2}))?").matchEntire(dir)?.groupValues?.let { (_, language, region) ->
-            if (region.isEmpty()) language else "$language-$region"
+            val tag = if (language == "in") "id" else language
+            if (region.isEmpty()) tag else "$tag-$region"
         }
 
     private fun read(file: java.io.File, values: Values) {
