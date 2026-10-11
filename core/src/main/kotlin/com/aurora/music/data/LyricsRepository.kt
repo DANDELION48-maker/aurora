@@ -1,6 +1,7 @@
 package com.aurora.music.data
 
 import com.aurora.music.model.LyricLine
+import com.aurora.music.model.LyricWord
 import com.aurora.music.model.Song
 import com.aurora.music.util.TrackMatch
 import com.google.gson.Gson
@@ -198,20 +199,56 @@ class LyricsRepository(
         private val TRAIL_FEAT = Regex("""[(\[]?\s*\b(feat|ft|featuring)\b\.?.*$""", RegexOption.IGNORE_CASE)
 
         private val TAG = Regex("""\[(\d+):(\d{1,2})(?:[.:](\d{1,3}))?]""")
+        private val LEADING_TAGS = Regex("""^(?:\s*\[\d+:\d{1,2}(?:[.:]\d{1,3})?])+""")
+        private val WORD_TAG = Regex("""[<\[](\d+):(\d{1,2})(?:[.:](\d{1,3}))?[>\]]""")
+
+        private fun tagMs(m: MatchResult): Long {
+            val min = m.groupValues[1].toLongOrNull() ?: 0L
+            val sec = m.groupValues[2].toLongOrNull() ?: 0L
+            val frac = m.groupValues[3]
+            val ms = (frac.toLongOrNull() ?: 0L) * when (frac.length) { 1 -> 100; 2 -> 10; else -> 1 }
+            return min * 60_000 + sec * 1000 + ms
+        }
 
         fun parseLrc(lrc: String): List<LyricLine> {
-            val out = mutableListOf<Pair<Int, String>>()
+            val out = mutableListOf<LyricLine>()
             lrc.lineSequence().forEach { raw ->
-                val tags = TAG.findAll(raw).toList()
-                if (tags.isEmpty()) return@forEach
-                val text = raw.substring(tags.last().range.last + 1).trim()
-                tags.forEach { m ->
-                    val min = m.groupValues[1].toIntOrNull() ?: 0
-                    val sec = m.groupValues[2].toIntOrNull() ?: 0
-                    out.add((min * 60 + sec) to text)
+                val lead = LEADING_TAGS.find(raw) ?: return@forEach
+                val body = raw.substring(lead.range.last + 1)
+                val starts = TAG.findAll(lead.value).map(::tagMs).toList()
+                val first = timedLine(starts.first(), body)
+                starts.forEach { ms ->
+                    val shift = ms - first.startMs
+                    out += first.copy(timeSec = (ms / 1000).toInt(), startMs = ms,
+                        words = first.words.map { it.copy(startMs = it.startMs + shift, endMs = if (it.endMs < 0) -1 else it.endMs + shift) })
                 }
             }
-            return out.sortedBy { it.first }.map { LyricLine(it.first, it.second) }
+            return out.sortedBy { it.startMs }
+        }
+
+        // enhanced lrc: <mm:ss.xx> (or inline [mm:ss.xx]) before each word
+        fun timedLine(startMs: Long, body: String): LyricLine {
+            val tags = WORD_TAG.findAll(body).toList()
+            if (tags.isEmpty()) return LyricLine((startMs / 1000).toInt(), body.trim(), startMs)
+            val segments = mutableListOf<Pair<Long, String>>()
+            var at = startMs
+            var from = 0
+            for (m in tags) {
+                segments += at to body.substring(from, m.range.first)
+                at = tagMs(m)
+                from = m.range.last + 1
+            }
+            segments += at to body.substring(from)
+            val words = segments.mapIndexedNotNull { i, (time, text) ->
+                if (text.isEmpty()) null else LyricWord(time, segments.getOrNull(i + 1)?.first ?: -1, text)
+            }.toMutableList()
+            while (words.firstOrNull()?.text?.isBlank() == true) words.removeAt(0)
+            while (words.lastOrNull()?.text?.isBlank() == true) words.removeAt(words.lastIndex)
+            if (words.isNotEmpty()) {
+                words[0] = words[0].copy(text = words[0].text.trimStart())
+                words[words.lastIndex] = words.last().copy(text = words.last().text.trimEnd())
+            }
+            return LyricLine((startMs / 1000).toInt(), words.joinToString("") { it.text }, startMs, words)
         }
     }
 }

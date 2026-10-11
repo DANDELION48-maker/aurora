@@ -9,6 +9,7 @@ import com.aurora.music.model.Album
 import com.aurora.music.model.Artist
 import com.aurora.music.model.DetailInfo
 import com.aurora.music.model.LyricLine
+import com.aurora.music.model.LyricWord
 import com.aurora.music.model.Playlist
 import com.aurora.music.model.Song
 import com.aurora.music.model.inferReleaseType
@@ -29,6 +30,7 @@ class JellyfinBackend(
 
     private companion object {
         const val TICKS_PER_SEC = 10_000_000L
+        private const val TICKS_PER_MS = 10_000L
     }
 
     private fun BaseItemDto.imageId(): String? = when {
@@ -351,7 +353,18 @@ class JellyfinBackend(
         val lines = runCatching { client.api.lyrics(song.id).Lyrics }.getOrNull()?.filter { !it.Text.isNullOrEmpty() }.orEmpty()
         if (lines.isEmpty()) return null
         val synced = lines.any { (it.Start ?: 0L) > 0L }
-        val mapped = lines.map { LyricLine(((it.Start ?: 0L) / TICKS_PER_SEC).toInt(), it.Text ?: "") }
+        val mapped = lines.map { line ->
+            val start = line.Start ?: 0L
+            val text = line.Text ?: ""
+            val cues = line.Cues.orEmpty().filter { it.Position != null && it.Start != null }.sortedBy { it.Position }
+            val words = cues.mapIndexedNotNull { i, cue ->
+                val from = if (i == 0) 0 else cue.Position!!.coerceIn(0, text.length)
+                val to = cues.getOrNull(i + 1)?.Position?.coerceIn(from, text.length) ?: text.length
+                if (from >= to) null
+                else LyricWord(cue.Start!! / TICKS_PER_MS, cue.End?.let { it / TICKS_PER_MS } ?: -1, text.substring(from, to))
+            }
+            LyricLine((start / TICKS_PER_SEC).toInt(), text, start / TICKS_PER_MS, words)
+        }
         return Lyrics(mapped, synced, "Jellyfin")
     }
 

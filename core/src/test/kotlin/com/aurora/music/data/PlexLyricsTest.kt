@@ -36,7 +36,7 @@ class PlexLyricsTest {
             val lyrics = requireNotNull(plexLyrics(client(server), "1"))
             assertTrue(lyrics.synced)
             assertEquals("Plex", lyrics.source)
-            assertEquals(listOf(LyricLine(2, "First line"), LyricLine(8, "Second line")), lyrics.lines)
+            assertEquals(listOf(LyricLine(2, "First line", 2500), LyricLine(8, "Second line", 8200)), lyrics.lines)
             assertEquals("/library/metadata/1", server.takeRequest().path)
             val request = server.takeRequest()
             assertEquals("/library/streams/synced", request.path)

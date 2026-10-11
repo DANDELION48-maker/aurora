@@ -33,7 +33,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -41,6 +44,8 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.LocalPlatformContext
 import com.aurora.music.R
 import com.aurora.music.data.Lyrics
+import com.aurora.music.data.charFill
+import com.aurora.music.data.withWordTiming
 import com.aurora.music.desktop.player.PlayerUiState
 import com.aurora.music.desktop.ui.LocalDesktopContainer
 import com.aurora.music.localization.appString
@@ -146,7 +151,7 @@ private fun WideLyrics(
                         Text(appString(R.string.text_no_lyrics_found_75127a), color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
                     }
                     else -> key(song.id, song.playbackSource?.providerId) {
-                        ImmersiveLyrics(lyrics, state.positionSec, state.durationSec, onSeek = onSeek)
+                        ImmersiveLyrics(lyrics, state.positionSec, state.isPlaying, state.durationSec, onSeek = onSeek)
                     }
                 }
             }
@@ -199,7 +204,7 @@ internal fun LyricsPane(
             else -> Column(Modifier.fillMaxSize()) {
                 Box(Modifier.weight(1f).fillMaxWidth()) {
                     key(song.id, song.playbackSource?.providerId) {
-                        ImmersiveLyrics(content, state.positionSec, state.durationSec, onSeek = onSeek, compact = compact)
+                        ImmersiveLyrics(content, state.positionSec, state.isPlaying, state.durationSec, onSeek = onSeek, compact = compact)
                     }
                 }
                 if (content.source.isNotBlank()) Text(content.source, color = Color.White.copy(alpha = .45f),
@@ -258,9 +263,13 @@ private fun LyricsBackdrop(song: Song) {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun ImmersiveLyrics(lyrics: Lyrics, positionSec: Float, durationSec: Int, onSeek: (Float) -> Unit, compact: Boolean = false) {
+private fun ImmersiveLyrics(source: Lyrics, positionSec: Float, playing: Boolean, durationSec: Int, onSeek: (Float) -> Unit, compact: Boolean = false) {
+    val lyrics = remember(source) { source.withWordTiming() }
     val lines = lyrics.lines
-    val current = if (lyrics.synced) lines.indexOfLast { it.timeSec >= 0 && it.timeSec <= positionSec } else -1
+    val clock = rememberLyricsClock(positionSec, playing)
+    val current by remember(lyrics) {
+        derivedStateOf { if (lyrics.synced) lines.indexOfLast { it.startMs >= 0 && it.startMs <= clock.longValue } else -1 }
+    }
     val list = rememberLazyListState()
     var browsing by remember { mutableStateOf(false) }
     val wheel = remember { MutableSharedFlow<Unit>(extraBufferCapacity = 1) }
@@ -291,11 +300,11 @@ private fun ImmersiveLyrics(lyrics: Lyrics, positionSec: Float, durationSec: Int
         ) {
             items(lines.size) { index ->
                 var textLayout by remember { mutableStateOf<TextLayoutResult?>(null) }
-                val seekable = lyrics.synced && durationSec > 0 && lines[index].timeSec >= 0
+                val seekable = lyrics.synced && durationSec > 0 && lines[index].startMs >= 0
                 val seekLine by rememberUpdatedState {
                     if (seekable) {
                         browsing = false
-                        onSeek((lines[index].timeSec.toFloat() / durationSec).coerceIn(0f, 1f))
+                        onSeek((lines[index].startMs / 1000f / durationSec).coerceIn(0f, 1f))
                     }
                 }
                 val active = index == current
@@ -311,7 +320,11 @@ private fun ImmersiveLyrics(lyrics: Lyrics, positionSec: Float, durationSec: Int
                     if (!lyrics.synced || browsing || active) 0f
                     else ((abs(index - current) - 1).coerceAtLeast(0) * 1.6f).coerceAtMost(7f),
                     tween(450), label = "lineSoftness")
-                Text(lines[index].text.ifBlank { "•••" },
+                val line = lines[index]
+                val text = if (active && !browsing && line.words.isNotEmpty())
+                    karaoke(line.displayText, line.charFill(clock.longValue), alpha)
+                else AnnotatedString(line.displayText.ifBlank { "•••" })
+                Text(text,
                     onTextLayout = { textLayout = it },
                     color = Color.White.copy(alpha = alpha), fontSize = if (compact) 22.sp else 30.sp,
                     lineHeight = if (compact) 29.sp else 38.sp,
@@ -343,6 +356,33 @@ private fun ImmersiveLyrics(lyrics: Lyrics, positionSec: Float, durationSec: Int
                     .clickable(role = Role.Button) { browsing = false }.pointerHoverIcon(PointerIcon.Hand)
                     .padding(horizontal = 20.dp, vertical = 14.dp))
         }
+    }
+}
+
+// extrapolates between player ticks so the word wipe moves every frame
+@Composable
+private fun rememberLyricsClock(positionSec: Float, playing: Boolean): MutableLongState {
+    val clock = remember { mutableLongStateOf((positionSec * 1000).toLong()) }
+    LaunchedEffect(positionSec, playing) {
+        val reported = (positionSec * 1000).toLong()
+        val ahead = clock.longValue - reported
+        val base = if (playing && ahead in 1L..250L) reported + ahead / 2 else reported
+        clock.longValue = base
+        if (!playing) return@LaunchedEffect
+        val start = withFrameMillis { it }
+        while (true) withFrameMillis { clock.longValue = base + (it - start) }
+    }
+    return clock
+}
+
+private fun karaoke(text: String, fill: FloatArray, alpha: Float): AnnotatedString = buildAnnotatedString {
+    append(text)
+    var i = 0
+    while (i < text.length) {
+        var j = i + 1
+        while (j < text.length && fill[j] == fill[i]) j++
+        addStyle(SpanStyle(color = Color.White.copy(alpha = alpha * (.4f + .6f * fill[i]))), i, j)
+        i = j
     }
 }
 

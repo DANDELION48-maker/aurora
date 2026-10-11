@@ -355,7 +355,7 @@ class SubsonicBackend(
             c.api.getLyricsBySongId(song.id).response.lyricsList?.structuredLyrics
         }.getOrNull().orEmpty().filter { it.line.isNotEmpty() }
         val best = list.firstOrNull { it.synced } ?: list.firstOrNull() ?: return null
-        val lines = best.line.map { LyricLine(((it.start ?: 0L) / 1000L).toInt(), it.value) }
+        val lines = best.line.map { LyricsRepository.timedLine(it.start ?: 0L, it.value.orEmpty()) }
         return Lyrics(lines, best.synced, "Server")
     }
 
