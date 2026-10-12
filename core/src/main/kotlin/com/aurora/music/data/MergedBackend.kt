@@ -131,10 +131,10 @@ class MergedBackend(
     }
 
     private fun dedupAlbums(all: List<Album>): List<Album> =
-        all.distinctBy { TrackMatch.norm(it.artist) + "|" + TrackMatch.norm(it.title) }
+        all.distinctBy { TrackMatch.key(it.artist, it.title) }
 
     private fun dedupArtists(all: List<Artist>): List<Artist> =
-        all.distinctBy { TrackMatch.norm(it.name) }.filter { it.name.isNotBlank() }
+        all.distinctBy { TrackMatch.identity(it.name) }.filter { it.name.isNotBlank() }
 
     // cluster by real duration window not fixed bins so near-equal durations dont split across a boundary
     private fun dedupSongs(all: List<Song>): List<Song> =
@@ -201,7 +201,7 @@ class MergedBackend(
     override suspend fun songsPage(offset: Int, count: Int): List<Song> =
         dedupSongs(wrapAll(fanOut { it.songsPage(offset, count) }) { s, i -> s.wrap(i) }).sortedBy { it.title.lowercase() }
     override suspend fun starredSongs(): List<Song> = dedupSongs(wrapAll(fanOut { it.starredSongs() }) { s, i -> s.wrap(i) })
-    override suspend fun starredCount(): Int = starredIds().size
+    override suspend fun starredCount(): Int = starredSongs().size
     override suspend fun starredIds(): Set<String> =
         sources.indices.zip(fanOut { it.starredIds().toList() }).flatMap { (i, ids) -> ids.map { wrapId(i, it) } }.toSet()
 

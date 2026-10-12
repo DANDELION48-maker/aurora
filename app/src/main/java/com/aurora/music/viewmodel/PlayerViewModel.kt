@@ -674,10 +674,17 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         return QueueDelivery(initial, 0)
     }
 
+    // the in-memory backfill deliverQueue just started must finish first, or everything past the first batch is lost
     private fun fillQueue(kind: String, id: String, loaded: List<Song>, total: Int, shuffle: Boolean, collection: PlaybackCollectionIdentity?) {
-        cancelQueueFill()
         if (loaded.size >= total || total <= 0) return
+        val backfill = queueFillJob
         queueFillJob = viewModelScope.launch {
+            try {
+                backfill?.join()
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                backfill?.cancel()
+                throw cancelled
+            }
             val c = controller ?: return@launch
             val token = queueToken ?: return@launch
             var delivered = c.mediaItemCount
