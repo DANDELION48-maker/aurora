@@ -75,7 +75,7 @@ class AutoEqController(
             return
         }
         val key = route.key
-        if (route.kind != ProcessingRouteKind.ANDROID || key == null) {
+        if (key == null || !route.switchesDeviceEq) {
             applied = null
             mutableStatus.value = RouteApplicationStatus(route.detail)
             return

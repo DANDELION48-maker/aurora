@@ -66,6 +66,17 @@ class ProcessingRoutesTest {
         assertNull(RouteRuleDecision.preset(RouteObservation(1, route().copy(key = null)), rules))
     }
 
+    @Test fun deviceEqFollowsNativeUsbButOnlyBindsWhereProcessingRuns() {
+        val usb = route().copy(kind = ProcessingRouteKind.NATIVE_USB)
+        assertTrue(route().bindsDeviceEq)
+        assertTrue(usb.switchesDeviceEq && usb.bindsDeviceEq)
+        assertTrue(usb.copy(bypassesProcessing = true).switchesDeviceEq)
+        assertFalse(usb.copy(bypassesProcessing = true).bindsDeviceEq)
+        assertFalse(usb.copy(key = null).switchesDeviceEq)
+        assertFalse(route().copy(kind = ProcessingRouteKind.CAST).switchesDeviceEq)
+        assertNull(RouteRuleDecision.preset(RouteObservation(1, usb), ProcessingRouteRules(true, listOf(RoutePresetBinding(first, "DAC", "", preset)))))
+    }
+
     @Test fun duplicateMalformedAndUnknownRulesAreRejected() {
         val binding = RoutePresetBinding(first, "Output", "", preset)
         assertTrue(runCatching { ProcessingRouteCodec.encode(ProcessingRouteRules(bindings = listOf(binding, binding))) }.isFailure)

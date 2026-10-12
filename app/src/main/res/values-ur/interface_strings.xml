@@ -605,6 +605,7 @@
     <string name="text_device_presets_ca72d3" formatted="false">"\u2067آلے کے پری سیٹس\u2069"</string>
     <string name="text_digital_sample_levels_eed86c" formatted="false">"\u2067ڈیجیٹل سیمپل لیولز\u2069"</string>
     <string name="text_direct_bc8152" formatted="false">"\u2067ڈائریکٹ\u2069"</string>
+    <string name="text_direct_usb_bypasses_aurora_s_processing_switch_to_processed_mode_4a9301" formatted="false">"\u2067ڈائریکٹ USB، Aurora کی پروسیسنگ کو بائی پاس کرتا ہے۔ اس DAC سے پری سیٹ جوڑنے کے لیے پروسیسڈ موڈ پر جائیں۔\u2069"</string>
     <string name="text_direct_usb_requested_fe8923" formatted="false">"\u2067ڈائریکٹ USB کی درخواست کی گئی\u2069"</string>
     <string name="text_discard_36fff6" formatted="false">"\u2067رد کریں\u2069"</string>
     <string name="text_disconnect_discord_0939de" formatted="false">"\u2067Discord منقطع کریں\u2069"</string>

@@ -605,6 +605,7 @@
     <string name="text_device_presets_ca72d3" formatted="false">"डिवाइस प्रीसेट"</string>
     <string name="text_digital_sample_levels_eed86c" formatted="false">"डिजिटल सैंपल स्तर"</string>
     <string name="text_direct_bc8152" formatted="false">"डायरेक्ट"</string>
+    <string name="text_direct_usb_bypasses_aurora_s_processing_switch_to_processed_mode_4a9301" formatted="false">"डायरेक्ट USB, Aurora की प्रोसेसिंग को बायपास करता है। इस DAC से प्रीसेट जोड़ने के लिए प्रोसेस्ड मोड पर जाएँ।"</string>
     <string name="text_direct_usb_requested_fe8923" formatted="false">"डायरेक्ट USB का अनुरोध किया गया"</string>
     <string name="text_discard_36fff6" formatted="false">"छोड़ें"</string>
     <string name="text_disconnect_discord_0939de" formatted="false">"Discord डिस्कनेक्ट करें"</string>

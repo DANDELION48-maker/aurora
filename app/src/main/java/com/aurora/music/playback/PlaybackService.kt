@@ -158,8 +158,8 @@ class PlaybackService : MediaLibraryService() {
     private var mixerRequestDetail: String? = null
     private var mixerRequestedDevice: android.media.AudioDeviceInfo? = null
     private val outputCallback = object : android.media.AudioDeviceCallback() {
-        override fun onAudioDevicesAdded(added: Array<out android.media.AudioDeviceInfo>) { mixerRequestKey = null; updateSignalPath() }
-        override fun onAudioDevicesRemoved(removed: Array<out android.media.AudioDeviceInfo>) { mixerRequestKey = null; updateSignalPath() }
+        override fun onAudioDevicesAdded(added: Array<out android.media.AudioDeviceInfo>) { mixerRequestKey = null; nativeRoutes.clear(); updateSignalPath() }
+        override fun onAudioDevicesRemoved(removed: Array<out android.media.AudioDeviceInfo>) { mixerRequestKey = null; nativeRoutes.clear(); updateSignalPath() }
     }
 
     @Volatile private var sleepFadeActive = false
@@ -196,6 +196,8 @@ class PlaybackService : MediaLibraryService() {
     private var usbSink: com.decent.usbaudio.media3.UsbAudioSink? = null
     private var processedUsbSink: ProcessedUsbAudioSink? = null
     private var hardwareVolume: UsbHardwareVolumeController? = null
+    // usb and audio device lookups are binder calls, signal path snapshots run every second
+    private val nativeRoutes = mutableMapOf<String, com.aurora.music.data.routes.ProcessingRoute>()
     private var rawDsdSink: com.aurora.music.playback.dsd.RawDsdAudioSink? = null
     @Volatile private var rawDsdFailure: String? = null
     private var usbMode = UsbOutputMode.DIRECT
@@ -909,9 +911,8 @@ class PlaybackService : MediaLibraryService() {
         val rawDsd = rawDsdSink?.telemetry
         if (rawDsd?.active == true || rawDsd?.failure != null) {
             requestBitPerfect(null, null, false)
-            container.settingsStore.processingRoutes.publish(com.aurora.music.data.routes.ProcessingRoute(
-                com.aurora.music.data.routes.ProcessingRouteKind.NATIVE_USB, label = "Raw DSD USB",
-                detail = "PCM processing is bypassed."))
+            container.settingsStore.processingRoutes.publish(nativeUsbRoute("Raw DSD USB",
+                "PCM processing is bypassed, so device presets have no effect here.", bypassesProcessing = true))
             val info = DsdSourceInfo.from(rawDsd.source)
             val sourceFormat = info?.let { SignalFormat(it.bitRate, 1, it.channels, "DSD") }
             val mode = if (rawDsd.wire == com.aurora.music.playback.dsd.DsdWireFormat.DOP) "DoP" else "Native DSD"
@@ -950,9 +951,9 @@ class PlaybackService : MediaLibraryService() {
         val usb = native?.usbActive == true || processedUsb
         val confirmedOutput = state?.routedOutput?.snapshot()
         container.settingsStore.processingRoutes.publish(if (usb)
-            com.aurora.music.data.routes.ProcessingRoute(com.aurora.music.data.routes.ProcessingRouteKind.NATIVE_USB,
-                label = if (processedUsb) "Processed USB output" else "Direct USB output",
-                detail = "Automatic output rules are paused for native USB.")
+            if (processedUsb) nativeUsbRoute("Processed USB output",
+                "Device presets follow this DAC. Output preset rules are paused for native USB.", bypassesProcessing = false)
+            else nativeUsbRoute("Direct USB output", "Aurora processing is bypassed, so device presets have no effect here.", bypassesProcessing = true)
             else confirmedOutput ?: com.aurora.music.data.routes.ProcessingRoute(
                 com.aurora.music.data.routes.ProcessingRouteKind.UNKNOWN, label = "Output unconfirmed",
                 detail = "Waiting for AudioTrack routing."))
@@ -1179,6 +1180,10 @@ class PlaybackService : MediaLibraryService() {
                 } ?: "Waiting for output configuration" else "No Aurora sample-rate conversion observed",
                 "Active sink configuration; downstream conversion is unknown"))
     }
+    private fun nativeUsbRoute(label: String, detail: String, bypassesProcessing: Boolean) = nativeRoutes.getOrPut(label) {
+        ConfirmedAudioRoute.nativeRoute(this, label, detail, bypassesProcessing)
+    }
+
     private fun softwareUsbVolume(): Double {
         val audio = getSystemService(AUDIO_SERVICE) as android.media.AudioManager
         return audio.getStreamVolume(android.media.AudioManager.STREAM_MUSIC).toDouble() /

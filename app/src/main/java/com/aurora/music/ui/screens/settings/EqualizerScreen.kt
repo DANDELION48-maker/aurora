@@ -482,7 +482,11 @@ private fun AutoEqPanel(container: AppContainer, prefs: AudioPrefs, store: Setti
             }
             Switch(checked = autoSwitch, onCheckedChange = { v -> scope.launch { store.setAutoEqAutoSwitch(v) } })
         }
-        if (active.isNotBlank() && observedOutput.route.key != null) {
+        if (active.isNotBlank() && observedOutput.route.switchesDeviceEq && !observedOutput.route.bindsDeviceEq) {
+            Text(appString(R.string.text_direct_usb_bypasses_aurora_s_processing_switch_to_processed_mode_4a9301),
+                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(vertical = 6.dp))
+        } else if (active.isNotBlank() && observedOutput.route.key != null) {
             Box(
                 Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(MaterialTheme.colorScheme.surfaceContainerHigh)
                     .clickable {

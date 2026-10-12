@@ -18,7 +18,12 @@ data class ProcessingRoute(
     val legacyKey: String? = null,
     val category: OutputDeviceCategory? = null,
     val androidDeviceId: Int? = null,
-)
+    val bypassesProcessing: Boolean = false,
+) {
+    // device eq bindings follow android and native usb outputs, full output presets stay android only
+    val switchesDeviceEq get() = key != null && (kind == ProcessingRouteKind.ANDROID || kind == ProcessingRouteKind.NATIVE_USB)
+    val bindsDeviceEq get() = switchesDeviceEq && !bypassesProcessing
+}
 
 data class RouteObservation(val generation: Long = 0, val route: ProcessingRoute = ProcessingRoute())
 

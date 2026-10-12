@@ -814,7 +814,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         }
         val route = processingRoutes.current.route
         val key = route.key ?: return
-        if (route.kind != ProcessingRouteKind.ANDROID) return
+        if (!route.switchesDeviceEq) return
         val rules = ProcessingRouteCodec.decode(p[Keys.PROCESSING_ROUTES]).getOrThrow()
         val fullBinding = rules.enabled && rules.bindings.any { it.routeKey == key }
         val legacyBinding = p[Keys.AUTOEQ_SWITCH] == true && parseBindings(p[Keys.EQ_BINDINGS]).any {
@@ -921,7 +921,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
             val rules = ProcessingRouteCodec.decode(p[Keys.PROCESSING_ROUTES]).getOrThrow()
             val observed = processingRoutes.current
             val key = observed.route.key
-            if (expectedRoute != null && (expectedRoute != observed || key == null || observed.route.kind != ProcessingRouteKind.ANDROID)) return@edit
+            if (expectedRoute != null && (expectedRoute != observed || key == null || !observed.route.switchesDeviceEq)) return@edit
             if (key != null && (key in rules.manual || rules.enabled && rules.bindings.any { it.routeKey == key })) return@edit
             p[Keys.DSP_PARAMETRIC] = ParamBandCodec.encodePreference(binding.bands)
             p[Keys.DSP_PREAMP] = binding.preampDb
@@ -1318,7 +1318,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         impulseResult {
             val expected = processingRoutes.current
             val key = expected.route.key ?: error("Output identity is unavailable.")
-            require(expected.route.kind == ProcessingRouteKind.ANDROID) { "This output bypasses local processing." }
+            require(expected.route.bindsDeviceEq) { "This output bypasses local processing." }
             dataStore.edit { p ->
                 require(processingRoutes.current == expected) { "The output changed. Try again." }
                 val binding = EqBinding(key, expected.route.label, profile, preampDb, bands)

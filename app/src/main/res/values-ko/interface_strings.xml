@@ -605,6 +605,7 @@
     <string name="text_device_presets_ca72d3" formatted="false">"기기 프리셋"</string>
     <string name="text_digital_sample_levels_eed86c" formatted="false">"디지털 샘플 레벨"</string>
     <string name="text_direct_bc8152" formatted="false">"다이렉트"</string>
+    <string name="text_direct_usb_bypasses_aurora_s_processing_switch_to_processed_mode_4a9301" formatted="false">"다이렉트 USB는 Aurora의 처리를 우회합니다. 이 DAC에 프리셋을 연결하려면 처리 모드로 전환하세요."</string>
     <string name="text_direct_usb_requested_fe8923" formatted="false">"다이렉트 USB 요청됨"</string>
     <string name="text_discard_36fff6" formatted="false">"버리기"</string>
     <string name="text_disconnect_discord_0939de" formatted="false">"Discord 연결 해제"</string>

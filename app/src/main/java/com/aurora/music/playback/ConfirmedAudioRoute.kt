@@ -45,7 +45,7 @@ class ConfirmedAudioRoute(private val context: Context, private val changed: () 
             AudioDeviceInfo.TYPE_BUILTIN_SPEAKER_SAFE)
         val unique = outputs.count { it.type == device.type &&
             (if (android.os.Build.VERSION.SDK_INT >= 28) it.address.orEmpty() else "") == address } == 1
-        val serial = if (device.type in USB_TYPES) usbIdentity() else null
+        val serial = if (device.type in USB_TYPES) usbIdentity(context) else null
         val key = RouteIdentity.key(device.type, address, builtIn, unique, serial)
         val legacy = "${device.type}:${device.productName}"
             .takeIf { outputs.count { it.type == device.type && it.productName.toString() == device.productName.toString() } == 1 }
@@ -56,24 +56,42 @@ class ConfirmedAudioRoute(private val context: Context, private val changed: () 
 
     fun supportedSampleRates(): IntArray = runCatching { track?.routedDevice?.sampleRates ?: intArrayOf() }.getOrDefault(intArrayOf())
 
-    private fun usbIdentity(): String? = runCatching {
-        val manager = context.getSystemService(Context.USB_SERVICE) as UsbManager
-        val device = manager.deviceList.values.filter { candidate ->
-            candidate.deviceClass == UsbConstants.USB_CLASS_AUDIO ||
-                (0 until candidate.interfaceCount).any { candidate.getInterface(it).interfaceClass == UsbConstants.USB_CLASS_AUDIO }
-        }.singleOrNull() ?: return null
-        val serial = device.serialNumber?.trim()?.takeIf { it.isNotEmpty() } ?: return null
-        "${device.vendorId}:${device.productId}:$serial"
-    }.getOrNull()
-
     fun close() = synchronized(this) {
         track?.let { runCatching { it.removeOnRoutingChangedListener(listener) } }
         track = null
     }
 
-    private companion object {
-        val USB_TYPES = setOf(AudioDeviceInfo.TYPE_USB_DEVICE, AudioDeviceInfo.TYPE_USB_ACCESSORY, AudioDeviceInfo.TYPE_USB_HEADSET)
-        fun category(type: Int): OutputDeviceCategory = when (type) {
+    companion object {
+        private val USB_TYPES = setOf(AudioDeviceInfo.TYPE_USB_DEVICE, AudioDeviceInfo.TYPE_USB_ACCESSORY, AudioDeviceInfo.TYPE_USB_HEADSET)
+
+        private fun audioUsbDevice(context: Context): android.hardware.usb.UsbDevice? = runCatching {
+            (context.getSystemService(Context.USB_SERVICE) as UsbManager).deviceList.values.filter { candidate ->
+                candidate.deviceClass == UsbConstants.USB_CLASS_AUDIO ||
+                    (0 until candidate.interfaceCount).any { candidate.getInterface(it).interfaceClass == UsbConstants.USB_CLASS_AUDIO }
+            }.singleOrNull()
+        }.getOrNull()
+
+        // reading the serial needs usb permission, a dac without one is identified by its model ids
+        fun usbIdentity(context: Context): String? {
+            val device = audioUsbDevice(context) ?: return null
+            val manager = context.getSystemService(Context.USB_SERVICE) as UsbManager
+            if (!runCatching { manager.hasPermission(device) }.getOrDefault(false)) return null
+            val serial = runCatching { device.serialNumber?.trim() }.getOrNull()?.takeIf { it.isNotEmpty() }
+            return listOfNotNull(device.vendorId, device.productId, serial).joinToString(":")
+        }
+
+        // aurora's own usb output keyed like android's route for the same dac so one binding covers both
+        fun nativeRoute(context: Context, label: String, detail: String, bypassesProcessing: Boolean): ProcessingRoute {
+            val manager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            val android = runCatching { manager.getDevices(AudioManager.GET_DEVICES_OUTPUTS).filter { it.type in USB_TYPES } }
+                .getOrDefault(emptyList()).singleOrNull()
+            val key = usbIdentity(context)?.let { RouteIdentity.key(android?.type ?: AudioDeviceInfo.TYPE_USB_HEADSET, "", false, true, it) }
+            val name = audioUsbDevice(context)?.productName?.trim()?.take(120)?.ifBlank { null }
+            return ProcessingRoute(ProcessingRouteKind.NATIVE_USB, key, name?.let { "$it · $label" } ?: label, detail,
+                android?.let { "${it.type}:${it.productName}" }, OutputDeviceCategory.USB, bypassesProcessing = bypassesProcessing)
+        }
+
+        private fun category(type: Int): OutputDeviceCategory = when (type) {
             AudioDeviceInfo.TYPE_BUILTIN_SPEAKER, AudioDeviceInfo.TYPE_BUILTIN_SPEAKER_SAFE -> OutputDeviceCategory.SPEAKER
             AudioDeviceInfo.TYPE_BUILTIN_EARPIECE -> OutputDeviceCategory.EARPIECE
             AudioDeviceInfo.TYPE_WIRED_HEADSET, AudioDeviceInfo.TYPE_WIRED_HEADPHONES -> OutputDeviceCategory.HEADPHONES

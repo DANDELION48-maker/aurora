@@ -605,6 +605,7 @@
     <string name="text_device_presets_ca72d3" formatted="false">"Préréglages d\'appareils"</string>
     <string name="text_digital_sample_levels_eed86c" formatted="false">"Niveaux d\'échantillons numériques"</string>
     <string name="text_direct_bc8152" formatted="false">"Direct"</string>
+    <string name="text_direct_usb_bypasses_aurora_s_processing_switch_to_processed_mode_4a9301" formatted="false">"L\'USB direct contourne le traitement d\'Aurora. Passez en mode traité pour associer des préréglages à ce DAC."</string>
     <string name="text_direct_usb_requested_fe8923" formatted="false">"USB direct demandé"</string>
     <string name="text_discard_36fff6" formatted="false">"Abandonner"</string>
     <string name="text_disconnect_discord_0939de" formatted="false">"Déconnecter Discord"</string>
