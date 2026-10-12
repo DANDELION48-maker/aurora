@@ -395,7 +395,13 @@ private fun ImmersiveLyrics(source: Lyrics, song: Song, positionSec: Float, play
     onScrolling: (Boolean) -> Unit, onBackgroundTap: () -> Unit, compact: Boolean = false) {
     val mode = com.aurora.music.ui.theme.LocalUiPrefs.current.lyricsSync
     val vocals = rememberVocals(song, source, mode)
-    val lyrics = remember(source, vocals, mode) { if (mode == LyricsSync.LINE) source else source.withWordTiming(vocals) }
+    val estimate = remember(source, mode) { if (mode == LyricsSync.LINE) source else source.withWordTiming() }
+    // the vocal fit runs off the main thread; the estimate shows meanwhile
+    val heard by produceState<Triple<Lyrics, VocalActivity, Lyrics>?>(null, source, vocals, mode) {
+        value = null
+        if (mode != LyricsSync.LINE && vocals != null) value = Triple(source, vocals, withContext(Dispatchers.Default) { source.withWordTiming(vocals) })
+    }
+    val lyrics = heard?.takeIf { it.first === source && it.second === vocals }?.third ?: estimate
     val lines = lyrics.lines
     val clock = rememberLyricsClock(positionSec, playing && mode != LyricsSync.LINE)
     val current by remember(lyrics) {
