@@ -39,11 +39,12 @@ object SettingsDestinations {
     val gestures = SettingsDestination(Routes.SETTINGS_GESTURES, R.string.text_gestures_behaviour_9d13b8, R.string.text_swipe_haptics_and_private_session_19567f)
     val integrations = SettingsDestination(Routes.SETTINGS_INTEGRATIONS, R.string.text_integrations_a7881c, R.string.text_scrobbling_presence_lyrics_and_metadata_687ea0)
     val permissions = SettingsDestination(Routes.SETTINGS_PERMISSIONS, R.string.text_permissions_d06d55, R.string.text_notifications_background_alarms_and_dac_eac2dd)
+    val insights = SettingsDestination(Routes.SETTINGS_INSIGHTS, R.string.insights_title, R.string.insights_description)
     val backup = SettingsDestination(Routes.SETTINGS_BACKUP, R.string.text_backup_restore_a16162, R.string.text_export_or_import_settings_and_playlists_4ce918)
     val about = SettingsDestination(Routes.SETTINGS_ABOUT, R.string.text_about_aurora_b4ed8c, R.string.text_version_and_app_information_9c9a82)
 
     val all = listOf(accounts, sources, storage, analysis, playback, output, network, equalizer, advancedAudio, processingRack, tuning, impulses, comparison, presetRules, processingPresets, loudness,
-        listening, extensions, signalPath, alarm, appearance, visualizer, gestures, integrations, permissions, backup, about)
+        listening, extensions, signalPath, alarm, appearance, visualizer, gestures, integrations, permissions, insights, backup, about)
 }
 
 @Composable

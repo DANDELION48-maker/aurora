@@ -955,6 +955,9 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     val lrclibEnabled: Flow<Boolean> = dataStore.data.map { it[Keys.LRCLIB] ?: true }
     val dataSaver: Flow<Boolean> = dataStore.data.map { it[Keys.DATA_SAVER] ?: false }
     val simpleMode: Flow<Boolean> = dataStore.data.map { it[Keys.SIMPLE_MODE] ?: false }.distinctUntilChanged()
+    val insightsPrefs: Flow<InsightsPrefs> = dataStore.data.map {
+        InsightsPrefs(it[Keys.INSIGHTS_ENABLED] ?: false, it[Keys.INSIGHTS_DEVICE] ?: true, it[Keys.INSIGHTS_AUDIO_PATH] ?: true)
+    }.distinctUntilChanged()
     val onboardingSeen: Flow<Boolean?> = dataStore.data.map { it[Keys.ONBOARDING_SEEN] }.distinctUntilChanged()
     suspend fun setOnboardingSeen() = dataStore.edit { it[Keys.ONBOARDING_SEEN] = true }
     val privateSession: Flow<Boolean> = dataStore.data.map { it[Keys.PRIVATE_SESSION] ?: false }
@@ -1241,6 +1244,9 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     suspend fun setAnimatedCoversFolder(uri: String) = dataStore.edit { it[Keys.ANIMATED_COVERS_FOLDER] = uri }
     suspend fun setLrclibEnabled(v: Boolean) = dataStore.edit { it[Keys.LRCLIB] = v }
     suspend fun setDataSaver(v: Boolean) = dataStore.edit { it[Keys.DATA_SAVER] = v }
+    suspend fun setInsightsEnabled(v: Boolean) = dataStore.edit { it[Keys.INSIGHTS_ENABLED] = v }
+    suspend fun setInsightsDevice(v: Boolean) = dataStore.edit { it[Keys.INSIGHTS_DEVICE] = v }
+    suspend fun setInsightsAudioPath(v: Boolean) = dataStore.edit { it[Keys.INSIGHTS_AUDIO_PATH] = v }
     suspend fun setSimpleMode(v: Boolean) = dataStore.edit { it[Keys.SIMPLE_MODE] = v }
     suspend fun setPrivateSession(v: Boolean) = dataStore.edit { it[Keys.PRIVATE_SESSION] = v }
     suspend fun setGestureSwipeArtwork(v: Boolean) = dataStore.edit { it[Keys.GESTURE_SWIPE_ART] = v }

@@ -633,6 +633,9 @@ fun AuroraApp() {
                         confirm = { confirm(it) },
                     )
                 }
+                composable(Routes.SETTINGS_INSIGHTS) {
+                    com.aurora.music.ui.screens.settings.DetailedStatsScreen(contentPadding = padding, onBack = { nav.popBackStack() })
+                }
                 composable(Routes.SETTINGS_GESTURES) {
                     com.aurora.music.ui.screens.settings.GesturesSettingsScreen(contentPadding = padding, onBack = { nav.popBackStack() })
                 }
@@ -1268,6 +1271,7 @@ fun AuroraApp() {
                                     onOpenAppearance = { open(Routes.SETTINGS_APPEARANCE) },
                                     onOpenLanguage = { open(Routes.SETTINGS_LANGUAGE) },
                                     onOpenGestures = { open(Routes.SETTINGS_GESTURES) },
+                                    onOpenInsights = { open(Routes.SETTINGS_INSIGHTS) },
                                     onOpenIntegrations = { open(Routes.SETTINGS_INTEGRATIONS) },
                                     onOpenPermissions = { open(Routes.SETTINGS_PERMISSIONS) },
                                     onOpenAbout = { open(Routes.SETTINGS_ABOUT) },

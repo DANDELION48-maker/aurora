@@ -95,6 +95,10 @@ class PlaybackService : MediaLibraryService() {
     @Volatile private var monoAudioPref: Boolean = false
     @Volatile private var lastAudioPrefs: AudioPrefs? = null
     private val listeningHistory by lazy { PlaybackListeningHistory(container.playHistory, container.discord) }
+    private val listeningDetails by lazy {
+        PlaybackListeningDetails({ play -> container.listeningDetails.save(play) }, { container.settingsStore.processingRoutes.current.route },
+            { container.signalPath.value }, { lastAudioPrefs }, { lastRack })
+    }
     private val playbackReporting by lazy { PlaybackReportingController(container.repository, container.playbackReports,
         allowed = { container.playbackReportingAllowed.value && !container.offline.value && container.sessionReady.value == true },
         nativePlaying = { active -> active === player && usbSink?.isNativeEngineActive == true && player.playWhenReady }) }
@@ -566,7 +570,18 @@ class PlaybackService : MediaLibraryService() {
         scope.launch {
             container.settingsStore.privateSession.collect { privateSession ->
                 listeningHistory.allowed = !privateSession
+                listeningDetails.privateSession = privateSession
+                listeningDetails.update()
             }
+        }
+        scope.launch {
+            container.settingsStore.insightsPrefs.collect { prefs ->
+                listeningDetails.prefs = prefs
+                listeningDetails.update()
+            }
+        }
+        scope.launch {
+            container.settingsStore.activeEqProfile.collect { listeningDetails.autoEqProfile = it }
         }
         scope.launch {
             container.playbackReportingAllowed.collect { playbackReporting.sample() }
@@ -584,7 +599,9 @@ class PlaybackService : MediaLibraryService() {
                 delay(1000)
                 val active = mediaSession?.player
                 playbackReporting.observe(active)
-                listeningHistory.track(active, active === player && usbSink?.isNativeEngineActive == true && player.playWhenReady)
+                val nativeUsb = active === player && usbSink?.isNativeEngineActive == true && player.playWhenReady
+                listeningHistory.track(active, nativeUsb)
+                listeningDetails.track(active, nativeUsb)
             }
         }
         // USB engine and volume/fade changes need snapshots even without a Media3 track event.
@@ -1854,6 +1871,7 @@ class PlaybackService : MediaLibraryService() {
     override fun onDestroy() {
         playbackReporting.close()
         listeningHistory.finish()
+        listeningDetails.finish()
         networkDisposed = true
         networkBridge?.close(); networkBridge = null
         networkPlayer?.release(); networkPlayer = null

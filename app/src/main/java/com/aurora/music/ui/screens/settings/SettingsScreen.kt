@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.Devices
 import androidx.compose.material.icons.filled.Route
@@ -85,6 +86,7 @@ fun SettingsScreen(
     onOpenAppearance: () -> Unit,
     onOpenLanguage: () -> Unit,
     onOpenGestures: () -> Unit,
+    onOpenInsights: () -> Unit = {},
     onOpenIntegrations: () -> Unit,
     onOpenPermissions: () -> Unit,
     onOpenAbout: () -> Unit,
@@ -258,6 +260,10 @@ fun SettingsScreen(
                         subtitle = appString(R.string.onboarding_replay_body), onClick = onReplayTour)
                     SettingsRowDivider()
                     SettingsDestinationRow(Icons.Filled.Lock, SettingsDestinations.permissions, onClick = onOpenPermissions)
+                    SettingsRowDivider()
+                    val insights by container.settingsStore.insightsPrefs.collectAsStateWithLifecycle(com.aurora.music.data.InsightsPrefs())
+                    SettingsDestinationRow(Icons.Filled.Insights, SettingsDestinations.insights,
+                        if (insights.enabled) appString(R.string.text_on_e0049a) else SettingsDestinations.insights.description, onClick = onOpenInsights)
                     SettingsRowDivider()
                     SettingsDestinationRow(Icons.Filled.Backup, SettingsDestinations.backup, onClick = onOpenBackup)
                     SettingsRowDivider()

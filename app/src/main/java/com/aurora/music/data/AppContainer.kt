@@ -59,6 +59,7 @@ class AppContainer(context: Context) {
     val localProfileAppearance = settingsStore.localProfile.map(profileImages::appearance)
         .flowOn(Dispatchers.IO).stateIn(scope, SharingStarted.Eagerly, ProfileAppearance())
     val playHistory = PlayHistoryStore(appContext.filesDir)
+    val listeningDetails by lazy { DetailedListeningStore(appContext) }
 
     val queueStore = QueueStore(appContext.filesDir)
 
