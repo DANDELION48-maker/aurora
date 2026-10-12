@@ -10,14 +10,18 @@ private const val HOLD = 1.5
 private const val MAX_STRETCH = 1.25
 private const val DEFAULT_PACE = 260.0
 private const val FILL_LEAD_MS = 80L
+private const val ACTIVE = .5f
+private const val FLOOR = .06f
+private const val EARLY_MS = 200L
+private const val LATE_MS = 1500L
 private const val CYRILLIC_VOWELS = "аеёиоуыэюяіїєў"
 private const val GREEK_VOWELS = "αεηιουω"
 private const val SMALL_KANA = "ぁぃぅぇぉゃゅょゎァィゥェォャュョヮ"
 private val ENGLISH = setOf("the", "you", "i", "and", "to", "my", "me", "a", "it", "in", "your", "of", "is",
     "that", "we", "dont", "im", "on", "be", "for", "all", "so", "but", "just", "oh", "know", "like")
 
-// line-synced lyrics get word timing paced from the song's own syllable rate; real word tags just get their open ends closed
-fun Lyrics.withWordTiming(): Lyrics {
+// line-synced lyrics get word timing paced from the song's own syllable rate, then snapped to detected singing when available
+fun Lyrics.withWordTiming(vocals: VocalActivity? = null): Lyrics {
     if (!synced) return this
     val next = lines.mapIndexed { i, line ->
         (i + 1 until lines.size).map { lines[it].startMs }.firstOrNull { it > line.startMs }
@@ -42,9 +46,59 @@ fun Lyrics.withWordTiming(): Lyrics {
         if (tokens[i].isEmpty()) return@mapIndexed line
         val near = (maxOf(0, i - 3)..minOf(lines.lastIndex, i + 3)).mapNotNull { samples[it] }
         val pace = (if (near.size >= 3) near.lowQuantile()!! else global).coerceIn(global * .6, global * 2)
-        line.copy(words = if (line.words.isEmpty()) layout(line.startMs, tokens[i], syllables[i], next[i], pace)
-            else close(line.words, syllables[i], next[i], pace))
+        if (line.words.isNotEmpty()) return@mapIndexed line.copy(words = close(line.words, syllables[i], next[i], pace))
+        val estimate = layout(line.startMs, tokens[i], syllables[i], next[i], pace)
+        val heard = if (vocals?.reliable == true) align(line.startMs, next[i], estimate, syllables[i], vocals) else null
+        line.copy(words = heard ?: estimate)
     })
+}
+
+// words advance only while the voice is active, between where singing actually starts and stops in the line
+private fun align(start: Long, next: Long?, words: List<LyricWord>, syllables: IntArray, vocals: VocalActivity): List<LyricWord>? {
+    val last = syllables.indexOfLast { it > 0 }
+    if (last < 0) return null
+    val frame = vocals.frameMs.toLong()
+    val estimated = (words.last().endMs - start).coerceAtLeast(frame)
+    val limit = next ?: (start + estimated + 2000)
+    var onset = -1L
+    var t = start - EARLY_MS
+    while (t <= minOf(start + LATE_MS, limit - 300)) {
+        if (vocals.at(t) >= ACTIVE) { onset = t; break }
+        t += frame
+    }
+    if (onset < 0) return null
+    var end = -1L
+    t = limit - 60
+    while (t > onset) {
+        if (vocals.at(t) >= ACTIVE) { end = t + frame; break }
+        t -= frame
+    }
+    end = minOf(end, onset + maxOf(estimated * 2, 1200))
+    if (end - onset < 250) return null
+    val steps = ((end - onset) / frame).toInt().coerceAtLeast(1)
+    val cumulative = FloatArray(steps + 1)
+    var voiced = 0
+    for (i in 0 until steps) {
+        val level = vocals.at(onset + i * frame)
+        if (level >= ACTIVE) voiced++
+        cumulative[i + 1] = cumulative[i] + maxOf(level, FLOOR)
+    }
+    if (voiced < steps * .3f) return null
+    val weights = DoubleArray(words.size) { k -> syllables.getOrElse(k) { 0 } + if (k == last) HOLD else 0.0 }
+    val total = weights.sum()
+    fun timeAt(share: Double): Long {
+        val target = (share * cumulative[steps]).toFloat()
+        var i = 0
+        while (i < steps - 1 && cumulative[i + 1] < target) i++
+        val span = (cumulative[i + 1] - cumulative[i]).coerceAtLeast(1e-6f)
+        return onset + ((i + ((target - cumulative[i]) / span).coerceIn(0f, 1f)) * frame).roundToLong()
+    }
+    var acc = 0.0
+    return words.mapIndexed { k, word ->
+        val from = timeAt(acc / total)
+        acc += weights[k]
+        LyricWord(from, timeAt(acc / total), word.text)
+    }
 }
 
 private fun List<Double>.lowQuantile(): Double? = if (isEmpty()) null else sorted()[((size - 1) * .35).roundToInt()]

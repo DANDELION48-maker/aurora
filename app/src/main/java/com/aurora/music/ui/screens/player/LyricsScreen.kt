@@ -53,6 +53,8 @@ import coil.request.SuccessResult
 import com.aurora.music.AuroraApplication
 import com.aurora.music.R
 import com.aurora.music.data.Lyrics
+import com.aurora.music.data.LyricsSync
+import com.aurora.music.data.VocalActivity
 import com.aurora.music.data.charFill
 import com.aurora.music.data.withWordTiming
 import com.aurora.music.localization.appString
@@ -194,7 +196,7 @@ internal fun LyricsScreen(
                             fontSize = 22.sp, fontWeight = FontWeight.Bold)
                     }
                     else -> key(song.id, song.playbackSource?.providerId) {
-                        ImmersiveLyrics(content, state.positionSec, state.isPlaying, state.durationSec,
+                        ImmersiveLyrics(content, state.current, state.positionSec, state.isPlaying, state.durationSec,
                             onSeek = { interactionVersion++; onSeek(it) }, onScrolling = { scrolling = it },
                             onBackgroundTap = { controlsVisible = !controlsVisible })
                     }
@@ -279,7 +281,7 @@ private fun WideLyrics(
                         Text(appString(R.string.text_no_lyrics_found_75127a), color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
                     }
                     else -> key(song.id, song.playbackSource?.providerId) {
-                        ImmersiveLyrics(lyrics, state.positionSec, state.isPlaying, state.durationSec, onSeek = onSeek, onScrolling = {}, onBackgroundTap = {})
+                        ImmersiveLyrics(lyrics, state.current, state.positionSec, state.isPlaying, state.durationSec, onSeek = onSeek, onScrolling = {}, onBackgroundTap = {})
                     }
                 }
             }
@@ -323,7 +325,7 @@ internal fun LyricsPane(state: PlayerUiState, onSeek: (Float) -> Unit, modifier:
             else -> Column(Modifier.fillMaxSize()) {
                 Box(Modifier.weight(1f).fillMaxWidth()) {
                     key(song.id, song.playbackSource?.providerId) {
-                        ImmersiveLyrics(content, state.positionSec, state.isPlaying, state.durationSec, onSeek = onSeek,
+                        ImmersiveLyrics(content, state.current, state.positionSec, state.isPlaying, state.durationSec, onSeek = onSeek,
                             onScrolling = {}, onBackgroundTap = {}, compact = compact)
                     }
                 }
@@ -389,11 +391,13 @@ private fun LyricsBackdrop(song: Song) {
 }
 
 @Composable
-private fun ImmersiveLyrics(source: Lyrics, positionSec: Float, playing: Boolean, durationSec: Int, onSeek: (Float) -> Unit,
+private fun ImmersiveLyrics(source: Lyrics, song: Song, positionSec: Float, playing: Boolean, durationSec: Int, onSeek: (Float) -> Unit,
     onScrolling: (Boolean) -> Unit, onBackgroundTap: () -> Unit, compact: Boolean = false) {
-    val lyrics = remember(source) { source.withWordTiming() }
+    val mode = com.aurora.music.ui.theme.LocalUiPrefs.current.lyricsSync
+    val vocals = rememberVocals(song, source, mode)
+    val lyrics = remember(source, vocals, mode) { if (mode == LyricsSync.LINE) source else source.withWordTiming(vocals) }
     val lines = lyrics.lines
-    val clock = rememberLyricsClock(positionSec, playing)
+    val clock = rememberLyricsClock(positionSec, playing && mode != LyricsSync.LINE)
     val current by remember(lyrics) {
         derivedStateOf { if (lyrics.synced) lines.indexOfLast { it.startMs >= 0 && it.startMs <= clock.longValue } else -1 }
     }
@@ -456,7 +460,7 @@ private fun ImmersiveLyrics(source: Lyrics, positionSec: Float, playing: Boolean
                     else ((abs(index - current) - 1).coerceAtLeast(0) * 1.6f).coerceAtMost(7f),
                     tween(450), label = "lineSoftness")
                 val line = lines[index]
-                val text = if (active && !browsing && line.words.isNotEmpty())
+                val text = if (mode != LyricsSync.LINE && active && !browsing && line.words.isNotEmpty())
                     karaoke(line.displayText, line.charFill(clock.longValue), alpha)
                 else AnnotatedString(line.displayText.ifBlank { "•••" })
                 Text(text,
@@ -491,6 +495,17 @@ private fun ImmersiveLyrics(source: Lyrics, positionSec: Float, playing: Boolean
                     .padding(horizontal = 20.dp, vertical = 14.dp))
         }
     }
+}
+
+// only songs without real word timing are analyzed; the estimate shows until the result arrives
+@Composable
+private fun rememberVocals(song: Song, lyrics: Lyrics, mode: Int): VocalActivity? {
+    val analysis = (LocalContext.current.applicationContext as AuroraApplication).container.vocalAnalysis
+    val wanted = mode == LyricsSync.VOCALS && lyrics.synced && lyrics.lines.none { it.words.isNotEmpty() }
+    val vocals by produceState<VocalActivity?>(null, song.id, song.playbackSource?.providerId, wanted) {
+        value = if (wanted) analysis.activityFor(song) else null
+    }
+    return vocals
 }
 
 // extrapolates between the 200ms player ticks so the word wipe moves every frame

@@ -192,6 +192,8 @@ object MiniStyle { const val STANDARD = 0; const val COMPACT = 1; const val PROM
 
 object MiniProgress { const val LINE = 0; const val BAR = 1; const val NONE = 2 }
 
+object LyricsSync { const val LINE = 0; const val WORD = 1; const val VOCALS = 2 }
+
 object HomeSection {
     const val HERO = "hero"; const val RECENT = "recent"; const val PLAYLISTS = "playlists"
     const val FAVOURITE = "favourite"; const val MOST = "most"; const val ARTISTS = "artists"; const val NEW = "new"
@@ -225,6 +227,7 @@ data class UiPrefs(
     val tabletFavouriteScale: Float = TabletSetting.FAVOURITE.default,
     val tabletPlayerSplit: Float = TabletSetting.PLAYER_SPLIT.default,
     val navLayout: String = "",
+    val lyricsSync: Int = LyricsSync.WORD,
 )
 
 enum class TabletSetting(val default: Float, val range: ClosedFloatingPointRange<Float>) {

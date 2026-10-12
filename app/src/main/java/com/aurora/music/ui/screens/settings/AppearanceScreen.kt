@@ -50,6 +50,7 @@ import com.aurora.music.data.AccentMode
 import com.aurora.music.data.AppTypeface
 import com.aurora.music.data.CornerStyle
 import com.aurora.music.data.HomeSection
+import com.aurora.music.data.LyricsSync
 import com.aurora.music.data.MiniProgress
 import com.aurora.music.data.MiniStyle
 import com.aurora.music.data.SeekStyle
@@ -185,6 +186,22 @@ fun AppearanceScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenNa
                 SettingsSwitchRow(title = appString(R.string.text_bottom_utilities_8b97ef), subtitle = appString(R.string.text_speed_lyrics_queue_row_814225), checked = prefs.playerShowUtilities) { v ->
                     scope.launch { store.setPlayerShowUtilities(v) }
                 }
+            }
+
+            item { SettingsSectionTitle(appString(R.string.lyrics_settings_title)) }
+            item {
+                SegmentedRow(appString(R.string.lyrics_sync_label), listOf(appString(R.string.lyrics_sync_line),
+                    appString(R.string.lyrics_sync_word), appString(R.string.lyrics_sync_vocals)), prefs.lyricsSync) { i ->
+                    scope.launch { store.setLyricsSync(i) }
+                }
+            }
+            item {
+                Text(appString(when (prefs.lyricsSync) {
+                    LyricsSync.LINE -> R.string.lyrics_sync_line_desc
+                    LyricsSync.VOCALS -> R.string.lyrics_sync_vocals_desc
+                    else -> R.string.lyrics_sync_word_desc
+                }), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp))
             }
 
             item { SettingsSectionTitle(appString(R.string.text_miniplayer_4adff2)) }

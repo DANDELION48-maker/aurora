@@ -274,6 +274,8 @@ class AppContainer(context: Context) {
     @Volatile
     private var dataSaver: Boolean = false
 
+    val vocalAnalysis = VocalAnalysis(appContext) { !offlineToggle && networkUp && onWifi && !dataSaver }
+
     // 0 = system default
     val preferredAudioDeviceId = MutableStateFlow(0)
 
