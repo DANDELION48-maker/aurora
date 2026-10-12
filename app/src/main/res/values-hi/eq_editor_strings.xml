@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">सरल</string>
+    <string name="eq_advanced">उन्नत</string>
+    <string name="eq_decrease">%1$s घटाएँ</string>
+    <string name="eq_increase">%1$s बढ़ाएँ</string>
+    <string name="eq_drag_hint">फ़्रीक्वेंसी और गेन बदलने के लिए ग्राफ़ पर किसी बिंदु को खींचें। वहाँ बैंड जोड़ने के लिए ग्राफ़ पर दो बार टैप करें।</string>
+    <string name="eq_simple_hint">स्लाइडर और पैरामीट्रिक बैंड दोनों लागू होते हैं; ग्राफ़ संयुक्त परिणाम दिखाता है।</string>
+    <string name="eq_no_bands">अभी कोई पैरामीट्रिक बैंड नहीं है। जोड़ने के लिए + पर टैप करें।</string>
+    <string name="eq_band_limit">यह EQ अधिकतम %1$s बैंड रख सकता है।</string>
+    <string name="eq_rack_hint">प्रोसेसिंग रैक के इक्वलाइज़र स्टेज 64 तक रख सकते हैं।</string>
+    <string name="eq_move_to_stage">इक्वलाइज़र स्टेज में ले जाएँ</string>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">リスニングマップ</string>
+    <string name="map_song_subtitle">位置情報付きの再生 %1$s 回</string>
+    <string name="map_empty">この場所にはまだ位置情報付きの再生がありません。</string>
+    <string name="map_plays_here">ここでの再生 %1$s 回</string>
+    <string name="map_show_on_map">聴いた場所を表示</string>
+    <string name="insights_location_history">位置情報の履歴</string>
+    <string name="insights_location_history_toggle">聴いた場所を保存</string>
+    <string name="insights_location_history_desc">地図用に各再生の正確な位置を保存します</string>
+    <string name="insights_location_history_guide">各再生は再生された正確な場所を保存し、地図で確認できます。データはこのスマホにのみ保存され、アップロードされることはなく、バックアップにも含まれません。ここまたは地図からいつでも削除できます。</string>
+    <string name="insights_location_count">位置情報付きの再生: %1$s 回</string>
+    <string name="insights_open_map">地図を開く</string>
+    <string name="insights_delete_locations">位置情報の履歴を削除</string>
+    <string name="insights_delete_locations_body">再生に保存されたすべての位置情報を削除します。再生記録と統計は残ります。</string>
+</resources>

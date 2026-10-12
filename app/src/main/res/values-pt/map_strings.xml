@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">Mapa de audição</string>
+    <string name="map_song_subtitle">%1$s reproduções com localização</string>
+    <string name="map_empty">Ainda não há reproduções com localização aqui.</string>
+    <string name="map_plays_here">%1$s reproduções aqui</string>
+    <string name="map_show_on_map">Mostrar onde você ouviu</string>
+    <string name="insights_location_history">Histórico de localização</string>
+    <string name="insights_location_history_toggle">Salvar onde você ouve</string>
+    <string name="insights_location_history_desc">Guarda a localização exata de cada reprodução para o mapa</string>
+    <string name="insights_location_history_guide">Cada reprodução guarda o local exato onde tocou, para você ver no mapa. Fica neste celular, nunca é enviado e fica fora dos backups. Você pode apagar aqui ou pelo mapa a qualquer momento.</string>
+    <string name="insights_location_count">%1$s reproduções têm localização</string>
+    <string name="insights_open_map">Abrir mapa</string>
+    <string name="insights_delete_locations">Apagar histórico de localização</string>
+    <string name="insights_delete_locations_body">Isso remove todas as localizações salvas das suas reproduções. As reproduções e suas estatísticas continuam.</string>
+</resources>

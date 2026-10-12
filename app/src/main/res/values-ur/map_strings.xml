@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">سننے کا نقشہ</string>
+    <string name="map_song_subtitle">مقام والے %1$s پلے</string>
+    <string name="map_empty">یہاں ابھی مقام والا کوئی پلے نہیں۔</string>
+    <string name="map_plays_here">یہاں %1$s پلے</string>
+    <string name="map_show_on_map">دکھائیں کہ آپ نے کہاں سنا</string>
+    <string name="insights_location_history">مقام کی تاریخ</string>
+    <string name="insights_location_history_toggle">محفوظ کریں کہ آپ کہاں سنتے ہیں</string>
+    <string name="insights_location_history_desc">نقشے کے لیے ہر پلے کا درست مقام رکھتا ہے</string>
+    <string name="insights_location_history_guide">ہر پلے وہ درست جگہ رکھتا ہے جہاں وہ چلا، تاکہ آپ اسے نقشے پر دیکھ سکیں۔ یہ اسی فون پر رہتا ہے، کبھی اپ لوڈ نہیں ہوتا اور بیک اپ میں شامل نہیں ہوتا۔ آپ اسے کسی بھی وقت یہاں یا نقشے سے حذف کر سکتے ہیں۔</string>
+    <string name="insights_location_count">%1$s پلے میں مقام موجود ہے</string>
+    <string name="insights_open_map">نقشہ کھولیں</string>
+    <string name="insights_delete_locations">مقام کی تاریخ حذف کریں</string>
+    <string name="insights_delete_locations_body">اس سے آپ کے پلے سے تمام محفوظ مقامات حذف ہو جائیں گے۔ پلے اور آپ کے اعداد و شمار باقی رہیں گے۔</string>
+</resources>

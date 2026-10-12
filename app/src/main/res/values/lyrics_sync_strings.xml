@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_title">Lyrics</string>
+    <string name="lyrics_sync_label">Synced lyrics</string>
+    <string name="lyrics_sync_line">Line by line</string>
+    <string name="lyrics_sync_word">Word by word</string>
+    <string name="lyrics_sync_vocals">Follow vocals</string>
+    <string name="lyrics_sync_line_desc">Highlights each whole line as it is sung.</string>
+    <string name="lyrics_sync_word_desc">Fills in each word, timed from the line timestamps and the song’s pace.</string>
+    <string name="lyrics_sync_vocals_desc">Listens to the song on your device to find where the singing starts, pauses and stops, then times each word to it. Word-by-word timing shows until the analysis is ready. Streamed songs are only analyzed on Wi-Fi.</string>
+</resources>

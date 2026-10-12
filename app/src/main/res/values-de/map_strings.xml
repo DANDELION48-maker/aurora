@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">Hörkarte</string>
+    <string name="map_song_subtitle">%1$s Wiedergaben mit Standort</string>
+    <string name="map_empty">Hier gibt es noch keine Wiedergaben mit Standort.</string>
+    <string name="map_plays_here">%1$s Wiedergaben hier</string>
+    <string name="map_show_on_map">Zeigen, wo du gehört hast</string>
+    <string name="insights_location_history">Standortverlauf</string>
+    <string name="insights_location_history_toggle">Speichern, wo du hörst</string>
+    <string name="insights_location_history_desc">Speichert den genauen Ort jeder Wiedergabe für die Karte</string>
+    <string name="insights_location_history_guide">Jede Wiedergabe behält den genauen Ort, an dem sie lief, damit du sie auf einer Karte sehen kannst. Die Daten bleiben auf diesem Handy, werden nie hochgeladen und sind von Backups ausgeschlossen. Du kannst sie jederzeit hier oder auf der Karte löschen.</string>
+    <string name="insights_location_count">%1$s Wiedergaben haben einen Standort</string>
+    <string name="insights_open_map">Karte öffnen</string>
+    <string name="insights_delete_locations">Standortverlauf löschen</string>
+    <string name="insights_delete_locations_body">Dadurch werden alle gespeicherten Standorte deiner Wiedergaben entfernt. Die Wiedergaben und deine Statistiken bleiben erhalten.</string>
+</resources>

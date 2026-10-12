@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">Listening map</string>
+    <string name="map_song_subtitle">%1$s plays with a location</string>
+    <string name="map_empty">No plays with a location here yet.</string>
+    <string name="map_plays_here">%1$s plays here</string>
+    <string name="map_show_on_map">Show where you listened</string>
+    <string name="insights_location_history">Location history</string>
+    <string name="insights_location_history_toggle">Save where you listen</string>
+    <string name="insights_location_history_desc">Keeps the exact location of each play for the map</string>
+    <string name="insights_location_history_guide">Each play keeps the exact spot where it was playing, so you can see it on a map. It stays on this phone, is never uploaded and is left out of backups. You can delete it here or from the map at any time.</string>
+    <string name="insights_location_count">%1$s plays have a location</string>
+    <string name="insights_open_map">Open map</string>
+    <string name="insights_delete_locations">Delete location history</string>
+    <string name="insights_delete_locations_body">This removes every saved location from your plays. The plays themselves and your statistics stay.</string>
+</resources>

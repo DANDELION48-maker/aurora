@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">خريطة الاستماع</string>
+    <string name="map_song_subtitle">%1$s تشغيل مع موقع</string>
+    <string name="map_empty">لا توجد تشغيلات بموقع هنا بعد.</string>
+    <string name="map_plays_here">%1$s تشغيل هنا</string>
+    <string name="map_show_on_map">إظهار مكان استماعك</string>
+    <string name="insights_location_history">سجل المواقع</string>
+    <string name="insights_location_history_toggle">حفظ مكان استماعك</string>
+    <string name="insights_location_history_desc">يحفظ الموقع الدقيق لكل تشغيل لعرضه على الخريطة</string>
+    <string name="insights_location_history_guide">يحتفظ كل تشغيل بالمكان الدقيق الذي شُغّل فيه لتراه على الخريطة. تبقى البيانات على هذا الهاتف ولا تُرفع أبدًا ولا تدخل في النسخ الاحتياطية. يمكنك حذفها من هنا أو من الخريطة في أي وقت.</string>
+    <string name="insights_location_count">%1$s تشغيل لديه موقع</string>
+    <string name="insights_open_map">فتح الخريطة</string>
+    <string name="insights_delete_locations">حذف سجل المواقع</string>
+    <string name="insights_delete_locations_body">سيؤدي ذلك إلى حذف كل المواقع المحفوظة من تشغيلاتك. تبقى التشغيلات وإحصاءاتك كما هي.</string>
+</resources>

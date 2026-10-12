@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_title">歌词</string>
+    <string name="lyrics_sync_label">同步歌词</string>
+    <string name="lyrics_sync_line">逐行</string>
+    <string name="lyrics_sync_word">逐字</string>
+    <string name="lyrics_sync_vocals">跟随人声</string>
+    <string name="lyrics_sync_line_desc">演唱时高亮整行歌词。</string>
+    <string name="lyrics_sync_word_desc">根据歌词行时间戳和歌曲节奏逐字填充。</string>
+    <string name="lyrics_sync_vocals_desc">在设备上分析歌曲，找出演唱开始、停顿和结束的位置，并据此为每个字定时。分析完成前使用逐字模式。在线播放的歌曲仅在 Wi-Fi 下分析。</string>
+</resources>

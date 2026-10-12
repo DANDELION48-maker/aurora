@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">Dinleme haritası</string>
+    <string name="map_song_subtitle">Konumu olan %1$s dinleme</string>
+    <string name="map_empty">Burada henüz konumu olan dinleme yok.</string>
+    <string name="map_plays_here">Burada %1$s dinleme</string>
+    <string name="map_show_on_map">Nerede dinlediğinizi göster</string>
+    <string name="insights_location_history">Konum geçmişi</string>
+    <string name="insights_location_history_toggle">Nerede dinlediğinizi kaydet</string>
+    <string name="insights_location_history_desc">Harita için her dinlemenin tam konumunu saklar</string>
+    <string name="insights_location_history_guide">Her dinleme çaldığı tam konumu saklar, böylece haritada görebilirsiniz. Bu telefonda kalır, hiçbir yere yüklenmez ve yedeklere dahil edilmez. İstediğiniz zaman buradan veya haritadan silebilirsiniz.</string>
+    <string name="insights_location_count">Konumu olan %1$s dinleme</string>
+    <string name="insights_open_map">Haritayı aç</string>
+    <string name="insights_delete_locations">Konum geçmişini sil</string>
+    <string name="insights_delete_locations_body">Dinlemelerinizdeki tüm kayıtlı konumlar silinir. Dinlemeler ve istatistikleriniz kalır.</string>
+</resources>

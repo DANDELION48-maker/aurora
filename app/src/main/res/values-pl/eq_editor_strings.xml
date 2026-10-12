@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">Prosty</string>
+    <string name="eq_advanced">Zaawansowany</string>
+    <string name="eq_decrease">Zmniejsz: %1$s</string>
+    <string name="eq_increase">Zwiększ: %1$s</string>
+    <string name="eq_drag_hint">Przeciągnij punkt na wykresie, aby zmienić częstotliwość i wzmocnienie. Stuknij dwukrotnie wykres, aby dodać tam pasmo.</string>
+    <string name="eq_simple_hint">Suwaki i pasma parametryczne działają razem; wykres pokazuje łączny wynik.</string>
+    <string name="eq_no_bands">Brak pasm parametrycznych. Stuknij +, aby dodać pasmo.</string>
+    <string name="eq_band_limit">Ten korektor obsługuje do %1$s pasm.</string>
+    <string name="eq_rack_hint">Etapy korektora w racku przetwarzania obsługują do 64.</string>
+    <string name="eq_move_to_stage">Przenieś do etapu korektora</string>
+</resources>

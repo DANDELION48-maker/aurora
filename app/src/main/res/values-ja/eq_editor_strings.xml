@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">シンプル</string>
+    <string name="eq_advanced">詳細</string>
+    <string name="eq_decrease">%1$sを下げる</string>
+    <string name="eq_increase">%1$sを上げる</string>
+    <string name="eq_drag_hint">グラフ上の点をドラッグして周波数とゲインを変更します。グラフをダブルタップするとその位置にバンドを追加します。</string>
+    <string name="eq_simple_hint">スライダーとパラメトリックバンドは両方適用され、グラフには合成結果が表示されます。</string>
+    <string name="eq_no_bands">パラメトリックバンドはまだありません。+ をタップして追加します。</string>
+    <string name="eq_band_limit">この EQ は最大 %1$s バンドまでです。</string>
+    <string name="eq_rack_hint">処理ラックのイコライザーステージは最大 64 まで使えます。</string>
+    <string name="eq_move_to_stage">イコライザーステージに移動</string>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">सुनने का नक्शा</string>
+    <string name="map_song_subtitle">लोकेशन वाले %1$s प्ले</string>
+    <string name="map_empty">यहाँ अभी लोकेशन वाला कोई प्ले नहीं है।</string>
+    <string name="map_plays_here">यहाँ %1$s प्ले</string>
+    <string name="map_show_on_map">दिखाएँ कि आपने कहाँ सुना</string>
+    <string name="insights_location_history">लोकेशन इतिहास</string>
+    <string name="insights_location_history_toggle">सहेजें कि आप कहाँ सुनते हैं</string>
+    <string name="insights_location_history_desc">नक्शे के लिए हर प्ले की सटीक लोकेशन रखता है</string>
+    <string name="insights_location_history_guide">हर प्ले वह सटीक जगह रखता है जहाँ वह चला, ताकि आप उसे नक्शे पर देख सकें। यह इसी फ़ोन पर रहता है, कभी अपलोड नहीं होता और बैकअप में शामिल नहीं होता। आप इसे कभी भी यहाँ या नक्शे से हटा सकते हैं।</string>
+    <string name="insights_location_count">%1$s प्ले में लोकेशन है</string>
+    <string name="insights_open_map">नक्शा खोलें</string>
+    <string name="insights_delete_locations">लोकेशन इतिहास हटाएँ</string>
+    <string name="insights_delete_locations_body">इससे आपके प्ले से सभी सहेजी गई लोकेशन हट जाएँगी। प्ले और आपके आँकड़े बने रहेंगे।</string>
+</resources>

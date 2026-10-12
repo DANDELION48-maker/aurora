@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_title">Songtexte</string>
+    <string name="lyrics_sync_label">Synchronisierte Songtexte</string>
+    <string name="lyrics_sync_line">Zeile für Zeile</string>
+    <string name="lyrics_sync_word">Wort für Wort</string>
+    <string name="lyrics_sync_vocals">Gesang folgen</string>
+    <string name="lyrics_sync_line_desc">Hebt jeweils die ganze Zeile hervor, während sie gesungen wird.</string>
+    <string name="lyrics_sync_word_desc">Füllt jedes Wort anhand der Zeilen-Zeitstempel und des Tempos des Songs.</string>
+    <string name="lyrics_sync_vocals_desc">Analysiert den Song auf deinem Gerät, um zu erkennen, wo der Gesang beginnt, pausiert und endet, und richtet jedes Wort danach aus. Bis die Analyse fertig ist, wird Wort für Wort verwendet. Gestreamte Songs werden nur im WLAN analysiert.</string>
+</resources>

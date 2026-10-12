@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_title">Teksty</string>
+    <string name="lyrics_sync_label">Zsynchronizowane teksty</string>
+    <string name="lyrics_sync_line">Wiersz po wierszu</string>
+    <string name="lyrics_sync_word">Słowo po słowie</string>
+    <string name="lyrics_sync_vocals">Za wokalem</string>
+    <string name="lyrics_sync_line_desc">Podświetla cały wiersz, gdy jest śpiewany.</string>
+    <string name="lyrics_sync_word_desc">Wypełnia każde słowo na podstawie czasów wierszy i tempa utworu.</string>
+    <string name="lyrics_sync_vocals_desc">Analizuje utwór na urządzeniu, aby ustalić, gdzie śpiew się zaczyna, przerywa i kończy, a potem dopasowuje do tego każde słowo. Do czasu zakończenia analizy używany jest tryb słowo po słowie. Utwory strumieniowane są analizowane tylko przez Wi-Fi.</string>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">Carte d’écoute</string>
+    <string name="map_song_subtitle">%1$s écoutes avec une position</string>
+    <string name="map_empty">Aucune écoute avec une position ici pour l’instant.</string>
+    <string name="map_plays_here">%1$s écoutes ici</string>
+    <string name="map_show_on_map">Afficher où vous avez écouté</string>
+    <string name="insights_location_history">Historique des positions</string>
+    <string name="insights_location_history_toggle">Enregistrer où vous écoutez</string>
+    <string name="insights_location_history_desc">Conserve la position exacte de chaque écoute pour la carte</string>
+    <string name="insights_location_history_guide">Chaque écoute conserve l’endroit exact où elle a été jouée, pour la voir sur une carte. Les données restent sur ce téléphone, ne sont jamais envoyées et sont exclues des sauvegardes. Vous pouvez les supprimer ici ou depuis la carte à tout moment.</string>
+    <string name="insights_location_count">%1$s écoutes ont une position</string>
+    <string name="insights_open_map">Ouvrir la carte</string>
+    <string name="insights_delete_locations">Supprimer l’historique des positions</string>
+    <string name="insights_delete_locations_body">Toutes les positions enregistrées de vos écoutes seront supprimées. Les écoutes et vos statistiques sont conservées.</string>
+</resources>

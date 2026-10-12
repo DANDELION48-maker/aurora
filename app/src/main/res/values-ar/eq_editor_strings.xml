@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">بسيط</string>
+    <string name="eq_advanced">متقدم</string>
+    <string name="eq_decrease">إنقاص %1$s</string>
+    <string name="eq_increase">زيادة %1$s</string>
+    <string name="eq_drag_hint">اسحب نقطة على الرسم البياني لتغيير التردد والكسب. انقر مرتين على الرسم البياني لإضافة نطاق هناك.</string>
+    <string name="eq_simple_hint">تُطبَّق أشرطة التمرير والنطاقات البارامترية معًا؛ ويعرض الرسم البياني النتيجة المجمّعة.</string>
+    <string name="eq_no_bands">لا توجد نطاقات بارامترية بعد. انقر على + لإضافة واحد.</string>
+    <string name="eq_band_limit">يتسع هذا المعادل لما يصل إلى %1$s نطاقات.</string>
+    <string name="eq_rack_hint">تتسع مراحل المعادل في سلسلة المعالجة لما يصل إلى 64.</string>
+    <string name="eq_move_to_stage">نقل إلى مرحلة معادل</string>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">Mapa słuchania</string>
+    <string name="map_song_subtitle">Odtworzenia z lokalizacją: %1$s</string>
+    <string name="map_empty">Tu nie ma jeszcze odtworzeń z lokalizacją.</string>
+    <string name="map_plays_here">Odtworzenia tutaj: %1$s</string>
+    <string name="map_show_on_map">Pokaż miejsce słuchania</string>
+    <string name="insights_location_history">Historia lokalizacji</string>
+    <string name="insights_location_history_toggle">Zapisuj, gdzie słuchasz</string>
+    <string name="insights_location_history_desc">Zapisuje dokładne miejsce każdego odtworzenia na potrzeby mapy</string>
+    <string name="insights_location_history_guide">Każde odtworzenie zachowuje dokładne miejsce, w którym grało, aby można je było zobaczyć na mapie. Dane zostają na tym telefonie, nigdy nie są wysyłane i nie trafiają do kopii zapasowych. Możesz je usunąć tutaj lub z mapy w dowolnej chwili.</string>
+    <string name="insights_location_count">Odtworzenia z lokalizacją: %1$s</string>
+    <string name="insights_open_map">Otwórz mapę</string>
+    <string name="insights_delete_locations">Usuń historię lokalizacji</string>
+    <string name="insights_delete_locations_body">Usunie to wszystkie zapisane lokalizacje odtworzeń. Same odtworzenia i statystyki zostaną.</string>
+</resources>

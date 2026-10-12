@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">Einfach</string>
+    <string name="eq_advanced">Erweitert</string>
+    <string name="eq_decrease">%1$s verringern</string>
+    <string name="eq_increase">%1$s erhöhen</string>
+    <string name="eq_drag_hint">Ziehe einen Punkt im Diagramm, um Frequenz und Verstärkung zu ändern. Tippe doppelt auf das Diagramm, um dort ein Band hinzuzufügen.</string>
+    <string name="eq_simple_hint">Schieberegler und parametrische Bänder wirken gemeinsam; das Diagramm zeigt das Gesamtergebnis.</string>
+    <string name="eq_no_bands">Noch keine parametrischen Bänder. Tippe auf +, um eines hinzuzufügen.</string>
+    <string name="eq_band_limit">Dieser EQ fasst bis zu %1$s Bänder.</string>
+    <string name="eq_rack_hint">Equalizer-Stufen im Verarbeitungs-Rack fassen bis zu 64.</string>
+    <string name="eq_move_to_stage">In eine Equalizer-Stufe verschieben</string>
+</resources>

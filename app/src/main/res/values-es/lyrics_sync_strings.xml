@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_title">Letras</string>
+    <string name="lyrics_sync_label">Letras sincronizadas</string>
+    <string name="lyrics_sync_line">Línea a línea</string>
+    <string name="lyrics_sync_word">Palabra a palabra</string>
+    <string name="lyrics_sync_vocals">Seguir la voz</string>
+    <string name="lyrics_sync_line_desc">Resalta cada línea completa mientras se canta.</string>
+    <string name="lyrics_sync_word_desc">Rellena cada palabra según las marcas de tiempo de las líneas y el ritmo de la canción.</string>
+    <string name="lyrics_sync_vocals_desc">Analiza la canción en tu dispositivo para detectar dónde empieza, se pausa y termina el canto, y ajusta cada palabra a ello. Hasta que el análisis esté listo se usa el modo palabra a palabra. Las canciones en streaming solo se analizan con Wi-Fi.</string>
+</resources>

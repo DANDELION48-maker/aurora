@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_title">Lirik</string>
+    <string name="lyrics_sync_label">Lirik tersinkron</string>
+    <string name="lyrics_sync_line">Baris per baris</string>
+    <string name="lyrics_sync_word">Kata per kata</string>
+    <string name="lyrics_sync_vocals">Ikuti vokal</string>
+    <string name="lyrics_sync_line_desc">Menyorot seluruh baris saat dinyanyikan.</string>
+    <string name="lyrics_sync_word_desc">Mengisi setiap kata berdasarkan stempel waktu baris dan tempo lagu.</string>
+    <string name="lyrics_sync_vocals_desc">Menganalisis lagu di perangkat Anda untuk menemukan kapan nyanyian dimulai, berhenti sejenak, dan selesai, lalu menyesuaikan waktu setiap kata. Mode kata per kata dipakai sampai analisis siap. Lagu streaming hanya dianalisis saat terhubung ke Wi-Fi.</string>
+</resources>

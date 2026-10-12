@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">Basit</string>
+    <string name="eq_advanced">Gelişmiş</string>
+    <string name="eq_decrease">Azalt: %1$s</string>
+    <string name="eq_increase">Artır: %1$s</string>
+    <string name="eq_drag_hint">Frekansı ve kazancı değiştirmek için grafikteki bir noktayı sürükleyin. Oraya bant eklemek için grafiğe çift dokunun.</string>
+    <string name="eq_simple_hint">Kaydırıcılar ve parametrik bantlar birlikte uygulanır; grafik toplam sonucu gösterir.</string>
+    <string name="eq_no_bands">Henüz parametrik bant yok. Eklemek için + simgesine dokunun.</string>
+    <string name="eq_band_limit">Bu EQ en fazla %1$s bant alır.</string>
+    <string name="eq_rack_hint">İşleme zincirindeki Ekolayzer aşamaları en fazla 64 bant alır.</string>
+    <string name="eq_move_to_stage">Ekolayzer aşamasına taşı</string>
+</resources>

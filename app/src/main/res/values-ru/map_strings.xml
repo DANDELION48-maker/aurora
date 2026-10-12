@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">Карта прослушиваний</string>
+    <string name="map_song_subtitle">Прослушиваний с местоположением: %1$s</string>
+    <string name="map_empty">Здесь пока нет прослушиваний с местоположением.</string>
+    <string name="map_plays_here">Прослушиваний здесь: %1$s</string>
+    <string name="map_show_on_map">Показать, где вы слушали</string>
+    <string name="insights_location_history">История местоположений</string>
+    <string name="insights_location_history_toggle">Сохранять, где вы слушаете</string>
+    <string name="insights_location_history_desc">Хранит точное место каждого прослушивания для карты</string>
+    <string name="insights_location_history_guide">Каждое прослушивание сохраняет точное место, где оно звучало, чтобы его можно было увидеть на карте. Данные остаются на этом телефоне, никуда не отправляются и не попадают в резервные копии. Удалить их можно здесь или на карте в любой момент.</string>
+    <string name="insights_location_count">Прослушиваний с местоположением: %1$s</string>
+    <string name="insights_open_map">Открыть карту</string>
+    <string name="insights_delete_locations">Удалить историю местоположений</string>
+    <string name="insights_delete_locations_body">Будут удалены все сохранённые местоположения прослушиваний. Сами прослушивания и статистика останутся.</string>
+</resources>

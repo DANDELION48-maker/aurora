@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">Sederhana</string>
+    <string name="eq_advanced">Lanjutan</string>
+    <string name="eq_decrease">Kurangi %1$s</string>
+    <string name="eq_increase">Tambah %1$s</string>
+    <string name="eq_drag_hint">Seret titik pada grafik untuk mengubah frekuensi dan gain. Ketuk dua kali grafik untuk menambahkan band di sana.</string>
+    <string name="eq_simple_hint">Slider dan band parametrik berlaku bersamaan; grafik menampilkan hasil gabungannya.</string>
+    <string name="eq_no_bands">Belum ada band parametrik. Ketuk + untuk menambahkan.</string>
+    <string name="eq_band_limit">EQ ini menampung hingga %1$s band.</string>
+    <string name="eq_rack_hint">Tahap Equalizer di rak pemrosesan menampung hingga 64.</string>
+    <string name="eq_move_to_stage">Pindahkan ke tahap Equalizer</string>
+</resources>

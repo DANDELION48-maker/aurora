@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">Simple</string>
+    <string name="eq_advanced">Avancé</string>
+    <string name="eq_decrease">Diminuer %1$s</string>
+    <string name="eq_increase">Augmenter %1$s</string>
+    <string name="eq_drag_hint">Faites glisser un point du graphique pour changer la fréquence et le gain. Touchez deux fois le graphique pour y ajouter une bande.</string>
+    <string name="eq_simple_hint">Les curseurs et les bandes paramétriques s’appliquent ensemble ; le graphique montre le résultat combiné.</string>
+    <string name="eq_no_bands">Aucune bande paramétrique pour l’instant. Touchez + pour en ajouter une.</string>
+    <string name="eq_band_limit">Cet égaliseur accepte jusqu’à %1$s bandes.</string>
+    <string name="eq_rack_hint">Les étages d’égaliseur du rack de traitement en acceptent jusqu’à 64.</string>
+    <string name="eq_move_to_stage">Déplacer vers un étage d’égaliseur</string>
+</resources>

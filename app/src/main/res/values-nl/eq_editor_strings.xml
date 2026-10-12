@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">Eenvoudig</string>
+    <string name="eq_advanced">Geavanceerd</string>
+    <string name="eq_decrease">%1$s verlagen</string>
+    <string name="eq_increase">%1$s verhogen</string>
+    <string name="eq_drag_hint">Sleep een punt in de grafiek om frequentie en versterking te wijzigen. Tik twee keer op de grafiek om daar een band toe te voegen.</string>
+    <string name="eq_simple_hint">Schuifregelaars en parametrische banden werken samen; de grafiek toont het gecombineerde resultaat.</string>
+    <string name="eq_no_bands">Nog geen parametrische banden. Tik op + om er een toe te voegen.</string>
+    <string name="eq_band_limit">Deze EQ kan maximaal %1$s banden bevatten.</string>
+    <string name="eq_rack_hint">Equalizerfasen in het verwerkingsrack kunnen er maximaal 64 bevatten.</string>
+    <string name="eq_move_to_stage">Verplaatsen naar een equalizerfase</string>
+</resources>

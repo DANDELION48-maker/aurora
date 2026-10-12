@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_title">歌詞</string>
+    <string name="lyrics_sync_label">同期歌詞</string>
+    <string name="lyrics_sync_line">行ごと</string>
+    <string name="lyrics_sync_word">単語ごと</string>
+    <string name="lyrics_sync_vocals">ボーカルに合わせる</string>
+    <string name="lyrics_sync_line_desc">歌われている行全体をハイライトします。</string>
+    <string name="lyrics_sync_word_desc">行のタイムスタンプと曲のテンポをもとに各単語を塗りつぶします。</string>
+    <string name="lyrics_sync_vocals_desc">端末上で曲を解析し、歌が始まる・途切れる・終わる位置を見つけて各単語のタイミングを合わせます。解析が終わるまでは単語ごとのタイミングを使います。ストリーミングの曲は Wi-Fi 接続時のみ解析します。</string>
+</resources>

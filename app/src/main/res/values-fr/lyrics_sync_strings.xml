@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_title">Paroles</string>
+    <string name="lyrics_sync_label">Paroles synchronisées</string>
+    <string name="lyrics_sync_line">Ligne par ligne</string>
+    <string name="lyrics_sync_word">Mot par mot</string>
+    <string name="lyrics_sync_vocals">Suivre la voix</string>
+    <string name="lyrics_sync_line_desc">Met en évidence chaque ligne entière pendant qu’elle est chantée.</string>
+    <string name="lyrics_sync_word_desc">Remplit chaque mot d’après l’horodatage des lignes et le rythme du morceau.</string>
+    <string name="lyrics_sync_vocals_desc">Analyse le morceau sur votre appareil pour repérer où le chant commence, s’interrompt et s’arrête, puis cale chaque mot dessus. Le mode mot par mot est utilisé tant que l’analyse n’est pas prête. Les morceaux en streaming ne sont analysés qu’en Wi-Fi.</string>
+</resources>

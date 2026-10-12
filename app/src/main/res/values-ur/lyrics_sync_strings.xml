@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_title">بول</string>
+    <string name="lyrics_sync_label">ہم وقت بول</string>
+    <string name="lyrics_sync_line">سطر بہ سطر</string>
+    <string name="lyrics_sync_word">لفظ بہ لفظ</string>
+    <string name="lyrics_sync_vocals">آواز کے ساتھ</string>
+    <string name="lyrics_sync_line_desc">گاتے وقت پوری سطر کو نمایاں کرتا ہے۔</string>
+    <string name="lyrics_sync_word_desc">سطروں کے اوقات اور گانے کی رفتار کے مطابق ہر لفظ بھرتا ہے۔</string>
+    <string name="lyrics_sync_vocals_desc">آپ کے آلے پر گانے کا تجزیہ کر کے معلوم کرتا ہے کہ گانا کہاں شروع ہوتا، رکتا اور ختم ہوتا ہے، پھر ہر لفظ کا وقت اسی کے مطابق رکھتا ہے۔ تجزیہ تیار ہونے تک لفظ بہ لفظ ٹائمنگ دکھائی جاتی ہے۔ اسٹریم کیے گئے گانوں کا تجزیہ صرف وائی فائی پر ہوتا ہے۔</string>
+</resources>

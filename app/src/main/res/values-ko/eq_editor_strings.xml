@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">단순</string>
+    <string name="eq_advanced">고급</string>
+    <string name="eq_decrease">%1$s 낮추기</string>
+    <string name="eq_increase">%1$s 높이기</string>
+    <string name="eq_drag_hint">그래프의 점을 드래그해 주파수와 게인을 바꿉니다. 그래프를 두 번 탭하면 그 위치에 밴드가 추가됩니다.</string>
+    <string name="eq_simple_hint">슬라이더와 파라메트릭 밴드가 함께 적용되며, 그래프에 합쳐진 결과가 표시됩니다.</string>
+    <string name="eq_no_bands">아직 파라메트릭 밴드가 없습니다. +를 탭해 추가하세요.</string>
+    <string name="eq_band_limit">이 EQ는 최대 %1$s개 밴드까지 지원합니다.</string>
+    <string name="eq_rack_hint">처리 랙의 이퀄라이저 단계는 최대 64개까지 지원합니다.</string>
+    <string name="eq_move_to_stage">이퀄라이저 단계로 이동</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">سادہ</string>
+    <string name="eq_advanced">اعلیٰ</string>
+    <string name="eq_decrease">%1$s کم کریں</string>
+    <string name="eq_increase">%1$s بڑھائیں</string>
+    <string name="eq_drag_hint">فریکوئنسی اور گین بدلنے کے لیے گراف پر کسی نقطے کو گھسیٹیں۔ وہاں بینڈ شامل کرنے کے لیے گراف پر دو بار تھپتھپائیں۔</string>
+    <string name="eq_simple_hint">سلائیڈر اور پیرامیٹرک بینڈ دونوں لاگو ہوتے ہیں؛ گراف مجموعی نتیجہ دکھاتا ہے۔</string>
+    <string name="eq_no_bands">ابھی کوئی پیرامیٹرک بینڈ نہیں۔ شامل کرنے کے لیے + پر تھپتھپائیں۔</string>
+    <string name="eq_band_limit">یہ EQ زیادہ سے زیادہ %1$s بینڈ رکھ سکتا ہے۔</string>
+    <string name="eq_rack_hint">پروسیسنگ ریک کے ایکولائزر مراحل 64 تک رکھ سکتے ہیں۔</string>
+    <string name="eq_move_to_stage">ایکولائزر مرحلے میں منتقل کریں</string>
+</resources>

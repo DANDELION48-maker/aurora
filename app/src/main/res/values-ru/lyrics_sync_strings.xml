@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_title">Тексты песен</string>
+    <string name="lyrics_sync_label">Синхронизированный текст</string>
+    <string name="lyrics_sync_line">Построчно</string>
+    <string name="lyrics_sync_word">По словам</string>
+    <string name="lyrics_sync_vocals">По вокалу</string>
+    <string name="lyrics_sync_line_desc">Подсвечивает всю строку, пока она звучит.</string>
+    <string name="lyrics_sync_word_desc">Заполняет каждое слово по времени строк и темпу песни.</string>
+    <string name="lyrics_sync_vocals_desc">Анализирует песню на устройстве, чтобы найти, где пение начинается, прерывается и заканчивается, и подстраивает под это каждое слово. Пока анализ не готов, используется синхронизация по словам. Песни из стриминга анализируются только по Wi-Fi.</string>
+</resources>

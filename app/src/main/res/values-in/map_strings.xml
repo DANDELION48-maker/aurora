@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">Peta mendengarkan</string>
+    <string name="map_song_subtitle">%1$s pemutaran dengan lokasi</string>
+    <string name="map_empty">Belum ada pemutaran dengan lokasi di sini.</string>
+    <string name="map_plays_here">%1$s pemutaran di sini</string>
+    <string name="map_show_on_map">Tampilkan tempat Anda mendengarkan</string>
+    <string name="insights_location_history">Riwayat lokasi</string>
+    <string name="insights_location_history_toggle">Simpan tempat Anda mendengarkan</string>
+    <string name="insights_location_history_desc">Menyimpan lokasi tepat setiap pemutaran untuk peta</string>
+    <string name="insights_location_history_guide">Setiap pemutaran menyimpan lokasi tepat saat diputar, sehingga Anda bisa melihatnya di peta. Data tetap di ponsel ini, tidak pernah diunggah, dan tidak ikut dalam cadangan. Anda dapat menghapusnya di sini atau dari peta kapan saja.</string>
+    <string name="insights_location_count">%1$s pemutaran memiliki lokasi</string>
+    <string name="insights_open_map">Buka peta</string>
+    <string name="insights_delete_locations">Hapus riwayat lokasi</string>
+    <string name="insights_delete_locations_body">Ini menghapus semua lokasi yang tersimpan dari pemutaran Anda. Pemutaran dan statistik Anda tetap ada.</string>
+</resources>

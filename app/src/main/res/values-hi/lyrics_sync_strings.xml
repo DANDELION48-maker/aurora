@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_title">बोल</string>
+    <string name="lyrics_sync_label">सिंक किए गए बोल</string>
+    <string name="lyrics_sync_line">पंक्ति दर पंक्ति</string>
+    <string name="lyrics_sync_word">शब्द दर शब्द</string>
+    <string name="lyrics_sync_vocals">आवाज़ के साथ</string>
+    <string name="lyrics_sync_line_desc">गाते समय पूरी पंक्ति को हाइलाइट करता है।</string>
+    <string name="lyrics_sync_word_desc">पंक्तियों के टाइमस्टैम्प और गाने की गति के आधार पर हर शब्द भरता है।</string>
+    <string name="lyrics_sync_vocals_desc">आपके डिवाइस पर गाने का विश्लेषण करके पता लगाता है कि गायन कहाँ शुरू होता है, रुकता है और खत्म होता है, फिर हर शब्द को उसी के अनुसार समय देता है। विश्लेषण तैयार होने तक शब्द दर शब्द टाइमिंग दिखती है। स्ट्रीम किए गए गानों का विश्लेषण केवल वाई-फ़ाई पर होता है।</string>
+</resources>

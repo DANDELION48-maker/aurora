@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">Semplice</string>
+    <string name="eq_advanced">Avanzato</string>
+    <string name="eq_decrease">Diminuisci %1$s</string>
+    <string name="eq_increase">Aumenta %1$s</string>
+    <string name="eq_drag_hint">Trascina un punto del grafico per cambiare frequenza e guadagno. Tocca due volte il grafico per aggiungere lì una banda.</string>
+    <string name="eq_simple_hint">Cursori e bande parametriche si applicano insieme; il grafico mostra il risultato combinato.</string>
+    <string name="eq_no_bands">Ancora nessuna banda parametrica. Tocca + per aggiungerne una.</string>
+    <string name="eq_band_limit">Questo EQ supporta fino a %1$s bande.</string>
+    <string name="eq_rack_hint">Gli stadi equalizzatore del rack di elaborazione ne supportano fino a 64.</string>
+    <string name="eq_move_to_stage">Sposta in uno stadio equalizzatore</string>
+</resources>

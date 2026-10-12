@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">Simple</string>
+    <string name="eq_advanced">Avanzado</string>
+    <string name="eq_decrease">Reducir %1$s</string>
+    <string name="eq_increase">Aumentar %1$s</string>
+    <string name="eq_drag_hint">Arrastra un punto del gráfico para cambiar la frecuencia y la ganancia. Toca dos veces el gráfico para añadir una banda ahí.</string>
+    <string name="eq_simple_hint">Los deslizadores y las bandas paramétricas se aplican juntos; el gráfico muestra el resultado combinado.</string>
+    <string name="eq_no_bands">Aún no hay bandas paramétricas. Toca + para añadir una.</string>
+    <string name="eq_band_limit">Este EQ admite hasta %1$s bandas.</string>
+    <string name="eq_rack_hint">Las etapas de ecualizador del rack de procesamiento admiten hasta 64.</string>
+    <string name="eq_move_to_stage">Mover a una etapa de ecualizador</string>
+</resources>

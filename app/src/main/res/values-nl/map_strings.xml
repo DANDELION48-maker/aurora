@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">Luisterkaart</string>
+    <string name="map_song_subtitle">%1$s keer geluisterd met locatie</string>
+    <string name="map_empty">Hier is nog niets met een locatie.</string>
+    <string name="map_plays_here">%1$s keer hier</string>
+    <string name="map_show_on_map">Toon waar je luisterde</string>
+    <string name="insights_location_history">Locatiegeschiedenis</string>
+    <string name="insights_location_history_toggle">Bewaar waar je luistert</string>
+    <string name="insights_location_history_desc">Bewaart de exacte locatie van elke keer luisteren voor de kaart</string>
+    <string name="insights_location_history_guide">Elke keer luisteren bewaart de exacte plek waar het speelde, zodat je het op een kaart ziet. Het blijft op deze telefoon, wordt nooit geüpload en gaat niet mee in back-ups. Je kunt het hier of vanaf de kaart altijd verwijderen.</string>
+    <string name="insights_location_count">%1$s keer luisteren heeft een locatie</string>
+    <string name="insights_open_map">Kaart openen</string>
+    <string name="insights_delete_locations">Locatiegeschiedenis verwijderen</string>
+    <string name="insights_delete_locations_body">Hiermee worden alle bewaarde locaties verwijderd. Wat je hebt beluisterd en je statistieken blijven bewaard.</string>
+</resources>

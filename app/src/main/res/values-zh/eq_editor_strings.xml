@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">简单</string>
+    <string name="eq_advanced">高级</string>
+    <string name="eq_decrease">减少%1$s</string>
+    <string name="eq_increase">增加%1$s</string>
+    <string name="eq_drag_hint">拖动图上的点可更改频率和增益。双击图表可在该处添加频段。</string>
+    <string name="eq_simple_hint">滑块和参数频段同时生效；图表显示叠加后的结果。</string>
+    <string name="eq_no_bands">还没有参数频段。点按 + 添加。</string>
+    <string name="eq_band_limit">此均衡器最多支持 %1$s 个频段。</string>
+    <string name="eq_rack_hint">处理机架中的均衡器阶段最多支持 64 个。</string>
+    <string name="eq_move_to_stage">移到均衡器阶段</string>
+</resources>

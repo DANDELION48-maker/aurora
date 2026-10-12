@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_title">Şarkı sözleri</string>
+    <string name="lyrics_sync_label">Senkronize sözler</string>
+    <string name="lyrics_sync_line">Satır satır</string>
+    <string name="lyrics_sync_word">Kelime kelime</string>
+    <string name="lyrics_sync_vocals">Vokali takip et</string>
+    <string name="lyrics_sync_line_desc">Söylenen satırın tamamını vurgular.</string>
+    <string name="lyrics_sync_word_desc">Her kelimeyi satır zamanlarına ve şarkının temposuna göre doldurur.</string>
+    <string name="lyrics_sync_vocals_desc">Şarkıyı cihazınızda analiz ederek vokalin nerede başladığını, durakladığını ve bittiğini bulur ve her kelimeyi buna göre zamanlar. Analiz hazır olana kadar kelime kelime zamanlama kullanılır. Akıştan çalınan şarkılar yalnızca Wi-Fi bağlantısında analiz edilir.</string>
+</resources>

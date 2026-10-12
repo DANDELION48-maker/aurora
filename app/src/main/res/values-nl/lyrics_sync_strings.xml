@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_title">Songteksten</string>
+    <string name="lyrics_sync_label">Gesynchroniseerde teksten</string>
+    <string name="lyrics_sync_line">Regel voor regel</string>
+    <string name="lyrics_sync_word">Woord voor woord</string>
+    <string name="lyrics_sync_vocals">Volg de zang</string>
+    <string name="lyrics_sync_line_desc">Markeert telkens de hele regel terwijl die wordt gezongen.</string>
+    <string name="lyrics_sync_word_desc">Vult elk woord in op basis van de regeltijden en het tempo van het nummer.</string>
+    <string name="lyrics_sync_vocals_desc">Analyseert het nummer op je apparaat om te bepalen waar de zang begint, pauzeert en stopt, en stemt elk woord daarop af. Tot de analyse klaar is, wordt woord voor woord gebruikt. Gestreamde nummers worden alleen via wifi geanalyseerd.</string>
+</resources>

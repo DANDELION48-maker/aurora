@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">收听地图</string>
+    <string name="map_song_subtitle">%1$s 次播放带有位置</string>
+    <string name="map_empty">这里还没有带位置的播放。</string>
+    <string name="map_plays_here">此处 %1$s 次播放</string>
+    <string name="map_show_on_map">显示你在哪里收听</string>
+    <string name="insights_location_history">位置历史</string>
+    <string name="insights_location_history_toggle">保存收听地点</string>
+    <string name="insights_location_history_desc">为地图保存每次播放的确切位置</string>
+    <string name="insights_location_history_guide">每次播放都会保存播放时的确切位置，方便你在地图上查看。数据只保存在这部手机上，从不上传，也不会进入备份。你可以随时在这里或地图上删除。</string>
+    <string name="insights_location_count">%1$s 次播放带有位置</string>
+    <string name="insights_open_map">打开地图</string>
+    <string name="insights_delete_locations">删除位置历史</string>
+    <string name="insights_delete_locations_body">这会删除播放记录中保存的所有位置。播放记录和统计数据会保留。</string>
+</resources>

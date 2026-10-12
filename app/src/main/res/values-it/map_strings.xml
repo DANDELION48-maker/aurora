@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_title">Mappa di ascolto</string>
+    <string name="map_song_subtitle">%1$s ascolti con posizione</string>
+    <string name="map_empty">Qui non ci sono ancora ascolti con posizione.</string>
+    <string name="map_plays_here">%1$s ascolti qui</string>
+    <string name="map_show_on_map">Mostra dove hai ascoltato</string>
+    <string name="insights_location_history">Cronologia posizioni</string>
+    <string name="insights_location_history_toggle">Salva dove ascolti</string>
+    <string name="insights_location_history_desc">Conserva la posizione esatta di ogni ascolto per la mappa</string>
+    <string name="insights_location_history_guide">Ogni ascolto conserva il punto esatto in cui è stato riprodotto, così puoi vederlo su una mappa. Resta su questo telefono, non viene mai caricato ed è escluso dai backup. Puoi eliminarlo qui o dalla mappa in qualsiasi momento.</string>
+    <string name="insights_location_count">%1$s ascolti hanno una posizione</string>
+    <string name="insights_open_map">Apri mappa</string>
+    <string name="insights_delete_locations">Elimina cronologia posizioni</string>
+    <string name="insights_delete_locations_body">Verranno rimosse tutte le posizioni salvate dei tuoi ascolti. Gli ascolti e le statistiche restano.</string>
+</resources>

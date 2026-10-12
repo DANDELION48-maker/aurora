@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eq_simple">Простой</string>
+    <string name="eq_advanced">Расширенный</string>
+    <string name="eq_decrease">Уменьшить: %1$s</string>
+    <string name="eq_increase">Увеличить: %1$s</string>
+    <string name="eq_drag_hint">Перетащите точку на графике, чтобы изменить частоту и усиление. Дважды коснитесь графика, чтобы добавить полосу.</string>
+    <string name="eq_simple_hint">Ползунки и параметрические полосы действуют вместе; график показывает итоговый результат.</string>
+    <string name="eq_no_bands">Параметрических полос пока нет. Нажмите +, чтобы добавить.</string>
+    <string name="eq_band_limit">Этот эквалайзер вмещает до %1$s полос.</string>
+    <string name="eq_rack_hint">Этапы эквалайзера в цепочке обработки вмещают до 64.</string>
+    <string name="eq_move_to_stage">Перенести в этап эквалайзера</string>
+</resources>
