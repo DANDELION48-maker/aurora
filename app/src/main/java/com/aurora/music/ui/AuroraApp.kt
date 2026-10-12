@@ -635,16 +635,24 @@ fun AuroraApp() {
                 }
                 composable(Routes.SETTINGS_INSIGHTS) {
                     com.aurora.music.ui.screens.settings.DetailedStatsScreen(contentPadding = padding, onBack = { nav.popBackStack() },
-                        onOpenInsights = { nav.navigate(Routes.INSIGHTS) })
+                        onOpenInsights = { nav.navigate(Routes.INSIGHTS) }, onOpenMap = { nav.navigate(Routes.LISTENING_MAP) })
                 }
                 composable(Routes.INSIGHTS) {
-                    com.aurora.music.ui.screens.stats.InsightsScreen(padding, onBack = { nav.popBackStack() }, onSetup = { nav.navigate(Routes.SETTINGS_INSIGHTS) })
+                    com.aurora.music.ui.screens.stats.InsightsScreen(padding, onBack = { nav.popBackStack() }, onSetup = { nav.navigate(Routes.SETTINGS_INSIGHTS) },
+                        onOpenMap = { nav.navigate(Routes.LISTENING_MAP) })
+                }
+                composable(Routes.LISTENING_MAP) {
+                    com.aurora.music.ui.screens.stats.ListeningMapScreen(padding, onBack = { nav.popBackStack() })
+                }
+                composable(Routes.LISTENING_MAP + "/{songId}/{at}") { entry ->
+                    com.aurora.music.ui.screens.stats.ListeningMapScreen(padding, onBack = { nav.popBackStack() },
+                        songId = entry.arguments?.getString("songId"), at = entry.arguments?.getString("at")?.toLongOrNull())
                 }
                 composable(Routes.INSIGHTS + "/{period}/{date}") { entry ->
                     val period = runCatching { com.aurora.music.data.RecapPeriod.valueOf(entry.arguments?.getString("period").orEmpty()) }.getOrDefault(com.aurora.music.data.RecapPeriod.MONTH)
                     val date = runCatching { java.time.LocalDate.parse(entry.arguments?.getString("date")) }.getOrDefault(java.time.LocalDate.now())
                     com.aurora.music.ui.screens.stats.InsightsScreen(padding, onBack = { nav.popBackStack() }, onSetup = { nav.navigate(Routes.SETTINGS_INSIGHTS) },
-                        initialWindow = com.aurora.music.data.RecapWindow.containing(period, date))
+                        initialWindow = com.aurora.music.data.RecapWindow.containing(period, date), onOpenMap = { nav.navigate(Routes.LISTENING_MAP) })
                 }
                 composable(Routes.SETTINGS_GESTURES) {
                     com.aurora.music.ui.screens.settings.GesturesSettingsScreen(contentPadding = padding, onBack = { nav.popBackStack() })
@@ -1321,7 +1329,8 @@ fun AuroraApp() {
                     }
                     settingsGraph(navController, inner)
                     composable(Routes.HISTORY) {
-                        com.aurora.music.ui.screens.stats.ListeningHistoryScreen(contentPadding = inner, onBack = { navController.popBackStack() }, onPlay = { playById(it) })
+                        com.aurora.music.ui.screens.stats.ListeningHistoryScreen(contentPadding = inner, onBack = { navController.popBackStack() }, onPlay = { playById(it) },
+                            onShowOnMap = { id, at -> navController.navigate("${Routes.LISTENING_MAP}/${android.net.Uri.encode(id)}/$at") })
                     }
                     composable(Routes.DUPLICATES) {
                         val dupVM: com.aurora.music.viewmodel.DuplicatesViewModel = viewModel()

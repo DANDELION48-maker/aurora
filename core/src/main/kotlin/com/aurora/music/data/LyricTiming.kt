@@ -2,6 +2,7 @@ package com.aurora.music.data
 
 import java.lang.Character.UnicodeScript
 import java.text.Normalizer
+import kotlin.math.abs
 import kotlin.math.ln
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
@@ -22,6 +23,8 @@ private const val PAUSE_REWARD = 1.0
 private const val BREATH_REWARD = .4
 private const val ONSET_REWARD = .35
 private const val HELD_PENALTY = .8
+private const val MARK = .75f
+private const val LEAD = 2.0
 private const val CYRILLIC_VOWELS = "аеёиоуыэюяіїєў"
 private const val GREEK_VOWELS = "αεηιουω"
 private const val SMALL_KANA = "ぁぃぅぇぉゃゅょゎァィゥェォャュョヮ"
@@ -71,6 +74,7 @@ fun Lyrics.withWordTiming(vocals: VocalActivity? = null): Lyrics {
 private class VoiceAligner(private val vocals: VocalActivity) {
     private class Run(val from: Int, val to: Int)
     private class Cut(val end: Int, val start: Int, val reward: Double, val pause: Boolean)
+    private class Sung(val phrases: List<List<Run>>, val stamp: Long, val joined: Boolean)
 
     private val frame = vocals.frameMs.toLong()
     private val spacing = noteSpacing()
@@ -78,17 +82,17 @@ private class VoiceAligner(private val vocals: VocalActivity) {
     fun align(lines: List<LyricLine>, next: List<Long?>, estimates: List<List<LyricWord>?>, syllables: List<IntArray>,
         pace: Double): List<List<LyricWord>?> {
         val units = syllables.map { it.sum() + HOLD }
-        val phrases = lines.indices.map { i ->
+        val sung = lines.indices.map { i ->
             val words = estimates[i] ?: return@map null
             val estimated = (words.last().endMs - lines[i].startMs).coerceAtLeast(frame)
-            window(lines[i].startMs, next[i] ?: (lines[i].startMs + estimated + 2000), estimated)?.let(::group)
+            window(lines[i].startMs, next[i] ?: (lines[i].startMs + estimated + 2000), estimated)
         }
         val voicedPace = lines.indices.mapNotNull { i ->
-            phrases[i]?.let { p -> sung(p.take(keep(p, units[i] * pace)).flatten()) / units[i] }
+            sung[i]?.let { s -> voiced(s.phrases.take(keep(s.phrases, units[i] * pace)).flatten()) / units[i] }
         }.lowQuantile() ?: pace
         return lines.indices.map { i ->
-            val p = phrases[i] ?: return@map null
-            place(p.take(keep(p, units[i] * voicedPace)).flatten(), syllables[i], estimates[i]!!)
+            val s = sung[i] ?: return@map null
+            place(s.phrases.take(keep(s.phrases, units[i] * voicedPace)).flatten(), s, syllables[i], estimates[i]!!)
         }
     }
 
@@ -96,10 +100,12 @@ private class VoiceAligner(private val vocals: VocalActivity) {
 
     private fun active(f: Int) = vocals.level(f) >= ACTIVE
 
-    private fun sung(runs: List<Run>): Double = runs.sumOf { r -> (r.from until r.to).sumOf { vocals.level(it).toDouble() } } * frame
+    private fun peak(f: Int) = if (spacing > 0) vocals.onset(f) else 0f
+
+    private fun voiced(runs: List<Run>): Double = runs.sumOf { r -> (r.from until r.to).sumOf { vocals.level(it).toDouble() } } * frame
 
     // the line's singing from its first entry up to the next line, dropping a note held over from the previous line
-    private fun window(start: Long, limit: Long, estimated: Long): List<Run>? {
+    private fun window(start: Long, limit: Long, estimated: Long): Sung? {
         val first = frameOf(start - EARLY_MS)
         val last = frameOf(limit - 60)
         val late = frameOf(minOf(start + maxOf(LATE_MS, minOf((limit - start) / 3, 3000)), limit - 300))
@@ -112,25 +118,23 @@ private class VoiceAligner(private val vocals: VocalActivity) {
             runs += Run(from, f)
         }
         val opening = runs.firstOrNull() ?: return null
-        if (opening.from == first && runs.size > 1) {
+        var joined = opening.from == first && first > 0 && active(first - 1)
+        if (joined && runs.size > 1) {
             var since = first
             while (since > 0 && first - since < 50 && active(since - 1)) since--
             val held = first - since >= 600 / frame && opening.to <= frameOf(start + 800) &&
                 (runs[1].from - opening.to) * frame >= 150 && (first until opening.to - 2).none { vocals.onset(it) >= .5f }
-            if (held) runs = runs.drop(1).toMutableList()
+            if (held) { runs = runs.drop(1).toMutableList(); joined = false }
         }
         if (runs.first().from > late) return null
         val cap = runs.first().from + ((maxOf(estimated * 2, 1200)) / frame).toInt()
         runs = runs.filter { it.from < cap }.map { Run(it.from, minOf(it.to, cap)) }.toMutableList()
-        return runs.takeIf { (it.last().to - it.first().from) * frame >= 250 }
-    }
-
-    private fun group(runs: List<Run>): List<List<Run>> {
+        if ((runs.last().to - runs.first().from) * frame < 250) return null
         val phrases = mutableListOf(mutableListOf(runs.first()))
         for (r in runs.drop(1)) {
             if ((r.from - phrases.last().last().to) * frame < PHRASE_GAP_MS) phrases.last() += r else phrases += mutableListOf(r)
         }
-        return phrases
+        return Sung(phrases, start, joined)
     }
 
     // later phrases join while they bring the sung time closer to what the syllables need; missing words cost more
@@ -142,7 +146,7 @@ private class VoiceAligner(private val vocals: VocalActivity) {
         var lowest = Double.MAX_VALUE
         phrases.forEachIndexed { j, p ->
             if (j > 0) silence += (p.first().from - phrases[j - 1].last().to) * frame - PHRASE_GAP_MS
-            voiced += sung(p)
+            voiced += voiced(p)
             val miss = ln(voiced.coerceAtLeast(1.0) / expected)
             val cost = (if (miss < 0) -1.5 * miss else .5 * miss) + .25 * silence / 1000
             if (cost < lowest) { lowest = cost; best = j + 1 }
@@ -150,11 +154,11 @@ private class VoiceAligner(private val vocals: VocalActivity) {
         return best
     }
 
-    // a dynamic programme over word breaks: durations follow the syllables, breaks are drawn to breaths and note starts
-    // and kept out of held notes, which only count a little toward a word's length
-    private fun place(runs: List<Run>, syllables: IntArray, words: List<LyricWord>): List<LyricWord>? {
-        val voicedWords = syllables.indices.filter { syllables[it] > 0 }
-        if (voicedWords.isEmpty()) return null
+    // a dynamic programme over word breaks: durations follow the syllables at the singer's note rate, breaks are drawn
+    // to breaths and note starts and kept out of held notes, and one long word is likelier than many slightly long ones
+    private fun place(runs: List<Run>, line: Sung, syllables: IntArray, words: List<LyricWord>): List<LyricWord>? {
+        val n = syllables.count { it > 0 }
+        if (n == 0) return null
         val from = runs.first().from
         val size = runs.last().to - from
         val sung = DoubleArray(size + 1)
@@ -163,7 +167,7 @@ private class VoiceAligner(private val vocals: VocalActivity) {
         if (spacing > 0) for (r in runs) {
             var mark = r.from
             for (f in r.from + 1..r.to) {
-                if (f < r.to && vocals.onset(f) <= 0f) continue
+                if (f < r.to && peak(f) < MARK) continue
                 if (f - mark > maxOf(30, spacing * 5 / 2)) for (h in mark + maxOf(15, spacing * 3 / 2) until f) holding[h - from] = true
                 mark = f
             }
@@ -173,9 +177,10 @@ private class VoiceAligner(private val vocals: VocalActivity) {
             sung[i + 1] = sung[i] + level
             held[i + 1] = held[i] + if (holding[i]) level else 0.0
         }
-        val units = DoubleArray(voicedWords.size) { j -> syllables[voicedWords[j]] + if (j == voicedWords.lastIndex) HOLD else 0.0 }
-        val pace = (sung[size] - (1 - HELD_SHARE) * held[size]) / units.sum()
-        if (pace <= 0 || sung[size] * frame < syllables.sum() * 50) return null
+        val units = syllables.filter { it > 0 }.mapIndexed { j, s -> s + if (j == n - 1) HOLD else 0.0 }
+        val even = (sung[size] - (1 - HELD_SHARE) * held[size]) / units.sum()
+        if (even <= 0 || sung[size] * frame < syllables.sum() * 50) return null
+        val pace = if (spacing > 0) spacing.toDouble().coerceIn(even * .5, even) else even
         val stride = maxOf(1, runs.sumOf { it.to - it.from } / 100)
         val cuts = mutableListOf<Cut>()
         runs.forEachIndexed { k, r ->
@@ -184,14 +189,14 @@ private class VoiceAligner(private val vocals: VocalActivity) {
                 cuts += Cut(runs[k - 1].to - from, r.from - from, if (pause) PAUSE_REWARD else BREATH_REWARD, pause)
             }
             for (f in r.from + 1 until r.to - 1) {
-                val onset = if (spacing > 0) vocals.onset(f) else 0f
+                val onset = peak(f)
                 if (onset <= 0f && (f - r.from) % stride != 0) continue
-                cuts += Cut(f - from, f - from, ONSET_REWARD * onset - if (holding[f - from]) HELD_PENALTY else 0.0, false)
+                val reward = if (onset > 0f) ONSET_REWARD * (2 * onset - 1) else 0.0
+                cuts += Cut(f - from, f - from, reward - if (holding[f - from]) HELD_PENALTY else 0.0, false)
             }
         }
         cuts.sortBy { it.end }
         cuts += Cut(size, size, 0.0, false)
-        val n = voicedWords.size
         val m = cuts.size
         fun cost(j: Int, start: Int, cut: Cut): Double {
             val length = sung[cut.end] - sung[start]
@@ -199,47 +204,53 @@ private class VoiceAligner(private val vocals: VocalActivity) {
             if (length <= 0 || effective <= 0) return Double.MAX_VALUE
             val expected = (units[j] + if (cut.pause && j < n - 1) PHRASE_HOLD else 0.0) * pace
             val r = ln(effective / expected)
-            return (if (r < 0) 1.0 else LONG_WEIGHT) * r * r - if (cut.end < size) cut.reward else 0.0
+            return (if (r < 0) r * r else LONG_WEIGHT * r) - if (cut.end < size) cut.reward else 0.0
         }
+        // singing that runs straight into the line can start at any note near its timestamp
+        val heads = mutableListOf(0 to 0.0)
+        val choose = line.joined && spacing > 0
+        if (choose) {
+            val latest = frameOf(line.stamp + 400) - from
+            cuts.filter { it.end in 1..latest && !it.pause }.forEach { heads += it.start to -it.reward }
+        }
+        val lead = heads.map { (start, extra) -> extra + if (choose) LEAD * abs((from + start) * frame - line.stamp) / 1000 else 0.0 }
         val best = Array(n) { DoubleArray(m) { Double.MAX_VALUE } }
         val back = Array(n) { IntArray(m) { -1 } }
-        if (n == 1) best[0][m - 1] = cost(0, 0, cuts[m - 1])
-        else for (b in 0 until m - 1) best[0][b] = cost(0, 0, cuts[b])
+        for (b in (if (n == 1) m - 1 else 0) until (if (n == 1) m else m - 1)) for (h in heads.indices) {
+            if (heads[h].first >= cuts[b].end) continue
+            val step = cost(0, heads[h].first, cuts[b])
+            if (step != Double.MAX_VALUE && lead[h] + step < best[0][b]) { best[0][b] = lead[h] + step; back[0][b] = h }
+        }
         for (j in 1 until n) for (b in j until m) {
             if (j == n - 1 && b != m - 1 || j < n - 1 && b == m - 1) continue
             for (a in j - 1 until b) {
                 val prior = best[j - 1][a]
                 if (prior == Double.MAX_VALUE || cuts[a].start >= cuts[b].end) continue
                 val step = cost(j, cuts[a].start, cuts[b])
-                if (step == Double.MAX_VALUE) continue
-                if (prior + step < best[j][b]) { best[j][b] = prior + step; back[j][b] = a }
+                if (step != Double.MAX_VALUE && prior + step < best[j][b]) { best[j][b] = prior + step; back[j][b] = a }
             }
         }
         if (best[n - 1][m - 1] == Double.MAX_VALUE) return null
-        val ends = IntArray(n)
+        val starts = IntArray(n)
+        val stops = IntArray(n)
         var b = m - 1
-        for (j in n - 1 downTo 0) { ends[j] = b; if (j > 0) b = back[j][b] }
-        val starts = LongArray(words.size)
-        val stops = LongArray(words.size)
-        var cursor = from.toLong()
-        var j = 0
-        for (k in words.indices) {
-            if (syllables[k] > 0) {
-                val cut = cuts[ends[j]]
-                starts[k] = (if (j == 0) from.toLong() else from.toLong() + cuts[ends[j - 1]].start) * frame
-                stops[k] = (from.toLong() + cut.end) * frame
-                cursor = from.toLong() + cut.start
-                j++
-            } else {
-                val at = if (j < n) (if (j == 0) from.toLong() else from.toLong() + cuts[ends[j - 1]].start) else cursor
-                starts[k] = at * frame
-                stops[k] = at * frame
-            }
+        for (j in n - 1 downTo 0) {
+            stops[j] = cuts[b].end
+            if (j > 0) { b = back[j][b]; starts[j] = cuts[b].start } else starts[0] = heads[back[0][b]].first
         }
-        return words.mapIndexed { k, w -> LyricWord(starts[k], stops[k], w.text) }
+        var j = 0
+        return words.mapIndexed { k, w ->
+            if (syllables[k] > 0) j++
+            val (start, stop) = when {
+                syllables[k] > 0 -> starts[j - 1] to stops[j - 1]
+                j < n -> starts[j] to starts[j]
+                else -> stops[n - 1] to stops[n - 1]
+            }
+            LyricWord((from + start) * frame, (from + stop) * frame, w.text)
+        }
     }
 
-    // typical frames between detected note starts within a phrase, or 0 when they don't look like singing
+    // typical frames between clear note starts within a phrase, or 0 when they don't look like singing
     private fun noteSpacing(): Int {
         if (vocals.onsets.isEmpty()) return 0
         val gaps = mutableListOf<Int>()
@@ -247,7 +258,7 @@ private class VoiceAligner(private val vocals: VocalActivity) {
         var broken = true
         for (f in vocals.onsets.indices) {
             if (!active(f) && !active(f + 1) && !active(f + 2)) broken = true
-            if (vocals.onset(f) <= 0f) continue
+            if (vocals.onset(f) < MARK) continue
             if (!broken && last >= 0) gaps += f - last
             last = f
             broken = false

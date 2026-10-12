@@ -44,6 +44,7 @@ object Routes {
     const val SETTINGS_GESTURES = "settings_gestures"
     const val SETTINGS_INSIGHTS = "settings_insights"
     const val INSIGHTS = "insights"
+    const val LISTENING_MAP = "listening_map"
     const val SETTINGS_INTEGRATIONS = "settings_integrations"
     const val SETTINGS_INTEGRATION_LYRICS = "settings_integration_lyrics"
     const val SETTINGS_INTEGRATION_LASTFM = "settings_integration_lastfm"
