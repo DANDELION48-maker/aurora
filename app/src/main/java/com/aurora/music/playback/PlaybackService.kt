@@ -97,7 +97,7 @@ class PlaybackService : MediaLibraryService() {
     private val listeningHistory by lazy { PlaybackListeningHistory(container.playHistory, container.discord) }
     private val listeningDetails by lazy {
         PlaybackListeningDetails({ play -> container.listeningDetails.save(play) }, { container.settingsStore.processingRoutes.current.route },
-            { container.signalPath.value }, { lastAudioPrefs }, { lastRack }, { container.placesStore.currentZone() })
+            { container.signalPath.value }, { lastAudioPrefs }, { lastRack }, { zone, point -> container.placesStore.sample(zone, point) })
     }
     private val playbackReporting by lazy { PlaybackReportingController(container.repository, container.playbackReports,
         allowed = { container.playbackReportingAllowed.value && !container.offline.value && container.sessionReady.value == true },
