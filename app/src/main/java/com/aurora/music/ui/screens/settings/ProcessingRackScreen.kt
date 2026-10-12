@@ -164,7 +164,15 @@ fun ProcessingRackScreen(contentPadding: PaddingValues, onBack: () -> Unit,
                     decoderRate = signalPath.decoder.format?.rateHz?.takeIf { signalPath.active && it in 8_000..768_000 },
                     onExportEq = { exportEq = edited },
                     onRouting = { routingTarget = edited.id }, impulseLibrary = (impulseLibrary + rackAssets).distinctBy { it.id },
-                    nodeMeter = signalPath.nodeMeters.firstOrNull { it.id == edited.id })
+                    nodeMeter = signalPath.nodeMeters.firstOrNull { it.id == edited.id },
+                    onSplitEq = if (edited.kind != RackNodeKind.LEGACY_DSP) null else ({
+                        val stage = splitEqStage(edited, RackNodeKind.EQ.label())
+                        change { rack -> rack.copy(nodes = rack.nodes.flatMap { node ->
+                            if (node.id != edited.id) listOf(node) else listOf(stage, node.copy(inputs = null,
+                                audio = node.audio.copy(dspGraphicBands = List(node.audio.dspGraphicBands.size) { 0f }, dspParametric = emptyList())))
+                        }) }
+                        editingId = stage.id
+                    }))
             }
         } else {
             Column(Modifier.fillMaxSize()) {
@@ -371,13 +379,12 @@ private fun RackNodeEditor(node: ProcessingRackNode, totalBands: Int, rackEnable
     padding: PaddingValues, onBack: () -> Unit,
     onEdit: ((ProcessingRackNode) -> ProcessingRackNode) -> Unit, onRename: () -> Unit, onPickImpulse: () -> Unit,
     decoderRate: Int?, onExportEq: () -> Unit, onRouting: () -> Unit,
-    impulseLibrary: List<com.aurora.music.data.ir.ImpulseLibraryEntry>, nodeMeter: com.aurora.music.playback.engine.RackNodeMeter?) {
+    impulseLibrary: List<com.aurora.music.data.ir.ImpulseLibraryEntry>, nodeMeter: com.aurora.music.playback.engine.RackNodeMeter?,
+    onSplitEq: (() -> Unit)? = null) {
     val audio = node.audio
     val legacy = node.kind == RackNodeKind.LEGACY_DSP
     var legacySection by rememberSaveable(node.id) { mutableStateOf(appString(R.string.text_equalizer_3b64a9)) }
     var sectionMenu by remember { mutableStateOf(false) }
-    var bandEdit by remember { mutableStateOf<Int?>(null) }
-    var showGraphic by rememberSaveable(node.id) { mutableStateOf(false) }
     var showResponse by rememberSaveable(node.id) { mutableStateOf(false) }
     fun changeAudio(transform: (AudioPrefs) -> AudioPrefs) = onEdit { it.copy(audio = transform(it.audio)) }
     fun shows(kind: RackNodeKind, section: String) = node.kind == kind || legacy && legacySection == section
@@ -427,42 +434,16 @@ private fun RackNodeEditor(node: ProcessingRackNode, totalBands: Int, rackEnable
                     }
                     if (showResponse) item { RackEqResponseCard(node, decoderRate, rackEnabled) }
                 }
-                val layout = DspCoeffBuilder.GRAPHIC_LAYOUTS.getOrElse(audio.dspGraphicLayout) { DspCoeffBuilder.GRAPHIC_LAYOUTS[0] }
+                val stageLimit = if (legacy) 12 else 64
                 item {
                     SettingsGroup {
-                        SettingsNavRow(Icons.Filled.Tune, appString(R.string.text_graphic_eq_3df203), appString(R.string.text_controls_af1fce, (layout.name), (if (showGraphic) appString(R.string.text_hide_34d8b6) else appString(R.string.text_show_d97d1e)))) { showGraphic = !showGraphic }
-                        if (showGraphic) {
-                            SegmentedRow(appString(R.string.text_layout_972ad8), DspCoeffBuilder.GRAPHIC_LAYOUTS.map { it.name }, audio.dspGraphicLayout) { selected ->
-                                changeAudio { old -> old.copy(dspGraphicLayout = selected) }
-                            }
-                            layout.freqs.forEachIndexed { index, frequency ->
-                                val gain = audio.dspGraphicBands.getOrElse(index) { 0f }
-                                SettingsSliderRow(rackFrequency(frequency), rackDb(gain), gain.coerceIn(-12f, 12f), -12f..12f) { value ->
-                                    changeAudio { old -> old.copy(dspGraphicBands = List(maxOf(old.dspGraphicBands.size, layout.freqs.size)) {
-                                        if (it == index) value else old.dspGraphicBands.getOrElse(it) { 0f }
-                                    }) }
-                                }
-                            }
-                        }
-                    }
-                }
-                item {
-                    SettingsSectionTitle(appString(R.string.text_parametric_eq_02ed4c, (audio.dspParametric.size), (if (audio.dspParametric.size == 1) "band" else "bands")))
-                    RackDescription(appString(R.string.text_bands_256_across_rack_39ea04, (audio.dspParametric.size), (if (legacy) 12 else 64), (totalBands)))
-                }
-                itemsIndexed(audio.dspParametric) { index, band ->
-                    RackBandRow(index, band, audio.dspParametric.size, canDuplicate = totalBands < ProcessingRackCodec.MAX_TOTAL_PARAMETRIC_BANDS && audio.dspParametric.size < (if (legacy) 12 else 64),
-                        onEdit = { bandEdit = index }, onToggle = { changeAudio { old -> old.copy(dspParametric = old.dspParametric.mapIndexed { i, b -> if (i == index) b.copy(enabled = !b.isEnabled) else b }) } }, onMove = { step -> changeAudio { old ->
-                            val list = old.dspParametric.toMutableList()
-                            if (index in list.indices && index + step in list.indices) list.add(index + step, list.removeAt(index))
-                            old.copy(dspParametric = list)
-                        } }, onDuplicate = { changeAudio { old -> old.copy(dspParametric = old.dspParametric.toMutableList().also { it.add(index + 1, band) }) } },
-                        onRemove = { changeAudio { old -> old.copy(dspParametric = old.dspParametric.filterIndexed { i, _ -> i != index }) } })
-                }
-                item {
-                    OutlinedButton(onClick = { bandEdit = -1 }, enabled = totalBands < ProcessingRackCodec.MAX_TOTAL_PARAMETRIC_BANDS && audio.dspParametric.size < (if (legacy) 12 else 64),
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
-                        Icon(Icons.Filled.Add, null); Text(appString(R.string.text_add_parametric_band_0c91fd), Modifier.padding(start = 8.dp))
+                        EqEditor(audio.dspGraphicLayout, audio.dspGraphicBands, audio.dspParametric,
+                            maxBands = minOf(stageLimit, audio.dspParametric.size + ProcessingRackCodec.MAX_TOTAL_PARAMETRIC_BANDS - totalBands),
+                            sampleRate = decoderRate ?: 48_000,
+                            onGraphic = { layout, gains -> changeAudio { it.copy(dspGraphicLayout = layout, dspGraphicBands = gains) } },
+                            onBands = { bands -> changeAudio { it.copy(dspParametric = bands) } },
+                            footer = appString(R.string.text_bands_256_across_rack_39ea04, audio.dspParametric.size, stageLimit, totalBands),
+                            limitAction = onSplitEq?.let { appString(R.string.eq_move_to_stage) to it })
                     }
                 }
             }
@@ -513,49 +494,6 @@ private fun RackNodeEditor(node: ProcessingRackNode, totalBands: Int, rackEnable
                     RackImpulsePicker(node, impulseLibrary, onEdit)
                     Text(appString(R.string.text_measured_headphone_spatial_filters_use_true_stereo_wav_impulses_f68789), Modifier.padding(horizontal = 20.dp, vertical = 8.dp), style = MaterialTheme.typography.bodySmall)
                     RackDbSlider(appString(R.string.text_makeup_gain_bced0d), audio.dspConvMakeupDb, -12f..12f) { value -> changeAudio { it.copy(dspConvMakeupDb = value) } }
-                }
-            }
-        }
-    }
-    bandEdit?.let { index ->
-        (if (index == -1) ParamBand(1_000f, 0f, 1f) else audio.dspParametric.getOrNull(index))?.let { band ->
-            RackBandDialog(band, if (index < 0) appString(R.string.text_new_parametric_band_0bc727) else appString(R.string.text_band_c6bf38, (index + 1)), onDismiss = { bandEdit = null }) { updated ->
-                changeAudio { old -> old.copy(dspParametric = if (index == -1) old.dspParametric + updated
-                    else old.dspParametric.mapIndexed { i, value -> if (i == index) updated else value }) }
-                bandEdit = null
-            }
-        }
-    }
-}
-
-@Composable
-private fun RackBandRow(index: Int, band: ParamBand, count: Int, canDuplicate: Boolean,
-    onEdit: () -> Unit, onToggle: () -> Unit, onMove: (Int) -> Unit, onDuplicate: () -> Unit, onRemove: () -> Unit) {
-    var menu by remember { mutableStateOf(false) }
-    SettingsGroup {
-        Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f).clickable(onClick = onEdit).padding(vertical = 14.dp)) {
-                val type = band.filterType
-                Text("${index + 1}. ${if (type == FilterType.CUSTOM_BIQUAD) type.label else rackFrequency(band.freqHz)}",
-                    style = MaterialTheme.typography.titleSmall)
-                Text(buildList {
-                    add(if (type == FilterType.CUSTOM_BIQUAD) appString(R.string.text_normalized_coefficients_eb7bc6) else type.label)
-                    if (type.hasGain) add(rackDb(band.gainDb))
-                    if (type.hasQ) add("Q %.2f".format(band.q))
-                    if (type.orders.size > 1) add(appString(R.string.text_db_oct_29dc5a, (band.filterOrder * 6)))
-                    if (!band.isEnabled) add(appString(R.string.text_bypassed_7a944b))
-                }.joinToString(" · "),
-                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-            IconButton(onClick = onEdit) { Icon(Icons.Filled.Edit, appString(R.string.text_edit_band_903859, (index + 1))) }
-            Box {
-                IconButton(onClick = { menu = true }) { Icon(Icons.Filled.MoreVert, appString(R.string.text_actions_for_band_c9bc9b, (index + 1))) }
-                DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
-                    DropdownMenuItem(text = { Text(if (band.isEnabled) appString(R.string.text_bypass_497852) else appString(R.string.text_enable_20063a)) }, onClick = { menu = false; onToggle() })
-                    DropdownMenuItem(text = { Text(appString(R.string.text_move_up_b4f57c)) }, enabled = index > 0, onClick = { menu = false; onMove(-1) })
-                    DropdownMenuItem(text = { Text(appString(R.string.text_move_down_260ff8)) }, enabled = index + 1 < count, onClick = { menu = false; onMove(1) })
-                    DropdownMenuItem(text = { Text(appString(R.string.text_duplicate_972d57)) }, enabled = canDuplicate, onClick = { menu = false; onDuplicate() })
-                    DropdownMenuItem(text = { Text(appString(R.string.text_remove_e96390)) }, onClick = { menu = false; onRemove() })
                 }
             }
         }
@@ -646,6 +584,12 @@ private fun RackDescription(text: String) = Text(text, Modifier.padding(horizont
 @Composable
 private fun RackDbSlider(label: String, value: Float, range: ClosedFloatingPointRange<Float>, onChange: (Float) -> Unit) =
     SettingsSliderRow(label, rackDb(value), value.coerceIn(range), range, onValueChange = onChange)
+
+// the legacy chain runs its eq first, so a stage placed just before it with the same filters sounds identical
+private fun splitEqStage(legacy: ProcessingRackNode, name: String) = ProcessingRackNode(UUID.randomUUID().toString(), name, RackNodeKind.EQ,
+    bypass = legacy.bypass, inputs = legacy.inputs,
+    audio = AudioPrefs(dspLimiterEnabled = false, dspLimiterCeilingDb = -1f, dspGraphicLayout = legacy.audio.dspGraphicLayout,
+        dspGraphicBands = legacy.audio.dspGraphicBands, dspParametric = legacy.audio.dspParametric))
 
 private fun ProcessingRack.parametricBandCount(): Int = nodes.filter { it.kind == RackNodeKind.EQ || it.kind == RackNodeKind.LEGACY_DSP }.sumOf { it.audio.dspParametric.size }
 private fun rackDb(value: Float) = appString(R.string.text_1f_db_731a6b).format(value)

@@ -15,8 +15,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class EqualizerScreenTest {
-    private fun equalizer(name: String, events: MutableList<String> = mutableListOf(), seed: suspend (SettingsStore) -> Unit = {}) =
-        AudioSettingsScene(name, seed = seed) {
+    private fun equalizer(name: String, events: MutableList<String> = mutableListOf(), height: Int = 900, seed: suspend (SettingsStore) -> Unit = {}) =
+        AudioSettingsScene(name, height = height, seed = seed) {
             EqualizerScreen(PaddingValues(), onBack = { events += "back" }, onOpenLoudness = { events += "loudness" },
                 onOpenProcessingPresets = { events += "presets" }, onOpenProcessingRack = { events += "rack" }, onOpenImpulses = { events += "impulses" })
         }
@@ -52,17 +52,23 @@ class EqualizerScreenTest {
     }
 
     @Test fun customDspChangesGraphicLayout() {
-        equalizer("equalizer-custom-dsp", seed = { store ->
+        equalizer("equalizer-custom-dsp", height = 1500, seed = { store ->
             store.setDspMode(DspMode.CUSTOM)
             store.setDspGraphicBands(AudioFixtures.customAudio.dspGraphicBands)
             store.setDspParametric(AudioFixtures.customAudio.dspParametric)
             store.setDspPreamp(-3f)
         }).use { scene ->
             assertTrue(scene.shot().distinctColors() > 20)
-            scene.click(420f, 730f)
+            scene.click(420f, 1037f)
             val audio = scene.await(read = { it.audioPrefs.first() }) { it.dspGraphicLayout == 1 }
-            assertEquals(List(15) { 0f }, audio.dspGraphicBands)
+            assertEquals(15, audio.dspGraphicBands.size)
+            assertEquals(3f, audio.dspGraphicBands.first())
+            assertEquals(3f, audio.dspGraphicBands.last())
             scene.shot("-15band")
+            scene.click(606f, 729f)
+            scene.shot("-advanced")
+            scene.click(788f, 1003f)
+            assertEquals(4, scene.await(read = { it.audioPrefs.first() }) { it.dspParametric.size == 4 }.dspParametric.size)
         }
     }
 

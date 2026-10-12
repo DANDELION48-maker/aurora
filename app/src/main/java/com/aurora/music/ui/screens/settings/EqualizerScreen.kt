@@ -95,6 +95,8 @@ import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.math.roundToInt
 
 @Composable
@@ -108,6 +110,10 @@ fun EqualizerScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenLou
     val playbackPrefs by store.playbackPrefs.collectAsStateWithLifecycle(initialValue = PlaybackPrefs())
     val rack by store.processingRack.collectAsStateWithLifecycle(initialValue = ProcessingRack())
     val scope = rememberCoroutineScope()
+    val draft = remember { EqDraft(store) }
+    LaunchedEffect(draft) { draft.run() }
+    val draftGraphic by draft.graphic.collectAsStateWithLifecycle()
+    val draftBands by draft.bands.collectAsStateWithLifecycle()
 
     val expanded = remember { mutableStateMapOf<String, Boolean>() }
     val activeEq by store.activeEqProfile.collectAsStateWithLifecycle(initialValue = "")
@@ -155,7 +161,9 @@ fun EqualizerScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenLou
 
                 when (prefs.dspMode) {
                     DspMode.SYSTEM -> { item { SettingsSectionTitle(appString(R.string.text_system_equalizer_be209a)) }; systemEqSection(prefs, fx, store, scope, expanded) }
-                    DspMode.CUSTOM -> { item { SettingsSectionTitle(appString(R.string.text_custom_dsp_df083c)) }; customDspSection(prefs, store, scope, expanded) }
+                    DspMode.CUSTOM -> { item { SettingsSectionTitle(appString(R.string.text_custom_dsp_df083c)) }; customDspSection(prefs.copy(dspGraphicLayout = draftGraphic?.first ?: prefs.dspGraphicLayout,
+                        dspGraphicBands = draftGraphic?.second ?: prefs.dspGraphicBands, dspParametric = draftBands ?: prefs.dspParametric),
+                        store, scope, expanded, draft, onOpenProcessingRack) }
                     else -> item {
                         Text(
                             appString(R.string.text_tone_shaping_is_bypassed_choose_system_or_custom_above_to_enable_1cdd7c),
@@ -552,41 +560,35 @@ private fun LazyListScope.systemEqSection(
     }
 }
 
+// slider drags land in a conflated draft so datastore writes never overlap or drop edits
+private class EqDraft(private val store: SettingsStore) {
+    val graphic = MutableStateFlow<Pair<Int, List<Float>>?>(null)
+    val bands = MutableStateFlow<List<ParamBand>?>(null)
+
+    suspend fun run() = coroutineScope {
+        launch { graphic.collect { g -> if (g != null) { store.setDspGraphicLayout(g.first); store.setDspGraphicBands(g.second); graphic.compareAndSet(g, null) } } }
+        launch { bands.collect { b -> if (b != null) { store.setDspParametric(b); bands.compareAndSet(b, null) } } }
+    }
+}
+
 private fun LazyListScope.customDspSection(
     prefs: AudioPrefs,
     store: SettingsStore,
     scope: CoroutineScope,
     expanded: SnapshotStateMap<String, Boolean>,
+    draft: EqDraft,
+    onOpenRack: () -> Unit,
 ) {
     val layout = DspCoeffBuilder.GRAPHIC_LAYOUTS.getOrElse(prefs.dspGraphicLayout) { DspCoeffBuilder.GRAPHIC_LAYOUTS[0] }
-    val nBands = layout.freqs.size
-    val graphic = (0 until nBands).map { prefs.dspGraphicBands.getOrElse(it) { 0f } }
-    val anyGraphic = graphic.any { it != 0f }
+    val graphic = layout.freqs.indices.map { prefs.dspGraphicBands.getOrElse(it) { 0f } }
 
-    collapsible("c_graphic", appString(R.string.text_graphic_eq_3df203), Icons.Filled.Tune, "${layout.name}${if (anyGraphic) appString(R.string.text_active_945637) else ""}", expanded, defaultOpen = true) {
-        SegmentedRow(appString(R.string.text_bands_2bc0aa), DspCoeffBuilder.GRAPHIC_LAYOUTS.map { it.name }, prefs.dspGraphicLayout) { i ->
-            scope.launch { store.setDspGraphicLayout(i); store.setDspGraphicBands(List(DspCoeffBuilder.GRAPHIC_LAYOUTS[i].freqs.size) { 0f }) }
-        }
-        graphic.forEachIndexed { i, g ->
-            DbSliderRow(freqLabel(layout.freqs[i].toInt()), g, -12f..12f) { v ->
-                val updated = graphic.toMutableList().also { it[i] = v }
-                scope.launch { store.setDspGraphicBands(updated) }
-            }
-        }
-        TextLink(appString(R.string.text_reset_graphic_eq_ace461)) { scope.launch { store.setDspGraphicBands(List(nBands) { 0f }) } }
-    }
-
-    collapsible("c_param", appString(R.string.text_parametric_eq_6e40f9), Icons.Filled.GraphicEq, appPlural(R.plurals.band_count, (prefs.dspParametric.size)), expanded) {
-        prefs.dspParametric.forEachIndexed { i, band ->
-            ParametricBandCard(
-                band = band,
-                onChange = { nb -> scope.launch { store.setDspParametric(prefs.dspParametric.toMutableList().also { it[i] = nb }) } },
-                onRemove = { scope.launch { store.setDspParametric(prefs.dspParametric.toMutableList().also { it.removeAt(i) }) } },
-            )
-        }
-        if (prefs.dspParametric.size < DspCoeffBuilder.MAX_PARAMETRIC) {
-            TextLink(appString(R.string.text_add_band_563c3b)) { scope.launch { store.setDspParametric(prefs.dspParametric + ParamBand(1000f, 0f, 1f)) } }
-        }
+    collapsible("c_eq", appString(R.string.text_equalizer_3b64a9), Icons.Filled.Tune,
+        "${layout.name} · ${appPlural(R.plurals.band_count, prefs.dspParametric.size)}", expanded, defaultOpen = true) {
+        EqEditor(prefs.dspGraphicLayout, prefs.dspGraphicBands, prefs.dspParametric, DspCoeffBuilder.MAX_PARAMETRIC, 48_000,
+            onGraphic = { index, gains -> draft.graphic.value = index to gains },
+            onBands = { draft.bands.value = it },
+            limitHint = appString(R.string.eq_rack_hint),
+            limitAction = appString(R.string.text_processing_rack_f7dff1) to onOpenRack)
     }
 
     collapsible("c_gain", appString(R.string.text_gain_headroom_5903cd), Icons.Filled.VolumeUp, appString(R.string.text_pre_amp_db_84974b, ("%+.0f".format(prefs.dspPreampDb))), expanded) {
@@ -636,32 +638,6 @@ private fun TextLink(text: String, onClick: () -> Unit) {
         text, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary,
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).clip(RoundedCornerShape(50)).clickable(onClick = onClick).padding(horizontal = 8.dp, vertical = 6.dp),
     )
-}
-
-@Composable
-private fun ParametricBandCard(band: ParamBand, onChange: (ParamBand) -> Unit, onRemove: () -> Unit) {
-    var edit by remember { mutableStateOf(false) }
-    if (edit) RackBandDialog(band, appString(R.string.text_edit_filter_32d3bd), { edit = false }) { onChange(it); edit = false }
-    Column(
-        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-            .padding(horizontal = 8.dp, vertical = 6.dp),
-    ) {
-        Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(freqLabel(band.freqHz.toInt()), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-            Text(appString(R.string.text_1f_db_q_1f_4fdf16).format(band.gainDb, band.q), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Icon(
-                Icons.Filled.Close, appString(R.string.text_remove_band_fb769d),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.width(28.dp).clip(RoundedCornerShape(50)).clickable(onClick = onRemove).padding(start = 8.dp),
-            )
-        }
-        TextButton(onClick = { edit = true }) { Text(band.filterType.label + if (band.isEnabled) "" else appString(R.string.text_bypassed_c5c251)) }
-        FloatSliderRow(appString(R.string.text_freq_f5f7de), band.freqHz, 20f..20000f, valueText = freqLabel(band.freqHz.toInt())) { v -> onChange(band.copy(freqHz = v)) }
-        if (band.filterType.hasGain) DbSliderRow(appString(R.string.text_gain_96dd91), band.gainDb, -15f..15f) { v -> onChange(band.copy(gainDb = v)) }
-        if (band.filterType.hasQ) FloatSliderRow("Q", band.q, 0.3f..8f, valueText = "%.2f".format(band.q)) { v -> onChange(band.copy(q = v)) }
-    }
 }
 
 @Composable
