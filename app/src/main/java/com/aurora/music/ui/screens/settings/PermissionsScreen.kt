@@ -12,6 +12,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
+import android.os.SystemClock
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,6 +36,8 @@ import androidx.compose.material.icons.filled.BatteryStd
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.LibraryMusic
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Usb
 import androidx.compose.material3.Icon
@@ -44,6 +47,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -82,6 +86,10 @@ fun PermissionsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
     val batteryOk = (ctx.getSystemService(Context.POWER_SERVICE) as PowerManager).isIgnoringBatteryOptimizations(ctx.packageName)
     val exactOk = if (Build.VERSION.SDK_INT >= 31) (ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms() else true
     val fsOk = if (Build.VERSION.SDK_INT >= 34) (ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).canUseFullScreenIntent() else true
+    val locationOk = listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+        .any { ContextCompat.checkSelfPermission(ctx, it) == PackageManager.PERMISSION_GRANTED }
+    val backgroundOk = Build.VERSION.SDK_INT < 29 ||
+        ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
 
     val usbDev = remember(refresh) { com.decent.usbaudio.UsbAudioDevice.getInstance(ctx) }
     val dac = remember(refresh) { usbDev.findUsbAudioDevice() }
@@ -95,6 +103,15 @@ fun PermissionsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
             ctx.startActivity(i)
         }
     }
+
+    // an instant denial means android no longer shows the prompt, so open the app page instead
+    var askedAt by remember { mutableLongStateOf(0L) }
+    fun answered(granted: Boolean) {
+        refresh++
+        if (!granted && SystemClock.elapsedRealtime() - askedAt < 400) open(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, withPackage = true)
+    }
+    val locationLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { answered(it.values.any { ok -> ok }) }
+    val backgroundLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { answered(it) }
 
     Column(Modifier.fillMaxWidth()) {
         SettingsTopBar(appString(R.string.text_permissions_d06d55), onBack)
@@ -133,6 +150,19 @@ fun PermissionsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
             item {
                 PermRow(Icons.Filled.Fullscreen, appString(R.string.text_full_screen_alarm_a37b1c), appString(R.string.text_show_the_alarm_full_screen_over_the_lock_screen_1d1cfb), fsOk) {
                     if (Build.VERSION.SDK_INT >= 34) open(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT, withPackage = true)
+                }
+            }
+            item {
+                PermRow(Icons.Filled.LocationOn, appString(R.string.perm_location), appString(R.string.perm_location_desc), locationOk) {
+                    askedAt = SystemClock.elapsedRealtime()
+                    locationLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+                }
+            }
+            if (Build.VERSION.SDK_INT >= 29) item {
+                PermRow(Icons.Filled.MyLocation, appString(R.string.perm_location_background), appString(R.string.perm_location_background_desc),
+                    backgroundOk, enabled = locationOk) {
+                    askedAt = SystemClock.elapsedRealtime()
+                    backgroundLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
                 }
             }
             item {

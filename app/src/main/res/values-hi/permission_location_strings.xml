@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="perm_location">स्थान</string>
+    <string name="perm_location_desc">विस्तृत आँकड़ों में जगहें और सुनने का नक्शा</string>
+    <string name="perm_location_background">हर समय स्थान</string>
+    <string name="perm_location_background_desc">Aurora के बैकग्राउंड में रहने पर भी दर्ज करता है कि गाने कहाँ चले</string>
+</resources>

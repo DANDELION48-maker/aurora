@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="perm_location">Localização</string>
+    <string name="perm_location_desc">Lugares e mapa de audição nas estatísticas detalhadas</string>
+    <string name="perm_location_background">Localização o tempo todo</string>
+    <string name="perm_location_background_desc">Registra onde as reproduções acontecem enquanto o Aurora está em segundo plano</string>
+</resources>

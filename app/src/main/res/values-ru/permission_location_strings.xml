@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="perm_location">Местоположение</string>
+    <string name="perm_location_desc">Места и карта прослушиваний в подробной статистике</string>
+    <string name="perm_location_background">Местоположение всегда</string>
+    <string name="perm_location_background_desc">Записывает, где звучит музыка, пока Aurora работает в фоне</string>
+</resources>

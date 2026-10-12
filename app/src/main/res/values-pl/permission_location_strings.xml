@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="perm_location">Lokalizacja</string>
+    <string name="perm_location_desc">Miejsca i mapa słuchania w szczegółowych statystykach</string>
+    <string name="perm_location_background">Lokalizacja zawsze</string>
+    <string name="perm_location_background_desc">Zapisuje, gdzie słuchasz muzyki, gdy Aurora działa w tle</string>
+</resources>

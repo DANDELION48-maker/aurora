@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="perm_location">위치</string>
+    <string name="perm_location_desc">상세 통계의 장소와 감상 지도</string>
+    <string name="perm_location_background">항상 위치 허용</string>
+    <string name="perm_location_background_desc">Aurora가 백그라운드에 있을 때도 재생 위치를 기록합니다</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="perm_location">Lokasi</string>
+    <string name="perm_location_desc">Tempat dan peta mendengarkan di statistik terperinci</string>
+    <string name="perm_location_background">Lokasi sepanjang waktu</string>
+    <string name="perm_location_background_desc">Mencatat lokasi pemutaran saat Aurora berjalan di latar belakang</string>
+</resources>

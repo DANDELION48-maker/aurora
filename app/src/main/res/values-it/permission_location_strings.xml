@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="perm_location">Posizione</string>
+    <string name="perm_location_desc">Luoghi e mappa degli ascolti nelle statistiche dettagliate</string>
+    <string name="perm_location_background">Posizione sempre</string>
+    <string name="perm_location_background_desc">Registra dove avvengono gli ascolti mentre Aurora è in background</string>
+</resources>

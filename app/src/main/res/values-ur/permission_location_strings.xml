@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="perm_location">مقام</string>
+    <string name="perm_location_desc">تفصیلی اعداد و شمار میں جگہیں اور سننے کا نقشہ</string>
+    <string name="perm_location_background">ہر وقت مقام</string>
+    <string name="perm_location_background_desc">Aurora کے بیک گراؤنڈ میں ہونے پر بھی ریکارڈ کرتا ہے کہ گانے کہاں چلے</string>
+</resources>

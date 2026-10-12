@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="perm_location">Standort</string>
+    <string name="perm_location_desc">Orte und Hörkarte in den detaillierten Statistiken</string>
+    <string name="perm_location_background">Standort immer</string>
+    <string name="perm_location_background_desc">Speichert, wo Wiedergaben laufen, während Aurora im Hintergrund ist</string>
+</resources>

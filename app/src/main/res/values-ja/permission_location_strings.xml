@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="perm_location">位置情報</string>
+    <string name="perm_location_desc">詳細な統計の場所と再生マップ</string>
+    <string name="perm_location_background">位置情報を常に許可</string>
+    <string name="perm_location_background_desc">Aurora がバックグラウンドのときも再生した場所を記録します</string>
+</resources>

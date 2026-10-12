@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="perm_location">الموقع</string>
+    <string name="perm_location_desc">الأماكن وخريطة الاستماع في الإحصاءات المفصّلة</string>
+    <string name="perm_location_background">الموقع طوال الوقت</string>
+    <string name="perm_location_background_desc">يسجّل مكان التشغيل أثناء عمل Aurora في الخلفية</string>
+</resources>
