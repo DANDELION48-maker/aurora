@@ -176,6 +176,7 @@ internal object SettingsKeys {
     val LASTFM_ENABLED = booleanPreferencesKey("lastfm_enabled")
     val LASTFM_API_KEY = stringPreferencesKey("lastfm_api_key")
     val LASTFM_SECRET = stringPreferencesKey("lastfm_secret")
+    val LASTFM_PENDING_TOKEN = stringPreferencesKey("lastfm_pending_token")
     val LASTFM_ARTIST_RULES = stringPreferencesKey("lastfm_artist_rules_v1")
     val LISTENBRAINZ_TOKEN = stringPreferencesKey("listenbrainz_token")
     val LISTENBRAINZ_USER = stringPreferencesKey("listenbrainz_user")

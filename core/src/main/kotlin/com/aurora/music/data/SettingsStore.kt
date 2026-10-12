@@ -73,6 +73,8 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         (p[Keys.LASTFM_API_KEY].orEmpty()) to (p[Keys.LASTFM_SECRET].orEmpty())
     }.distinctUntilChanged()
 
+    val lastfmPendingToken: Flow<String> = dataStore.data.map { it[Keys.LASTFM_PENDING_TOKEN].orEmpty() }.distinctUntilChanged()
+
     val lastfmArtistRules: Flow<List<ScrobbleArtistRule>> = dataStore.data
         .map { it[Keys.LASTFM_ARTIST_RULES] }.distinctUntilChanged()
         .map { runCatching { ScrobbleArtistRulesCodec.decode(it) }.getOrDefault(emptyList()) }.distinctUntilChanged()
@@ -1424,10 +1426,11 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         p[Keys.LASTFM_USER] = username
         p[Keys.LASTFM_IMAGE] = imageUrl
         p[Keys.LASTFM_ENABLED] = true
+        p.remove(Keys.LASTFM_PENDING_TOKEN)
     }
 
     suspend fun clearLastfm() = dataStore.edit { p ->
-        p.remove(Keys.LASTFM_SK); p.remove(Keys.LASTFM_USER); p.remove(Keys.LASTFM_IMAGE)
+        p.remove(Keys.LASTFM_SK); p.remove(Keys.LASTFM_USER); p.remove(Keys.LASTFM_IMAGE); p.remove(Keys.LASTFM_PENDING_TOKEN)
     }
 
     suspend fun setLastfmEnabled(v: Boolean) = dataStore.edit { it[Keys.LASTFM_ENABLED] = v }
@@ -1435,6 +1438,10 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     suspend fun setLastfmKeys(apiKey: String, secret: String) = dataStore.edit { p ->
         p[Keys.LASTFM_API_KEY] = apiKey.trim()
         p[Keys.LASTFM_SECRET] = secret.trim()
+    }
+
+    suspend fun setLastfmPendingToken(token: String?) = dataStore.edit { p ->
+        if (token.isNullOrBlank()) p.remove(Keys.LASTFM_PENDING_TOKEN) else p[Keys.LASTFM_PENDING_TOKEN] = token
     }
 
     suspend fun setLastfmArtistRules(rules: List<ScrobbleArtistRule>) = dataStore.edit { p ->

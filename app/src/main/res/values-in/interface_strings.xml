@@ -703,6 +703,7 @@
     <string name="text_enter_at_least_two_characters_to_search_squig_link_ca1a71" formatted="false">"Masukkan setidaknya dua karakter untuk mencari di squig.link."</string>
     <string name="text_enter_five_valid_numbers_17625b" formatted="false">"Masukkan lima angka yang valid."</string>
     <string name="text_enter_the_address_of_your_server_3f01ed">"Masukkan alamat server %1$s-mu."</string>
+    <string name="text_enter_your_api_key_and_shared_secret_first_651d89" formatted="false">"Masukkan dulu kunci API dan rahasia bersamamu."</string>
     <string name="text_entrance_shape_a03f73" formatted="false">"Bentuk masuk"</string>
     <string name="text_episode_8669aa" formatted="false">"Episode"</string>
     <string name="text_episodes_49d641" formatted="false">"Episode"</string>
@@ -993,6 +994,9 @@
     <string name="text_l_08eea2">"L %1$s%%"</string>
     <string name="text_l_1f_r_1f_ms_00e48f" formatted="false">"L %.1f · R %.1f md"</string>
     <string name="text_l_r_db_31102b">"L %1$s · R %2$s · ±%3$s dB"</string>
+    <string name="text_last_fm_error_54ddf2">"Kesalahan Last.fm %1$s: %2$s"</string>
+    <string name="text_last_fm_rejected_the_api_key_check_it_on_your_api_account_page_f1c437" formatted="false">"Last.fm menolak kunci API. Periksa di halaman akun API-mu."</string>
+    <string name="text_last_fm_rejected_the_shared_secret_copy_it_again_from_your_api_ac_1061e1" formatted="false">"Last.fm menolak rahasia bersama. Salin lagi dari akun API-mu."</string>
     <string name="text_last_played_7201a8" formatted="false">"Terakhir diputar"</string>
     <string name="text_last_played_days_ago_8e3e3b" formatted="false">"Terakhir diputar (hari lalu)"</string>
     <string name="text_last_stage_58b1e2" formatted="false">"Tahap Terakhir"</string>
@@ -1950,6 +1954,7 @@
     <string name="text_this_ir_is_no_longer_in_the_library_7118f3" formatted="false">"IR ini tidak ada lagi di pustaka."</string>
     <string name="text_this_is_the_eq_s_group_delay_it_does_not_measure_device_or_playba_31e689" formatted="false">"Ini adalah tunda grup EQ; bukan pengukuran latensi perangkat atau pemutaran."</string>
     <string name="text_this_link_cannot_open_here_finish_verification_using_another_meth_0d1c6a" formatted="false">"Tautan ini tidak dapat dibuka di sini. Selesaikan verifikasi dengan cara lain, lalu ketuk Lanjutkan ke YouTube Music."</string>
+    <string name="text_this_link_has_expired_connect_again_to_get_a_new_one_8e6cd7" formatted="false">"Tautan ini sudah kedaluwarsa. Sambungkan lagi untuk mendapatkan yang baru."</string>
     <string name="text_this_mix_has_reached_10_000_tracks_115af4" formatted="false">"Mix ini telah mencapai 10.000 lagu."</string>
     <string name="text_this_project_940087" formatted="false">"Proyek ini"</string>
     <string name="text_this_project_is_no_longer_saved_33a1db" formatted="false">"Proyek ini tidak lagi tersimpan."</string>

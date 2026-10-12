@@ -703,6 +703,7 @@
     <string name="text_enter_at_least_two_characters_to_search_squig_link_ca1a71" formatted="false">"Wpisz co najmniej dwa znaki, aby przeszukać squig.link."</string>
     <string name="text_enter_five_valid_numbers_17625b" formatted="false">"Wpisz pięć prawidłowych liczb."</string>
     <string name="text_enter_the_address_of_your_server_3f01ed">"Wpisz adres swojego serwera %1$s."</string>
+    <string name="text_enter_your_api_key_and_shared_secret_first_651d89" formatted="false">"Najpierw wpisz klucz API i wspólny sekret."</string>
     <string name="text_entrance_shape_a03f73" formatted="false">"Kształt wejścia"</string>
     <string name="text_episode_8669aa" formatted="false">"Odcinek"</string>
     <string name="text_episodes_49d641" formatted="false">"Odcinki"</string>
@@ -993,6 +994,9 @@
     <string name="text_l_08eea2">"L %1$s%%"</string>
     <string name="text_l_1f_r_1f_ms_00e48f" formatted="false">"L %.1f · P %.1f ms"</string>
     <string name="text_l_r_db_31102b">"L %1$s · P %2$s · ±%3$s dB"</string>
+    <string name="text_last_fm_error_54ddf2">"Błąd Last.fm %1$s: %2$s"</string>
+    <string name="text_last_fm_rejected_the_api_key_check_it_on_your_api_account_page_f1c437" formatted="false">"Last.fm odrzucił klucz API. Sprawdź go na stronie swojego konta API."</string>
+    <string name="text_last_fm_rejected_the_shared_secret_copy_it_again_from_your_api_ac_1061e1" formatted="false">"Last.fm odrzucił wspólny sekret. Skopiuj go ponownie ze swojego konta API."</string>
     <string name="text_last_played_7201a8" formatted="false">"Ostatnio odtwarzane"</string>
     <string name="text_last_played_days_ago_8e3e3b" formatted="false">"Ostatnio odtwarzane (dni temu)"</string>
     <string name="text_last_stage_58b1e2" formatted="false">"Ostatni etap"</string>
@@ -1950,6 +1954,7 @@
     <string name="text_this_ir_is_no_longer_in_the_library_7118f3" formatted="false">"Tej IR nie ma już w bibliotece."</string>
     <string name="text_this_is_the_eq_s_group_delay_it_does_not_measure_device_or_playba_31e689" formatted="false">"To opóźnienie grupowe korektora; nie mierzy opóźnienia urządzenia ani odtwarzania."</string>
     <string name="text_this_link_cannot_open_here_finish_verification_using_another_meth_0d1c6a" formatted="false">"Tego linku nie da się tu otworzyć. Dokończ weryfikację inną metodą, a potem dotknij Przejdź do YouTube Music."</string>
+    <string name="text_this_link_has_expired_connect_again_to_get_a_new_one_8e6cd7" formatted="false">"Ten link wygasł. Połącz ponownie, aby uzyskać nowy."</string>
     <string name="text_this_mix_has_reached_10_000_tracks_115af4" formatted="false">"Ten miks osiągnął 10 000 utworów."</string>
     <string name="text_this_project_940087" formatted="false">"Ten projekt"</string>
     <string name="text_this_project_is_no_longer_saved_33a1db" formatted="false">"Ten projekt nie jest już zapisany."</string>

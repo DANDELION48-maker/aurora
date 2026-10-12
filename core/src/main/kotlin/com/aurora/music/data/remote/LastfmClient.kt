@@ -14,29 +14,32 @@ data class LastfmSession(val name: String, val key: String)
 
 data class LastfmUser(val name: String, val imageUrl: String, val playcount: Long)
 
+class LastfmException(val code: Int, message: String) : Exception(message)
+
 // authenticated calls signed: api_sig = md5(params sorted by name as key+value + secret) excluding format
 class LastfmClient(private val apiKey: String, private val secret: String, private val http: OkHttpClient = sharedHttp) {
     private val gson = Gson()
 
     val configured: Boolean get() = apiKey.isNotBlank() && !apiKey.startsWith("YOUR_")
 
-    suspend fun getToken(): String? = withContext(Dispatchers.IO) {
+    suspend fun getToken(): Result<String> = withContext(Dispatchers.IO) {
         val params = sortedMapOf("api_key" to apiKey, "method" to "auth.getToken")
         runCatching {
-            val resp = get(params)
-            gson.fromJson(resp, TokenResp::class.java)?.token
-        }.getOrNull()
+            gson.fromJson(get(params), TokenResp::class.java)?.token ?: error("Last.fm returned no token")
+        }
     }
 
     fun authorizeUrl(token: String): String = "https://www.last.fm/api/auth/?api_key=$apiKey&token=$token"
 
-    suspend fun getSession(token: String): LastfmSession? = withContext(Dispatchers.IO) {
+    suspend fun getSession(token: String): Result<LastfmSession> = withContext(Dispatchers.IO) {
         val params = sortedMapOf("api_key" to apiKey, "method" to "auth.getSession", "token" to token)
         runCatching {
-            val resp = get(params)
-            val s = gson.fromJson(resp, SessionResp::class.java)?.session
-            if (s?.name != null && s.key != null) LastfmSession(s.name, s.key) else null
-        }.getOrNull()
+            val s = gson.fromJson(get(params), SessionResp::class.java)?.session
+            val name = s?.name
+            val key = s?.key
+            if (name == null || key == null) error("Last.fm returned no session")
+            LastfmSession(name, key)
+        }
     }
 
     suspend fun userInfo(name: String): LastfmUser? = withContext(Dispatchers.IO) {
@@ -89,7 +92,9 @@ class LastfmClient(private val apiKey: String, private val secret: String, priva
         params.forEach { (k, v) -> builder.addQueryParameter(k, v) }
         builder.addQueryParameter("api_sig", sig)
         builder.addQueryParameter("format", "json")
-        return http.newCall(Request.Builder().url(builder.build()).build()).execute().use { it.body?.string() }
+        val body = http.newCall(Request.Builder().url(builder.build()).build()).execute().use { it.body?.string() }
+        gson.fromJson(body, ErrorResp::class.java)?.let { e -> e.error?.let { throw LastfmException(it, e.message.orEmpty()) } }
+        return body
     }
 
     private fun post(method: String, extra: Map<String, String>) {
@@ -115,6 +120,7 @@ class LastfmClient(private val apiKey: String, private val secret: String, priva
     private fun md5(s: String): String =
         MessageDigest.getInstance("MD5").digest(s.toByteArray(Charsets.UTF_8)).joinToString("") { "%02x".format(it) }
 
+    private data class ErrorResp(val error: Int? = null, val message: String? = null)
     private data class TokenResp(val token: String? = null)
     private data class SessionResp(val session: Sess? = null)
     private data class Sess(val name: String? = null, val key: String? = null)

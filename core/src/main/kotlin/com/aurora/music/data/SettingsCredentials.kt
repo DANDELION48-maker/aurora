@@ -15,6 +15,6 @@ fun Preferences.withoutCredentials(): Preferences = toMutablePreferences().apply
         this[SettingsKeys.SAVED_SESSIONS] = Gson().toJson(sessions.filter { it.type == ServerType.LOCAL })
     }
     with(SettingsKeys) {
-        listOf(ACOUSTID_KEY, LASTFM_SK, LASTFM_API_KEY, LASTFM_SECRET, LISTENBRAINZ_TOKEN, DISCORD_TOKEN).forEach { remove(it) }
+        listOf(ACOUSTID_KEY, LASTFM_SK, LASTFM_API_KEY, LASTFM_SECRET, LASTFM_PENDING_TOKEN, LISTENBRAINZ_TOKEN, DISCORD_TOKEN).forEach { remove(it) }
     }
 }.toPreferences()

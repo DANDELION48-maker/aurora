@@ -703,6 +703,7 @@
     <string name="text_enter_at_least_two_characters_to_search_squig_link_ca1a71" formatted="false">"squig.link खोजने के लिए कम से कम दो अक्षर डालें।"</string>
     <string name="text_enter_five_valid_numbers_17625b" formatted="false">"पाँच मान्य संख्याएँ डालें।"</string>
     <string name="text_enter_the_address_of_your_server_3f01ed">"अपने %1$s सर्वर का पता डालें।"</string>
+    <string name="text_enter_your_api_key_and_shared_secret_first_651d89" formatted="false">"पहले अपनी API कुंजी और शेयर्ड सीक्रेट दर्ज करें।"</string>
     <string name="text_entrance_shape_a03f73" formatted="false">"एंट्री का आकार"</string>
     <string name="text_episode_8669aa" formatted="false">"एपिसोड"</string>
     <string name="text_episodes_49d641" formatted="false">"एपिसोड"</string>
@@ -993,6 +994,9 @@
     <string name="text_l_08eea2">"L %1$s%%"</string>
     <string name="text_l_1f_r_1f_ms_00e48f" formatted="false">"L %.1f · R %.1f ms"</string>
     <string name="text_l_r_db_31102b">"L %1$s · R %2$s · ±%3$s dB"</string>
+    <string name="text_last_fm_error_54ddf2">"Last.fm त्रुटि %1$s: %2$s"</string>
+    <string name="text_last_fm_rejected_the_api_key_check_it_on_your_api_account_page_f1c437" formatted="false">"Last.fm ने API कुंजी अस्वीकार कर दी। इसे अपने API खाते के पेज पर जाँचें।"</string>
+    <string name="text_last_fm_rejected_the_shared_secret_copy_it_again_from_your_api_ac_1061e1" formatted="false">"Last.fm ने शेयर्ड सीक्रेट अस्वीकार कर दिया। इसे अपने API खाते से फिर से कॉपी करें।"</string>
     <string name="text_last_played_7201a8" formatted="false">"आख़िरी बार चलाया गया"</string>
     <string name="text_last_played_days_ago_8e3e3b" formatted="false">"आख़िरी बार चलाया गया (दिन पहले)"</string>
     <string name="text_last_stage_58b1e2" formatted="false">"आख़िरी स्टेज"</string>
@@ -1950,6 +1954,7 @@
     <string name="text_this_ir_is_no_longer_in_the_library_7118f3" formatted="false">"यह IR अब लाइब्रेरी में नहीं है।"</string>
     <string name="text_this_is_the_eq_s_group_delay_it_does_not_measure_device_or_playba_31e689" formatted="false">"यह EQ का ग्रुप डिले है; यह डिवाइस या प्लेबैक की लेटेंसी नहीं मापता।"</string>
     <string name="text_this_link_cannot_open_here_finish_verification_using_another_meth_0d1c6a" formatted="false">"यह लिंक यहाँ नहीं खुल सकता। किसी और तरीक़े से सत्यापन पूरा करें, फिर YouTube Music पर जारी रखें पर टैप करें।"</string>
+    <string name="text_this_link_has_expired_connect_again_to_get_a_new_one_8e6cd7" formatted="false">"यह लिंक समाप्त हो गया है। नया लिंक पाने के लिए फिर से कनेक्ट करें।"</string>
     <string name="text_this_mix_has_reached_10_000_tracks_115af4" formatted="false">"यह मिक्स 10,000 ट्रैक तक पहुँच गया है।"</string>
     <string name="text_this_project_940087" formatted="false">"यह प्रोजेक्ट"</string>
     <string name="text_this_project_is_no_longer_saved_33a1db" formatted="false">"यह प्रोजेक्ट अब सहेजा हुआ नहीं है।"</string>

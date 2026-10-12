@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aurora.music.AuroraApplication
 import com.aurora.music.data.*
+import com.aurora.music.data.remote.LastfmException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
@@ -153,7 +154,6 @@ fun LastfmIntegrationScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
     val acct by store.lastfm.collectAsStateWithLifecycle(initialValue = LastfmAccount())
     val rules by store.lastfmArtistRules.collectAsStateWithLifecycle(initialValue = emptyList())
     val scope = rememberCoroutineScope()
-    var pendingToken by remember { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
     var status by remember { mutableStateOf<String?>(null) }
     var editingRule by remember { mutableStateOf<Int?>(null) }
@@ -161,7 +161,7 @@ fun LastfmIntegrationScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
 
     SettingsPage("Last.fm", contentPadding, onBack) {
         item { SettingsSectionTitle(appString(R.string.text_account_85dfa3)) }
-        item { SettingsGroup { LastfmAccountControls(acct, scope, pendingToken, busy, status, { pendingToken = it }, { busy = it }, { status = it }) } }
+        item { SettingsGroup { LastfmAccountControls(acct, scope, busy, status, { busy = it }, { status = it }) } }
         item { SettingsSectionTitle(appString(R.string.text_artist_replacement_rules_ff8fa3)) }
         item { Text(appString(R.string.text_replace_an_exact_artist_credit_before_last_fm_receives_it_matchin_99a847), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp)) }
         item {
@@ -197,10 +197,8 @@ fun LastfmIntegrationScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
 private fun LastfmAccountControls(
     acct: LastfmAccount,
     scope: CoroutineScope,
-    pendingToken: String?,
     busy: Boolean,
     status: String?,
-    onPending: (String?) -> Unit,
     onBusy: (Boolean) -> Unit,
     onStatus: (String?) -> Unit,
 ) {
@@ -213,19 +211,22 @@ private fun LastfmAccountControls(
         return
     }
     val keys by container.settingsStore.lastfmKeys.collectAsStateWithLifecycle(initialValue = "" to "")
-    var apiKey by remember(keys.first) { mutableStateOf(keys.first) }
-    var secret by remember(keys.second) { mutableStateOf(keys.second) }
-    OutlinedTextField(apiKey, { apiKey = it; scope.launch { container.settingsStore.setLastfmKeys(it, secret) } }, label = { Text(appString(R.string.text_api_key_cf678c)) }, singleLine = true, modifier = fieldModifier())
-    OutlinedTextField(secret, { secret = it; scope.launch { container.settingsStore.setLastfmKeys(apiKey, it) } }, label = { Text(appString(R.string.text_shared_secret_4e19fd)) }, singleLine = true, visualTransformation = PasswordVisualTransformation(), modifier = fieldModifier())
-    if (pendingToken == null) {
+    val pendingToken by container.settingsStore.lastfmPendingToken.collectAsStateWithLifecycle(initialValue = "")
+    var draft by remember { mutableStateOf<Pair<String, String>?>(null) }
+    DebouncedSave(draft) { (key, secret) -> container.settingsStore.setLastfmKeys(key, secret) }
+    val (apiKey, secret) = draft ?: keys
+    OutlinedTextField(apiKey, { draft = it to secret }, label = { Text(appString(R.string.text_api_key_cf678c)) }, singleLine = true, modifier = fieldModifier())
+    OutlinedTextField(secret, { draft = apiKey to it }, label = { Text(appString(R.string.text_shared_secret_4e19fd)) }, singleLine = true, visualTransformation = PasswordVisualTransformation(), modifier = fieldModifier())
+    if (pendingToken.isBlank()) {
         SettingsNavRow(Icons.Filled.Headset, appString(R.string.text_connect_last_fm_406205), status ?: appString(R.string.text_create_an_api_account_then_link_your_profile_5a93ca), if (busy) "…" else appString(R.string.text_connect_b65463)) {
-            if (busy || !container.lastfm.configured) return@SettingsNavRow
+            if (busy) return@SettingsNavRow
+            if (apiKey.isBlank() || secret.isBlank()) { onStatus(appString(R.string.text_enter_your_api_key_and_shared_secret_first_651d89)); return@SettingsNavRow }
             scope.launch {
                 onBusy(true); onStatus(null)
-                val token = container.lastfm.beginLink()
+                container.settingsStore.setLastfmKeys(apiKey, secret)
+                val url = container.lastfm.beginLink()
                 onBusy(false)
-                if (token == null) onStatus(appString(R.string.text_couldn_t_reach_last_fm_check_your_keys_and_connection_e65155))
-                else { onPending(token); openUrl(ctx, container.lastfm.authorizeUrl(token)) }
+                url.onSuccess { openUrl(ctx, it) }.onFailure { onStatus(lastfmError(it)) }
             }
         }
     } else {
@@ -233,12 +234,25 @@ private fun LastfmAccountControls(
             if (busy) return@SettingsNavRow
             scope.launch {
                 onBusy(true); onStatus(null)
-                val ok = container.lastfm.finishLink(pendingToken)
+                val result = container.lastfm.finishLink()
                 onBusy(false)
-                if (ok) onPending(null) else onStatus(appString(R.string.text_authorization_is_not_ready_allow_access_then_try_again_99dd5c))
+                result.onFailure {
+                    onStatus(lastfmError(it))
+                    // not approved yet, show the approval page again in case the tab was closed
+                    if ((it as? LastfmException)?.code == 14) container.lastfm.pendingAuthorizeUrl()?.let { url -> openUrl(ctx, url) }
+                }
             }
         }
     }
+}
+
+private fun lastfmError(e: Throwable): String = when (val code = (e as? LastfmException)?.code) {
+    null -> appString(R.string.text_couldn_t_reach_last_fm_check_your_keys_and_connection_e65155)
+    13 -> appString(R.string.text_last_fm_rejected_the_shared_secret_copy_it_again_from_your_api_ac_1061e1)
+    10, 26 -> appString(R.string.text_last_fm_rejected_the_api_key_check_it_on_your_api_account_page_f1c437)
+    14 -> appString(R.string.text_authorization_is_not_ready_allow_access_then_try_again_99dd5c)
+    4, 15 -> appString(R.string.text_this_link_has_expired_connect_again_to_get_a_new_one_8e6cd7)
+    else -> appString(R.string.text_last_fm_error_54ddf2, code, e.message.orEmpty())
 }
 
 @Composable

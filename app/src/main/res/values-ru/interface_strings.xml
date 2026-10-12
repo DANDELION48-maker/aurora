@@ -703,6 +703,7 @@
     <string name="text_enter_at_least_two_characters_to_search_squig_link_ca1a71" formatted="false">"Для поиска на squig.link введите хотя бы два символа."</string>
     <string name="text_enter_five_valid_numbers_17625b" formatted="false">"Введите пять корректных чисел."</string>
     <string name="text_enter_the_address_of_your_server_3f01ed">"Введите адрес сервера %1$s."</string>
+    <string name="text_enter_your_api_key_and_shared_secret_first_651d89" formatted="false">"Сначала введите API-ключ и секретный ключ."</string>
     <string name="text_entrance_shape_a03f73" formatted="false">"Кривая нарастания"</string>
     <string name="text_episode_8669aa" formatted="false">"Выпуск"</string>
     <string name="text_episodes_49d641" formatted="false">"Выпуски"</string>
@@ -993,6 +994,9 @@
     <string name="text_l_08eea2">"Л %1$s%%"</string>
     <string name="text_l_1f_r_1f_ms_00e48f" formatted="false">"Л %.1f · П %.1f мс"</string>
     <string name="text_l_r_db_31102b">"Л %1$s · П %2$s · ±%3$s дБ"</string>
+    <string name="text_last_fm_error_54ddf2">"Ошибка Last.fm %1$s: %2$s"</string>
+    <string name="text_last_fm_rejected_the_api_key_check_it_on_your_api_account_page_f1c437" formatted="false">"Last.fm отклонил API-ключ. Проверьте его на странице своего API-аккаунта."</string>
+    <string name="text_last_fm_rejected_the_shared_secret_copy_it_again_from_your_api_ac_1061e1" formatted="false">"Last.fm отклонил секретный ключ. Скопируйте его ещё раз из своего API-аккаунта."</string>
     <string name="text_last_played_7201a8" formatted="false">"Последнее прослушивание"</string>
     <string name="text_last_played_days_ago_8e3e3b" formatted="false">"Последнее прослушивание (дней назад)"</string>
     <string name="text_last_stage_58b1e2" formatted="false">"Последний этап"</string>
@@ -1950,6 +1954,7 @@
     <string name="text_this_ir_is_no_longer_in_the_library_7118f3" formatted="false">"Этого импульса больше нет в библиотеке."</string>
     <string name="text_this_is_the_eq_s_group_delay_it_does_not_measure_device_or_playba_31e689" formatted="false">"Это групповая задержка эквалайзера, а не задержка устройства или воспроизведения."</string>
     <string name="text_this_link_cannot_open_here_finish_verification_using_another_meth_0d1c6a" formatted="false">"Эту ссылку нельзя открыть здесь. Пройдите проверку другим способом, затем нажмите «Перейти в YouTube Music»."</string>
+    <string name="text_this_link_has_expired_connect_again_to_get_a_new_one_8e6cd7" formatted="false">"Срок действия ссылки истёк. Подключитесь снова, чтобы получить новую."</string>
     <string name="text_this_mix_has_reached_10_000_tracks_115af4" formatted="false">"В миксе уже 10 000 треков."</string>
     <string name="text_this_project_940087" formatted="false">"Этот проект"</string>
     <string name="text_this_project_is_no_longer_saved_33a1db" formatted="false">"Этот проект больше не сохранён."</string>
