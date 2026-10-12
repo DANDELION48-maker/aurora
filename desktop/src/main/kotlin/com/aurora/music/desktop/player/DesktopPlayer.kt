@@ -230,6 +230,7 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
         }
         scope.launch {
             deps.settingsStore.playbackPrefs.collect { p ->
+                details.crossfadeMs = p.crossfadeSec * 1000L
                 autoplayEnabled = p.autoplayRadio
                 if (_state.value.speed == 1.0f && p.defaultSpeed != 1.0f && _state.value.current.id.isEmpty()) {
                     _state.update { it.copy(speed = p.defaultSpeed) }
