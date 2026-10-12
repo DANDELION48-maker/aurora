@@ -305,4 +305,34 @@ class BackupArchiveTest {
             output.write("data".toByteArray()); le(4, 4); le(16_384, 2); le(8_192, 2)
         }
     }
+
+    private fun event(i: Int, listened: Long? = 30_000L) = PlayEvent("song-$i", "Title $i", "Artist", "Album", "album", "artist",
+        "https://example.invalid/cover/$i?" + "x".repeat(300), 200, 1_700_000_000_000L - i, listened)
+
+    @Test fun historyWithListeningTimeRoundTrips() {
+        val history = listOf(event(1), event(2, null), event(3, 0L))
+        val output = ByteArrayOutputStream()
+        BackupArchive.write(AuroraBackup(playHistory = history), output)
+        BackupArchive.read(ByteArrayInputStream(output.toByteArray()), directory).use { imported ->
+            assertEquals(history, imported.backup.playHistory)
+        }
+    }
+
+    @Test fun historyEntriesStillRejectUnknownFieldsAndNegativeTimes() {
+        val base = """"songId":"s","title":"t","artist":"a","album":"b","albumId":"c","artistId":"d","artworkUrl":"","durationSec":1,"timestamp":2"""
+        BackupArchive.decodeJson("""{"version":2,"prefs":{},"playHistory":[{$base,"listenedMs":5}]}""")
+        assertFails { BackupArchive.decodeJson("""{"version":2,"prefs":{},"playHistory":[{$base,"location":"x"}]}""") }
+        assertFails { BackupArchive.decodeJson("""{"version":2,"prefs":{},"playHistory":[{$base,"listenedMs":-1}]}""") }
+    }
+
+    @Test fun oversizedHistoryKeepsTheNewestPlaysAndStaysImportable() {
+        val history = List(60_000) { event(it) }
+        val output = ByteArrayOutputStream()
+        BackupArchive.write(AuroraBackup(playHistory = history), output)
+        BackupArchive.read(ByteArrayInputStream(output.toByteArray()), directory).use { imported ->
+            val kept = imported.backup.playHistory
+            assertTrue(kept.isNotEmpty() && kept.size < history.size)
+            assertEquals(history.take(kept.size), kept)
+        }
+    }
 }

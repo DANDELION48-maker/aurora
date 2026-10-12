@@ -627,6 +627,18 @@ private fun Shell(
         composable(Routes.SETTINGS_BACKUP) {
             BackupScreen(padding, container.backupManager, onBack = pop, confirm = { confirm(it) })
         }
+        composable(Routes.SETTINGS_INSIGHTS) {
+            com.aurora.music.ui.screens.settings.DetailedStatsScreen(padding, onBack = pop, onOpenInsights = { nav.navigate(Routes.INSIGHTS) })
+        }
+        composable(Routes.INSIGHTS) {
+            com.aurora.music.ui.screens.stats.InsightsScreen(padding, onBack = pop, onSetup = { nav.navigate(Routes.SETTINGS_INSIGHTS) })
+        }
+        composable(Routes.INSIGHTS + "/{period}/{date}") { entry ->
+            val period = runCatching { RecapPeriod.valueOf(entry.arg("period")) }.getOrDefault(RecapPeriod.MONTH)
+            val date = runCatching { LocalDate.parse(entry.arg("date")) }.getOrDefault(LocalDate.now())
+            com.aurora.music.ui.screens.stats.InsightsScreen(padding, onBack = pop, onSetup = { nav.navigate(Routes.SETTINGS_INSIGHTS) },
+                initialWindow = RecapWindow.containing(period, date))
+        }
         composable(Routes.SETTINGS_INTEGRATIONS) {
             IntegrationsSettingsScreen(
                 contentPadding = padding,
@@ -810,7 +822,8 @@ private fun Shell(
                                 val period = runCatching { RecapPeriod.valueOf(entry.arg("period")) }.getOrDefault(RecapPeriod.DAY)
                                 val date = runCatching { LocalDate.parse(entry.arg("date")) }.getOrDefault(LocalDate.now().minusDays(1))
                                 ListeningStatsScreen(inner, { navController.popBackStack() }, { playById(it) }, { k, i -> openDetail(k, i) },
-                                    RecapWindow.containing(period, date))
+                                    RecapWindow.containing(period, date),
+                                    onOpenInsights = { w -> navController.navigate("${Routes.INSIGHTS}/${w.period.name}/${w.start}") })
                             }
                             composable(Routes.HOME) {
                                 val homeVM = viewModel { HomeViewModel(container) }
@@ -1147,6 +1160,7 @@ private fun Shell(
                                                     onOpenProfile = { navController.navigate(Routes.PROFILE) },
                                                     onOpenAccounts = { open(Routes.SETTINGS_ACCOUNTS) },
                                                     onOpenBackup = { open(Routes.SETTINGS_BACKUP) },
+                                                    onOpenInsights = { open(Routes.SETTINGS_INSIGHTS) },
                                                     onLogout = { logout() },
                                                 )
                                             }
@@ -1197,7 +1211,8 @@ private fun Shell(
                             }
                             composable(Routes.STATS) {
                                 ListeningStatsScreen(contentPadding = inner, onBack = { navController.popBackStack() }, onPlay = { playById(it) },
-                                    onOpenDetail = { k, i -> openDetail(k, i) })
+                                    onOpenDetail = { k, i -> openDetail(k, i) },
+                                    onOpenInsights = { w -> navController.navigate("${Routes.INSIGHTS}/${w.period.name}/${w.start}") })
                             }
                         }
                     }

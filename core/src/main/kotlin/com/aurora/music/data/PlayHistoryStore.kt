@@ -178,8 +178,12 @@ class PlayHistoryStore(filesDir: File) {
     private fun load(): List<PlayEvent> = runCatching {
         if (!file.exists()) return@runCatching emptyList<PlayEvent>()
         val type = object : TypeToken<List<PlayEvent>>() {}.type
-        gson.fromJson<List<PlayEvent>>(file.readText(), type) ?: emptyList()
+        gson.fromJson<List<PlayEvent>>(file.readText(), type)?.map(::withoutBrowsePrefix) ?: emptyList()
     }.getOrDefault(emptyList())
+
+    // android auto and the library browser used to record their "song_" media ids instead of the song id
+    private fun withoutBrowsePrefix(event: PlayEvent): PlayEvent =
+        if ((event.songId as String?)?.startsWith(BROWSE_PREFIX) == true) event.copy(songId = event.songId.removePrefix(BROWSE_PREFIX)) else event
 
     fun flushNow() {
         synchronized(lock) {
@@ -206,5 +210,8 @@ class PlayHistoryStore(filesDir: File) {
         }
     }
 
-    companion object { const val MAX = 250_000 }
+    companion object {
+        const val MAX = 250_000
+        private const val BROWSE_PREFIX = "song_"
+    }
 }

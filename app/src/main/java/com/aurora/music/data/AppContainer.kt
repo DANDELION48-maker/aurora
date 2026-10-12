@@ -60,6 +60,7 @@ class AppContainer(context: Context) {
         .flowOn(Dispatchers.IO).stateIn(scope, SharingStarted.Eagerly, ProfileAppearance())
     val playHistory = PlayHistoryStore(appContext.filesDir)
     val listeningDetails by lazy { DetailedListeningStore(appContext) }
+    val placesStore by lazy { PlacesStore(appContext) }
 
     val queueStore = QueueStore(appContext.filesDir)
 

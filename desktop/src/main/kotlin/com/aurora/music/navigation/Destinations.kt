@@ -39,6 +39,8 @@ object Routes {
     const val SETTINGS_SONIC = "settings_sonic"
     const val SETTINGS_ACCOUNTS = "settings_accounts"
     const val SETTINGS_BACKUP = "settings_backup"
+    const val SETTINGS_INSIGHTS = "settings_insights"
+    const val INSIGHTS = "insights"
     const val SETTINGS_SOURCES = "settings_sources"
     const val HISTORY = "history"
     const val STATS = "stats"

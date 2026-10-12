@@ -62,9 +62,11 @@ import com.aurora.music.data.label
 
 @Composable
 fun ListeningStatsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onPlay: (String) -> Unit, onOpenDetail: (String, String) -> Unit,
-    initialWindow: com.aurora.music.data.RecapWindow? = null) {
+    initialWindow: com.aurora.music.data.RecapWindow? = null, onOpenInsights: ((RecapWindow) -> Unit)? = null) {
     val context = LocalContext.current
     val store = (context.applicationContext as AuroraApplication).container.playHistory
+    val insights by (context.applicationContext as AuroraApplication).container.settingsStore.insightsPrefs
+        .collectAsStateWithLifecycle(initialValue = com.aurora.music.data.InsightsPrefs())
     val history by store.history.collectAsStateWithLifecycle()
     var window by remember(initialWindow) { mutableStateOf(initialWindow ?: RecapWindow.containing(RecapPeriod.DAY, java.time.LocalDate.now().minusDays(1))) }
     var byMinutes by remember { mutableStateOf(false) }
@@ -102,6 +104,15 @@ fun ListeningStatsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onPl
                 }
                 Text(appString(R.string.text_plays_count_after_30_seconds_or_half_of_a_shorter_song_private_se_333c7b), Modifier.padding(horizontal = 16.dp, vertical = 6.dp), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 if (recap.estimated) Text(appString(R.string.text_older_plays_use_estimated_listening_time_from_track_lengths_768fa0), Modifier.padding(horizontal = 16.dp), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                if (onOpenInsights != null && insights.enabled) {
+                    Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp).clip(RoundedCornerShape(18.dp))
+                        .background(MaterialTheme.colorScheme.primaryContainer).clickable { onOpenInsights(window) }.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Text(appString(R.string.insights_open_period), Modifier.weight(1f), style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Text("›", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    }
+                }
             }
             if (recap.millis == 0L) item { Text(appString(R.string.text_no_listening_recorded_in_this_period_choose_another_date_or_play_ed4ba2), Modifier.padding(24.dp)) }
             else {

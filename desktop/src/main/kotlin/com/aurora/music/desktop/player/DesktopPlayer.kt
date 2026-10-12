@@ -71,6 +71,8 @@ data class PlayerDependencies(
     val offline: () -> Boolean,
     val visualizer: VisualizerController?,
     val artwork: suspend (String) -> ByteArray?,
+    val listeningDetails: com.aurora.music.data.DetailedPlaySink = com.aurora.music.data.DetailedPlaySink { },
+    val platform: String = "desktop",
 )
 
 fun DesktopContainer.playerDependencies(): PlayerDependencies = PlayerDependencies(
@@ -90,6 +92,8 @@ fun DesktopContainer.playerDependencies(): PlayerDependencies = PlayerDependenci
     offline = { offline.value },
     visualizer = visualizer,
     artwork = { url -> artworkBytes(url, http, artworkRepository) },
+    listeningDetails = { play -> listeningDetails.save(play) },
+    platform = com.aurora.music.desktop.platform.HostPlatform.name.lowercase(java.util.Locale.ROOT),
 )
 
 class DesktopPlayer(private val engine: PlaybackEngine, private val deps: PlayerDependencies) : PlayerController, AutoCloseable {
@@ -119,6 +123,7 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
         deps.reportingAllowed() && !deps.offline() && deps.sessionReady.value == true
     }
     private val history = ListeningHistory(deps.playHistory)
+    private val details = DesktopListeningDetails(deps.listeningDetails, deps.platform)
 
     private var sleepJob: Job? = null
     private var queueFillJob: Job? = null
@@ -160,6 +165,7 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
                 val current = engine.state.value
                 reporting.sample(current, uptime())
                 history.track(current, uptime())
+                details.track(current, uptime())
             }
         }
         scope.launch {
@@ -205,6 +211,21 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
             deps.settingsStore.privateSession.collect {
                 privateSession = it
                 history.allowed = !it
+                details.privateSession = it
+                details.update()
+            }
+        }
+        scope.launch {
+            deps.settingsStore.insightsPrefs.collect {
+                details.prefs = it
+                details.update()
+            }
+        }
+        scope.launch { deps.settingsStore.activeEqProfile.collect { details.autoEqProfile = it } }
+        scope.launch {
+            deps.settingsStore.processingSettings.collect {
+                details.audio = it.audio
+                details.rack = it.rack
             }
         }
         scope.launch {
@@ -690,6 +711,7 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
         deps.queueStore.flushNow()
         reporting.close(last, uptime())
         history.finish()
+        details.finish()
         mediaControls.close()
         scope.cancel()
         engine.close()

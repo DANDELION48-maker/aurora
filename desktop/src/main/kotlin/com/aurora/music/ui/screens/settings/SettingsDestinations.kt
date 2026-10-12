@@ -33,11 +33,12 @@ object SettingsDestinations {
     val appearance = SettingsDestination(Routes.SETTINGS_APPEARANCE, R.string.text_appearance_41def7, R.string.text_theme_accent_and_layout_cb0657)
     val visualizer = SettingsDestination(Routes.SETTINGS_VISUALIZER, R.string.text_visualizer_7177c7, R.string.text_spectrum_waveform_radial_and_particles_145442)
     val integrations = SettingsDestination(Routes.SETTINGS_INTEGRATIONS, R.string.text_integrations_a7881c, R.string.text_scrobbling_presence_lyrics_and_metadata_687ea0)
+    val insights = SettingsDestination(Routes.SETTINGS_INSIGHTS, R.string.insights_title, R.string.insights_description)
     val backup = SettingsDestination(Routes.SETTINGS_BACKUP, R.string.text_backup_restore_a16162, R.string.text_export_or_import_settings_and_playlists_4ce918)
     val about = SettingsDestination(Routes.SETTINGS_ABOUT, R.string.text_about_aurora_b4ed8c, R.string.text_version_and_app_information_9c9a82)
 
     val all = listOf(accounts, sources, storage, analysis, playback, output, equalizer, advancedAudio, processingRack, tuning, impulses, comparison, presetRules, processingPresets, loudness,
-        listening, signalPath, appearance, visualizer, integrations, backup, about)
+        listening, signalPath, appearance, visualizer, integrations, insights, backup, about)
 }
 
 @Composable

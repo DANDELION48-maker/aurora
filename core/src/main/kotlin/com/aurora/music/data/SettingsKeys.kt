@@ -89,6 +89,7 @@ internal object SettingsKeys {
     val INSIGHTS_ENABLED = booleanPreferencesKey("insights_enabled")
     val INSIGHTS_DEVICE = booleanPreferencesKey("insights_device")
     val INSIGHTS_AUDIO_PATH = booleanPreferencesKey("insights_audio_path")
+    val INSIGHTS_PLACES = booleanPreferencesKey("insights_places")
     val ONBOARDING_SEEN = booleanPreferencesKey("onboarding_seen")
     val PRIVATE_SESSION = booleanPreferencesKey("private_session")
     val GESTURE_SWIPE_ART = booleanPreferencesKey("gesture_swipe_art")

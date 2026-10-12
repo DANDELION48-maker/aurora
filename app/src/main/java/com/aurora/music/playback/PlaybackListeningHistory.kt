@@ -24,7 +24,7 @@ internal class PlaybackListeningHistory(
             return
         }
         val item = active.currentMediaItem
-        val id = item?.mediaId.orEmpty()
+        val id = item?.mediaMetadata?.extras?.getString("aurora.songId")?.takeIf(String::isNotBlank) ?: item?.mediaId.orEmpty()
         val playing = active.isPlaying || nativeUsbPlaying
         val currentPosition = active.currentPosition
         val metadata = item?.mediaMetadata

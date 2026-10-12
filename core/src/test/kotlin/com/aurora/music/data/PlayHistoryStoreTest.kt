@@ -64,4 +64,10 @@ class PlayHistoryStoreTest {
         assertEquals(100, store.snapshot().size)
         assertEquals(store.snapshot(), PlayHistoryStore(root).snapshot())
     }
+
+    @Test fun browseMediaIdsAreStoredAsTheSongId() {
+        file.writeText("""[{"songId":"song_42","title":"t","artist":"a","album":"b","albumId":"c","artistId":"d","artworkUrl":"","durationSec":1,"timestamp":2},
+            {"songId":"42","title":"t","artist":"a","album":"b","albumId":"c","artistId":"d","artworkUrl":"","durationSec":1,"timestamp":1}]""")
+        assertEquals(listOf("42", "42"), PlayHistoryStore(root).snapshot().map { it.songId })
+    }
 }

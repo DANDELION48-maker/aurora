@@ -105,6 +105,8 @@ class DesktopContainer(
     }
 
     val playHistory = PlayHistoryStore(paths.roaming)
+    // machine-local, never in the roaming profile
+    val listeningDetails by lazy { com.aurora.music.data.JsonLinesDetailedListeningStore(java.io.File(paths.local, "listening_details.jsonl"), com.aurora.music.desktop.platform.HostPlatform.name.lowercase(java.util.Locale.ROOT)) }
     val queueStore = QueueStore(paths.local)
     val replayGainStore = ReplayGainStore(paths.roaming)
     val artistInfoStore = ArtistInfoStore(paths.roaming)

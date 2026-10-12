@@ -21,6 +21,7 @@ import java.util.zip.ZipOutputStream
 
 object BackupArchive {
     const val MAX_METADATA_BYTES = 16L * 1024 * 1024
+    const val MAX_HISTORY = 100_000
     const val MAX_ASSET_BYTES = 64L * 1024 * 1024
     const val MAX_ARCHIVE_BYTES = 512L * 1024 * 1024
     private const val MAX_ASSETS = 1024
@@ -57,8 +58,7 @@ object BackupArchive {
         require(assets.size <= MAX_ASSETS && assets.values.sumOf { it.length() } <= MAX_ARCHIVE_BYTES - MAX_METADATA_BYTES - ZIP_OVERHEAD_BYTES) {
             "Impulse responses exceed the 495 MiB backup asset limit."
         }
-        val bytes = gson.toJson(portable).toByteArray(Charsets.UTF_8)
-        require(bytes.size <= MAX_METADATA_BYTES) { "Backup metadata exceeds 16 MiB." }
+        val bytes = encodeWithinLimit(portable)
         val borrowed = object : FilterOutputStream(output) {
             private var written = 0L
             override fun close() = flush()
@@ -146,6 +146,18 @@ object BackupArchive {
         }
     }
 
+    // history is newest first, so trimming keeps recent plays and the archive always stays importable
+    private fun encodeWithinLimit(backup: AuroraBackup): ByteArray {
+        var history = backup.playHistory.take(MAX_HISTORY)
+        var bytes = gson.toJson(backup.copy(playHistory = history)).toByteArray(Charsets.UTF_8)
+        while (bytes.size > MAX_METADATA_BYTES && history.isNotEmpty()) {
+            history = history.take(history.size * 3 / 4)
+            bytes = gson.toJson(backup.copy(playHistory = history)).toByteArray(Charsets.UTF_8)
+        }
+        require(bytes.size <= MAX_METADATA_BYTES) { "Backup metadata exceeds 16 MiB." }
+        return bytes
+    }
+
     fun decodeJson(json: String): AuroraBackup {
         require(json.toByteArray(Charsets.UTF_8).size <= MAX_METADATA_BYTES) { "Backup metadata exceeds 16 MiB." }
         val root = parseStrictJson(json)
@@ -187,15 +199,20 @@ object BackupArchive {
         }
         validateLocal(local)
         val events = o.get("playHistory") ?: com.google.gson.JsonArray().also { o.add("playHistory", it) }
-        require(events.isJsonArray && events.asJsonArray.size() <= 100_000) { "Invalid listening history." }
+        require(events.isJsonArray && events.asJsonArray.size() <= MAX_HISTORY) { "Invalid listening history." }
         val historyStrings = setOf("songId", "title", "artist", "album", "albumId", "artistId", "artworkUrl")
         events.asJsonArray.forEach { event ->
             require(event.isJsonObject)
             val e = event.asJsonObject
-            require(e.keySet() == historyStrings + setOf("durationSec", "timestamp")) { "Incomplete history entry." }
+            val required = historyStrings + setOf("durationSec", "timestamp")
+            require(e.keySet().containsAll(required) && e.keySet().all { it in required || it == "listenedMs" }) { "Incomplete history entry." }
             historyStrings.forEach { key -> require(e[key].isJsonPrimitive && e[key].asJsonPrimitive.isString) }
             val duration = number(e, "durationSec"); val timestamp = number(e, "timestamp")
             require(duration >= 0 && duration == duration.toInt().toDouble() && timestamp >= 0 && timestamp == timestamp.toLong().toDouble())
+            e.get("listenedMs")?.takeUnless { it.isJsonNull }?.let {
+                val listened = number(e, "listenedMs")
+                require(listened >= 0 && listened == listened.toLong().toDouble()) { "Invalid listening time." }
+            }
         }
         o.addProperty("createdAt", created.toLong()); o.addProperty("localStore", local)
         val result = gson.fromJson(o, AuroraBackup::class.java)
