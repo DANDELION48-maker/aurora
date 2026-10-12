@@ -39,11 +39,11 @@ import com.aurora.music.localization.appString
 
 internal class StorageConfirm(val title: String, val message: String, val confirm: String, val action: () -> Unit)
 
-internal fun storageSize(bytes: Long): String =
-    if (bytes <= 0) appString(R.string.storage_empty) else Formatter.formatShortFileSize(AppStrings.context, bytes)
+internal fun storageSize(bytes: Long): String = Formatter.formatShortFileSize(AppStrings.context, bytes.coerceAtLeast(0))
 
 internal fun storageDetail(bytes: Long, vararg parts: String): String =
-    (listOf(storageSize(bytes)) + parts.filter { it.isNotBlank() }).joinToString(" · ")
+    (listOfNotNull(storageSize(bytes).takeIf { bytes > 0 }) + parts.filter { it.isNotBlank() }).joinToString(" · ")
+        .ifBlank { appString(R.string.storage_empty) }
 
 @Composable
 internal fun StorageRow(

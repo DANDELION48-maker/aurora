@@ -23,6 +23,7 @@ data class StorageUsage(
     val audioCache: Long = 0,
     val artwork: Long = 0,
     val images: Long = 0,
+    val mapTiles: Long = 0,
     val vocals: Long = 0,
     val stems: Long = 0,
     val temporary: Long = 0,
@@ -34,7 +35,7 @@ data class StorageUsage(
     val insightsPlays: Int = 0,
     val locatedPlays: Int = 0,
 ) {
-    val caches: Long get() = audioCache + artwork + images + vocals + stems + temporary + artistInfo
+    val caches: Long get() = audioCache + artwork + images + mapTiles + vocals + stems + temporary + artistInfo
     val analysis: Long get() = sonic + stemModel + languagePackBytes
     val other: Long get() = (total - downloads - caches - analysis).coerceAtLeast(0)
 }
@@ -67,6 +68,7 @@ class StorageInventory(private val context: Context, private val container: AppC
             audioCache = container.audioCache.status.value.bytes,
             artwork = container.artworkRepository.bytes.value,
             images = runCatching { context.imageLoader.diskCache?.size }.getOrNull() ?: 0L,
+            mapTiles = mapTiles.diskBytes(),
             vocals = container.vocalAnalysis.bytes(),
             stems = container.stemSeparator.stemBytes(),
             temporary = temporaryFiles().sumOf { it.diskBytes() },
@@ -79,6 +81,8 @@ class StorageInventory(private val context: Context, private val container: AppC
             locatedPlays = located,
         )
     }
+
+    private val mapTiles get() = File(context.cacheDir, MAP_TILES)
 
     private fun languagePackDirs(): List<File> = listOf(context.filesDir, context.noBackupFilesDir).flatMap { root ->
         root.listFiles().orEmpty().filter { it.isDirectory && "mlkit" in it.name && "translate" in it.name }
@@ -106,6 +110,8 @@ class StorageInventory(private val context: Context, private val container: AppC
         context.imageLoader.memoryCache?.clear()
     }
 
+    suspend fun clearMapTiles() = withContext(Dispatchers.IO) { mapTiles.listFiles()?.forEach(File::deleteRecursively) }
+
     suspend fun clearTemporary() = withContext(Dispatchers.IO) {
         temporaryFiles().forEach { if (it.isDirectory) it.listFiles()?.forEach(File::deleteRecursively) else it.delete() }
     }
@@ -125,6 +131,7 @@ class StorageInventory(private val context: Context, private val container: AppC
         runCatching { container.audioCache.clear() }
         runCatching { clearArtwork() }
         runCatching { clearImages() }
+        runCatching { clearMapTiles() }
         runCatching { clearVocals() }
         runCatching { clearArtistInfo() }
         runCatching { clearTemporary() }
@@ -134,8 +141,9 @@ class StorageInventory(private val context: Context, private val container: AppC
     private companion object {
         val SYSTEM_DIRS = setOf("lib", "code_cache")
         const val YOUTUBE_WORK = "youtube-downloads"
+        const val MAP_TILES = "osmdroid"
         // these have their own rows or are in use by playback and clean themselves up
         val MANAGED_CACHE = setOf("audio-streams", "metadata-artwork", "image_cache", "vocal-activity", "separated-stems-v1",
-            "network-audio", "renderer-media", "local-profile")
+            "network-audio", "renderer-media", "local-profile", MAP_TILES)
     }
 }

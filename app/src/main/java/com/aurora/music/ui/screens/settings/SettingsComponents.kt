@@ -44,6 +44,15 @@ import androidx.navigation.NavBackStackEntry
 import com.aurora.music.data.ThemeStyle
 import com.aurora.music.ui.theme.LocalUiPrefs
 import com.aurora.music.ui.theme.auroraPanel
+import com.aurora.music.ui.theme.isGlassTheme
+import com.aurora.music.ui.theme.LocalGlassAmbient
+import com.aurora.music.ui.components.glass.GlassButton
+import com.aurora.music.ui.components.glass.GlassSegmented
+import com.aurora.music.ui.components.glass.GlassToggle
+import com.aurora.music.ui.components.glass.glassTileColor
+import com.kyant.shapes.RoundedRectangle
+import androidx.compose.ui.graphics.Color
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 
 val LocalSettingsPaneRoots = compositionLocalOf<Set<String>?> { null }
 
@@ -62,6 +71,22 @@ fun SettingsTopBar(title: String, onBack: () -> Unit) {
 @Composable
 fun SettingsTopBar(title: String, onBack: () -> Unit, showBack: Boolean) {
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    if (isGlassTheme()) {
+        Row(
+            Modifier.fillMaxWidth().padding(top = topInset + 6.dp, start = 16.dp, end = 16.dp, bottom = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (showBack) {
+                GlassButton(onClick = onBack, backdrop = LocalGlassAmbient.current, modifier = Modifier.size(44.dp),
+                    contentDescription = appString(R.string.text_back_b52b36)) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBackIos, null, Modifier.size(20.dp).padding(start = 5.dp), tint = MaterialTheme.colorScheme.onSurface)
+                }
+                Spacer(Modifier.width(12.dp))
+            } else Spacer(Modifier.width(4.dp))
+            Text(title, style = MaterialTheme.typography.headlineMedium)
+        }
+        return
+    }
     Row(
         Modifier.fillMaxWidth()
             .then(if (LocalUiPrefs.current.themeStyle != ThemeStyle.AURORA) Modifier.auroraPanel(RectangleShape) else Modifier)
@@ -82,8 +107,8 @@ fun SettingsSectionTitle(title: String) {
         title.uppercase(java.util.Locale.getDefault()),
         style = MaterialTheme.typography.labelMedium,
         fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(start = 20.dp, top = 22.dp, bottom = 6.dp),
+        color = if (isGlassTheme()) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(start = if (isGlassTheme()) 28.dp else 20.dp, top = 22.dp, bottom = 6.dp),
     )
 }
 
@@ -126,7 +151,13 @@ internal fun RowScaffold(
             .padding(horizontal = 20.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (icon != null) {
+        if (icon != null && isGlassTheme()) {
+            Box(
+                Modifier.size(32.dp).clip(RoundedRectangle(8.dp)).background(glassTileColor(icon)),
+                contentAlignment = Alignment.Center,
+            ) { Icon(icon, null, tint = Color.White, modifier = Modifier.size(19.dp)) }
+            Spacer(Modifier.width(14.dp))
+        } else if (icon != null) {
             Box(
                 Modifier.size(38.dp).then(
                     if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA)
@@ -160,7 +191,8 @@ fun SettingsNavRow(icon: ImageVector, title: String, subtitle: String? = null, v
 @Composable
 fun SettingsSwitchRow(icon: ImageVector? = null, title: String, subtitle: String? = null, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     RowScaffold(icon, title, subtitle, { onCheckedChange(!checked) }) {
-        Switch(
+        if (isGlassTheme()) GlassToggle(checked, onCheckedChange, Modifier.padding(start = 12.dp))
+        else Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
             colors = SwitchDefaults.colors(
@@ -187,6 +219,14 @@ fun SettingsSliderRow(title: String, valueLabel: String, value: Float, range: Cl
 
 @Composable
 fun SegmentedRow(title: String, options: List<String>, selected: Int, onSelect: (Int) -> Unit) {
+    if (isGlassTheme()) {
+        Column(Modifier.padding(horizontal = 20.dp, vertical = 10.dp)) {
+            Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Medium)
+            Spacer(Modifier.size(10.dp))
+            GlassSegmented(options, selected, onSelect)
+        }
+        return
+    }
     val shape = if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(50) else MaterialTheme.shapes.small
     Column(Modifier.padding(horizontal = 20.dp, vertical = 10.dp)) {
         Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Medium)

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="storage_description">\u2067ڈاؤن لوڈز، کیش، تجزیہ اور ہسٹری\u2069</string>
+    <string name="storage_summary">\u2067%1$s استعمال میں · ڈاؤن لوڈز، کیش اور ہسٹری\u2069</string>
+    <string name="storage_used">\u2067Aurora %1$s استعمال کر رہا ہے\u2069</string>
+    <string name="storage_free">\u2067اس آلے پر %1$s خالی\u2069</string>
+    <string name="storage_measuring">\u2067اسٹوریج کی پیمائش ہو رہی ہے…\u2069</string>
+    <string name="storage_part_downloads">\u2067ڈاؤن لوڈز\u2069</string>
+    <string name="storage_part_caches">\u2067کیش\u2069</string>
+    <string name="storage_part_analysis">\u2067تجزیہ اور ماڈلز\u2069</string>
+    <string name="storage_part_other">\u2067ایپ ڈیٹا\u2069</string>
+    <string name="storage_clear_caches">\u2067تمام کیش صاف کریں\u2069</string>
+    <string name="storage_clear_caches_title">\u2067تمام کیش صاف کریں؟\u2069</string>
+    <string name="storage_clear_caches_message">\u2067اس سے آڈیو کیش، کور، تصویر اور نقشے کے کیش، ووکل ٹائمنگ، الگ کیے گئے اسٹیمز، فنکار کی معلومات اور عارضی فائلیں ہٹ جاتی ہیں۔ ڈاؤن لوڈز، تجزیہ، ہسٹری اور ترتیبات برقرار رہتی ہیں۔ Aurora استعمال کرتے وقت کیش دوبارہ بھر جاتا ہے۔\u2069</string>
+    <string name="storage_caches_cleared">\u2067کیش صاف ہو گیا\u2069</string>
+    <string name="storage_stems_busy">\u2067ووکل علیحدگی جاری ہے، اس لیے اس کی فائلیں رکھی گئیں\u2069</string>
+    <string name="storage_cleared">\u2067صاف ہو گیا\u2069</string>
+    <string name="storage_clear_failed">\u2067یہ صاف نہیں ہو سکا۔ دوبارہ کوشش کریں۔\u2069</string>
+    <string name="storage_clear">\u2067صاف کریں\u2069</string>
+    <string name="storage_delete">\u2067حذف کریں\u2069</string>
+    <string name="storage_remove">\u2067ہٹائیں\u2069</string>
+    <string name="storage_remove_all">\u2067سب ہٹائیں\u2069</string>
+    <string name="storage_empty">\u2067خالی\u2069</string>
+
+    <string name="storage_downloads_title">\u2067ڈاؤن لوڈ شدہ موسیقی\u2069</string>
+    <string name="storage_downloads_none">\u2067ابھی تک کچھ ڈاؤن لوڈ نہیں ہوا\u2069</string>
+    <string name="storage_remove_downloads_title">\u2067تمام ڈاؤن لوڈز ہٹائیں؟\u2069</string>
+    <string name="storage_remove_downloads_message">\u2067آپ کے تمام ذرائع سے ڈاؤن لوڈ شدہ ہر ٹریک اور مجموعہ اس آلے سے حذف ہو جاتا ہے۔ آپ انہیں بعد میں دوبارہ ڈاؤن لوڈ کر سکتے ہیں۔\u2069</string>
+    <string name="storage_remove_source_title">\u2067%1$s سے ڈاؤن لوڈز ہٹائیں؟\u2069</string>
+    <string name="storage_remove_source_message">\u2067اس ذریعے سے ڈاؤن لوڈ کیے گئے ٹریک اس آلے سے حذف ہو جاتے ہیں۔ آپ کے دوسرے ذرائع کے ڈاؤن لوڈز برقرار رہتے ہیں۔\u2069</string>
+    <string name="storage_source_unknown">\u2067دیگر ذرائع\u2069</string>
+    <string name="storage_youtube_note">\u2067YouTube سے ڈاؤن لوڈز آپ کے فون پر Music/Aurora میں محفوظ ہوتے ہیں اور آپ کے فائل مینیجر سے منظم ہوتے ہیں۔\u2069</string>
+
+    <string name="storage_section_images">\u2067کور اور تصاویر\u2069</string>
+    <string name="storage_cover_cache">\u2067کور تلاش کیش\u2069</string>
+    <string name="storage_cover_cache_detail">\u2067%2$s میں سے %1$s · ملے ہوئے کور آف لائن بھی دستیاب رہتے ہیں\u2069</string>
+    <string name="storage_image_cache">\u2067تصویر کیش\u2069</string>
+    <string name="storage_image_cache_detail">\u2067ایپ میں پہلے دکھائے گئے آرٹ ورک اور تصاویر\u2069</string>
+    <string name="storage_map_tiles">\u2067نقشے کی ٹائلز\u2069</string>
+    <string name="storage_map_tiles_detail">\u2067آپ کے سننے کے نقشے کے لیے محفوظ\u2069</string>
+    <string name="storage_cover_cache_moved">\u2067کور کیش\u2069</string>
+    <string name="storage_cover_cache_moved_detail">\u2067سائز اور صفائی ڈاؤن لوڈز اور اسٹوریج میں ہیں\u2069</string>
+
+    <string name="storage_section_analysis">\u2067تجزیہ اور ماڈلز\u2069</string>
+    <string name="storage_sonic">\u2067Sonic تجزیہ\u2069</string>
+    <string name="storage_sonic_clear_title">\u2067Sonic تجزیہ صاف کریں؟\u2069</string>
+    <string name="storage_sonic_clear_message">\u2067Sonic ریڈیو، آٹو DJ اور خودکار مکس اسی پر انحصار کرتے ہیں، اس لیے چلانے یا اسکین کرنے پر ٹریکس کا دوبارہ تجزیہ ہوگا۔ بڑی لائبریریوں میں کچھ وقت لگ سکتا ہے۔\u2069</string>
+    <string name="storage_vocals">\u2067ووکل ٹائمنگ\u2069</string>
+    <string name="storage_vocals_detail">\u2067جب بول آواز کے ساتھ چلتے ہیں تب بنتی ہے\u2069</string>
+    <string name="storage_stem_model">\u2067ووکل علیحدگی ماڈل\u2069</string>
+    <string name="storage_stem_model_ready">\u2067اگلی بار ٹریک الگ کرنے پر دوبارہ ڈاؤن لوڈ ہوگا\u2069</string>
+    <string name="storage_stem_model_missing">\u2067ڈاؤن لوڈ نہیں ہوا\u2069</string>
+    <string name="storage_stems">\u2067الگ کیے گئے اسٹیمز\u2069</string>
+    <string name="storage_stems_detail">\u2067مکس کے لیے بنائے گئے ووکل اور بیکنگ ٹریکس\u2069</string>
+    <string name="storage_stems_clear_title">\u2067الگ کیے گئے اسٹیمز صاف کریں؟\u2069</string>
+    <string name="storage_stems_clear_message">\u2067ووکلز یا بیکنگ ٹریکس استعمال کرنے والے مکس کھولنے پر ان گانوں کو دوبارہ الگ کریں گے۔\u2069</string>
+    <string name="storage_model_delete_title">\u2067ووکل علیحدگی ماڈل حذف کریں؟\u2069</string>
+    <string name="storage_model_delete_message">\u2067اگلی بار کسی مکس میں ووکلز الگ کرنے پر ماڈل (تقریباً 64 MB) دوبارہ ڈاؤن لوڈ ہوگا۔\u2069</string>
+    <string name="storage_replaygain">\u2067ReplayGain اسکین\u2069</string>
+    <string name="storage_replaygain_clear_title">\u2067ReplayGain نتائج صاف کریں؟\u2069</string>
+    <string name="storage_replaygain_clear_message">\u2067دوبارہ اسکین کرنے تک آلے پر موجود فائلوں کی والیوم لیولنگ رک جائے گی۔\u2069</string>
+
+    <string name="storage_section_translation">\u2067گانوں کے بول کا ترجمہ\u2069</string>
+    <string name="storage_language_pack">\u2067زبان کا پیک\u2069</string>
+    <string name="storage_language_none">\u2067کوئی زبان کا پیک ڈاؤن لوڈ نہیں ہوا\u2069</string>
+    <string name="storage_language_delete_title">\u2067زبان کا پیک (%1$s) حذف کریں؟\u2069</string>
+    <string name="storage_language_delete_message">\u2067اگلی بار بولوں کو ضرورت پڑنے پر یہ Wi-Fi پر دوبارہ ڈاؤن لوڈ ہوگا۔\u2069</string>
+
+    <string name="storage_section_history">\u2067ہسٹری اور پرائیویسی\u2069</string>
+    <string name="storage_private_detail">\u2067پلے ہسٹری، تفصیلی اعداد و شمار اور اسکروبلنگ روکیں\u2069</string>
+    <string name="storage_play_history">\u2067پلے ہسٹری\u2069</string>
+    <string name="storage_play_history_clear_title">\u2067پلے ہسٹری صاف کریں؟\u2069</string>
+    <string name="storage_play_history_clear_message">\u2067آپ کے اعداد و شمار، ری کیپس، تسلسل اور اسمارٹ پلے لسٹس نئے سرے سے شروع ہوں گے۔ آپ کے سرور، Last.fm یا ListenBrainz کو پہلے بھیجے گئے پلے متاثر نہیں ہوں گے۔\u2069</string>
+    <string name="storage_save_searches">\u2067تلاش کی ہسٹری محفوظ کریں\u2069</string>
+    <string name="storage_save_searches_detail">\u2067تلاش کی اسکرین پر اپنی حالیہ تلاشیں دکھائیں\u2069</string>
+    <string name="storage_search_history">\u2067تلاش کی ہسٹری\u2069</string>
+    <string name="storage_insights_off">\u2067ریکارڈنگ بند ہے\u2069</string>
+    <string name="storage_places_detail">\u2067صرف اسی آلے پر محفوظ\u2069</string>
+    <string name="storage_levels">\u2067سننے کی سطح کی ہسٹری\u2069</string>
+    <string name="storage_levels_clear_title">\u2067سننے کی سطح کی ہسٹری صاف کریں؟\u2069</string>
+    <string name="storage_levels_clear_message">\u2067محفوظ کردہ سطح کے نمونے ہٹا دیے جاتے ہیں۔ آپ کے ہیڈ فون کیلیبریشنز برقرار رہتے ہیں۔\u2069</string>
+    <string name="storage_artist_info_clear_title">\u2067فنکار کی معلومات صاف کریں؟\u2069</string>
+    <string name="storage_artist_info_clear_message">\u2067اگلی بار کسی فنکار کو کھولنے پر سوانح اور تصاویر دوبارہ تلاش کی جائیں گی۔\u2069</string>
+
+    <string name="storage_section_other">\u2067دیگر\u2069</string>
+    <string name="storage_temporary">\u2067عارضی فائلیں\u2069</string>
+    <string name="storage_temporary_detail">\u2067امپورٹ، کنورژن اور منتقلی سے بچی ہوئی فائلیں\u2069</string>
+
+    <plurals name="storage_tracks_analysed">
+        <item quantity="one">\u2067%1$d ٹریک کا تجزیہ ہو گیا\u2069</item>
+        <item quantity="other">\u2067%1$d ٹریکس کا تجزیہ ہو گیا\u2069</item>
+    </plurals>
+    <plurals name="storage_plays">
+        <item quantity="one">\u2067%1$d پلے\u2069</item>
+        <item quantity="other">\u2067%1$d پلے\u2069</item>
+    </plurals>
+    <plurals name="storage_searches">
+        <item quantity="one">\u2067%1$d حالیہ تلاش\u2069</item>
+        <item quantity="other">\u2067%1$d حالیہ تلاشیں\u2069</item>
+    </plurals>
+    <plurals name="storage_level_samples">
+        <item quantity="one">\u2067%1$d محفوظ نمونہ\u2069</item>
+        <item quantity="other">\u2067%1$d محفوظ نمونے\u2069</item>
+    </plurals>
+    <plurals name="storage_artists">
+        <item quantity="one">\u2067%1$d فنکار محفوظ\u2069</item>
+        <item quantity="other">\u2067%1$d فنکار محفوظ\u2069</item>
+    </plurals>
+</resources>

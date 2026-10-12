@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="storage_description">Downloads, caches, analyse en geschiedenis</string>
+    <string name="storage_summary">%1$s gebruikt · downloads, caches en geschiedenis</string>
+    <string name="storage_used">Aurora gebruikt %1$s</string>
+    <string name="storage_free">%1$s vrij op dit apparaat</string>
+    <string name="storage_measuring">Opslag meten…</string>
+    <string name="storage_part_downloads">Downloads</string>
+    <string name="storage_part_caches">Caches</string>
+    <string name="storage_part_analysis">Analyse &amp; modellen</string>
+    <string name="storage_part_other">App-gegevens</string>
+    <string name="storage_clear_caches">Alle caches wissen</string>
+    <string name="storage_clear_caches_title">Alle caches wissen?</string>
+    <string name="storage_clear_caches_message">Hiermee worden de audiocache, de hoezen-, afbeeldings- en kaartcaches, zangtiming, gescheiden stems, artiestinformatie en tijdelijke bestanden verwijderd. Downloads, analyses, geschiedenis en instellingen blijven behouden. De caches vullen zich weer terwijl je Aurora gebruikt.</string>
+    <string name="storage_caches_cleared">Caches gewist</string>
+    <string name="storage_stems_busy">Zangscheiding is bezig, dus de bestanden daarvan zijn bewaard</string>
+    <string name="storage_cleared">Gewist</string>
+    <string name="storage_clear_failed">Wissen is niet gelukt. Probeer het opnieuw.</string>
+    <string name="storage_clear">Wissen</string>
+    <string name="storage_delete">Verwijderen</string>
+    <string name="storage_remove">Verwijderen</string>
+    <string name="storage_remove_all">Alles verwijderen</string>
+    <string name="storage_empty">Leeg</string>
+
+    <string name="storage_downloads_title">Gedownloade muziek</string>
+    <string name="storage_downloads_none">Nog niets gedownload</string>
+    <string name="storage_remove_downloads_title">Alle downloads verwijderen?</string>
+    <string name="storage_remove_downloads_message">Alle gedownloade nummers en collecties worden van dit apparaat verwijderd, voor al je bronnen. Je kunt ze later opnieuw downloaden.</string>
+    <string name="storage_remove_source_title">Downloads van %1$s verwijderen?</string>
+    <string name="storage_remove_source_message">Nummers die van deze bron zijn gedownload, worden van dit apparaat verwijderd. Downloads van je andere bronnen blijven behouden.</string>
+    <string name="storage_source_unknown">Andere bronnen</string>
+    <string name="storage_youtube_note">Downloads van YouTube worden op je telefoon opgeslagen in Music/Aurora en beheer je met je bestandsbeheerder.</string>
+
+    <string name="storage_section_images">Hoezen &amp; afbeeldingen</string>
+    <string name="storage_cover_cache">Cache voor hoezen zoeken</string>
+    <string name="storage_cover_cache_detail">%1$s van %2$s · gevonden hoezen blijven offline beschikbaar</string>
+    <string name="storage_image_cache">Afbeeldingscache</string>
+    <string name="storage_image_cache_detail">Hoezen en foto’s die al in de app zijn getoond</string>
+    <string name="storage_map_tiles">Kaarttegels</string>
+    <string name="storage_map_tiles_detail">Opgeslagen voor je luisterkaart</string>
+    <string name="storage_cover_cache_moved">Hoezencache</string>
+    <string name="storage_cover_cache_moved_detail">Grootte en wissen vind je onder Downloads &amp; opslag</string>
+
+    <string name="storage_section_analysis">Analyse &amp; modellen</string>
+    <string name="storage_sonic">Sonic-analyse</string>
+    <string name="storage_sonic_clear_title">Sonic-analyse wissen?</string>
+    <string name="storage_sonic_clear_message">Sonic-radio, Auto-DJ en automatische mixen zijn ervan afhankelijk, dus nummers worden opnieuw geanalyseerd terwijl je afspeelt of scant. Bij grote bibliotheken kan dat even duren.</string>
+    <string name="storage_vocals">Zangtiming</string>
+    <string name="storage_vocals_detail">Gemaakt wanneer songteksten de zang volgen</string>
+    <string name="storage_stem_model">Model voor zangscheiding</string>
+    <string name="storage_stem_model_ready">Wordt opnieuw gedownload als je weer een nummer scheidt</string>
+    <string name="storage_stem_model_missing">Niet gedownload</string>
+    <string name="storage_stems">Gescheiden stems</string>
+    <string name="storage_stems_detail">Zang- en begeleidingssporen gemaakt voor mixen</string>
+    <string name="storage_stems_clear_title">Gescheiden stems wissen?</string>
+    <string name="storage_stems_clear_message">Mixen die zang of begeleiding gebruiken, scheiden die nummers opnieuw wanneer je ze opent.</string>
+    <string name="storage_model_delete_title">Model voor zangscheiding verwijderen?</string>
+    <string name="storage_model_delete_message">Het model (ongeveer 64 MB) wordt opnieuw gedownload wanneer je weer zang scheidt in een mix.</string>
+    <string name="storage_replaygain">ReplayGain-scan</string>
+    <string name="storage_replaygain_clear_title">ReplayGain-resultaten wissen?</string>
+    <string name="storage_replaygain_clear_message">Volumenivellering voor bestanden op dit apparaat stopt tot je opnieuw scant.</string>
+
+    <string name="storage_section_translation">Vertaling van songteksten</string>
+    <string name="storage_language_pack">Taalpakket</string>
+    <string name="storage_language_none">Geen taalpakketten gedownload</string>
+    <string name="storage_language_delete_title">Taalpakket (%1$s) verwijderen?</string>
+    <string name="storage_language_delete_message">Het wordt opnieuw via wifi gedownload zodra songteksten het weer nodig hebben.</string>
+
+    <string name="storage_section_history">Geschiedenis &amp; privacy</string>
+    <string name="storage_private_detail">Luistergeschiedenis, gedetailleerde statistieken en scrobbelen pauzeren</string>
+    <string name="storage_play_history">Luistergeschiedenis</string>
+    <string name="storage_play_history_clear_title">Luistergeschiedenis wissen?</string>
+    <string name="storage_play_history_clear_message">Je statistieken, overzichten, reeksen en slimme playlists beginnen opnieuw. Wat al naar je server, Last.fm of ListenBrainz is gestuurd, blijft ongewijzigd.</string>
+    <string name="storage_save_searches">Zoekgeschiedenis bewaren</string>
+    <string name="storage_save_searches_detail">Toon je recente zoekopdrachten op het zoekscherm</string>
+    <string name="storage_search_history">Zoekgeschiedenis</string>
+    <string name="storage_insights_off">Wordt niet vastgelegd</string>
+    <string name="storage_places_detail">Alleen opgeslagen op dit apparaat</string>
+    <string name="storage_levels">Geschiedenis van luisterniveaus</string>
+    <string name="storage_levels_clear_title">Geschiedenis van luisterniveaus wissen?</string>
+    <string name="storage_levels_clear_message">Opgeslagen niveaumetingen worden verwijderd. Je koptelefoonkalibraties blijven behouden.</string>
+    <string name="storage_artist_info_clear_title">Artiestinformatie wissen?</string>
+    <string name="storage_artist_info_clear_message">Biografieën en foto’s worden opnieuw opgezocht wanneer je weer een artiest opent.</string>
+
+    <string name="storage_section_other">Overig</string>
+    <string name="storage_temporary">Tijdelijke bestanden</string>
+    <string name="storage_temporary_detail">Restanten van imports, conversies en overdrachten</string>
+
+    <plurals name="storage_tracks_analysed">
+        <item quantity="one">%1$d nummer geanalyseerd</item>
+        <item quantity="other">%1$d nummers geanalyseerd</item>
+    </plurals>
+    <plurals name="storage_plays">
+        <item quantity="one">%1$d keer geluisterd</item>
+        <item quantity="other">%1$d keer geluisterd</item>
+    </plurals>
+    <plurals name="storage_searches">
+        <item quantity="one">%1$d recente zoekopdracht</item>
+        <item quantity="other">%1$d recente zoekopdrachten</item>
+    </plurals>
+    <plurals name="storage_level_samples">
+        <item quantity="one">%1$d opgeslagen meting</item>
+        <item quantity="other">%1$d opgeslagen metingen</item>
+    </plurals>
+    <plurals name="storage_artists">
+        <item quantity="one">%1$d artiest opgeslagen</item>
+        <item quantity="other">%1$d artiesten opgeslagen</item>
+    </plurals>
+</resources>

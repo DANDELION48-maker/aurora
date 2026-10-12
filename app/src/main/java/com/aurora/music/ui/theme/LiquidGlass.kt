@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
@@ -23,6 +25,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.aurora.music.data.ThemeStyle
 import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.LayerBackdrop
+import com.kyant.backdrop.backdrops.rememberCombinedBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kyant.backdrop.drawBackdrop
 import com.kyant.backdrop.effects.blur
 import com.kyant.backdrop.effects.lens
@@ -38,6 +43,26 @@ val LocalGlassAmbient = staticCompositionLocalOf<Backdrop?> { null }
 
 val liveGlassSupported: Boolean get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
+class GlassLayers(val ambient: LayerBackdrop, val page: LayerBackdrop)
+
+// the app shell records its backdrop and page into these; null unless live glass is on
+val LocalGlassLayers = staticCompositionLocalOf<GlassLayers?> { null }
+
+@Composable
+fun GlassHost(content: @Composable () -> Unit) {
+    val ambient = rememberLayerBackdrop()
+    val page = rememberLayerBackdrop()
+    val chrome = rememberCombinedBackdrop(ambient, page)
+    val layers = remember(ambient, page) { GlassLayers(ambient, page) }
+    val live = isGlassTheme() && liveGlassSupported
+    CompositionLocalProvider(
+        LocalGlassLayers provides layers.takeIf { live },
+        LocalGlassBackdrop provides chrome.takeIf { live },
+        LocalGlassAmbient provides ambient.takeIf { live },
+        content = content,
+    )
+}
+
 @Composable
 @ReadOnlyComposable
 fun isGlassTheme(): Boolean = LocalUiPrefs.current.themeStyle == ThemeStyle.GLASS
@@ -48,8 +73,8 @@ fun glassIsDark(): Boolean = MaterialTheme.colorScheme.background.luminance() < 
 
 object GlassColors {
     fun surface(dark: Boolean, live: Boolean): Color = when {
-        live && dark -> Color(0xFF0E0E10).copy(alpha = .5f)
-        live -> Color(0xFFFAFAFA).copy(alpha = .55f)
+        live && dark -> Color(0xFF0E0E10).copy(alpha = .58f)
+        live -> Color(0xFFFAFAFA).copy(alpha = .6f)
         dark -> Color(0xFF1C1C1E).copy(alpha = .96f)
         else -> Color(0xFFF9F9FB).copy(alpha = .96f)
     }

@@ -54,7 +54,7 @@ class AuroraActivity : AppCompatActivity() {
             AuroraTheme(uiPrefs = uiPrefs) {
                 BoxWithConstraints(Modifier.fillMaxSize()) {
                     CompositionLocalProvider(LocalWindowLayout provides WindowLayout(maxWidth.value.toInt(), maxHeight.value.toInt())) {
-                        AuroraApp()
+                        com.aurora.music.ui.theme.GlassHost { AuroraApp() }
                     }
                 }
             }

@@ -11,7 +11,7 @@
     <string name="storage_part_other">App data</string>
     <string name="storage_clear_caches">Clear all caches</string>
     <string name="storage_clear_caches_title">Clear all caches?</string>
-    <string name="storage_clear_caches_message">This removes the audio cache, cover and image caches, vocal timing, separated stems, artist info and temporary files. Downloads, analysis, history and settings stay. Caches fill up again as you use Aurora.</string>
+    <string name="storage_clear_caches_message">This removes the audio cache, cover, image and map caches, vocal timing, separated stems, artist info and temporary files. Downloads, analysis, history and settings stay. Caches fill up again as you use Aurora.</string>
     <string name="storage_caches_cleared">Caches cleared</string>
     <string name="storage_stems_busy">Vocal separation is running, so its files were kept</string>
     <string name="storage_cleared">Cleared</string>
@@ -36,6 +36,8 @@
     <string name="storage_cover_cache_detail">%1$s of %2$s · found covers stay available offline</string>
     <string name="storage_image_cache">Image cache</string>
     <string name="storage_image_cache_detail">Artwork and photos already shown in the app</string>
+    <string name="storage_map_tiles">Map tiles</string>
+    <string name="storage_map_tiles_detail">Saved for your listening map</string>
     <string name="storage_cover_cache_moved">Cover cache</string>
     <string name="storage_cover_cache_moved_detail">Size and clearing are in Downloads &amp; Storage</string>
 

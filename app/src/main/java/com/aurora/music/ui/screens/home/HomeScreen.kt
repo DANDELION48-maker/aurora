@@ -422,6 +422,13 @@ private fun OverlayTile(title: String, artUrl: String, accent: Color, onClick: (
 
 @Composable
 internal fun IconPill(icon: androidx.compose.ui.graphics.vector.ImageVector, desc: String, onClick: () -> Unit) {
+    if (com.aurora.music.ui.theme.isGlassTheme()) {
+        com.aurora.music.ui.components.glass.GlassButton(onClick, com.aurora.music.ui.theme.LocalGlassAmbient.current,
+            Modifier.size(44.dp), contentDescription = desc) {
+            Icon(icon, null, tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(22.dp))
+        }
+        return
+    }
     Box(
         Modifier.size(40.dp).clip(CircleShape).background(MaterialTheme.colorScheme.surfaceContainerHigh).clickable(onClick = onClick),
         contentAlignment = Alignment.Center,

@@ -49,7 +49,7 @@ fun Artwork(
     val artCorner = if (corner == 0.dp || corner >= 22.dp) corner else when (LocalUiPrefs.current.themeStyle) {
         ThemeStyle.RETRO -> 2.dp
         ThemeStyle.AERO -> 5.dp
-        ThemeStyle.GLASS -> 18.dp
+        ThemeStyle.GLASS -> corner.coerceIn(10.dp, 16.dp)
         else -> corner
     }
     val placeholder = Brush.linearGradient(

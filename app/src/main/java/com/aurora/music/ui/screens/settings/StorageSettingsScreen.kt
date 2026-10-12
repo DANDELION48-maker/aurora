@@ -61,7 +61,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aurora.music.AuroraApplication
 import com.aurora.music.data.Session
+import com.aurora.music.data.qualifiesAsPlay
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
@@ -96,8 +99,9 @@ fun StorageSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onO
         if (key in working) return
         working = working + key
         scope.launch {
-            val result = runCatching { action() }
-            runCatching { inventory.refresh() }
+            val result = withContext(NonCancellable) {
+                runCatching { action() }.also { runCatching { inventory.refresh() } }
+            }
             working = working - key
             val message = when {
                 result.isFailure -> R.string.storage_clear_failed
@@ -181,6 +185,14 @@ fun StorageSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onO
                     appString(R.string.storage_clear), enabled = usage.images > 0, working = "images" in working) {
                     perform("images") { inventory.clearImages(); true }
                 }
+                if (usage.mapTiles > 0) {
+                    SettingsRowDivider()
+                    StorageRow(Icons.Filled.Map, appString(R.string.storage_map_tiles),
+                        storageDetail(usage.mapTiles, appString(R.string.storage_map_tiles_detail)),
+                        appString(R.string.storage_clear), working = "tiles" in working) {
+                        perform("tiles") { inventory.clearMapTiles(); true }
+                    }
+                }
             }
 
             AnalysisSettings(usage, working, ::perform, ::ask)
@@ -198,7 +210,7 @@ fun StorageSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onO
                 }
                 SettingsRowDivider()
                 StorageRow(Icons.Filled.Person, appPlural(R.plurals.storage_artists, container.artistInfoStore.size),
-                    storageSize(usage.artistInfo), appString(R.string.storage_clear),
+                    storageDetail(usage.artistInfo), appString(R.string.storage_clear),
                     enabled = usage.artistInfo > 0, working = "artists" in working) {
                     ask(appString(R.string.storage_artist_info_clear_title), appString(R.string.storage_artist_info_clear_message)) {
                         perform("artists") { inventory.clearArtistInfo(); true }

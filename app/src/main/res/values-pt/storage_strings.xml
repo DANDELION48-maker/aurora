@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="storage_description">Downloads, caches, análises e histórico</string>
+    <string name="storage_summary">%1$s em uso · downloads, caches e histórico</string>
+    <string name="storage_used">O Aurora usa %1$s</string>
+    <string name="storage_free">%1$s livres neste dispositivo</string>
+    <string name="storage_measuring">Medindo o armazenamento…</string>
+    <string name="storage_part_downloads">Downloads</string>
+    <string name="storage_part_caches">Caches</string>
+    <string name="storage_part_analysis">Análises e modelos</string>
+    <string name="storage_part_other">Dados do app</string>
+    <string name="storage_clear_caches">Limpar todos os caches</string>
+    <string name="storage_clear_caches_title">Limpar todos os caches?</string>
+    <string name="storage_clear_caches_message">Isso remove o cache de áudio, os caches de capas, imagens e mapas, a sincronização vocal, as faixas separadas, as informações de artistas e os arquivos temporários. Downloads, análises, histórico e ajustes continuam. Os caches voltam a encher conforme você usa o Aurora.</string>
+    <string name="storage_caches_cleared">Caches limpos</string>
+    <string name="storage_stems_busy">A separação de vocais está em andamento, então os arquivos dela foram mantidos</string>
+    <string name="storage_cleared">Limpo</string>
+    <string name="storage_clear_failed">Não foi possível limpar. Tente de novo.</string>
+    <string name="storage_clear">Limpar</string>
+    <string name="storage_delete">Excluir</string>
+    <string name="storage_remove">Remover</string>
+    <string name="storage_remove_all">Remover tudo</string>
+    <string name="storage_empty">Vazio</string>
+
+    <string name="storage_downloads_title">Músicas baixadas</string>
+    <string name="storage_downloads_none">Nada baixado ainda</string>
+    <string name="storage_remove_downloads_title">Remover todos os downloads?</string>
+    <string name="storage_remove_downloads_message">Todas as faixas e coleções baixadas são excluídas deste dispositivo, de todas as suas fontes. Você pode baixá-las de novo depois.</string>
+    <string name="storage_remove_source_title">Remover os downloads de %1$s?</string>
+    <string name="storage_remove_source_message">As faixas baixadas desta fonte são excluídas deste dispositivo. Os downloads das suas outras fontes continuam.</string>
+    <string name="storage_source_unknown">Outras fontes</string>
+    <string name="storage_youtube_note">Os downloads do YouTube são salvos em Music/Aurora no seu celular e são gerenciados pelo seu gerenciador de arquivos.</string>
+
+    <string name="storage_section_images">Capas e imagens</string>
+    <string name="storage_cover_cache">Cache de busca de capas</string>
+    <string name="storage_cover_cache_detail">%1$s de %2$s · as capas encontradas continuam disponíveis offline</string>
+    <string name="storage_image_cache">Cache de imagens</string>
+    <string name="storage_image_cache_detail">Capas e fotos já exibidas no app</string>
+    <string name="storage_map_tiles">Blocos do mapa</string>
+    <string name="storage_map_tiles_detail">Salvos para o seu mapa de audição</string>
+    <string name="storage_cover_cache_moved">Cache de capas</string>
+    <string name="storage_cover_cache_moved_detail">O tamanho e a limpeza ficam em Downloads e armazenamento</string>
+
+    <string name="storage_section_analysis">Análises e modelos</string>
+    <string name="storage_sonic">Análise Sonic</string>
+    <string name="storage_sonic_clear_title">Limpar a análise Sonic?</string>
+    <string name="storage_sonic_clear_message">A rádio Sonic, o Auto DJ e as mixagens automáticas dependem dela, então as faixas são analisadas de novo conforme você toca ou escaneia. Bibliotecas grandes podem demorar um pouco.</string>
+    <string name="storage_vocals">Sincronização vocal</string>
+    <string name="storage_vocals_detail">Criada quando a letra segue a voz</string>
+    <string name="storage_stem_model">Modelo de separação de vocais</string>
+    <string name="storage_stem_model_ready">Baixado de novo na próxima vez que você separar uma faixa</string>
+    <string name="storage_stem_model_missing">Não baixado</string>
+    <string name="storage_stems">Faixas separadas</string>
+    <string name="storage_stems_detail">Faixas de vocal e base criadas para mixagens</string>
+    <string name="storage_stems_clear_title">Limpar as faixas separadas?</string>
+    <string name="storage_stems_clear_message">As mixagens que usam vocais ou bases vão separar essas músicas de novo quando você abri-las.</string>
+    <string name="storage_model_delete_title">Excluir o modelo de separação de vocais?</string>
+    <string name="storage_model_delete_message">O modelo (cerca de 64 MB) é baixado de novo na próxima vez que você separar vocais em uma mixagem.</string>
+    <string name="storage_replaygain">Análise de ReplayGain</string>
+    <string name="storage_replaygain_clear_title">Limpar os resultados de ReplayGain?</string>
+    <string name="storage_replaygain_clear_message">O nivelamento de volume dos arquivos do dispositivo para até você analisar de novo.</string>
+
+    <string name="storage_section_translation">Tradução de letras</string>
+    <string name="storage_language_pack">Pacote de idioma</string>
+    <string name="storage_language_none">Nenhum pacote de idioma baixado</string>
+    <string name="storage_language_delete_title">Excluir o pacote de idioma (%1$s)?</string>
+    <string name="storage_language_delete_message">Ele é baixado de novo pelo Wi-Fi na próxima vez que as letras precisarem.</string>
+
+    <string name="storage_section_history">Histórico e privacidade</string>
+    <string name="storage_private_detail">Pausa o histórico de reprodução, as estatísticas detalhadas e o scrobbling</string>
+    <string name="storage_play_history">Histórico de reprodução</string>
+    <string name="storage_play_history_clear_title">Limpar o histórico de reprodução?</string>
+    <string name="storage_play_history_clear_message">Suas estatísticas, retrospectivas, sequências e playlists inteligentes recomeçam do zero. As reproduções já enviadas ao seu servidor, ao Last.fm ou ao ListenBrainz não são afetadas.</string>
+    <string name="storage_save_searches">Salvar histórico de busca</string>
+    <string name="storage_save_searches_detail">Mostra suas buscas recentes na tela de busca</string>
+    <string name="storage_search_history">Histórico de busca</string>
+    <string name="storage_insights_off">Registro desativado</string>
+    <string name="storage_places_detail">Salvo só neste dispositivo</string>
+    <string name="storage_levels">Histórico de níveis de escuta</string>
+    <string name="storage_levels_clear_title">Limpar o histórico de níveis de escuta?</string>
+    <string name="storage_levels_clear_message">As amostras de nível salvas são removidas. As calibrações dos seus fones continuam.</string>
+    <string name="storage_artist_info_clear_title">Limpar as informações de artistas?</string>
+    <string name="storage_artist_info_clear_message">Biografias e fotos são buscadas de novo na próxima vez que você abrir um artista.</string>
+
+    <string name="storage_section_other">Outros</string>
+    <string name="storage_temporary">Arquivos temporários</string>
+    <string name="storage_temporary_detail">Sobras de importações, conversões e transferências</string>
+
+    <plurals name="storage_tracks_analysed">
+        <item quantity="one">%1$d faixa analisada</item>
+        <item quantity="other">%1$d faixas analisadas</item>
+        <item quantity="many">%1$d faixas analisadas</item>
+    </plurals>
+    <plurals name="storage_plays">
+        <item quantity="one">%1$d reprodução</item>
+        <item quantity="other">%1$d reproduções</item>
+        <item quantity="many">%1$d reproduções</item>
+    </plurals>
+    <plurals name="storage_searches">
+        <item quantity="one">%1$d busca recente</item>
+        <item quantity="other">%1$d buscas recentes</item>
+        <item quantity="many">%1$d buscas recentes</item>
+    </plurals>
+    <plurals name="storage_level_samples">
+        <item quantity="one">%1$d amostra salva</item>
+        <item quantity="other">%1$d amostras salvas</item>
+        <item quantity="many">%1$d amostras salvas</item>
+    </plurals>
+    <plurals name="storage_artists">
+        <item quantity="one">%1$d artista salvo</item>
+        <item quantity="other">%1$d artistas salvos</item>
+        <item quantity="many">%1$d artistas salvos</item>
+    </plurals>
+</resources>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="storage_description">Downloads, Caches, Analysen und Verlauf</string>
+    <string name="storage_summary">%1$s belegt · Downloads, Caches und Verlauf</string>
+    <string name="storage_used">Aurora belegt %1$s</string>
+    <string name="storage_free">%1$s frei auf diesem Gerät</string>
+    <string name="storage_measuring">Speicher wird gemessen…</string>
+    <string name="storage_part_downloads">Downloads</string>
+    <string name="storage_part_caches">Caches</string>
+    <string name="storage_part_analysis">Analyse &amp; Modelle</string>
+    <string name="storage_part_other">App-Daten</string>
+    <string name="storage_clear_caches">Alle Caches leeren</string>
+    <string name="storage_clear_caches_title">Alle Caches leeren?</string>
+    <string name="storage_clear_caches_message">Dadurch werden der Audio-Cache, die Cover-, Bild- und Karten-Caches, das Gesangs-Timing, getrennte Spuren, Künstlerinformationen und temporäre Dateien entfernt. Downloads, Analysen, Verlauf und Einstellungen bleiben erhalten. Die Caches füllen sich wieder, während du Aurora nutzt.</string>
+    <string name="storage_caches_cleared">Caches geleert</string>
+    <string name="storage_stems_busy">Die Gesangstrennung läuft gerade, daher wurden ihre Dateien behalten</string>
+    <string name="storage_cleared">Geleert</string>
+    <string name="storage_clear_failed">Das konnte nicht geleert werden. Versuch es noch einmal.</string>
+    <string name="storage_clear">Leeren</string>
+    <string name="storage_delete">Löschen</string>
+    <string name="storage_remove">Entfernen</string>
+    <string name="storage_remove_all">Alle entfernen</string>
+    <string name="storage_empty">Leer</string>
+
+    <string name="storage_downloads_title">Heruntergeladene Musik</string>
+    <string name="storage_downloads_none">Noch nichts heruntergeladen</string>
+    <string name="storage_remove_downloads_title">Alle Downloads entfernen?</string>
+    <string name="storage_remove_downloads_message">Alle heruntergeladenen Titel und Sammlungen werden von diesem Gerät gelöscht, und zwar für alle deine Quellen. Du kannst sie später erneut herunterladen.</string>
+    <string name="storage_remove_source_title">Downloads von %1$s entfernen?</string>
+    <string name="storage_remove_source_message">Von dieser Quelle heruntergeladene Titel werden von diesem Gerät gelöscht. Downloads aus deinen anderen Quellen bleiben erhalten.</string>
+    <string name="storage_source_unknown">Andere Quellen</string>
+    <string name="storage_youtube_note">Downloads von YouTube werden auf deinem Telefon unter Music/Aurora gespeichert und über deinen Dateimanager verwaltet.</string>
+
+    <string name="storage_section_images">Cover &amp; Bilder</string>
+    <string name="storage_cover_cache">Cache der Cover-Suche</string>
+    <string name="storage_cover_cache_detail">%1$s von %2$s · gefundene Cover bleiben offline verfügbar</string>
+    <string name="storage_image_cache">Bild-Cache</string>
+    <string name="storage_image_cache_detail">Cover und Fotos, die in der App schon angezeigt wurden</string>
+    <string name="storage_map_tiles">Kartenkacheln</string>
+    <string name="storage_map_tiles_detail">Für deine Hörkarte gespeichert</string>
+    <string name="storage_cover_cache_moved">Cover-Cache</string>
+    <string name="storage_cover_cache_moved_detail">Größe und Leeren findest du unter Downloads &amp; Speicher</string>
+
+    <string name="storage_section_analysis">Analyse &amp; Modelle</string>
+    <string name="storage_sonic">Sonic-Analyse</string>
+    <string name="storage_sonic_clear_title">Sonic-Analyse löschen?</string>
+    <string name="storage_sonic_clear_message">Sonic-Radio, Auto-DJ und automatische Mixe brauchen sie, daher werden Titel beim Abspielen oder Scannen erneut analysiert. Bei großen Bibliotheken kann das eine Weile dauern.</string>
+    <string name="storage_vocals">Gesangs-Timing</string>
+    <string name="storage_vocals_detail">Entsteht, wenn Songtexte dem Gesang folgen</string>
+    <string name="storage_stem_model">Modell für Gesangstrennung</string>
+    <string name="storage_stem_model_ready">Wird beim nächsten Trennen eines Titels erneut geladen</string>
+    <string name="storage_stem_model_missing">Nicht heruntergeladen</string>
+    <string name="storage_stems">Getrennte Spuren</string>
+    <string name="storage_stems_detail">Gesangs- und Begleitspuren für Mixe</string>
+    <string name="storage_stems_clear_title">Getrennte Spuren löschen?</string>
+    <string name="storage_stems_clear_message">Mixe mit Gesang oder Begleitung trennen diese Songs beim nächsten Öffnen erneut.</string>
+    <string name="storage_model_delete_title">Modell für Gesangstrennung löschen?</string>
+    <string name="storage_model_delete_message">Das Modell (etwa 64 MB) wird erneut geladen, wenn du das nächste Mal in einem Mix Gesang trennst.</string>
+    <string name="storage_replaygain">ReplayGain-Scan</string>
+    <string name="storage_replaygain_clear_title">ReplayGain-Ergebnisse löschen?</string>
+    <string name="storage_replaygain_clear_message">Die Lautstärkeangleichung für Dateien auf dem Gerät pausiert, bis du erneut scannst.</string>
+
+    <string name="storage_section_translation">Songtext-Übersetzung</string>
+    <string name="storage_language_pack">Sprachpaket</string>
+    <string name="storage_language_none">Keine Sprachpakete heruntergeladen</string>
+    <string name="storage_language_delete_title">Sprachpaket (%1$s) löschen?</string>
+    <string name="storage_language_delete_message">Es wird erneut über WLAN geladen, sobald Songtexte es wieder brauchen.</string>
+
+    <string name="storage_section_history">Verlauf &amp; Datenschutz</string>
+    <string name="storage_private_detail">Wiedergabeverlauf, detaillierte Statistiken und Scrobbling pausieren</string>
+    <string name="storage_play_history">Wiedergabeverlauf</string>
+    <string name="storage_play_history_clear_title">Wiedergabeverlauf löschen?</string>
+    <string name="storage_play_history_clear_message">Deine Statistiken, Rückblicke, Serien und intelligenten Playlists beginnen von vorn. Wiedergaben, die schon an deinen Server, Last.fm oder ListenBrainz gesendet wurden, sind nicht betroffen.</string>
+    <string name="storage_save_searches">Suchverlauf speichern</string>
+    <string name="storage_save_searches_detail">Deine letzten Suchen auf dem Suchbildschirm anzeigen</string>
+    <string name="storage_search_history">Suchverlauf</string>
+    <string name="storage_insights_off">Keine Aufzeichnung</string>
+    <string name="storage_places_detail">Nur auf diesem Gerät gespeichert</string>
+    <string name="storage_levels">Verlauf der Hörpegel</string>
+    <string name="storage_levels_clear_title">Verlauf der Hörpegel löschen?</string>
+    <string name="storage_levels_clear_message">Gespeicherte Pegelmessungen werden entfernt. Deine Kopfhörerkalibrierungen bleiben erhalten.</string>
+    <string name="storage_artist_info_clear_title">Künstlerinformationen löschen?</string>
+    <string name="storage_artist_info_clear_message">Biografien und Fotos werden neu nachgeschlagen, wenn du das nächste Mal einen Künstler öffnest.</string>
+
+    <string name="storage_section_other">Sonstiges</string>
+    <string name="storage_temporary">Temporäre Dateien</string>
+    <string name="storage_temporary_detail">Reste von Importen, Konvertierungen und Übertragungen</string>
+
+    <plurals name="storage_tracks_analysed">
+        <item quantity="one">%1$d Titel analysiert</item>
+        <item quantity="other">%1$d Titel analysiert</item>
+    </plurals>
+    <plurals name="storage_plays">
+        <item quantity="one">%1$d Wiedergabe</item>
+        <item quantity="other">%1$d Wiedergaben</item>
+    </plurals>
+    <plurals name="storage_searches">
+        <item quantity="one">%1$d letzte Suche</item>
+        <item quantity="other">%1$d letzte Suchen</item>
+    </plurals>
+    <plurals name="storage_level_samples">
+        <item quantity="one">%1$d gespeicherte Messung</item>
+        <item quantity="other">%1$d gespeicherte Messungen</item>
+    </plurals>
+    <plurals name="storage_artists">
+        <item quantity="one">%1$d Künstler gespeichert</item>
+        <item quantity="other">%1$d Künstler gespeichert</item>
+    </plurals>
+</resources>

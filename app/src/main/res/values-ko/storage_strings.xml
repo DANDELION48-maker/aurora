@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="storage_description">다운로드, 캐시, 분석 및 기록</string>
+    <string name="storage_summary">%1$s 사용 중 · 다운로드, 캐시 및 기록</string>
+    <string name="storage_used">Aurora 사용량 %1$s</string>
+    <string name="storage_free">이 기기의 여유 공간 %1$s</string>
+    <string name="storage_measuring">저장공간 측정 중…</string>
+    <string name="storage_part_downloads">다운로드</string>
+    <string name="storage_part_caches">캐시</string>
+    <string name="storage_part_analysis">분석 및 모델</string>
+    <string name="storage_part_other">앱 데이터</string>
+    <string name="storage_clear_caches">모든 캐시 지우기</string>
+    <string name="storage_clear_caches_title">모든 캐시를 지울까요?</string>
+    <string name="storage_clear_caches_message">오디오 캐시, 커버·이미지·지도 캐시, 보컬 타이밍, 분리된 스템, 아티스트 정보, 임시 파일이 삭제됩니다. 다운로드, 분석, 기록, 설정은 그대로 유지됩니다. Aurora를 사용하는 동안 캐시가 다시 채워집니다.</string>
+    <string name="storage_caches_cleared">캐시를 지웠습니다</string>
+    <string name="storage_stems_busy">보컬 분리가 진행 중이어서 관련 파일은 유지했습니다</string>
+    <string name="storage_cleared">지웠습니다</string>
+    <string name="storage_clear_failed">지우지 못했습니다. 다시 시도하세요.</string>
+    <string name="storage_clear">지우기</string>
+    <string name="storage_delete">삭제</string>
+    <string name="storage_remove">제거</string>
+    <string name="storage_remove_all">모두 제거</string>
+    <string name="storage_empty">비어 있음</string>
+
+    <string name="storage_downloads_title">다운로드한 음악</string>
+    <string name="storage_downloads_none">아직 다운로드한 항목이 없습니다</string>
+    <string name="storage_remove_downloads_title">모든 다운로드를 제거할까요?</string>
+    <string name="storage_remove_downloads_message">모든 소스에서 다운로드한 곡과 컬렉션이 이 기기에서 삭제됩니다. 나중에 다시 다운로드할 수 있습니다.</string>
+    <string name="storage_remove_source_title">%1$s에서 받은 다운로드를 제거할까요?</string>
+    <string name="storage_remove_source_message">이 소스에서 다운로드한 곡이 이 기기에서 삭제됩니다. 다른 소스의 다운로드는 유지됩니다.</string>
+    <string name="storage_source_unknown">기타 소스</string>
+    <string name="storage_youtube_note">YouTube에서 받은 다운로드는 휴대폰의 Music/Aurora에 저장되며 파일 관리자에서 관리합니다.</string>
+
+    <string name="storage_section_images">커버 및 이미지</string>
+    <string name="storage_cover_cache">커버 검색 캐시</string>
+    <string name="storage_cover_cache_detail">%1$s / %2$s · 찾은 커버는 오프라인에서도 볼 수 있습니다</string>
+    <string name="storage_image_cache">이미지 캐시</string>
+    <string name="storage_image_cache_detail">앱에 이미 표시된 아트워크와 사진</string>
+    <string name="storage_map_tiles">지도 타일</string>
+    <string name="storage_map_tiles_detail">청취 지도용으로 저장됨</string>
+    <string name="storage_cover_cache_moved">커버 캐시</string>
+    <string name="storage_cover_cache_moved_detail">크기 확인과 지우기는 다운로드 및 저장공간에서 할 수 있습니다</string>
+
+    <string name="storage_section_analysis">분석 및 모델</string>
+    <string name="storage_sonic">Sonic 분석</string>
+    <string name="storage_sonic_clear_title">Sonic 분석을 지울까요?</string>
+    <string name="storage_sonic_clear_message">Sonic 라디오, 자동 DJ, 자동 믹스가 이 분석을 사용하므로 재생하거나 스캔할 때 곡을 다시 분석합니다. 보관함이 크면 시간이 걸릴 수 있습니다.</string>
+    <string name="storage_vocals">보컬 타이밍</string>
+    <string name="storage_vocals_detail">가사가 보컬을 따라갈 때 생성됩니다</string>
+    <string name="storage_stem_model">보컬 분리 모델</string>
+    <string name="storage_stem_model_ready">다음에 곡을 분리할 때 다시 다운로드됩니다</string>
+    <string name="storage_stem_model_missing">다운로드되지 않음</string>
+    <string name="storage_stems">분리된 스템</string>
+    <string name="storage_stems_detail">믹스용으로 만든 보컬 및 반주 트랙</string>
+    <string name="storage_stems_clear_title">분리된 스템을 지울까요?</string>
+    <string name="storage_stems_clear_message">보컬이나 반주를 사용하는 믹스는 열 때 해당 곡을 다시 분리합니다.</string>
+    <string name="storage_model_delete_title">보컬 분리 모델을 삭제할까요?</string>
+    <string name="storage_model_delete_message">다음에 믹스에서 보컬을 분리할 때 모델(약 64MB)을 다시 다운로드합니다.</string>
+    <string name="storage_replaygain">ReplayGain 스캔</string>
+    <string name="storage_replaygain_clear_title">ReplayGain 결과를 지울까요?</string>
+    <string name="storage_replaygain_clear_message">다시 스캔할 때까지 기기 내 파일의 볼륨 평준화가 중지됩니다.</string>
+
+    <string name="storage_section_translation">가사 번역</string>
+    <string name="storage_language_pack">언어 팩</string>
+    <string name="storage_language_none">다운로드한 언어 팩이 없습니다</string>
+    <string name="storage_language_delete_title">언어 팩(%1$s)을 삭제할까요?</string>
+    <string name="storage_language_delete_message">다음에 가사에 필요할 때 Wi-Fi로 다시 다운로드됩니다.</string>
+
+    <string name="storage_section_history">기록 및 개인정보</string>
+    <string name="storage_private_detail">재생 기록, 상세 통계, 스크로블링 일시중지</string>
+    <string name="storage_play_history">재생 기록</string>
+    <string name="storage_play_history_clear_title">재생 기록을 지울까요?</string>
+    <string name="storage_play_history_clear_message">통계, 요약, 연속 기록, 스마트 플레이리스트가 처음부터 다시 시작됩니다. 서버, Last.fm, ListenBrainz에 이미 전송된 재생에는 영향이 없습니다.</string>
+    <string name="storage_save_searches">검색 기록 저장</string>
+    <string name="storage_save_searches_detail">검색 화면에 최근 검색어 표시</string>
+    <string name="storage_search_history">검색 기록</string>
+    <string name="storage_insights_off">기록하지 않음</string>
+    <string name="storage_places_detail">이 기기에만 저장됨</string>
+    <string name="storage_levels">청취 레벨 기록</string>
+    <string name="storage_levels_clear_title">청취 레벨 기록을 지울까요?</string>
+    <string name="storage_levels_clear_message">저장된 레벨 샘플이 삭제됩니다. 헤드폰 보정은 유지됩니다.</string>
+    <string name="storage_artist_info_clear_title">아티스트 정보를 지울까요?</string>
+    <string name="storage_artist_info_clear_message">다음에 아티스트를 열 때 약력과 사진을 다시 찾습니다.</string>
+
+    <string name="storage_section_other">기타</string>
+    <string name="storage_temporary">임시 파일</string>
+    <string name="storage_temporary_detail">가져오기, 변환, 전송 후 남은 파일</string>
+
+    <plurals name="storage_tracks_analysed">
+        <item quantity="one">분석된 곡 %1$d개</item>
+        <item quantity="other">분석된 곡 %1$d개</item>
+    </plurals>
+    <plurals name="storage_plays">
+        <item quantity="one">재생 %1$d회</item>
+        <item quantity="other">재생 %1$d회</item>
+    </plurals>
+    <plurals name="storage_searches">
+        <item quantity="one">최근 검색 %1$d개</item>
+        <item quantity="other">최근 검색 %1$d개</item>
+    </plurals>
+    <plurals name="storage_level_samples">
+        <item quantity="one">저장된 샘플 %1$d개</item>
+        <item quantity="other">저장된 샘플 %1$d개</item>
+    </plurals>
+    <plurals name="storage_artists">
+        <item quantity="one">저장된 아티스트 %1$d명</item>
+        <item quantity="other">저장된 아티스트 %1$d명</item>
+    </plurals>
+</resources>

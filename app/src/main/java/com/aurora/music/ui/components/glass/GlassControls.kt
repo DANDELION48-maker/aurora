@@ -7,6 +7,9 @@ import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.draw.shadow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -412,3 +415,55 @@ fun GlassToggle(checked: Boolean, onCheckedChange: (Boolean) -> Unit, modifier: 
         )
     }
 }
+
+// ios segmented control: a raised thumb springs between the options
+@Composable
+fun GlassSegmented(options: List<String>, selected: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier) {
+    val dark = glassIsDark()
+    val track = Color(0xFF767680).copy(alpha = if (dark) .24f else .12f)
+    val thumb = if (dark) Color(0xFF636366).copy(alpha = .9f) else Color.White
+    val position by animateFloatAsState(selected.coerceAtLeast(0).toFloat(), spring(.78f, 420f), label = "glassSegment")
+    val scope = rememberCoroutineScope()
+    val press = remember(scope) { InteractiveHighlight(scope) }
+    BoxWithConstraints(
+        modifier.fillMaxWidth().height(36.dp).clip(Capsule()).background(track).padding(2.dp),
+    ) {
+        val segment = maxWidth / options.size.coerceAtLeast(1)
+        if (selected >= 0) Box(
+            Modifier
+                .width(segment)
+                .fillMaxHeight()
+                .graphicsLayer {
+                    translationX = position * segment.toPx()
+                    val s = lerp(1f, 1.06f, press.pressProgress)
+                    scaleX = s
+                    scaleY = s
+                }
+                .shadow(if (dark) 0.dp else 3.dp, Capsule(), clip = false, ambientColor = Color.Black.copy(alpha = .12f), spotColor = Color.Black.copy(alpha = .12f))
+                .clip(Capsule())
+                .background(thumb),
+        )
+        Row(Modifier.fillMaxWidth().fillMaxHeight().then(press.gestureModifier)) {
+            options.forEachIndexed { i, label ->
+                Box(
+                    Modifier.weight(1f).fillMaxHeight().clip(Capsule())
+                        .clickable(interactionSource = null, indication = null, role = Role.Tab) { onSelect(i) }
+                        .semantics { this.selected = i == selected },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(label, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp,
+                        fontWeight = if (i == selected) FontWeight.SemiBold else FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 6.dp))
+                }
+            }
+        }
+    }
+}
+
+private val TilePalette = listOf(
+    Color(0xFF0A84FF), Color(0xFF30D158), Color(0xFFFF9F0A), Color(0xFFFF375F),
+    Color(0xFFBF5AF2), Color(0xFF5E5CE6), Color(0xFF32ADE6), Color(0xFFFF453A), Color(0xFF8E8E93),
+)
+
+// a stable ios-settings colour per icon
+fun glassTileColor(icon: ImageVector): Color = TilePalette[Math.floorMod(icon.name.hashCode(), TilePalette.size)]

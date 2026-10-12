@@ -29,6 +29,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.util.lerp
+import com.aurora.music.ui.components.glass.InteractiveHighlight
+import com.aurora.music.ui.theme.LocalGlassBackdrop
+import com.aurora.music.ui.theme.liquidGlass
+import com.kyant.shapes.Capsule
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +63,10 @@ fun MiniPlayer(
     onNext: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    if (LocalUiPrefs.current.themeStyle == ThemeStyle.GLASS) {
+        GlassMiniPlayer(state, onExpand, onTogglePlay, onToggleLike, onNext, modifier)
+        return
+    }
     val song = state.current
     val isMix = song.id.startsWith("aurora-mix:")
     val ui = LocalUiPrefs.current
@@ -148,5 +161,72 @@ fun MiniPlayer(
             }
         }
         Spacer(Modifier.height(6.dp))
+    }
+}
+
+@Composable
+private fun GlassMiniPlayer(
+    state: PlayerUiState,
+    onExpand: () -> Unit,
+    onTogglePlay: () -> Unit,
+    onToggleLike: () -> Unit,
+    onNext: () -> Unit,
+    modifier: Modifier,
+) {
+    val song = state.current
+    val isMix = song.id.startsWith("aurora-mix:")
+    val ui = LocalUiPrefs.current
+    val colors = MaterialTheme.colorScheme
+    val progress by animateFloatAsState(state.progress, label = "glassMiniProgress")
+    val accent = com.aurora.music.ui.theme.LocalContextAccent.current.color ?: colors.primary
+    val likeTint by animateColorAsState(if (state.isCurrentLiked) colors.primary else colors.onSurface, label = "glassLike")
+    val scope = rememberCoroutineScope()
+    val highlight = remember(scope) { InteractiveHighlight(scope) }
+    val height = when (ui.miniStyle) { MiniStyle.COMPACT -> 54.dp; MiniStyle.PROMINENT -> 70.dp; else -> 62.dp }
+    val art = when (ui.miniStyle) { MiniStyle.COMPACT -> 38.dp; MiniStyle.PROMINENT -> 52.dp; else -> 44.dp }
+    val track = colors.onSurface.copy(alpha = .12f)
+    Row(
+        modifier
+            .fillMaxWidth()
+            .height(height)
+            .liquidGlass(LocalGlassBackdrop.current, Capsule(), refraction = 20.dp, layerBlock = {
+                val scale = lerp(1f, 1f + 4.dp.toPx() / size.height, highlight.pressProgress)
+                scaleX = scale
+                scaleY = scale
+            }, onDrawSurface = {
+                if (ui.miniProgress != MiniProgress.NONE) {
+                    val width = (if (ui.miniProgress == MiniProgress.BAR) 3.5f else 2f).dp.toPx()
+                    val inset = size.height / 2f
+                    val y = size.height - width / 2f - 2.5.dp.toPx()
+                    drawLine(track, Offset(inset, y), Offset(size.width - inset, y), width, StrokeCap.Round)
+                    drawLine(accent, Offset(inset, y), Offset(inset + (size.width - inset * 2) * progress, y), width, StrokeCap.Round)
+                }
+            })
+            .clickable(interactionSource = null, indication = null, onClick = onExpand)
+            .then(highlight.modifier)
+            .then(highlight.gestureModifier)
+            .padding(start = (height - art) / 2, end = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Artwork(song.artworkUrl, song.accent, Modifier.size(art), corner = 10.dp)
+        Spacer(Modifier.width(12.dp))
+        Column(Modifier.weight(1f)) {
+            Text(song.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold, color = colors.onSurface,
+                maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(song.artist, style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant,
+                maxLines = 1, overflow = TextOverflow.Ellipsis)
+        }
+        if (ui.miniStyle != MiniStyle.COMPACT && !isMix) GlassGlyph(
+            if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder, appString(R.string.text_like_c7e02c), likeTint, 24.dp, onToggleLike)
+        GlassGlyph(if (state.isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow, appString(R.string.text_play_pause_14a1d0), colors.onSurface, 32.dp, onTogglePlay)
+        if (!isMix) GlassGlyph(Icons.Filled.SkipNext, appString(R.string.text_next_bc9819), colors.onSurface, 32.dp, onNext)
+    }
+}
+
+@Composable
+private fun GlassGlyph(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, tint: androidx.compose.ui.graphics.Color,
+    size: androidx.compose.ui.unit.Dp, onClick: () -> Unit) {
+    Box(Modifier.size(44.dp).clip(CircleShape).clickable(onClick = onClick), contentAlignment = Alignment.Center) {
+        Icon(icon, label, tint = tint, modifier = Modifier.size(size))
     }
 }

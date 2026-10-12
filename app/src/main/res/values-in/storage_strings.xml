@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="storage_description">Unduhan, cache, analisis, dan riwayat</string>
+    <string name="storage_summary">%1$s terpakai · unduhan, cache, dan riwayat</string>
+    <string name="storage_used">Aurora memakai %1$s</string>
+    <string name="storage_free">%1$s kosong di perangkat ini</string>
+    <string name="storage_measuring">Mengukur penyimpanan…</string>
+    <string name="storage_part_downloads">Unduhan</string>
+    <string name="storage_part_caches">Cache</string>
+    <string name="storage_part_analysis">Analisis &amp; model</string>
+    <string name="storage_part_other">Data aplikasi</string>
+    <string name="storage_clear_caches">Hapus semua cache</string>
+    <string name="storage_clear_caches_title">Hapus semua cache?</string>
+    <string name="storage_clear_caches_message">Ini menghapus cache audio, cache sampul, gambar, dan peta, timing vokal, stem terpisah, info artis, dan file sementara. Unduhan, analisis, riwayat, dan pengaturan tetap ada. Cache akan terisi lagi saat kamu memakai Aurora.</string>
+    <string name="storage_caches_cleared">Cache dihapus</string>
+    <string name="storage_stems_busy">Pemisahan vokal sedang berjalan, jadi file-nya tetap disimpan</string>
+    <string name="storage_cleared">Dihapus</string>
+    <string name="storage_clear_failed">Tidak dapat menghapus ini. Coba lagi.</string>
+    <string name="storage_clear">Hapus</string>
+    <string name="storage_delete">Hapus</string>
+    <string name="storage_remove">Hapus</string>
+    <string name="storage_remove_all">Hapus semua</string>
+    <string name="storage_empty">Kosong</string>
+
+    <string name="storage_downloads_title">Musik yang diunduh</string>
+    <string name="storage_downloads_none">Belum ada yang diunduh</string>
+    <string name="storage_remove_downloads_title">Hapus semua unduhan?</string>
+    <string name="storage_remove_downloads_message">Semua lagu dan koleksi yang diunduh akan dihapus dari perangkat ini, untuk semua sumbermu. Kamu bisa mengunduhnya lagi nanti.</string>
+    <string name="storage_remove_source_title">Hapus unduhan dari %1$s?</string>
+    <string name="storage_remove_source_message">Lagu yang diunduh dari sumber ini akan dihapus dari perangkat ini. Unduhan dari sumber lainnya tetap ada.</string>
+    <string name="storage_source_unknown">Sumber lain</string>
+    <string name="storage_youtube_note">Unduhan dari YouTube disimpan ke Music/Aurora di ponselmu dan dikelola lewat pengelola file.</string>
+
+    <string name="storage_section_images">Sampul &amp; gambar</string>
+    <string name="storage_cover_cache">Cache pencarian sampul</string>
+    <string name="storage_cover_cache_detail">%1$s dari %2$s · sampul yang ditemukan tetap tersedia offline</string>
+    <string name="storage_image_cache">Cache gambar</string>
+    <string name="storage_image_cache_detail">Sampul dan foto yang sudah ditampilkan di aplikasi</string>
+    <string name="storage_map_tiles">Petak peta</string>
+    <string name="storage_map_tiles_detail">Disimpan untuk peta mendengarkanmu</string>
+    <string name="storage_cover_cache_moved">Cache sampul</string>
+    <string name="storage_cover_cache_moved_detail">Ukuran dan penghapusan ada di Unduhan &amp; Penyimpanan</string>
+
+    <string name="storage_section_analysis">Analisis &amp; model</string>
+    <string name="storage_sonic">Analisis Sonic</string>
+    <string name="storage_sonic_clear_title">Hapus analisis Sonic?</string>
+    <string name="storage_sonic_clear_message">Radio Sonic, Auto-DJ, dan mix otomatis bergantung padanya, jadi lagu akan dianalisis ulang saat kamu memutar atau memindai. Pustaka besar bisa memakan waktu.</string>
+    <string name="storage_vocals">Timing vokal</string>
+    <string name="storage_vocals_detail">Dibuat saat lirik mengikuti vokal</string>
+    <string name="storage_stem_model">Model pemisahan vokal</string>
+    <string name="storage_stem_model_ready">Diunduh lagi saat kamu memisahkan lagu berikutnya</string>
+    <string name="storage_stem_model_missing">Belum diunduh</string>
+    <string name="storage_stems">Stem terpisah</string>
+    <string name="storage_stems_detail">Trek vokal dan iringan yang dibuat untuk mix</string>
+    <string name="storage_stems_clear_title">Hapus stem terpisah?</string>
+    <string name="storage_stems_clear_message">Mix yang memakai vokal atau iringan akan memisahkan lagu tersebut lagi saat kamu membukanya.</string>
+    <string name="storage_model_delete_title">Hapus model pemisahan vokal?</string>
+    <string name="storage_model_delete_message">Model (sekitar 64 MB) akan diunduh lagi saat kamu memisahkan vokal di mix berikutnya.</string>
+    <string name="storage_replaygain">Pindaian ReplayGain</string>
+    <string name="storage_replaygain_clear_title">Hapus hasil ReplayGain?</string>
+    <string name="storage_replaygain_clear_message">Perataan volume untuk file di perangkat berhenti sampai kamu memindai lagi.</string>
+
+    <string name="storage_section_translation">Terjemahan lirik</string>
+    <string name="storage_language_pack">Paket bahasa</string>
+    <string name="storage_language_none">Belum ada paket bahasa yang diunduh</string>
+    <string name="storage_language_delete_title">Hapus paket bahasa (%1$s)?</string>
+    <string name="storage_language_delete_message">Paket ini akan diunduh lagi melalui Wi-Fi saat lirik membutuhkannya.</string>
+
+    <string name="storage_section_history">Riwayat &amp; privasi</string>
+    <string name="storage_private_detail">Jeda riwayat putar, statistik terperinci, dan scrobbling</string>
+    <string name="storage_play_history">Riwayat putar</string>
+    <string name="storage_play_history_clear_title">Hapus riwayat putar?</string>
+    <string name="storage_play_history_clear_message">Statistik, rekap, rangkaian, dan playlist pintarmu akan mulai dari awal. Pemutaran yang sudah dikirim ke servermu, Last.fm, atau ListenBrainz tidak terpengaruh.</string>
+    <string name="storage_save_searches">Simpan riwayat pencarian</string>
+    <string name="storage_save_searches_detail">Tampilkan pencarian terbarumu di layar pencarian</string>
+    <string name="storage_search_history">Riwayat pencarian</string>
+    <string name="storage_insights_off">Tidak mencatat</string>
+    <string name="storage_places_detail">Hanya disimpan di perangkat ini</string>
+    <string name="storage_levels">Riwayat level mendengarkan</string>
+    <string name="storage_levels_clear_title">Hapus riwayat level mendengarkan?</string>
+    <string name="storage_levels_clear_message">Sampel level yang tersimpan akan dihapus. Kalibrasi headphone-mu tetap ada.</string>
+    <string name="storage_artist_info_clear_title">Hapus informasi artis?</string>
+    <string name="storage_artist_info_clear_message">Biografi dan foto akan dicari lagi saat kamu membuka artis berikutnya.</string>
+
+    <string name="storage_section_other">Lainnya</string>
+    <string name="storage_temporary">File sementara</string>
+    <string name="storage_temporary_detail">Sisa dari impor, konversi, dan transfer</string>
+
+    <plurals name="storage_tracks_analysed">
+        <item quantity="one">%1$d lagu dianalisis</item>
+        <item quantity="other">%1$d lagu dianalisis</item>
+    </plurals>
+    <plurals name="storage_plays">
+        <item quantity="one">%1$d pemutaran</item>
+        <item quantity="other">%1$d pemutaran</item>
+    </plurals>
+    <plurals name="storage_searches">
+        <item quantity="one">%1$d pencarian terbaru</item>
+        <item quantity="other">%1$d pencarian terbaru</item>
+    </plurals>
+    <plurals name="storage_level_samples">
+        <item quantity="one">%1$d sampel tersimpan</item>
+        <item quantity="other">%1$d sampel tersimpan</item>
+    </plurals>
+    <plurals name="storage_artists">
+        <item quantity="one">%1$d artis tersimpan</item>
+        <item quantity="other">%1$d artis tersimpan</item>
+    </plurals>
+</resources>

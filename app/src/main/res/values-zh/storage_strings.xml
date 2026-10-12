@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="storage_description">下载、缓存、分析和历史记录</string>
+    <string name="storage_summary">已使用 %1$s · 下载、缓存和历史记录</string>
+    <string name="storage_used">Aurora 已使用 %1$s</string>
+    <string name="storage_free">此设备可用空间 %1$s</string>
+    <string name="storage_measuring">正在计算存储空间…</string>
+    <string name="storage_part_downloads">下载</string>
+    <string name="storage_part_caches">缓存</string>
+    <string name="storage_part_analysis">分析与模型</string>
+    <string name="storage_part_other">应用数据</string>
+    <string name="storage_clear_caches">清除所有缓存</string>
+    <string name="storage_clear_caches_title">清除所有缓存？</string>
+    <string name="storage_clear_caches_message">这会删除音频缓存，封面、图片和地图缓存，人声时间轴，分离音轨，艺人信息和临时文件。下载、分析、历史记录和设置都会保留。使用 Aurora 时缓存会重新填充。</string>
+    <string name="storage_caches_cleared">缓存已清除</string>
+    <string name="storage_stems_busy">人声分离正在进行，因此保留了相关文件</string>
+    <string name="storage_cleared">已清除</string>
+    <string name="storage_clear_failed">无法清除。请重试。</string>
+    <string name="storage_clear">清除</string>
+    <string name="storage_delete">删除</string>
+    <string name="storage_remove">移除</string>
+    <string name="storage_remove_all">全部移除</string>
+    <string name="storage_empty">空</string>
+
+    <string name="storage_downloads_title">已下载的音乐</string>
+    <string name="storage_downloads_none">尚未下载任何内容</string>
+    <string name="storage_remove_downloads_title">移除所有下载？</string>
+    <string name="storage_remove_downloads_message">所有来源中已下载的曲目和合集都会从此设备删除。之后你可以重新下载。</string>
+    <string name="storage_remove_source_title">移除来自 %1$s 的下载？</string>
+    <string name="storage_remove_source_message">从此来源下载的曲目将从此设备删除。其他来源的下载会保留。</string>
+    <string name="storage_source_unknown">其他来源</string>
+    <string name="storage_youtube_note">从 YouTube 下载的内容保存在手机的 Music/Aurora 中，请使用文件管理器管理。</string>
+
+    <string name="storage_section_images">封面与图片</string>
+    <string name="storage_cover_cache">封面查找缓存</string>
+    <string name="storage_cover_cache_detail">%1$s / %2$s · 已找到的封面离线时仍可使用</string>
+    <string name="storage_image_cache">图片缓存</string>
+    <string name="storage_image_cache_detail">应用中已显示过的封面和照片</string>
+    <string name="storage_map_tiles">地图图块</string>
+    <string name="storage_map_tiles_detail">为你的收听地图保存</string>
+    <string name="storage_cover_cache_moved">封面缓存</string>
+    <string name="storage_cover_cache_moved_detail">大小和清除选项位于“下载与存储”中</string>
+
+    <string name="storage_section_analysis">分析与模型</string>
+    <string name="storage_sonic">Sonic 分析</string>
+    <string name="storage_sonic_clear_title">清除 Sonic 分析？</string>
+    <string name="storage_sonic_clear_message">Sonic 电台、自动 DJ 和自动混音都依赖它，因此播放或扫描时会重新分析曲目。大型音乐库可能需要一段时间。</string>
+    <string name="storage_vocals">人声时间轴</string>
+    <string name="storage_vocals_detail">在歌词跟随人声时生成</string>
+    <string name="storage_stem_model">人声分离模型</string>
+    <string name="storage_stem_model_ready">下次分离曲目时会重新下载</string>
+    <string name="storage_stem_model_missing">未下载</string>
+    <string name="storage_stems">分离音轨</string>
+    <string name="storage_stems_detail">为混音生成的人声和伴奏音轨</string>
+    <string name="storage_stems_clear_title">清除分离音轨？</string>
+    <string name="storage_stems_clear_message">使用人声或伴奏的混音在打开时会重新分离这些歌曲。</string>
+    <string name="storage_model_delete_title">删除人声分离模型？</string>
+    <string name="storage_model_delete_message">下次在混音中分离人声时，会重新下载该模型（约 64 MB）。</string>
+    <string name="storage_replaygain">ReplayGain 扫描</string>
+    <string name="storage_replaygain_clear_title">清除 ReplayGain 结果？</string>
+    <string name="storage_replaygain_clear_message">在重新扫描前，本机文件的音量平衡将停止。</string>
+
+    <string name="storage_section_translation">歌词翻译</string>
+    <string name="storage_language_pack">语言包</string>
+    <string name="storage_language_none">未下载任何语言包</string>
+    <string name="storage_language_delete_title">删除语言包（%1$s）？</string>
+    <string name="storage_language_delete_message">下次歌词需要时，会通过 Wi-Fi 重新下载。</string>
+
+    <string name="storage_section_history">历史记录与隐私</string>
+    <string name="storage_private_detail">暂停播放历史、详细统计和 Scrobble</string>
+    <string name="storage_play_history">播放历史</string>
+    <string name="storage_play_history_clear_title">清除播放历史？</string>
+    <string name="storage_play_history_clear_message">你的统计、回顾、连续记录和智能播放列表将重新开始。已发送到服务器、Last.fm 或 ListenBrainz 的播放记录不受影响。</string>
+    <string name="storage_save_searches">保存搜索历史</string>
+    <string name="storage_save_searches_detail">在搜索页面显示最近的搜索</string>
+    <string name="storage_search_history">搜索历史</string>
+    <string name="storage_insights_off">未在记录</string>
+    <string name="storage_places_detail">仅保存在此设备上</string>
+    <string name="storage_levels">聆听电平历史</string>
+    <string name="storage_levels_clear_title">清除聆听电平历史？</string>
+    <string name="storage_levels_clear_message">已保存的电平样本将被删除。耳机校准会保留。</string>
+    <string name="storage_artist_info_clear_title">清除艺人信息？</string>
+    <string name="storage_artist_info_clear_message">下次打开艺人时，会重新查找简介和照片。</string>
+
+    <string name="storage_section_other">其他</string>
+    <string name="storage_temporary">临时文件</string>
+    <string name="storage_temporary_detail">导入、转换和传输留下的文件</string>
+
+    <plurals name="storage_tracks_analysed">
+        <item quantity="one">已分析 %1$d 首曲目</item>
+        <item quantity="other">已分析 %1$d 首曲目</item>
+    </plurals>
+    <plurals name="storage_plays">
+        <item quantity="one">%1$d 次播放</item>
+        <item quantity="other">%1$d 次播放</item>
+    </plurals>
+    <plurals name="storage_searches">
+        <item quantity="one">%1$d 条最近搜索</item>
+        <item quantity="other">%1$d 条最近搜索</item>
+    </plurals>
+    <plurals name="storage_level_samples">
+        <item quantity="one">%1$d 个已保存样本</item>
+        <item quantity="other">%1$d 个已保存样本</item>
+    </plurals>
+    <plurals name="storage_artists">
+        <item quantity="one">已保存 %1$d 位艺人</item>
+        <item quantity="other">已保存 %1$d 位艺人</item>
+    </plurals>
+</resources>

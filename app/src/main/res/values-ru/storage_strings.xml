@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="storage_description">Скачанное, кэш, анализ и история</string>
+    <string name="storage_summary">Занято %1$s · скачанное, кэш и история</string>
+    <string name="storage_used">Aurora занимает %1$s</string>
+    <string name="storage_free">Свободно на устройстве: %1$s</string>
+    <string name="storage_measuring">Подсчёт занятого места…</string>
+    <string name="storage_part_downloads">Скачанное</string>
+    <string name="storage_part_caches">Кэш</string>
+    <string name="storage_part_analysis">Анализ и модели</string>
+    <string name="storage_part_other">Данные приложения</string>
+    <string name="storage_clear_caches">Очистить весь кэш</string>
+    <string name="storage_clear_caches_title">Очистить весь кэш?</string>
+    <string name="storage_clear_caches_message">Будут удалены аудиокэш, кэш обложек, изображений и карт, синхронизация с вокалом, разделённые дорожки, сведения об исполнителях и временные файлы. Скачанное, результаты анализа, история и настройки сохранятся. Кэш снова заполнится по мере использования Aurora.</string>
+    <string name="storage_caches_cleared">Кэш очищен</string>
+    <string name="storage_stems_busy">Сейчас идёт выделение вокала, поэтому его файлы сохранены</string>
+    <string name="storage_cleared">Очищено</string>
+    <string name="storage_clear_failed">Не удалось очистить. Попробуйте ещё раз.</string>
+    <string name="storage_clear">Очистить</string>
+    <string name="storage_delete">Удалить</string>
+    <string name="storage_remove">Удалить</string>
+    <string name="storage_remove_all">Удалить все</string>
+    <string name="storage_empty">Пусто</string>
+
+    <string name="storage_downloads_title">Скачанная музыка</string>
+    <string name="storage_downloads_none">Пока ничего не скачано</string>
+    <string name="storage_remove_downloads_title">Удалить всё скачанное?</string>
+    <string name="storage_remove_downloads_message">Все скачанные треки и подборки из всех ваших источников будут удалены с этого устройства. Позже их можно скачать снова.</string>
+    <string name="storage_remove_source_title">Удалить скачанное из %1$s?</string>
+    <string name="storage_remove_source_message">Треки, скачанные из этого источника, будут удалены с устройства. Скачанное из других источников сохранится.</string>
+    <string name="storage_source_unknown">Другие источники</string>
+    <string name="storage_youtube_note">Скачанное с YouTube сохраняется на телефоне в папке Music/Aurora, и управлять им можно в файловом менеджере.</string>
+
+    <string name="storage_section_images">Обложки и изображения</string>
+    <string name="storage_cover_cache">Кэш поиска обложек</string>
+    <string name="storage_cover_cache_detail">%1$s из %2$s · найденные обложки доступны без интернета</string>
+    <string name="storage_image_cache">Кэш изображений</string>
+    <string name="storage_image_cache_detail">Обложки и фото, которые уже показывались в приложении</string>
+    <string name="storage_map_tiles">Фрагменты карты</string>
+    <string name="storage_map_tiles_detail">Сохранены для карты прослушиваний</string>
+    <string name="storage_cover_cache_moved">Кэш обложек</string>
+    <string name="storage_cover_cache_moved_detail">Размер и очистка — в разделе «Скачанное и хранилище»</string>
+
+    <string name="storage_section_analysis">Анализ и модели</string>
+    <string name="storage_sonic">Анализ Sonic</string>
+    <string name="storage_sonic_clear_title">Очистить анализ Sonic?</string>
+    <string name="storage_sonic_clear_message">На нём работают радио Sonic, автодиджей и автоматические миксы, поэтому треки будут заново анализироваться при воспроизведении или сканировании. Для больших медиатек это может занять время.</string>
+    <string name="storage_vocals">Синхронизация с вокалом</string>
+    <string name="storage_vocals_detail">Создаётся, когда текст следует за вокалом</string>
+    <string name="storage_stem_model">Модель выделения вокала</string>
+    <string name="storage_stem_model_ready">Будет скачана снова, когда вы в следующий раз разделите трек</string>
+    <string name="storage_stem_model_missing">Не скачана</string>
+    <string name="storage_stems">Разделённые дорожки</string>
+    <string name="storage_stems_detail">Дорожки вокала и аккомпанемента для миксов</string>
+    <string name="storage_stems_clear_title">Очистить разделённые дорожки?</string>
+    <string name="storage_stems_clear_message">Миксы с вокалом или аккомпанементом заново разделят эти песни при открытии.</string>
+    <string name="storage_model_delete_title">Удалить модель выделения вокала?</string>
+    <string name="storage_model_delete_message">Модель (около 64 МБ) будет скачана снова, когда вы в следующий раз выделите вокал в миксе.</string>
+    <string name="storage_replaygain">Расчёт ReplayGain</string>
+    <string name="storage_replaygain_clear_title">Очистить результаты ReplayGain?</string>
+    <string name="storage_replaygain_clear_message">Выравнивание громкости для файлов на устройстве отключится до следующего расчёта.</string>
+
+    <string name="storage_section_translation">Перевод текстов</string>
+    <string name="storage_language_pack">Языковой пакет</string>
+    <string name="storage_language_none">Языковые пакеты не скачаны</string>
+    <string name="storage_language_delete_title">Удалить языковой пакет (%1$s)?</string>
+    <string name="storage_language_delete_message">Он снова загрузится по Wi-Fi, когда понадобится для текстов.</string>
+
+    <string name="storage_section_history">История и конфиденциальность</string>
+    <string name="storage_private_detail">Приостанавливает историю прослушиваний, подробную статистику и скробблинг</string>
+    <string name="storage_play_history">История прослушиваний</string>
+    <string name="storage_play_history_clear_title">Очистить историю прослушиваний?</string>
+    <string name="storage_play_history_clear_message">Статистика, итоги, серии и умные плейлисты начнутся заново. Прослушиваний, уже отправленных на ваш сервер, в Last.fm или ListenBrainz, это не затронет.</string>
+    <string name="storage_save_searches">Сохранять историю поиска</string>
+    <string name="storage_save_searches_detail">Показывать недавние запросы на экране поиска</string>
+    <string name="storage_search_history">История поиска</string>
+    <string name="storage_insights_off">Запись выключена</string>
+    <string name="storage_places_detail">Хранится только на этом устройстве</string>
+    <string name="storage_levels">История уровней прослушивания</string>
+    <string name="storage_levels_clear_title">Очистить историю уровней прослушивания?</string>
+    <string name="storage_levels_clear_message">Сохранённые замеры уровня будут удалены. Калибровки наушников сохранятся.</string>
+    <string name="storage_artist_info_clear_title">Очистить сведения об исполнителях?</string>
+    <string name="storage_artist_info_clear_message">Биографии и фото будут найдены заново, когда вы в следующий раз откроете исполнителя.</string>
+
+    <string name="storage_section_other">Другое</string>
+    <string name="storage_temporary">Временные файлы</string>
+    <string name="storage_temporary_detail">Остатки после импорта, конвертации и передачи файлов</string>
+
+    <plurals name="storage_tracks_analysed">
+        <item quantity="one">Проанализирован %1$d трек</item>
+        <item quantity="few">Проанализировано %1$d трека</item>
+        <item quantity="many">Проанализировано %1$d треков</item>
+        <item quantity="other">Проанализировано %1$d трека</item>
+    </plurals>
+    <plurals name="storage_plays">
+        <item quantity="one">%1$d прослушивание</item>
+        <item quantity="few">%1$d прослушивания</item>
+        <item quantity="many">%1$d прослушиваний</item>
+        <item quantity="other">%1$d прослушивания</item>
+    </plurals>
+    <plurals name="storage_searches">
+        <item quantity="one">%1$d недавний запрос</item>
+        <item quantity="few">%1$d недавних запроса</item>
+        <item quantity="many">%1$d недавних запросов</item>
+        <item quantity="other">%1$d недавних запроса</item>
+    </plurals>
+    <plurals name="storage_level_samples">
+        <item quantity="one">%1$d сохранённый замер</item>
+        <item quantity="few">%1$d сохранённых замера</item>
+        <item quantity="many">%1$d сохранённых замеров</item>
+        <item quantity="other">%1$d сохранённых замера</item>
+    </plurals>
+    <plurals name="storage_artists">
+        <item quantity="one">Сохранён %1$d исполнитель</item>
+        <item quantity="few">Сохранено %1$d исполнителя</item>
+        <item quantity="many">Сохранено %1$d исполнителей</item>
+        <item quantity="other">Сохранено %1$d исполнителя</item>
+    </plurals>
+</resources>

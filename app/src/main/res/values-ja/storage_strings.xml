@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="storage_description">ダウンロード、キャッシュ、解析、履歴</string>
+    <string name="storage_summary">%1$s 使用中 · ダウンロード、キャッシュ、履歴</string>
+    <string name="storage_used">Aurora の使用量：%1$s</string>
+    <string name="storage_free">この端末の空き容量：%1$s</string>
+    <string name="storage_measuring">ストレージを計測中…</string>
+    <string name="storage_part_downloads">ダウンロード</string>
+    <string name="storage_part_caches">キャッシュ</string>
+    <string name="storage_part_analysis">解析とモデル</string>
+    <string name="storage_part_other">アプリデータ</string>
+    <string name="storage_clear_caches">すべてのキャッシュを消去</string>
+    <string name="storage_clear_caches_title">すべてのキャッシュを消去しますか？</string>
+    <string name="storage_clear_caches_message">音声キャッシュ、カバー・画像・地図のキャッシュ、ボーカルのタイミング、分離したステム、アーティスト情報、一時ファイルを削除します。ダウンロード、解析、履歴、設定はそのまま残ります。キャッシュは Aurora を使ううちに再び貯まります。</string>
+    <string name="storage_caches_cleared">キャッシュを消去しました</string>
+    <string name="storage_stems_busy">ボーカル分離を実行中のため、そのファイルは残しました</string>
+    <string name="storage_cleared">消去しました</string>
+    <string name="storage_clear_failed">消去できませんでした。もう一度お試しください。</string>
+    <string name="storage_clear">消去</string>
+    <string name="storage_delete">削除</string>
+    <string name="storage_remove">削除</string>
+    <string name="storage_remove_all">すべて削除</string>
+    <string name="storage_empty">空</string>
+
+    <string name="storage_downloads_title">ダウンロードした音楽</string>
+    <string name="storage_downloads_none">まだ何もダウンロードしていません</string>
+    <string name="storage_remove_downloads_title">すべてのダウンロードを削除しますか？</string>
+    <string name="storage_remove_downloads_message">すべてのソースのダウンロード済みの曲とコレクションが、この端末から削除されます。後でもう一度ダウンロードできます。</string>
+    <string name="storage_remove_source_title">%1$s からのダウンロードを削除しますか？</string>
+    <string name="storage_remove_source_message">このソースからダウンロードした曲がこの端末から削除されます。ほかのソースのダウンロードは残ります。</string>
+    <string name="storage_source_unknown">その他のソース</string>
+    <string name="storage_youtube_note">YouTube からのダウンロードはスマートフォンの Music/Aurora に保存され、ファイルマネージャーで管理します。</string>
+
+    <string name="storage_section_images">カバーと画像</string>
+    <string name="storage_cover_cache">カバー検索キャッシュ</string>
+    <string name="storage_cover_cache_detail">%1$s / %2$s · 見つかったカバーはオフラインでも表示されます</string>
+    <string name="storage_image_cache">画像キャッシュ</string>
+    <string name="storage_image_cache_detail">アプリで表示済みのアートワークと写真</string>
+    <string name="storage_map_tiles">地図タイル</string>
+    <string name="storage_map_tiles_detail">リスニングマップ用に保存されています</string>
+    <string name="storage_cover_cache_moved">カバーキャッシュ</string>
+    <string name="storage_cover_cache_moved_detail">サイズの確認と消去は「ダウンロードとストレージ」で行えます</string>
+
+    <string name="storage_section_analysis">解析とモデル</string>
+    <string name="storage_sonic">Sonic 解析</string>
+    <string name="storage_sonic_clear_title">Sonic 解析を消去しますか？</string>
+    <string name="storage_sonic_clear_message">Sonic ラジオ、オート DJ、自動ミックスはこの解析を使うため、再生やスキャンの際に曲が再解析されます。大きなライブラリでは時間がかかることがあります。</string>
+    <string name="storage_vocals">ボーカルのタイミング</string>
+    <string name="storage_vocals_detail">歌詞をボーカルに合わせるときに作成されます</string>
+    <string name="storage_stem_model">ボーカル分離モデル</string>
+    <string name="storage_stem_model_ready">次に曲を分離するときに再ダウンロードされます</string>
+    <string name="storage_stem_model_missing">未ダウンロード</string>
+    <string name="storage_stems">分離したステム</string>
+    <string name="storage_stems_detail">ミックス用に作成したボーカルと伴奏のトラック</string>
+    <string name="storage_stems_clear_title">分離したステムを消去しますか？</string>
+    <string name="storage_stems_clear_message">ボーカルや伴奏を使うミックスは、開いたときにその曲を再び分離します。</string>
+    <string name="storage_model_delete_title">ボーカル分離モデルを削除しますか？</string>
+    <string name="storage_model_delete_message">モデル（約 64 MB）は、次にミックスでボーカルを分離するときに再ダウンロードされます。</string>
+    <string name="storage_replaygain">ReplayGain スキャン</string>
+    <string name="storage_replaygain_clear_title">ReplayGain の結果を消去しますか？</string>
+    <string name="storage_replaygain_clear_message">端末内のファイルの音量の均一化は、再スキャンするまで停止します。</string>
+
+    <string name="storage_section_translation">歌詞の翻訳</string>
+    <string name="storage_language_pack">言語パック</string>
+    <string name="storage_language_none">ダウンロード済みの言語パックはありません</string>
+    <string name="storage_language_delete_title">言語パック（%1$s）を削除しますか？</string>
+    <string name="storage_language_delete_message">次に歌詞で必要になったときに Wi-Fi 経由で再ダウンロードされます。</string>
+
+    <string name="storage_section_history">履歴とプライバシー</string>
+    <string name="storage_private_detail">再生履歴、詳細な統計、Scrobble を一時停止します</string>
+    <string name="storage_play_history">再生履歴</string>
+    <string name="storage_play_history_clear_title">再生履歴を消去しますか？</string>
+    <string name="storage_play_history_clear_message">統計、まとめ、連続記録、スマートプレイリストが最初からになります。サーバー、Last.fm、ListenBrainz に送信済みの再生には影響しません。</string>
+    <string name="storage_save_searches">検索履歴を保存</string>
+    <string name="storage_save_searches_detail">検索画面に最近の検索を表示します</string>
+    <string name="storage_search_history">検索履歴</string>
+    <string name="storage_insights_off">記録していません</string>
+    <string name="storage_places_detail">この端末にのみ保存されます</string>
+    <string name="storage_levels">リスニングレベルの履歴</string>
+    <string name="storage_levels_clear_title">リスニングレベルの履歴を消去しますか？</string>
+    <string name="storage_levels_clear_message">保存したレベルのサンプルが削除されます。ヘッドホンのキャリブレーションは残ります。</string>
+    <string name="storage_artist_info_clear_title">アーティスト情報を消去しますか？</string>
+    <string name="storage_artist_info_clear_message">次にアーティストを開いたときに、経歴と写真を再検索します。</string>
+
+    <string name="storage_section_other">その他</string>
+    <string name="storage_temporary">一時ファイル</string>
+    <string name="storage_temporary_detail">インポート、変換、転送の残りファイル</string>
+
+    <plurals name="storage_tracks_analysed">
+        <item quantity="one">解析済み：%1$d 曲</item>
+        <item quantity="other">解析済み：%1$d 曲</item>
+    </plurals>
+    <plurals name="storage_plays">
+        <item quantity="one">%1$d 回再生</item>
+        <item quantity="other">%1$d 回再生</item>
+    </plurals>
+    <plurals name="storage_searches">
+        <item quantity="one">最近の検索：%1$d 件</item>
+        <item quantity="other">最近の検索：%1$d 件</item>
+    </plurals>
+    <plurals name="storage_level_samples">
+        <item quantity="one">保存したサンプル：%1$d 件</item>
+        <item quantity="other">保存したサンプル：%1$d 件</item>
+    </plurals>
+    <plurals name="storage_artists">
+        <item quantity="one">保存したアーティスト：%1$d 人</item>
+        <item quantity="other">保存したアーティスト：%1$d 人</item>
+    </plurals>
+</resources>

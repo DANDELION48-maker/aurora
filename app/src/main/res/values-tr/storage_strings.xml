@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="storage_description">İndirilenler, önbellekler, analizler ve geçmiş</string>
+    <string name="storage_summary">%1$s kullanılıyor · indirilenler, önbellekler ve geçmiş</string>
+    <string name="storage_used">Aurora %1$s kullanıyor</string>
+    <string name="storage_free">Bu cihazda %1$s boş</string>
+    <string name="storage_measuring">Depolama ölçülüyor…</string>
+    <string name="storage_part_downloads">İndirilenler</string>
+    <string name="storage_part_caches">Önbellekler</string>
+    <string name="storage_part_analysis">Analiz ve modeller</string>
+    <string name="storage_part_other">Uygulama verileri</string>
+    <string name="storage_clear_caches">Tüm önbellekleri temizle</string>
+    <string name="storage_clear_caches_title">Tüm önbellekler temizlensin mi?</string>
+    <string name="storage_clear_caches_message">Bu işlem ses önbelleğini, kapak, görsel ve harita önbelleklerini, vokal zamanlamasını, ayrılmış kanalları, sanatçı bilgilerini ve geçici dosyaları kaldırır. İndirilenler, analizler, geçmiş ve ayarlar kalır. Önbellekler Aurora’yı kullandıkça yeniden dolar.</string>
+    <string name="storage_caches_cleared">Önbellekler temizlendi</string>
+    <string name="storage_stems_busy">Vokal ayırma sürüyor, bu yüzden dosyaları korundu</string>
+    <string name="storage_cleared">Temizlendi</string>
+    <string name="storage_clear_failed">Bu temizlenemedi. Tekrar deneyin.</string>
+    <string name="storage_clear">Temizle</string>
+    <string name="storage_delete">Sil</string>
+    <string name="storage_remove">Kaldır</string>
+    <string name="storage_remove_all">Tümünü kaldır</string>
+    <string name="storage_empty">Boş</string>
+
+    <string name="storage_downloads_title">İndirilen müzikler</string>
+    <string name="storage_downloads_none">Henüz bir şey indirilmedi</string>
+    <string name="storage_remove_downloads_title">Tüm indirilenler kaldırılsın mı?</string>
+    <string name="storage_remove_downloads_message">İndirilen tüm parçalar ve koleksiyonlar, tüm kaynaklarınız için bu cihazdan silinir. Bunları daha sonra yeniden indirebilirsiniz.</string>
+    <string name="storage_remove_source_title">%1$s kaynağından indirilenler kaldırılsın mı?</string>
+    <string name="storage_remove_source_message">Bu kaynaktan indirilen parçalar bu cihazdan silinir. Diğer kaynaklarınızdan indirilenler kalır.</string>
+    <string name="storage_source_unknown">Diğer kaynaklar</string>
+    <string name="storage_youtube_note">YouTube’dan indirilenler telefonunuzda Music/Aurora klasörüne kaydedilir ve dosya yöneticinizle yönetilir.</string>
+
+    <string name="storage_section_images">Kapaklar ve görseller</string>
+    <string name="storage_cover_cache">Kapak arama önbelleği</string>
+    <string name="storage_cover_cache_detail">%1$s / %2$s · bulunan kapaklar çevrimdışıyken de kullanılabilir</string>
+    <string name="storage_image_cache">Görsel önbelleği</string>
+    <string name="storage_image_cache_detail">Uygulamada zaten gösterilmiş kapak resimleri ve fotoğraflar</string>
+    <string name="storage_map_tiles">Harita döşemeleri</string>
+    <string name="storage_map_tiles_detail">Dinleme haritanız için kaydedildi</string>
+    <string name="storage_cover_cache_moved">Kapak önbelleği</string>
+    <string name="storage_cover_cache_moved_detail">Boyut ve temizleme seçenekleri İndirilenler ve depolama bölümünde</string>
+
+    <string name="storage_section_analysis">Analiz ve modeller</string>
+    <string name="storage_sonic">Sonic analizi</string>
+    <string name="storage_sonic_clear_title">Sonic analizi temizlensin mi?</string>
+    <string name="storage_sonic_clear_message">Sonic radyo, Otomatik DJ ve otomatik miksler buna dayanır; bu nedenle parçalar siz çaldıkça veya taradıkça yeniden analiz edilir. Büyük kitaplıklarda bu biraz sürebilir.</string>
+    <string name="storage_vocals">Vokal zamanlaması</string>
+    <string name="storage_vocals_detail">Şarkı sözleri vokali takip ettiğinde oluşturulur</string>
+    <string name="storage_stem_model">Vokal ayırma modeli</string>
+    <string name="storage_stem_model_ready">Bir sonraki parça ayırma işleminde yeniden indirilir</string>
+    <string name="storage_stem_model_missing">İndirilmedi</string>
+    <string name="storage_stems">Ayrılmış kanallar</string>
+    <string name="storage_stems_detail">Miksler için oluşturulan vokal ve altyapı kanalları</string>
+    <string name="storage_stems_clear_title">Ayrılmış kanallar temizlensin mi?</string>
+    <string name="storage_stems_clear_message">Vokal veya altyapı kullanan miksler, açtığınızda bu şarkıları yeniden ayırır.</string>
+    <string name="storage_model_delete_title">Vokal ayırma modeli silinsin mi?</string>
+    <string name="storage_model_delete_message">Model (yaklaşık 64 MB), bir mikste vokalleri bir sonraki ayırışınızda yeniden indirilir.</string>
+    <string name="storage_replaygain">ReplayGain taraması</string>
+    <string name="storage_replaygain_clear_title">ReplayGain sonuçları temizlensin mi?</string>
+    <string name="storage_replaygain_clear_message">Cihazdaki dosyalar için ses düzeyi dengeleme, yeniden tarayana kadar durur.</string>
+
+    <string name="storage_section_translation">Şarkı sözü çevirisi</string>
+    <string name="storage_language_pack">Dil paketi</string>
+    <string name="storage_language_none">İndirilmiş dil paketi yok</string>
+    <string name="storage_language_delete_title">Dil paketi (%1$s) silinsin mi?</string>
+    <string name="storage_language_delete_message">Şarkı sözleri bir dahaki sefere ihtiyaç duyduğunda Wi-Fi üzerinden yeniden indirilir.</string>
+
+    <string name="storage_section_history">Geçmiş ve gizlilik</string>
+    <string name="storage_private_detail">Dinleme geçmişini, ayrıntılı istatistikleri ve scrobble’ı duraklatır</string>
+    <string name="storage_play_history">Dinleme geçmişi</string>
+    <string name="storage_play_history_clear_title">Dinleme geçmişi temizlensin mi?</string>
+    <string name="storage_play_history_clear_message">İstatistikleriniz, özetleriniz, serileriniz ve akıllı çalma listeleriniz sıfırdan başlar. Sunucunuza, Last.fm’e veya ListenBrainz’e zaten gönderilmiş dinlemeler etkilenmez.</string>
+    <string name="storage_save_searches">Arama geçmişini kaydet</string>
+    <string name="storage_save_searches_detail">Son aramalarınızı arama ekranında gösterir</string>
+    <string name="storage_search_history">Arama geçmişi</string>
+    <string name="storage_insights_off">Kayıt kapalı</string>
+    <string name="storage_places_detail">Yalnızca bu cihazda saklanır</string>
+    <string name="storage_levels">Dinleme düzeyi geçmişi</string>
+    <string name="storage_levels_clear_title">Dinleme düzeyi geçmişi temizlensin mi?</string>
+    <string name="storage_levels_clear_message">Kaydedilen düzey örnekleri kaldırılır. Kulaklık kalibrasyonlarınız kalır.</string>
+    <string name="storage_artist_info_clear_title">Sanatçı bilgileri temizlensin mi?</string>
+    <string name="storage_artist_info_clear_message">Biyografiler ve fotoğraflar, bir sanatçıyı bir sonraki açışınızda yeniden aranır.</string>
+
+    <string name="storage_section_other">Diğer</string>
+    <string name="storage_temporary">Geçici dosyalar</string>
+    <string name="storage_temporary_detail">İçe aktarma, dönüştürme ve aktarımlardan kalanlar</string>
+
+    <plurals name="storage_tracks_analysed">
+        <item quantity="one">%1$d parça analiz edildi</item>
+        <item quantity="other">%1$d parça analiz edildi</item>
+    </plurals>
+    <plurals name="storage_plays">
+        <item quantity="one">%1$d dinleme</item>
+        <item quantity="other">%1$d dinleme</item>
+    </plurals>
+    <plurals name="storage_searches">
+        <item quantity="one">%1$d son arama</item>
+        <item quantity="other">%1$d son arama</item>
+    </plurals>
+    <plurals name="storage_level_samples">
+        <item quantity="one">%1$d kayıtlı örnek</item>
+        <item quantity="other">%1$d kayıtlı örnek</item>
+    </plurals>
+    <plurals name="storage_artists">
+        <item quantity="one">%1$d sanatçı kaydedildi</item>
+        <item quantity="other">%1$d sanatçı kaydedildi</item>
+    </plurals>
+</resources>

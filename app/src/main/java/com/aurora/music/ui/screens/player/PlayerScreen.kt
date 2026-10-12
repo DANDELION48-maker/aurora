@@ -106,6 +106,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
@@ -137,6 +141,8 @@ import com.aurora.music.ui.components.formatTime
 import com.aurora.music.ui.theme.LocalUiPrefs
 import com.aurora.music.ui.theme.auroraBackdrop
 import com.aurora.music.ui.theme.auroraPanel
+import com.aurora.music.ui.theme.liquidGlass
+import com.kyant.backdrop.backdrops.layerBackdrop
 import com.aurora.music.viewmodel.PlayerUiState
 import com.aurora.music.viewmodel.RepeatMode
 import kotlinx.coroutines.delay
@@ -179,6 +185,9 @@ fun PlayerScreen(
     val song = state.current
     val ui = LocalUiPrefs.current
     val classic = ui.themeStyle == ThemeStyle.AURORA
+    val glassStyle = ui.themeStyle == ThemeStyle.GLASS
+    val playerBackdrop = com.kyant.backdrop.backdrops.rememberLayerBackdrop()
+    val glassBackdrop = playerBackdrop.takeIf { glassStyle && com.aurora.music.ui.theme.liveGlassSupported }
     val windowLayout = com.aurora.music.ui.layout.LocalWindowLayout.current
     val tablet = windowLayout.useNavigationRail && paneContent != null
     var showLyrics by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
@@ -262,6 +271,7 @@ fun PlayerScreen(
             .fillMaxSize()
             .then(
                 if (classic) Modifier.background(MaterialTheme.colorScheme.background).background(bg)
+                else if (glassBackdrop != null) Modifier.background(MaterialTheme.colorScheme.background)
                 else Modifier.auroraBackdrop()
             )
             // consume taps so nothing leaks through to the app behind
@@ -270,6 +280,7 @@ fun PlayerScreen(
                 indication = null,
             ) {},
     ) {
+        if (glassBackdrop != null) GlassArtBackdrop(song, Modifier.matchParentSize().layerBackdrop(playerBackdrop))
         val header: @Composable () -> Unit = {
             Column(
                 Modifier
@@ -460,6 +471,9 @@ fun PlayerScreen(
                         val cover = CoverKey(song.album, song.artist, song.path)
                         if (classic) {
                             Artwork(song.artworkUrl, song.accent, artModifier, corner = 20.dp, animated = cover)
+                        } else if (glassStyle) {
+                            Artwork(song.artworkUrl, song.accent, artModifier.shadow(30.dp, RoundedCornerShape(16.dp),
+                                ambientColor = Color.Black.copy(alpha = .5f), spotColor = Color.Black.copy(alpha = .5f)), corner = 16.dp, animated = cover)
                         } else {
                             Box(artModifier.auroraPanel(MaterialTheme.shapes.large, emphasized = true).padding(6.dp)) {
                                 Artwork(song.artworkUrl, song.accent, Modifier.fillMaxSize(), corner = 20.dp, animated = cover)
@@ -564,7 +578,9 @@ fun PlayerScreen(
 
             Row(
                 Modifier.fillMaxWidth().then(
-                    if (classic) Modifier else Modifier.auroraPanel(MaterialTheme.shapes.extraLarge, emphasized = true)
+                    if (classic) Modifier
+                    else if (glassStyle) Modifier.liquidGlass(glassBackdrop, com.kyant.shapes.Capsule(), refraction = 20.dp).padding(horizontal = 8.dp, vertical = 8.dp)
+                    else Modifier.auroraPanel(MaterialTheme.shapes.extraLarge, emphasized = true)
                 ),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
@@ -580,7 +596,12 @@ fun PlayerScreen(
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(56.dp).clip(CircleShape).clickable(onClick = onPrevious).padding(6.dp),
                 )
-                Box(
+                if (glassStyle) com.aurora.music.ui.components.glass.GlassButton(
+                    onClick = onTogglePlay, backdrop = glassBackdrop, modifier = Modifier.size(68.dp), tint = playerAccent,
+                    contentDescription = appString(R.string.text_play_pause_14a1d0),
+                ) {
+                    Icon(if (state.isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow, null, tint = onPlayerAccent, modifier = Modifier.size(36.dp))
+                } else Box(
                     Modifier
                         .size(72.dp)
                         .clip(if (classic) CircleShape else MaterialTheme.shapes.large)
@@ -1178,5 +1199,19 @@ private fun SeekBar(
             Text(formatTime(positionSec), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(formatTime(durationSec), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+    }
+}
+
+// apple-music style: the cover itself, blurred into a soft wash the glass controls can bend
+@Composable
+private fun GlassArtBackdrop(song: com.aurora.music.model.Song, modifier: Modifier) {
+    val dark = com.aurora.music.ui.theme.glassIsDark()
+    val base = MaterialTheme.colorScheme.background
+    Box(modifier.background(base).clipToBounds()) {
+        Artwork(song.artworkUrl, song.accent, Modifier.fillMaxSize().graphicsLayer { scaleX = 1.35f; scaleY = 1.35f }
+            .blur(110.dp, BlurredEdgeTreatment.Rectangle), corner = 0.dp)
+        Box(Modifier.fillMaxSize().background(Brush.verticalGradient(
+            if (dark) listOf(Color.Black.copy(alpha = .12f), Color.Black.copy(alpha = .3f), Color.Black.copy(alpha = .5f))
+            else listOf(Color.White.copy(alpha = .1f), Color.White.copy(alpha = .3f), Color.White.copy(alpha = .55f)))))
     }
 }

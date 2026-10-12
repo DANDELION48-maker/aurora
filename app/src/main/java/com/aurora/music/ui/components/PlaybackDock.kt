@@ -62,6 +62,7 @@ import com.aurora.music.localization.appString
 import com.aurora.music.ui.screens.player.PlayerPane
 import com.aurora.music.ui.theme.LocalUiPrefs
 import com.aurora.music.ui.theme.auroraPanel
+import com.aurora.music.ui.theme.liquidGlass
 import com.aurora.music.viewmodel.PlayerUiState
 import kotlinx.coroutines.delay
 import kotlin.math.abs
@@ -93,7 +94,9 @@ fun PlaybackDock(
             .then(
                 if (classic) Modifier.clip(RoundedCornerShape(22.dp)).background(
                     Brush.horizontalGradient(listOf(colors.surfaceContainerHigh, lerp(colors.surfaceContainerHigh, colors.primary, 0.14f)))
-                ) else Modifier.auroraPanel(MaterialTheme.shapes.extraLarge, emphasized = true)
+                ) else if (ui.themeStyle == ThemeStyle.GLASS) Modifier.liquidGlass(com.aurora.music.ui.theme.LocalGlassBackdrop.current,
+                    com.kyant.shapes.RoundedRectangle(32.dp), refraction = 20.dp, depth = 28.dp)
+                else Modifier.auroraPanel(MaterialTheme.shapes.extraLarge, emphasized = true)
             ),
     ) {
         val roomy = maxWidth >= 760.dp

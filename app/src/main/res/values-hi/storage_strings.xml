@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="storage_description">डाउनलोड, कैश, विश्लेषण और इतिहास</string>
+    <string name="storage_summary">%1$s उपयोग में · डाउनलोड, कैश और इतिहास</string>
+    <string name="storage_used">Aurora %1$s इस्तेमाल करता है</string>
+    <string name="storage_free">इस डिवाइस पर %1$s खाली</string>
+    <string name="storage_measuring">स्टोरेज मापा जा रहा है…</string>
+    <string name="storage_part_downloads">डाउनलोड</string>
+    <string name="storage_part_caches">कैश</string>
+    <string name="storage_part_analysis">विश्लेषण और मॉडल</string>
+    <string name="storage_part_other">ऐप डेटा</string>
+    <string name="storage_clear_caches">सभी कैश साफ़ करें</string>
+    <string name="storage_clear_caches_title">सभी कैश साफ़ करें?</string>
+    <string name="storage_clear_caches_message">इससे ऑडियो कैश, कवर, इमेज और मैप कैश, वोकल टाइमिंग, अलग किए गए स्टेम, कलाकार की जानकारी और अस्थायी फ़ाइलें हट जाती हैं। डाउनलोड, विश्लेषण, इतिहास और सेटिंग बनी रहती हैं। Aurora इस्तेमाल करते समय कैश फिर से भर जाते हैं।</string>
+    <string name="storage_caches_cleared">कैश साफ़ हो गए</string>
+    <string name="storage_stems_busy">वोकल सेपरेशन चल रहा है, इसलिए उसकी फ़ाइलें रखी गईं</string>
+    <string name="storage_cleared">साफ़ हो गया</string>
+    <string name="storage_clear_failed">इसे साफ़ नहीं किया जा सका। फिर से कोशिश करें।</string>
+    <string name="storage_clear">साफ़ करें</string>
+    <string name="storage_delete">हटाएँ</string>
+    <string name="storage_remove">हटाएँ</string>
+    <string name="storage_remove_all">सभी हटाएँ</string>
+    <string name="storage_empty">खाली</string>
+
+    <string name="storage_downloads_title">डाउनलोड किया गया संगीत</string>
+    <string name="storage_downloads_none">अभी तक कुछ डाउनलोड नहीं हुआ</string>
+    <string name="storage_remove_downloads_title">सभी डाउनलोड हटाएँ?</string>
+    <string name="storage_remove_downloads_message">आपके सभी स्रोतों से डाउनलोड किए गए सभी ट्रैक और कलेक्शन इस डिवाइस से हटा दिए जाते हैं। आप उन्हें बाद में फिर से डाउनलोड कर सकते हैं।</string>
+    <string name="storage_remove_source_title">%1$s से किए गए डाउनलोड हटाएँ?</string>
+    <string name="storage_remove_source_message">इस स्रोत से डाउनलोड किए गए ट्रैक इस डिवाइस से हटा दिए जाते हैं। आपके दूसरे स्रोतों के डाउनलोड बने रहते हैं।</string>
+    <string name="storage_source_unknown">अन्य स्रोत</string>
+    <string name="storage_youtube_note">YouTube से किए गए डाउनलोड आपके फ़ोन पर Music/Aurora में सहेजे जाते हैं और आपके फ़ाइल मैनेजर से मैनेज होते हैं।</string>
+
+    <string name="storage_section_images">कवर और इमेज</string>
+    <string name="storage_cover_cache">कवर खोज कैश</string>
+    <string name="storage_cover_cache_detail">%2$s में से %1$s · मिले हुए कवर ऑफ़लाइन भी उपलब्ध रहते हैं</string>
+    <string name="storage_image_cache">इमेज कैश</string>
+    <string name="storage_image_cache_detail">ऐप में पहले दिखाए गए आर्टवर्क और फ़ोटो</string>
+    <string name="storage_map_tiles">मैप टाइलें</string>
+    <string name="storage_map_tiles_detail">आपके सुनने के नक्शे के लिए सहेजी गईं</string>
+    <string name="storage_cover_cache_moved">कवर कैश</string>
+    <string name="storage_cover_cache_moved_detail">आकार और साफ़ करने के विकल्प डाउनलोड और स्टोरेज में हैं</string>
+
+    <string name="storage_section_analysis">विश्लेषण और मॉडल</string>
+    <string name="storage_sonic">Sonic विश्लेषण</string>
+    <string name="storage_sonic_clear_title">Sonic विश्लेषण साफ़ करें?</string>
+    <string name="storage_sonic_clear_message">Sonic रेडियो, ऑटो DJ और ऑटोमैटिक मिक्स इस पर निर्भर हैं, इसलिए चलाते या स्कैन करते समय ट्रैक का फिर से विश्लेषण होगा। बड़ी लाइब्रेरी में इसमें कुछ समय लग सकता है।</string>
+    <string name="storage_vocals">वोकल टाइमिंग</string>
+    <string name="storage_vocals_detail">तब बनती है जब गीत आवाज़ के साथ चलते हैं</string>
+    <string name="storage_stem_model">वोकल सेपरेशन मॉडल</string>
+    <string name="storage_stem_model_ready">अगली बार ट्रैक अलग करने पर फिर से डाउनलोड होगा</string>
+    <string name="storage_stem_model_missing">डाउनलोड नहीं किया गया</string>
+    <string name="storage_stems">अलग किए गए स्टेम</string>
+    <string name="storage_stems_detail">मिक्स के लिए बनाए गए वोकल और बैकिंग ट्रैक</string>
+    <string name="storage_stems_clear_title">अलग किए गए स्टेम साफ़ करें?</string>
+    <string name="storage_stems_clear_message">वोकल या बैकिंग ट्रैक इस्तेमाल करने वाले मिक्स खोलने पर उन गानों को फिर से अलग करेंगे।</string>
+    <string name="storage_model_delete_title">वोकल सेपरेशन मॉडल हटाएँ?</string>
+    <string name="storage_model_delete_message">अगली बार किसी मिक्स में वोकल अलग करने पर मॉडल (लगभग 64 MB) फिर से डाउनलोड होगा।</string>
+    <string name="storage_replaygain">ReplayGain स्कैन</string>
+    <string name="storage_replaygain_clear_title">ReplayGain नतीजे साफ़ करें?</string>
+    <string name="storage_replaygain_clear_message">फिर से स्कैन करने तक डिवाइस पर मौजूद फ़ाइलों की वॉल्यूम लेवलिंग बंद रहेगी।</string>
+
+    <string name="storage_section_translation">गीतों का अनुवाद</string>
+    <string name="storage_language_pack">भाषा पैक</string>
+    <string name="storage_language_none">कोई भाषा पैक डाउनलोड नहीं हुआ</string>
+    <string name="storage_language_delete_title">भाषा पैक (%1$s) हटाएँ?</string>
+    <string name="storage_language_delete_message">अगली बार गीतों के लिए ज़रूरत होने पर यह Wi-Fi पर फिर से डाउनलोड होगा।</string>
+
+    <string name="storage_section_history">इतिहास और प्राइवेसी</string>
+    <string name="storage_private_detail">प्ले इतिहास, विस्तृत आँकड़े और स्क्रॉबलिंग रोकें</string>
+    <string name="storage_play_history">प्ले इतिहास</string>
+    <string name="storage_play_history_clear_title">प्ले इतिहास साफ़ करें?</string>
+    <string name="storage_play_history_clear_message">आपके आँकड़े, रीकैप, स्ट्रीक और स्मार्ट प्लेलिस्ट नए सिरे से शुरू होंगे। आपके सर्वर, Last.fm या ListenBrainz को पहले भेजे जा चुके प्ले पर कोई असर नहीं पड़ेगा।</string>
+    <string name="storage_save_searches">खोज इतिहास सहेजें</string>
+    <string name="storage_save_searches_detail">खोज स्क्रीन पर आपकी हाल की खोजें दिखाएँ</string>
+    <string name="storage_search_history">खोज इतिहास</string>
+    <string name="storage_insights_off">रिकॉर्डिंग बंद</string>
+    <string name="storage_places_detail">केवल इसी डिवाइस पर सहेजा गया</string>
+    <string name="storage_levels">सुनने के स्तर का इतिहास</string>
+    <string name="storage_levels_clear_title">सुनने के स्तर का इतिहास साफ़ करें?</string>
+    <string name="storage_levels_clear_message">सहेजे गए लेवल सैंपल हटा दिए जाते हैं। आपके हेडफ़ोन कैलिब्रेशन बने रहते हैं।</string>
+    <string name="storage_artist_info_clear_title">कलाकार की जानकारी साफ़ करें?</string>
+    <string name="storage_artist_info_clear_message">अगली बार किसी कलाकार को खोलने पर जीवनी और तस्वीरें फिर से खोजी जाएँगी।</string>
+
+    <string name="storage_section_other">अन्य</string>
+    <string name="storage_temporary">अस्थायी फ़ाइलें</string>
+    <string name="storage_temporary_detail">इंपोर्ट, कन्वर्ज़न और ट्रांसफ़र से बची फ़ाइलें</string>
+
+    <plurals name="storage_tracks_analysed">
+        <item quantity="one">%1$d ट्रैक का विश्लेषण हुआ</item>
+        <item quantity="other">%1$d ट्रैक का विश्लेषण हुआ</item>
+    </plurals>
+    <plurals name="storage_plays">
+        <item quantity="one">%1$d प्ले</item>
+        <item quantity="other">%1$d प्ले</item>
+    </plurals>
+    <plurals name="storage_searches">
+        <item quantity="one">%1$d हाल की खोज</item>
+        <item quantity="other">%1$d हाल की खोजें</item>
+    </plurals>
+    <plurals name="storage_level_samples">
+        <item quantity="one">%1$d सहेजा गया सैंपल</item>
+        <item quantity="other">%1$d सहेजे गए सैंपल</item>
+    </plurals>
+    <plurals name="storage_artists">
+        <item quantity="one">%1$d कलाकार सहेजा गया</item>
+        <item quantity="other">%1$d कलाकार सहेजे गए</item>
+    </plurals>
+</resources>

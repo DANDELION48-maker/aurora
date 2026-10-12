@@ -109,6 +109,8 @@ import com.aurora.music.ui.screens.player.SpeedPitchSheet
 import com.aurora.music.ui.screens.profile.ProfileScreen
 import com.aurora.music.ui.screens.search.SearchScreen
 import com.aurora.music.ui.theme.auroraPanel
+import com.aurora.music.ui.theme.liquidGlass
+import com.kyant.backdrop.backdrops.layerBackdrop
 import com.aurora.music.ui.theme.rememberPlayerColorScheme
 import com.aurora.music.ui.screens.settings.PlaybackSettingsScreen
 import com.aurora.music.ui.screens.settings.SettingsScreen
@@ -283,6 +285,7 @@ fun AuroraApp() {
         com.aurora.music.navigation.NavMenu.parse(uiPrefs.navLayout).visible(simpleMode)
     }
     val navGap = if (rail) uiPrefs.tabletNavGap.dp else 0.dp
+    val barMargin = if (uiPrefs.themeStyle == com.aurora.music.data.ThemeStyle.GLASS) 16.dp else 10.dp
     val pageMargin = if (rail) uiPrefs.tabletPageMargin.dp else 0.dp
     val panelSpacing = uiPrefs.tabletPanelSpacing.dp.coerceAtLeast(4.dp)
     val density = androidx.compose.ui.platform.LocalDensity.current
@@ -807,7 +810,8 @@ fun AuroraApp() {
         },
     ) {
         Box(Modifier.fillMaxSize()) {
-            AmbientBackground()
+            val glassLayers = com.aurora.music.ui.theme.LocalGlassLayers.current
+            AmbientBackground(glassLayers?.let { Modifier.layerBackdrop(it.ambient) } ?: Modifier)
             if (rail) {
                 Box(
                     Modifier.fillMaxHeight().then(
@@ -848,7 +852,7 @@ fun AuroraApp() {
                             Modifier
                                 .then(if (rail) Modifier.fillMaxWidth() else Modifier.widthIn(max = 960.dp))
                                 .windowInsetsPadding(WindowInsets.navigationBars)
-                                .padding(start = if (rail) pageMargin else 10.dp, end = if (rail) pageMargin.coerceAtLeast(12.dp) else 10.dp,
+                                .padding(start = if (rail) pageMargin else barMargin, end = if (rail) pageMargin.coerceAtLeast(12.dp) else barMargin,
                                     top = 8.dp, bottom = if (dockVisible) 0.dp else if (rail) 12.dp else 8.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
@@ -884,7 +888,7 @@ fun AuroraApp() {
                     }
                 },
             ) { inner ->
-                Row(Modifier.fillMaxSize()) {
+                Row(Modifier.fillMaxSize().then(glassLayers?.let { Modifier.layerBackdrop(it.page) } ?: Modifier)) {
                 Box(Modifier.weight(1f).fillMaxHeight().padding(horizontal = pageMargin), contentAlignment = Alignment.TopCenter) {
                 NavHost(
                     navController = navController,
@@ -1583,8 +1587,9 @@ private fun DownloadProgressBanner(count: Int, progress: Float) {
             .then(if (classic) Modifier.clip(RoundedCornerShape(18.dp))
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.96f))
                 .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f), RoundedCornerShape(18.dp))
+                else if (com.aurora.music.ui.theme.isGlassTheme()) Modifier.liquidGlass(com.aurora.music.ui.theme.LocalGlassBackdrop.current, com.kyant.shapes.RoundedRectangle(24.dp), refraction = 16.dp)
                 else Modifier.auroraPanel(MaterialTheme.shapes.large))
-            .padding(horizontal = 14.dp, vertical = 10.dp),
+            .padding(horizontal = 16.dp, vertical = 11.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(Icons.Filled.Downloading, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
@@ -1624,6 +1629,10 @@ private suspend fun playlistMutation(block: suspend () -> Boolean): Boolean = tr
 
 @Composable
 private fun FloatingNav(currentRoute: String?, onNavigate: (String) -> Unit) {
+    if (com.aurora.music.ui.theme.isGlassTheme()) {
+        GlassFloatingNav(currentRoute, onNavigate)
+        return
+    }
     val classic = com.aurora.music.ui.theme.LocalUiPrefs.current.themeStyle == com.aurora.music.data.ThemeStyle.AURORA
     Row(
         modifier = Modifier
@@ -1660,6 +1669,37 @@ private fun FloatingNav(currentRoute: String?, onNavigate: (String) -> Unit) {
                         Text(dest.label, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = content)
                     }
                 }
+            }
+        }
+    }
+}
+
+// ios 26 layout: tabs in one glass capsule, search as its own glass circle
+@Composable
+private fun GlassFloatingNav(currentRoute: String?, onNavigate: (String) -> Unit) {
+    val backdrop = com.aurora.music.ui.theme.LocalGlassBackdrop.current
+    val search = topLevelDestinations.firstOrNull { it.route == Routes.SEARCH }
+    val tabs = topLevelDestinations.filter { it != search }
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        com.aurora.music.ui.components.glass.GlassTabBar(
+            tabs = tabs.map { com.aurora.music.ui.components.glass.GlassTab(it.label, it.selectedIcon) },
+            selectedIndex = tabs.indexOfFirst { it.route == currentRoute },
+            onSelect = { onNavigate(tabs[it].route) },
+            backdrop = backdrop,
+            modifier = Modifier.weight(1f),
+        )
+        if (search != null) {
+            val selected = currentRoute == search.route
+            Spacer(Modifier.width(12.dp))
+            com.aurora.music.ui.components.glass.GlassButton(
+                onClick = { onNavigate(search.route) },
+                backdrop = backdrop,
+                modifier = Modifier.size(64.dp),
+                selected = selected,
+                contentDescription = search.label,
+            ) {
+                Icon(search.selectedIcon, null, Modifier.size(28.dp),
+                    tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)
             }
         }
     }

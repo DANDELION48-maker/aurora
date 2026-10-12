@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="storage_description">\u2067التنزيلات والذاكرة المؤقتة والتحليل والسجل\u2069</string>
+    <string name="storage_summary">\u2067المستخدم %1$s · التنزيلات والذاكرة المؤقتة والسجل\u2069</string>
+    <string name="storage_used">\u2067يشغل Aurora مساحة %1$s\u2069</string>
+    <string name="storage_free">\u2067المساحة المتاحة على هذا الجهاز: %1$s\u2069</string>
+    <string name="storage_measuring">\u2067جارٍ قياس مساحة التخزين…\u2069</string>
+    <string name="storage_part_downloads">\u2067التنزيلات\u2069</string>
+    <string name="storage_part_caches">\u2067الذاكرة المؤقتة\u2069</string>
+    <string name="storage_part_analysis">\u2067التحليل والنماذج\u2069</string>
+    <string name="storage_part_other">\u2067بيانات التطبيق\u2069</string>
+    <string name="storage_clear_caches">\u2067مسح كل الذاكرة المؤقتة\u2069</string>
+    <string name="storage_clear_caches_title">\u2067مسح كل الذاكرة المؤقتة؟\u2069</string>
+    <string name="storage_clear_caches_message">\u2067يؤدي ذلك إلى إزالة ذاكرة الصوت المؤقتة وذاكرة الأغلفة والصور والخرائط المؤقتة وتوقيت الغناء والمسارات المفصولة ومعلومات الفنانين والملفات المؤقتة. تبقى التنزيلات والتحليل والسجل والإعدادات. تمتلئ الذاكرة المؤقتة مجددًا أثناء استخدامك Aurora.\u2069</string>
+    <string name="storage_caches_cleared">\u2067تم مسح الذاكرة المؤقتة\u2069</string>
+    <string name="storage_stems_busy">\u2067فصل الغناء قيد التشغيل، لذا احتُفظ بملفاته\u2069</string>
+    <string name="storage_cleared">\u2067تم المسح\u2069</string>
+    <string name="storage_clear_failed">\u2067تعذّر المسح. حاول مرة أخرى.\u2069</string>
+    <string name="storage_clear">\u2067مسح\u2069</string>
+    <string name="storage_delete">\u2067حذف\u2069</string>
+    <string name="storage_remove">\u2067إزالة\u2069</string>
+    <string name="storage_remove_all">\u2067إزالة الكل\u2069</string>
+    <string name="storage_empty">\u2067فارغ\u2069</string>
+
+    <string name="storage_downloads_title">\u2067الموسيقى المنزّلة\u2069</string>
+    <string name="storage_downloads_none">\u2067لم يُنزَّل أي شيء بعد\u2069</string>
+    <string name="storage_remove_downloads_title">\u2067إزالة كل التنزيلات؟\u2069</string>
+    <string name="storage_remove_downloads_message">\u2067يُحذف كل مقطع ومجموعة منزّلة من هذا الجهاز، لجميع مصادرك. يمكنك تنزيلها مجددًا لاحقًا.\u2069</string>
+    <string name="storage_remove_source_title">\u2067إزالة التنزيلات من %1$s؟\u2069</string>
+    <string name="storage_remove_source_message">\u2067تُحذف المقاطع المنزّلة من هذا المصدر من هذا الجهاز. تبقى التنزيلات من مصادرك الأخرى.\u2069</string>
+    <string name="storage_source_unknown">\u2067مصادر أخرى\u2069</string>
+    <string name="storage_youtube_note">\u2067تُحفظ التنزيلات من YouTube في Music/Aurora على هاتفك، وتُدار من مدير الملفات.\u2069</string>
+
+    <string name="storage_section_images">\u2067الأغلفة والصور\u2069</string>
+    <string name="storage_cover_cache">\u2067ذاكرة البحث عن الأغلفة\u2069</string>
+    <string name="storage_cover_cache_detail">\u2067%1$s من %2$s · تبقى الأغلفة التي عُثر عليها متاحة دون اتصال\u2069</string>
+    <string name="storage_image_cache">\u2067ذاكرة الصور المؤقتة\u2069</string>
+    <string name="storage_image_cache_detail">\u2067الأغلفة والصور المعروضة سابقًا في التطبيق\u2069</string>
+    <string name="storage_map_tiles">\u2067مربعات الخريطة\u2069</string>
+    <string name="storage_map_tiles_detail">\u2067محفوظة لخريطة الاستماع\u2069</string>
+    <string name="storage_cover_cache_moved">\u2067ذاكرة الأغلفة المؤقتة\u2069</string>
+    <string name="storage_cover_cache_moved_detail">\u2067الحجم والمسح في التنزيلات والتخزين\u2069</string>
+
+    <string name="storage_section_analysis">\u2067التحليل والنماذج\u2069</string>
+    <string name="storage_sonic">\u2067تحليل Sonic\u2069</string>
+    <string name="storage_sonic_clear_title">\u2067مسح تحليل Sonic؟\u2069</string>
+    <string name="storage_sonic_clear_message">\u2067يعتمد عليه راديو Sonic والمنسّق التلقائي والمزج التلقائي، لذا يُعاد تحليل المقاطع أثناء التشغيل أو الفحص. قد يستغرق ذلك وقتًا في المكتبات الكبيرة.\u2069</string>
+    <string name="storage_vocals">\u2067توقيت الغناء\u2069</string>
+    <string name="storage_vocals_detail">\u2067يُنشأ عندما تتبع الكلمات الصوت\u2069</string>
+    <string name="storage_stem_model">\u2067نموذج فصل الغناء\u2069</string>
+    <string name="storage_stem_model_ready">\u2067يُنزَّل مجددًا عند فصل مقطع في المرة القادمة\u2069</string>
+    <string name="storage_stem_model_missing">\u2067غير منزّل\u2069</string>
+    <string name="storage_stems">\u2067المسارات المفصولة\u2069</string>
+    <string name="storage_stems_detail">\u2067مسارات الغناء والمرافقة المُعدّة للمزج\u2069</string>
+    <string name="storage_stems_clear_title">\u2067مسح المسارات المفصولة؟\u2069</string>
+    <string name="storage_stems_clear_message">\u2067ستفصل المزجات التي تستخدم الغناء أو المرافقة تلك الأغاني مجددًا عند فتحها.\u2069</string>
+    <string name="storage_model_delete_title">\u2067حذف نموذج فصل الغناء؟\u2069</string>
+    <string name="storage_model_delete_message">\u2067يُنزَّل النموذج (نحو 64 ميغابايت) مجددًا في المرة القادمة التي تفصل فيها الغناء في مزيج.\u2069</string>
+    <string name="storage_replaygain">\u2067فحص ReplayGain\u2069</string>
+    <string name="storage_replaygain_clear_title">\u2067مسح نتائج ReplayGain؟\u2069</string>
+    <string name="storage_replaygain_clear_message">\u2067تتوقف موازنة مستوى الصوت للملفات الموجودة على الجهاز حتى تُجري الفحص مجددًا.\u2069</string>
+
+    <string name="storage_section_translation">\u2067ترجمة كلمات الأغاني\u2069</string>
+    <string name="storage_language_pack">\u2067حزمة اللغة\u2069</string>
+    <string name="storage_language_none">\u2067لا توجد حزم لغة منزّلة\u2069</string>
+    <string name="storage_language_delete_title">\u2067حذف حزمة اللغة (%1$s)؟\u2069</string>
+    <string name="storage_language_delete_message">\u2067تُنزَّل مجددًا عبر Wi-Fi في المرة القادمة التي تحتاجها فيها الكلمات.\u2069</string>
+
+    <string name="storage_section_history">\u2067السجل والخصوصية\u2069</string>
+    <string name="storage_private_detail">\u2067إيقاف سجل التشغيل والإحصاءات المفصّلة وتسجيل الاستماع مؤقتًا\u2069</string>
+    <string name="storage_play_history">\u2067سجل التشغيل\u2069</string>
+    <string name="storage_play_history_clear_title">\u2067مسح سجل التشغيل؟\u2069</string>
+    <string name="storage_play_history_clear_message">\u2067ستبدأ إحصاءاتك وملخصاتك وسلاسلك وقوائم التشغيل الذكية من جديد. لا يتأثر ما أُرسل بالفعل إلى خادمك أو Last.fm أو ListenBrainz.\u2069</string>
+    <string name="storage_save_searches">\u2067حفظ سجل البحث\u2069</string>
+    <string name="storage_save_searches_detail">\u2067عرض عمليات البحث الأخيرة في شاشة البحث\u2069</string>
+    <string name="storage_search_history">\u2067سجل البحث\u2069</string>
+    <string name="storage_insights_off">\u2067التسجيل متوقف\u2069</string>
+    <string name="storage_places_detail">\u2067محفوظة على هذا الجهاز فقط\u2069</string>
+    <string name="storage_levels">\u2067سجل مستويات الاستماع\u2069</string>
+    <string name="storage_levels_clear_title">\u2067مسح سجل مستويات الاستماع؟\u2069</string>
+    <string name="storage_levels_clear_message">\u2067تُزال عينات المستوى المحفوظة. تبقى معايرات سماعات الرأس.\u2069</string>
+    <string name="storage_artist_info_clear_title">\u2067مسح معلومات الفنانين؟\u2069</string>
+    <string name="storage_artist_info_clear_message">\u2067يُعاد البحث عن السير الذاتية والصور في المرة القادمة التي تفتح فيها صفحة فنان.\u2069</string>
+
+    <string name="storage_section_other">\u2067أخرى\u2069</string>
+    <string name="storage_temporary">\u2067الملفات المؤقتة\u2069</string>
+    <string name="storage_temporary_detail">\u2067بقايا عمليات الاستيراد والتحويل والنقل\u2069</string>
+
+    <plurals name="storage_tracks_analysed">
+        <item quantity="one">\u2067المقاطع المحللة: %1$d\u2069</item>
+        <item quantity="other">\u2067المقاطع المحللة: %1$d\u2069</item>
+        <item quantity="zero">\u2067المقاطع المحللة: %1$d\u2069</item>
+        <item quantity="two">\u2067المقاطع المحللة: %1$d\u2069</item>
+        <item quantity="few">\u2067المقاطع المحللة: %1$d\u2069</item>
+        <item quantity="many">\u2067المقاطع المحللة: %1$d\u2069</item>
+    </plurals>
+    <plurals name="storage_plays">
+        <item quantity="one">\u2067مرات التشغيل: %1$d\u2069</item>
+        <item quantity="other">\u2067مرات التشغيل: %1$d\u2069</item>
+        <item quantity="zero">\u2067مرات التشغيل: %1$d\u2069</item>
+        <item quantity="two">\u2067مرات التشغيل: %1$d\u2069</item>
+        <item quantity="few">\u2067مرات التشغيل: %1$d\u2069</item>
+        <item quantity="many">\u2067مرات التشغيل: %1$d\u2069</item>
+    </plurals>
+    <plurals name="storage_searches">
+        <item quantity="one">\u2067عمليات البحث الأخيرة: %1$d\u2069</item>
+        <item quantity="other">\u2067عمليات البحث الأخيرة: %1$d\u2069</item>
+        <item quantity="zero">\u2067عمليات البحث الأخيرة: %1$d\u2069</item>
+        <item quantity="two">\u2067عمليات البحث الأخيرة: %1$d\u2069</item>
+        <item quantity="few">\u2067عمليات البحث الأخيرة: %1$d\u2069</item>
+        <item quantity="many">\u2067عمليات البحث الأخيرة: %1$d\u2069</item>
+    </plurals>
+    <plurals name="storage_level_samples">
+        <item quantity="one">\u2067العينات المحفوظة: %1$d\u2069</item>
+        <item quantity="other">\u2067العينات المحفوظة: %1$d\u2069</item>
+        <item quantity="zero">\u2067العينات المحفوظة: %1$d\u2069</item>
+        <item quantity="two">\u2067العينات المحفوظة: %1$d\u2069</item>
+        <item quantity="few">\u2067العينات المحفوظة: %1$d\u2069</item>
+        <item quantity="many">\u2067العينات المحفوظة: %1$d\u2069</item>
+    </plurals>
+    <plurals name="storage_artists">
+        <item quantity="one">\u2067الفنانون المحفوظون: %1$d\u2069</item>
+        <item quantity="other">\u2067الفنانون المحفوظون: %1$d\u2069</item>
+        <item quantity="zero">\u2067الفنانون المحفوظون: %1$d\u2069</item>
+        <item quantity="two">\u2067الفنانون المحفوظون: %1$d\u2069</item>
+        <item quantity="few">\u2067الفنانون المحفوظون: %1$d\u2069</item>
+        <item quantity="many">\u2067الفنانون المحفوظون: %1$d\u2069</item>
+    </plurals>
+</resources>
