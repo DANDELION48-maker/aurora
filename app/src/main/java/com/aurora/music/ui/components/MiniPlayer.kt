@@ -4,7 +4,6 @@ import com.aurora.music.localization.appString
 import com.aurora.music.R
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -41,6 +40,8 @@ import com.kyant.shapes.Capsule
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.font.FontWeight
@@ -70,7 +71,7 @@ fun MiniPlayer(
     val song = state.current
     val isMix = song.id.startsWith("aurora-mix:")
     val ui = LocalUiPrefs.current
-    val progress by animateFloatAsState(state.progress, label = "miniProgress")
+    val position = LocalPlaybackPosition.current
     val progressBrush = com.aurora.music.ui.theme.rememberColorSweep(
         com.aurora.music.ui.theme.LocalContextAccent.current.color ?: MaterialTheme.colorScheme.primary,
     )
@@ -149,16 +150,12 @@ fun MiniPlayer(
                     .padding(horizontal = 10.dp)
                     .height(barH)
                     .clip(RoundedCornerShape(barH))
-                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)),
-            ) {
-                Box(
-                    Modifier
-                        .fillMaxWidth(progress)
-                        .height(barH)
-                        .clip(RoundedCornerShape(barH))
-                        .background(progressBrush),
-                )
-            }
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
+                    .drawBehind {
+                        val r = size.height / 2f
+                        drawRoundRect(progressBrush, size = size.copy(width = size.width * state.progressAt(position.value)), cornerRadius = CornerRadius(r, r))
+                    },
+            )
         }
         Spacer(Modifier.height(6.dp))
     }
@@ -177,7 +174,7 @@ private fun GlassMiniPlayer(
     val isMix = song.id.startsWith("aurora-mix:")
     val ui = LocalUiPrefs.current
     val colors = MaterialTheme.colorScheme
-    val progress by animateFloatAsState(state.progress, label = "glassMiniProgress")
+    val position = LocalPlaybackPosition.current
     val accent = com.aurora.music.ui.theme.LocalContextAccent.current.color ?: colors.primary
     val likeTint by animateColorAsState(if (state.isCurrentLiked) colors.primary else colors.onSurface, label = "glassLike")
     val scope = rememberCoroutineScope()
@@ -199,7 +196,7 @@ private fun GlassMiniPlayer(
                     val inset = size.height / 2f
                     val y = size.height - width / 2f - 2.5.dp.toPx()
                     drawLine(track, Offset(inset, y), Offset(size.width - inset, y), width, StrokeCap.Round)
-                    drawLine(accent, Offset(inset, y), Offset(inset + (size.width - inset * 2) * progress, y), width, StrokeCap.Round)
+                    drawLine(accent, Offset(inset, y), Offset(inset + (size.width - inset * 2) * state.progressAt(position.value), y), width, StrokeCap.Round)
                 }
             })
             .clickable(interactionSource = null, indication = null, onClick = onExpand)

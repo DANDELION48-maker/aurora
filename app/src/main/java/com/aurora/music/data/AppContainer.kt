@@ -1,7 +1,6 @@
 package com.aurora.music.data
 
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.drop
 
 import android.content.Context
@@ -41,6 +40,8 @@ class AppContainer(context: Context) {
     private val _sourceErrors = kotlinx.coroutines.flow.MutableSharedFlow<String>(extraBufferCapacity = 1)
     val sourceErrors = _sourceErrors.asSharedFlow()
 
+    val http: okhttp3.OkHttpClient by lazy { okhttp3.OkHttpClient() }
+
     val settingsStore = SettingsStore(appContext)
     val playbackReportingAllowed = kotlinx.coroutines.flow.combine(settingsStore.playbackPrefs, settingsStore.privateSession) { prefs, private ->
         prefs.scrobble && !private
@@ -50,7 +51,7 @@ class AppContainer(context: Context) {
     }
 
     val audioCache = com.aurora.music.data.cache.AudioCache(appContext, settingsStore, offline = { offlineFlag })
-    val appUpdater = com.aurora.music.data.updates.AppUpdater(appContext)
+    val appUpdater = com.aurora.music.data.updates.AppUpdater(appContext, http)
     val extensions = com.aurora.music.extensions.ExtensionManager(appContext, settingsStore, scope)
     val listeningLevels = com.aurora.music.data.listening.ListeningLevelStore(
         java.io.File(appContext.noBackupFilesDir, "listening_levels.json"), settingsStore.processingRoutes)
@@ -69,6 +70,7 @@ class AppContainer(context: Context) {
     val localLibrary = LocalLibrary(appContext, gainProvider = { path -> replayGainStore.gainsFor(path) },
         separatorsProvider = { settingsStore.artistSeparators.first() })
     private val localStore = LocalStore(appContext.filesDir)
+    private val localIndexRequested = java.util.concurrent.atomic.AtomicBoolean(false)
 
     val replayGainScanner = ReplayGainScanner(localLibrary, replayGainStore)
 
@@ -76,21 +78,23 @@ class AppContainer(context: Context) {
 
     val backupManager = BackupManager(settingsStore, localStore, playHistory, appContext.filesDir, appContext.cacheDir, listeningLevels)
 
-    val musicBrainz = com.aurora.music.data.remote.MusicBrainzClient()
+    val musicBrainz by lazy { com.aurora.music.data.remote.MusicBrainzClient(http) }
 
     @Volatile private var acoustIdKeyValue: String = ""
-    val acoustId = com.aurora.music.data.remote.AcoustIdClient(apiKeyProvider = { acoustIdKeyValue })
+    val acoustId by lazy { com.aurora.music.data.remote.AcoustIdClient(apiKeyProvider = { acoustIdKeyValue }, base = http) }
 
-    val autoEq = AutoEqRepository(appContext)
+    val autoEq by lazy { AutoEqRepository(appContext, http) }
     val autoEqController = AutoEqController(settingsStore, scope)
 
     @Volatile private var squigBaseValue: String = DEFAULT_SQUIG_BASE
     @Volatile private var squigTargetValue: String = DEFAULT_SQUIG_TARGET
-    val squigEq = SquigEqRepository(
-        com.aurora.music.data.remote.SquigClient(),
-        baseProvider = { squigBaseValue },
-        targetProvider = { squigTargetValue },
-    )
+    val squigEq by lazy {
+        SquigEqRepository(
+            com.aurora.music.data.remote.SquigClient(http),
+            baseProvider = { squigBaseValue },
+            targetProvider = { squigTargetValue },
+        )
+    }
 
     @Volatile
     private var maxBitrate: Int = 0
@@ -132,7 +136,26 @@ class AppContainer(context: Context) {
 
     private val sourceLocalizer = SourceLocalizer(localMergeSession, downloadManager,
         preferLocal = { preferLocalSources }, priority = { sourcePriorityValue },
-        isLocalUrl = { it.startsWith("content://") || it.startsWith("file://") }, findLocal = localLibrary::findMatch)
+        isLocalUrl = { it.startsWith("content://") || it.startsWith("file://") }, findLocal = ::findLocalMatch)
+
+    private fun requestLocalIndex() {
+        if (!localLibrary.inUse && localIndexRequested.compareAndSet(false, true)) scope.launch { runCatching { localLibrary.ensureLoaded() } }
+    }
+
+    private fun findLocalMatch(artist: String, title: String, durationSec: Int): Song? {
+        requestLocalIndex()
+        return localLibrary.findMatch(artist, title, durationSec)
+    }
+
+    // best-source matching needs the on-device index only once a server session will look up local copies
+    private suspend fun prefetchLocalIndex() {
+        val session = settingsStore.session.first() ?: return
+        val order = settingsStore.sourcePriority.first()
+        val local = order.indexOf("local")
+        val stream = order.indexOf("stream")
+        if (session.type != ServerType.LOCAL && local >= 0 && (stream < 0 || local < stream) &&
+            settingsStore.preferLocalSources.first()) requestLocalIndex()
+    }
 
     val sonicStore = SonicStore(appContext)
     val mixStore = com.aurora.music.mix.MixStore(appContext)
@@ -145,10 +168,10 @@ class AppContainer(context: Context) {
     val sonicEngine by lazy { SonicEngine(sonicStore, { repository.allLibrarySongs(cap = Int.MAX_VALUE) },
         { settingsStore.session.first()?.accountKey().orEmpty() }, mixAnalyzer) }
 
-    val radioBrowser = com.aurora.music.data.remote.RadioBrowserClient()
-    val podcastClient = com.aurora.music.data.remote.PodcastClient()
+    val radioBrowser by lazy { com.aurora.music.data.remote.RadioBrowserClient(http) }
+    val podcastClient by lazy { com.aurora.music.data.remote.PodcastClient(http) }
 
-    val artistInfoClient = com.aurora.music.data.remote.ArtistInfoClient()
+    val artistInfoClient by lazy { com.aurora.music.data.remote.ArtistInfoClient(http) }
     val artistInfoStore = ArtistInfoStore(appContext.filesDir)
 
     private fun resolveYtSentinel(sentinel: String): String? {
@@ -241,23 +264,29 @@ class AppContainer(context: Context) {
 
     val lastfm = LastfmScrobbler(settingsStore, scope)
 
-    val listenBrainz = ListenBrainzScrobbler(settingsStore, scope)
+    val listenBrainz = ListenBrainzScrobbler(settingsStore, scope, com.aurora.music.data.remote.ListenBrainzClient(
+        http.newBuilder().connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS).readTimeout(30, java.util.concurrent.TimeUnit.SECONDS).build()))
 
     val discord = DiscordRpc(appContext, settingsStore, scope)
 
-    val youtubeResolver = com.aurora.music.playback.YoutubeResolver()
+    val youtubeResolver by lazy { com.aurora.music.playback.YoutubeResolver(http) }
     val youtubeMusicCredentials = YouTubeMusicCredentials(appContext)
-    val youTubeDownloader = YouTubeDownloader(appContext, youtubeResolver, { settingsStore.youTubeDownloadPrefs.first() }) {
-        settingsStore.savedSessions.first().firstOrNull { it.type == ServerType.YOUTUBE_MUSIC }?.let { session ->
-            runCatching { com.aurora.music.data.remote.YouTubeMusicWebSession.decode(youtubeMusicCredentials.read(session.token)) }.getOrNull()
+    val youTubeDownloader by lazy {
+        YouTubeDownloader(appContext, youtubeResolver, { settingsStore.youTubeDownloadPrefs.first() }, http) {
+            settingsStore.savedSessions.first().firstOrNull { it.type == ServerType.YOUTUBE_MUSIC }?.let { session ->
+                runCatching { com.aurora.music.data.remote.YouTubeMusicWebSession.decode(youtubeMusicCredentials.read(session.token)) }.getOrNull()
+            }
         }
     }
 
     @Volatile
     private var lrclibEnabled: Boolean = true
 
-    val lyricsRepository = LyricsRepository(backendProvider = { backend }, lrclibEnabledProvider = { lrclibEnabled },
-        separatorsProvider = { settingsStore.artistSeparators.first() })
+    val lyricsRepository by lazy {
+        LyricsRepository(backendProvider = { backend }, lrclibEnabledProvider = { lrclibEnabled },
+            separatorsProvider = { settingsStore.artistSeparators.first() },
+            http = http.newBuilder().connectTimeout(8, java.util.concurrent.TimeUnit.SECONDS).readTimeout(8, java.util.concurrent.TimeUnit.SECONDS).build())
+    }
 
     @Volatile
     private var offlineToggle: Boolean = false
@@ -308,7 +337,7 @@ class AppContainer(context: Context) {
 
     @OptIn(kotlinx.coroutines.FlowPreview::class)
     private suspend fun followMediaStore() {
-        mediaStoreChanges.onStart { emit(Unit) }.debounce(MEDIA_STORE_SETTLE_MS).collect {
+        mediaStoreChanges.debounce(MEDIA_STORE_SETTLE_MS).collect {
             if (localLibrary.inUse && runCatching { localLibrary.syncWithMediaStore() }.getOrDefault(false)) _libraryReload.value++
         }
     }
@@ -335,10 +364,13 @@ class AppContainer(context: Context) {
     @Volatile private var smartPlaylistsValue: List<SmartPlaylist> = emptyList()
     val smartEngine = SmartPlaylistEngine(playHistory, downloadManager)
 
+    private val artworkHttp = http.newBuilder().connectTimeout(8, java.util.concurrent.TimeUnit.SECONDS)
+        .readTimeout(10, java.util.concurrent.TimeUnit.SECONDS).build()
     val artworkRepository = com.aurora.music.data.artwork.ArtworkRepository(java.io.File(appContext.cacheDir, "metadata-artwork"),
         appContext::openUri, com.aurora.music.data.artwork.AndroidArtworkImages,
         offline = { offlineToggle || !networkUp }, enabled = { settingsStore.artworkLookupEnabled.first() },
-        separators = { settingsStore.artistSeparators.first() })
+        separators = { settingsStore.artistSeparators.first() },
+        client = com.aurora.music.data.artwork.CoverArtClient(artworkHttp), http = artworkHttp)
     val animatedCovers = AnimatedCovers(appContext, settingsStore, scope)
     val storage by lazy { StorageInventory(appContext, this, downloadsDir) }
 
@@ -385,28 +417,39 @@ class AppContainer(context: Context) {
             }
         }
         scope.launch {
-            settingsStore.session.distinctUntilChanged().collect { session ->
-                lastSession = session
-                // keep a disk-restored session in the saved list so it shows up for switching
-                session?.let { settingsStore.addSavedSession(it) }
+            var previous: Triple<Session?, Boolean, Set<String>>? = null
+            kotlinx.coroutines.flow.combine(settingsStore.session.distinctUntilChanged(),
+                settingsStore.unifiedLibrary.distinctUntilChanged(), settingsStore.mergeSources.distinctUntilChanged()) { session, unified, merge ->
+                Triple(session, unified, merge)
+            }.distinctUntilChanged().collect { current ->
+                val (session, unified, merge) = current
+                val last = previous
+                previous = current
+                val sessionChanged = last == null || last.first != session
+                unifiedLibraryValue = unified
+                mergeSourceKeys = merge
+                if (sessionChanged) {
+                    lastSession = session
+                    // keep a disk-restored session in the saved list so it shows up for switching
+                    if (session != null && runCatching { settingsStore.savedSessions.first().lastOrNull() }.getOrNull() != session)
+                        settingsStore.addSavedSession(session)
+                }
+                // single build so read the stored spotify client id instead of racing its collector
+                if (lastSession?.type == ServerType.SPOTIFY) spotifyClientIdValue = settingsStore.spotifyClientId.first()
                 rebuildBackend()
-                _sessionReady.value = session != null
-                // ignore the first load so startup doesn't count as an account change
-                val key = accountKey(session)
-                if (lastAccountKey != null && lastAccountKey != key) _accountEpoch.value++
-                lastAccountKey = key
-                recomputeOffline()
-                sonicEngine.cancel()
-                kotlinx.coroutines.withContext(Dispatchers.IO) { sonicStore.selectAccount(session?.accountKey().orEmpty()) }
-                if (session != null && settingsStore.sonicAutoAnalyze.first()) sonicEngine.scan()
-            }
-        }
-        scope.launch {
-            var first = true
-            settingsStore.unifiedLibrary.distinctUntilChanged().collect {
-                unifiedLibraryValue = it; rebuildBackend()
-                if (!first) _libraryReload.value++
-                first = false
+                if (sessionChanged) {
+                    _sessionReady.value = session != null
+                    // ignore the first load so startup doesn't count as an account change
+                    val key = accountKey(session)
+                    if (lastAccountKey != null && lastAccountKey != key) _accountEpoch.value++
+                    lastAccountKey = key
+                    recomputeOffline()
+                    sonicEngine.cancel()
+                    kotlinx.coroutines.withContext(Dispatchers.IO) { sonicStore.selectAccount(session?.accountKey().orEmpty()) }
+                    if (session != null) prefetchLocalIndex()
+                    if (session != null && settingsStore.sonicAutoAnalyze.first()) sonicEngine.scan()
+                }
+                if (last != null && (last.second != unified || last.third != merge)) _libraryReload.value++
             }
         }
         scope.launch {
@@ -415,14 +458,6 @@ class AppContainer(context: Context) {
                     rebuildBackend()
                     _libraryReload.value++
                 }
-            }
-        }
-        scope.launch {
-            var first = true
-            settingsStore.mergeSources.distinctUntilChanged().collect {
-                mergeSourceKeys = it; rebuildBackend()
-                if (!first) _libraryReload.value++
-                first = false
             }
         }
         scope.launch {
@@ -453,9 +488,9 @@ class AppContainer(context: Context) {
         }
         scope.launch {
             settingsStore.preferLocalSources.collect { on ->
+                if (on && !preferLocalSources) localIndexRequested.set(false)
                 preferLocalSources = on
-                // best-source matching needs the on-device index load it once when enabled
-                if (on) runCatching { localLibrary.ensureLoaded() }
+                if (on) prefetchLocalIndex()
             }
         }
         scope.launch {

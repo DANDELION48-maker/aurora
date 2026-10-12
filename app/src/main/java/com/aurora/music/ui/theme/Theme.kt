@@ -11,6 +11,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -107,6 +108,11 @@ fun rememberPlayerColorScheme(artworkUrl: String, fallback: Color): ColorScheme 
 
     val accent by rememberDominantColor(artworkUrl, fallback)
     val dark = appColors.background.luminance() < 0.5f
+    // a fresh ColorScheme has no equals so rebuilding it every pass defeats skipping under the player
+    return remember(accent, dark, prefs.themeMode) { playerColorScheme(accent, dark, prefs.themeMode == ThemeMode.AMOLED) }
+}
+
+private fun playerColorScheme(accent: Color, dark: Boolean, amoled: Boolean): ColorScheme {
     val base = (if (dark) DarkColors else LightColors).withAccent(accent, dark)
     // Choose the higher-contrast foreground for artwork colors of any brightness.
     fun foreground(color: Color) = if (color.luminance() > 0.179f) Color.Black else Color.White
@@ -122,7 +128,7 @@ fun rememberPlayerColorScheme(artworkUrl: String, fallback: Color): ColorScheme 
         surfaceTint = accent,
         inversePrimary = accent,
     )
-    return if (prefs.themeMode == ThemeMode.AMOLED) colors.toAmoled() else colors
+    return if (amoled) colors.toAmoled() else colors
 }
 
 @Composable

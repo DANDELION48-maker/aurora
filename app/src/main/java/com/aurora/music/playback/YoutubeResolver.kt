@@ -24,9 +24,8 @@ import org.schabi.newpipe.extractor.downloader.Request as NpRequest
 import org.schabi.newpipe.extractor.downloader.Response as NpResponse
 
 // blocks on network must run off main thread
-class YoutubeResolver {
+class YoutubeResolver(private val http: OkHttpClient = OkHttpClient()) {
 
-    private val http = OkHttpClient()
     private data class CachedStream(val url: String, val expiresAt: Long)
     private val cache = ConcurrentHashMap<String, CachedStream>()
     data class PlaybackStream(val url: String, val mimeType: String? = null, val videoUrl: String? = null)

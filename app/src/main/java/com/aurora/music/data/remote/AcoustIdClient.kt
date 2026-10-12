@@ -34,7 +34,7 @@ interface AcoustIdApi {
     ): AcoustIdResult
 }
 
-class AcoustIdClient(private val apiKeyProvider: () -> String) {
+class AcoustIdClient(private val apiKeyProvider: () -> String, base: OkHttpClient = OkHttpClient()) {
 
     private val apiKey: String get() = apiKeyProvider()
 
@@ -42,7 +42,7 @@ class AcoustIdClient(private val apiKeyProvider: () -> String) {
 
     val configured: Boolean get() = apiKey.isNotBlank()
 
-    private val http = OkHttpClient.Builder()
+    private val http = base.newBuilder()
         .connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .build()

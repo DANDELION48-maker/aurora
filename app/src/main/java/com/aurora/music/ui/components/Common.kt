@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.SubcomposeAsyncImage
+import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.aurora.music.data.ThemeStyle
 import com.aurora.music.ui.theme.LocalUiPrefs
@@ -44,6 +45,7 @@ fun Artwork(
     corner: Dp = 12.dp,
     contentScale: ContentScale = ContentScale.Crop,
     animated: CoverKey? = null,
+    decodeSize: Int = 0,
 ) {
     // Keep flush artwork and circular avatars intact; frame music covers to match the identity.
     val artCorner = if (corner == 0.dp || corner >= 22.dp) corner else when (LocalUiPrefs.current.themeStyle) {
@@ -52,23 +54,20 @@ fun Artwork(
         ThemeStyle.GLASS -> corner.coerceIn(10.dp, 16.dp)
         else -> corner
     }
-    val placeholder = Brush.linearGradient(
-        listOf(accent.copy(alpha = 0.55f), accent.copy(alpha = 0.12f))
-    )
+    val placeholder = remember(accent) { Brush.linearGradient(listOf(accent.copy(alpha = 0.55f), accent.copy(alpha = 0.12f))) }
+    val context = LocalContext.current
     Box(
         modifier = modifier.clip(RoundedCornerShape(artCorner)).background(placeholder),
         contentAlignment = Alignment.Center,
     ) {
-        SubcomposeAsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(url)
-                .crossfade(true)
-                .build(),
+        // the gradient behind shows while loading or on error so no subcomposed slots are needed
+        if (url.isNotBlank()) AsyncImage(
+            model = remember(url, decodeSize) {
+                ImageRequest.Builder(context).data(url).crossfade(true).apply { if (decodeSize > 0) size(decodeSize) }.build()
+            },
             contentDescription = null,
             contentScale = contentScale,
             modifier = Modifier.fillMaxSize(),
-            loading = { Box(Modifier.fillMaxSize().background(placeholder)) },
-            error = { Box(Modifier.fillMaxSize().background(placeholder)) },
         )
         if (animated != null) AnimatedCoverLayer(animated, Modifier.fillMaxSize())
     }

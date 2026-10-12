@@ -392,9 +392,11 @@ class MergedBackend(
 
 const val MERGE_NAMESPACE_SEP = '\u0001'   // same control char as MergedBackend.SEP
 
+private val MERGE_NAMESPACE_PATTERN = Regex("s[0-9a-f]{64}")
+
 fun stripMergeNamespace(id: String): String {
     val i = id.indexOf(MERGE_NAMESPACE_SEP)
     if (i <= 0) return id
     val prefix = id.substring(0, i)
-    return if (prefix.all { it.isDigit() } || prefix.matches(Regex("s[0-9a-f]{64}"))) id.substring(i + 1) else id
+    return if (prefix.all { it.isDigit() } || prefix.matches(MERGE_NAMESPACE_PATTERN)) id.substring(i + 1) else id
 }

@@ -59,13 +59,15 @@ class MixPlayer(
     private var publishedTrack = -1
     private var repeat = Player.REPEAT_MODE_OFF
     private var transportParams = PlaybackParameters.DEFAULT
+    // paused decks only need a slow tick until a control wakes the loop
+    private val wake = kotlinx.coroutines.channels.Channel<Unit>(kotlinx.coroutines.channels.Channel.CONFLATED)
     private val manager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     private val focus = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
         .setAudioAttributes(android.media.AudioAttributes.Builder().setUsage(android.media.AudioAttributes.USAGE_MEDIA)
             .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MUSIC).build())
         .setOnAudioFocusChangeListener { change ->
             if (change == AudioManager.AUDIOFOCUS_GAIN) {
-                if (resumeAfterFocus) { wanted = true; resumeAfterFocus = false; lastTick = SystemClock.elapsedRealtime(); invalidateState() }
+                if (resumeAfterFocus) { wanted = true; resumeAfterFocus = false; lastTick = SystemClock.elapsedRealtime(); invalidateState(); wake.trySend(Unit) }
             } else {
                 resumeAfterFocus = wanted && change != AudioManager.AUDIOFOCUS_LOSS
                 wanted = false
@@ -83,7 +85,12 @@ class MixPlayer(
         ContextCompat.registerReceiver(context, noisy, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY), ContextCompat.RECEIVER_NOT_EXPORTED)
         require(AutoMixPlanner.maxLayers(project) <= MixProject.MAX_LAYERS) { "At most eight tracks can overlap at once." }
         seekInternal(position)
-        scope.launch { while (isActive) { tick(); delay(16) } }
+        scope.launch(Dispatchers.Main) {
+            while (isActive) {
+                tick()
+                if (wanted) delay(16) else withTimeoutOrNull(250) { wake.receive() }
+            }
+        }
     }
 
     private fun createDeck(clip: MixClip) {
@@ -205,6 +212,7 @@ class MixPlayer(
         bus.activeProject = project
         if (reposition) seekInternal(position)
         invalidateState()
+        wake.trySend(Unit)
     }
 
     fun sleepFade(milliseconds: Int) {
@@ -300,6 +308,7 @@ class MixPlayer(
             deck.started = false
         }
         invalidateState()
+        wake.trySend(Unit)
     }
 
     override fun getState(): State {
@@ -346,6 +355,7 @@ class MixPlayer(
         if (wanted && ended) seekInternal(0f)
         if (!wanted) decks.forEach { it.player.pause() }
         lastTick = SystemClock.elapsedRealtime()
+        wake.trySend(Unit)
         return Futures.immediateVoidFuture()
     }
     override fun handlePrepare(): ListenableFuture<*> = Futures.immediateVoidFuture()

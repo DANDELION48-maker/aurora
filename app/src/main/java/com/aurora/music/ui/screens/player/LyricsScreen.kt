@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -69,6 +70,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
+import kotlin.math.roundToInt
 import com.aurora.music.model.accent
 
 @Composable
@@ -204,7 +206,7 @@ internal fun LyricsScreen(
                             fontSize = 22.sp, fontWeight = FontWeight.Bold)
                     }
                     else -> key(song.id, song.playbackSource?.providerId) {
-                        ImmersiveLyrics(content, state.current, state.positionSec, state.isPlaying, state.durationSec,
+                        ImmersiveLyrics(content, state.current, state.isPlaying, state.durationSec,
                             onSeek = { interactionVersion++; onSeek(it) }, onScrolling = { scrolling = it },
                             onBackgroundTap = { controlsVisible = !controlsVisible })
                     }
@@ -251,13 +253,14 @@ private fun WideLyrics(
                         maxLines = 1, overflow = TextOverflow.Ellipsis)
                     Spacer(Modifier.height(20.dp))
                     if (state.durationSec > 0) {
+                        val positionSec = com.aurora.music.ui.components.LocalPlaybackPosition.current.value
                         com.aurora.music.ui.components.Waveform(
-                            progress = state.progress, accent = Color.White, onSeek = onSeek,
+                            progress = state.progressAt(positionSec), accent = Color.White, onSeek = onSeek,
                             modifier = Modifier.fillMaxWidth(), seed = song.id.hashCode(),
                             barCount = ui.playerWaveBars.coerceIn(24, 96), height = 40.dp,
                         )
                         Row(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(formatTime(state.positionSec.toInt()), color = Color.White.copy(alpha = .65f), style = MaterialTheme.typography.labelSmall)
+                            Text(formatTime(positionSec.toInt()), color = Color.White.copy(alpha = .65f), style = MaterialTheme.typography.labelSmall)
                             Text(formatTime(state.durationSec), color = Color.White.copy(alpha = .65f), style = MaterialTheme.typography.labelSmall)
                         }
                     }
@@ -289,7 +292,7 @@ private fun WideLyrics(
                         Text(appString(R.string.text_no_lyrics_found_75127a), color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
                     }
                     else -> key(song.id, song.playbackSource?.providerId) {
-                        ImmersiveLyrics(lyrics, state.current, state.positionSec, state.isPlaying, state.durationSec, onSeek = onSeek, onScrolling = {}, onBackgroundTap = {})
+                        ImmersiveLyrics(lyrics, state.current, state.isPlaying, state.durationSec, onSeek = onSeek, onScrolling = {}, onBackgroundTap = {})
                     }
                 }
             }
@@ -333,7 +336,7 @@ internal fun LyricsPane(state: PlayerUiState, onSeek: (Float) -> Unit, modifier:
             else -> Column(Modifier.fillMaxSize()) {
                 Box(Modifier.weight(1f).fillMaxWidth()) {
                     key(song.id, song.playbackSource?.providerId) {
-                        ImmersiveLyrics(content, state.current, state.positionSec, state.isPlaying, state.durationSec, onSeek = onSeek,
+                        ImmersiveLyrics(content, state.current, state.isPlaying, state.durationSec, onSeek = onSeek,
                             onScrolling = {}, onBackgroundTap = {}, compact = compact)
                     }
                 }
@@ -381,10 +384,18 @@ private fun LyricsBackdrop(song: Song) {
     val first by animateColorAsState(tones[0], tween(1100), label = "lyricsPrimary")
     val second by animateColorAsState(tones[1], tween(1100), label = "lyricsSecondary")
     val third by animateColorAsState(tones[2], tween(1100), label = "lyricsGlow")
-    val motion = rememberInfiniteTransition(label = "lyricsAtmosphere")
-    val drift by motion.animateFloat(0f, 1f,
-        infiniteRepeatable(tween(18000, easing = LinearEasing), RepeatMode.Reverse), label = "drift")
+    // the glow drifts under a pixel per frame so a dozen redraws a second look identical and cost far less
+    val driftState = remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(Unit) {
+        val start = withFrameMillis { it }
+        while (true) {
+            val phase = ((withFrameMillis { it } - start) % 36_000L) / 18_000f
+            driftState.floatValue = if (phase <= 1f) phase else 2f - phase
+            delay(80)
+        }
+    }
     Canvas(Modifier.fillMaxSize()) {
+        val drift = driftState.floatValue
         drawRect(lerp(second, Color.Black, .58f))
         val radius = size.maxDimension * .85f
         drawCircle(Brush.radialGradient(listOf(first.copy(alpha = .72f), first.copy(alpha = 0f)),
@@ -399,7 +410,7 @@ private fun LyricsBackdrop(song: Song) {
 }
 
 @Composable
-private fun ImmersiveLyrics(source: Lyrics, song: Song, positionSec: Float, playing: Boolean, durationSec: Int, onSeek: (Float) -> Unit,
+private fun ImmersiveLyrics(source: Lyrics, song: Song, playing: Boolean, durationSec: Int, onSeek: (Float) -> Unit,
     onScrolling: (Boolean) -> Unit, onBackgroundTap: () -> Unit, compact: Boolean = false) {
     val mode = com.aurora.music.ui.theme.LocalUiPrefs.current.lyricsSync
     val vocals = rememberVocals(song, source, mode)
@@ -413,7 +424,7 @@ private fun ImmersiveLyrics(source: Lyrics, song: Song, positionSec: Float, play
     val lines = lyrics.lines
     val translation = rememberTranslation(source)
     val translated = (translation as? LyricsTranslation.Ready)?.lines?.takeIf { it.size == lines.size }
-    val clock = rememberLyricsClock(positionSec, playing && mode != LyricsSync.LINE)
+    val clock = rememberLyricsClock(com.aurora.music.ui.components.LocalPlaybackPosition.current, playing && mode != LyricsSync.LINE)
     val current by remember(lyrics) {
         derivedStateOf { if (lyrics.synced) lines.indexOfLast { it.startMs >= 0 && it.startMs <= clock.longValue } else -1 }
     }
@@ -476,9 +487,15 @@ private fun ImmersiveLyrics(source: Lyrics, song: Song, positionSec: Float, play
                     else ((abs(index - current) - 1).coerceAtLeast(0) * 1.6f).coerceAtMost(7f),
                     tween(450), label = "lineSoftness")
                 val line = lines[index]
-                val text = if (mode != LyricsSync.LINE && active && !browsing && line.words.isNotEmpty())
-                    karaoke(line.displayText, line.charFill(clock.longValue), alpha)
-                else AnnotatedString(line.displayText.ifBlank { "•••" })
+                val karaokeOn = mode != LyricsSync.LINE && active && !browsing && line.words.isNotEmpty()
+                // the wipe advances in quarter-character steps so the line re-lays out only when its look changes
+                val fill by remember(line, karaokeOn) {
+                    derivedStateOf(structuralEqualityPolicy()) {
+                        if (karaokeOn) line.charFill(clock.longValue).map { (it * FILL_STEPS).roundToInt() / FILL_STEPS } else null
+                    }
+                }
+                val text = fill?.let { remember(line, it, alpha) { karaoke(line.displayText, it, alpha) } }
+                    ?: AnnotatedString(line.displayText.ifBlank { "•••" })
                 val meaning = translated?.getOrNull(index)
                 Column(Modifier.fillMaxWidth().graphicsLayer {
                     scaleX = scale; scaleY = scale; transformOrigin = TransformOrigin(0f, .5f)
@@ -557,21 +574,25 @@ private fun rememberVocals(song: Song, lyrics: Lyrics, mode: Int): VocalActivity
 
 // extrapolates between the 200ms player ticks so the word wipe moves every frame
 @Composable
-private fun rememberLyricsClock(positionSec: Float, playing: Boolean): MutableLongState {
-    val clock = remember { mutableLongStateOf((positionSec * 1000).toLong()) }
-    LaunchedEffect(positionSec, playing) {
-        val reported = (positionSec * 1000).toLong()
-        val ahead = clock.longValue - reported
-        val base = if (playing && ahead in 1L..250L) reported + ahead / 2 else reported
-        clock.longValue = base
-        if (!playing) return@LaunchedEffect
-        val start = withFrameMillis { it }
-        while (true) withFrameMillis { clock.longValue = base + (it - start) }
+private fun rememberLyricsClock(position: State<Float>, playing: Boolean): MutableLongState {
+    val clock = remember { mutableLongStateOf((androidx.compose.runtime.snapshots.Snapshot.withoutReadObservation { position.value } * 1000).toLong()) }
+    LaunchedEffect(position, playing) {
+        snapshotFlow { position.value }.collectLatest { positionSec ->
+            val reported = (positionSec * 1000).toLong()
+            val ahead = clock.longValue - reported
+            val base = if (playing && ahead in 1L..250L) reported + ahead / 2 else reported
+            clock.longValue = base
+            if (!playing) return@collectLatest
+            val start = withFrameMillis { it }
+            while (true) withFrameMillis { clock.longValue = base + (it - start) }
+        }
     }
     return clock
 }
 
-private fun karaoke(text: String, fill: FloatArray, alpha: Float): AnnotatedString = buildAnnotatedString {
+private const val FILL_STEPS = 4f
+
+private fun karaoke(text: String, fill: List<Float>, alpha: Float): AnnotatedString = buildAnnotatedString {
     append(text)
     var i = 0
     while (i < text.length) {
@@ -598,7 +619,8 @@ private fun LyricsTransport(state: PlayerUiState, source: String?, onTogglePlay:
     val reportSeeking by rememberUpdatedState(onSeeking)
     LaunchedEffect(seeking != null) { reportSeeking(seeking != null) }
     DisposableEffect(Unit) { onDispose { reportSeeking(false) } }
-    val progress = seeking ?: if (state.durationSec > 0) state.positionSec / state.durationSec else 0f
+    val positionSec = com.aurora.music.ui.components.LocalPlaybackPosition.current.value
+    val progress = seeking ?: if (state.durationSec > 0) positionSec / state.durationSec else 0f
     Column(Modifier.fillMaxWidth().padding(horizontal = 28.dp).padding(bottom = 12.dp)) {
         if (state.durationSec > 0) {
             Slider(value = progress.coerceIn(0f, 1f), onValueChange = { seeking = it },

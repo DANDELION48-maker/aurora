@@ -5,13 +5,17 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.util.concurrent.CountDownLatch
+import kotlin.concurrent.thread
 
 data class PlayEvent(
     val songId: String,
@@ -38,58 +42,94 @@ class PlayHistoryStore(filesDir: File) {
     private var savedRevision = 0L
     private var listeningKey = ""
     private var listeningStamp = 0L
-    private var lastSave = 0L
+    private var lastSave = System.nanoTime()
+    private var quietSave: Job? = null
 
     fun endListeningSession() {
-        val changed = synchronized(lock) { val active = listeningKey.isNotEmpty(); listeningKey = ""; active }
+        val changed = synchronized(lock) {
+            val active = listeningKey.isNotEmpty()
+            listeningKey = ""
+            if (active) { quietSave?.cancel(); quietSave = null; lastSave = System.nanoTime() }
+            active
+        }
         if (changed) scope.launch { save() }
     }
 
     fun recordListening(song: Song, elapsedMs: Long, timestamp: Long = System.currentTimeMillis()) {
         if (song.id.isBlank() || elapsedMs <= 0) return
-        synchronized(lock) {
+        awaitLoaded()
+        val safety = synchronized(lock) {
             val day = java.time.Instant.ofEpochMilli(timestamp).atZone(java.time.ZoneId.systemDefault()).toLocalDate()
             val key = "${song.id}:$day"
-            val old = _history.value.firstOrNull()
+            val events = _history.value
+            val old = events.firstOrNull()
             if (listeningKey != key || old?.timestamp != listeningStamp || old.songId != song.id) {
                 listeningKey = key
                 listeningStamp = timestamp
                 val e = PlayEvent(song.id, song.title, song.artist, song.album, song.albumId, song.artistId, song.artworkUrl, song.durationSec, timestamp, elapsedMs)
-                _history.value = listOf(e) + _history.value.take(MAX - 1)
+                _history.value = prepend(events, e)
             } else {
-                _history.value = listOf(old.copy(listenedMs = (old.listenedMs ?: 0) + elapsedMs)) + _history.value.drop(1)
+                _history.value = withHead(events, old.copy(listenedMs = (old.listenedMs ?: 0) + elapsedMs))
             }
             revision++
+            quietSave?.cancel()
+            quietSave = null
+            val now = System.nanoTime()
+            if (now - lastSave >= SAFETY_SAVE_NS) { lastSave = now; true }
+            else { quietSave = scope.launch { delay(QUIET_SAVE_MS); save() }; false }
         }
-        if (timestamp - lastSave >= 15_000) { lastSave = timestamp; scope.launch { save() } }
+        if (safety) scope.launch { save() }
     }
 
     class BackupRollback internal constructor(internal val previous: List<PlayEvent>, internal val revision: Long)
 
-    private val _history = MutableStateFlow(load())
+    private val loaded = CountDownLatch(1)
+    private val _history = MutableStateFlow<List<PlayEvent>>(emptyList())
     val history: StateFlow<List<PlayEvent>> = _history.asStateFlow()
+
+    init {
+        thread(name = "play-history-load", isDaemon = true) {
+            try {
+                val events = load()
+                synchronized(lock) { _history.value = events }
+            } finally {
+                loaded.countDown()
+            }
+        }
+    }
+
+    private fun awaitLoaded() {
+        if (loaded.count > 0L) loaded.await()
+    }
 
     fun record(song: Song, timestamp: Long) {
         if (song.id.isEmpty()) return
         val event = PlayEvent(song.id, song.title, song.artist, song.album, song.albumId, song.artistId, song.artworkUrl, song.durationSec, timestamp)
+        awaitLoaded()
         synchronized(lock) {
             // drop immediate duplicate re-fire within 10s
             val last = _history.value.firstOrNull()
             if (last != null && last.songId == song.id && timestamp - last.timestamp < 10_000) return
             revision++
-            _history.value = (listOf(event) + _history.value).take(MAX)
+            _history.value = prepend(_history.value, event)
         }
         scope.launch { save() }
     }
 
     fun clear() {
+        awaitLoaded()
         synchronized(lock) { revision++; _history.value = emptyList() }
         // Persist the current state when this work runs: a queued delete must never erase a later restore.
         scope.launch { save() }
     }
 
-    fun snapshot(): List<PlayEvent> = _history.value
+    fun snapshot(): List<PlayEvent> {
+        awaitLoaded()
+        return _history.value
+    }
+
     fun restore(events: List<PlayEvent>) {
+        awaitLoaded()
         synchronized(lock) { revision++; _history.value = events.take(MAX) }
         scope.launch { save() }
     }
@@ -99,8 +139,9 @@ class PlayHistoryStore(filesDir: File) {
     }
 
     suspend fun replaceBackup(events: List<PlayEvent>): BackupRollback = withContext(Dispatchers.IO) {
+        awaitLoaded()
         val restored = events.take(MAX)
-        val bytes = gson.toJson(restored).toByteArray(Charsets.UTF_8)
+        val bytes = gson.toJson(restored, EVENTS_TYPE).toByteArray(Charsets.UTF_8)
         synchronized(lock) {
             val previous = _history.value
             persistBackupFileAtomically(file, bytes)
@@ -112,13 +153,14 @@ class PlayHistoryStore(filesDir: File) {
     }
 
     suspend fun rollbackBackup(token: BackupRollback): Boolean = withContext(Dispatchers.IO) {
+        awaitLoaded()
         synchronized(lock) {
             if (revision != token.revision) {
-                persistBackupFileAtomically(file, gson.toJson(_history.value).toByteArray(Charsets.UTF_8))
+                persistBackupFileAtomically(file, gson.toJson(_history.value, EVENTS_TYPE).toByteArray(Charsets.UTF_8))
                 savedRevision = revision
                 false
             } else {
-                persistBackupFileAtomically(file, gson.toJson(token.previous).toByteArray(Charsets.UTF_8))
+                persistBackupFileAtomically(file, gson.toJson(token.previous, EVENTS_TYPE).toByteArray(Charsets.UTF_8))
                 savedRevision = ++revision
                 _history.value = token.previous
                 true
@@ -126,10 +168,10 @@ class PlayHistoryStore(filesDir: File) {
         }
     }
 
-    fun totalPlays(): Int = _history.value.count { it.qualifiesAsPlay }
-    fun totalMinutes(): Long = _history.value.sumOf { it.listeningMillis } / 60_000
+    fun totalPlays(): Int = snapshot().count { it.qualifiesAsPlay }
+    fun totalMinutes(): Long = snapshot().sumOf { it.listeningMillis } / 60_000
 
-    fun since(millis: Long): List<PlayEvent> = _history.value.filter { it.timestamp >= millis }
+    fun since(millis: Long): List<PlayEvent> = snapshot().filter { it.timestamp >= millis }
 
     fun topArtists(events: List<PlayEvent>, limit: Int = 20): List<RankedItem> =
         events.filter { it.artistId.isNotBlank() || it.artist.isNotBlank() }
@@ -156,7 +198,7 @@ class PlayHistoryStore(filesDir: File) {
     }
 
     fun streak(): Pair<Int, Int> {
-        val days = _history.value.map { localDay(it.timestamp) }.toSortedSet().toList()
+        val days = snapshot().map { localDay(it.timestamp) }.toSortedSet().toList()
         if (days.isEmpty()) return 0 to 0
         var longest = 1; var run = 1
         for (i in 1 until days.size) {
@@ -177,8 +219,7 @@ class PlayHistoryStore(filesDir: File) {
 
     private fun load(): List<PlayEvent> = runCatching {
         if (!file.exists()) return@runCatching emptyList<PlayEvent>()
-        val type = object : TypeToken<List<PlayEvent>>() {}.type
-        gson.fromJson<List<PlayEvent>>(file.readText(), type)?.map(::withoutBrowsePrefix) ?: emptyList()
+        gson.fromJson<List<PlayEvent>>(file.readText(), EVENTS_TYPE)?.map(::withoutBrowsePrefix) ?: emptyList()
     }.getOrDefault(emptyList())
 
     // android auto and the library browser used to record their "song_" media ids instead of the song id
@@ -189,7 +230,7 @@ class PlayHistoryStore(filesDir: File) {
         synchronized(lock) {
             if (revision == savedRevision) return
             runCatching {
-                persistBackupFileAtomically(file, gson.toJson(_history.value).toByteArray(Charsets.UTF_8))
+                persistBackupFileAtomically(file, gson.toJson(_history.value, EVENTS_TYPE).toByteArray(Charsets.UTF_8))
                 savedRevision = revision
             }
         }
@@ -200,7 +241,7 @@ class PlayHistoryStore(filesDir: File) {
             if (revision == savedRevision) return
             revision to _history.value
         }
-        val bytes = gson.toJson(snapshot).toByteArray(Charsets.UTF_8)
+        val bytes = gson.toJson(snapshot, EVENTS_TYPE).toByteArray(Charsets.UTF_8)
         synchronized(lock) {
             // A queued save must not overwrite a later clear or backup restore.
             if (revision == version && savedRevision != version) runCatching {
@@ -210,8 +251,37 @@ class PlayHistoryStore(filesDir: File) {
         }
     }
 
+    // newest events sit in a short array over a shared base so ticks never copy the whole history
+    private class Events(val head: Array<PlayEvent>, val base: List<PlayEvent>, val from: Int) : AbstractList<PlayEvent>(), RandomAccess {
+        override val size: Int = head.size + base.size - from
+        override fun get(index: Int): PlayEvent {
+            if (index < 0 || index >= size) throw IndexOutOfBoundsException("Index $index out of bounds for size $size")
+            return if (index < head.size) head[index] else base[from + index - head.size]
+        }
+    }
+
+    private fun prepend(events: List<PlayEvent>, event: PlayEvent): List<PlayEvent> = when {
+        events.size >= MAX || (events is Events && events.head.size >= HEAD_LIMIT) ->
+            ArrayList<PlayEvent>(minOf(events.size + 1, MAX)).apply {
+                add(event)
+                for (i in 0 until minOf(events.size, MAX - 1)) add(events[i])
+            }
+        events is Events -> Events(Array(events.head.size + 1) { if (it == 0) event else events.head[it - 1] }, events.base, events.from)
+        else -> Events(arrayOf(event), randomAccess(events), 0)
+    }
+
+    private fun withHead(events: List<PlayEvent>, event: PlayEvent): List<PlayEvent> =
+        if (events is Events) Events(events.head.copyOf().also { it[0] = event }, events.base, events.from)
+        else Events(arrayOf(event), randomAccess(events), 1)
+
+    private fun randomAccess(events: List<PlayEvent>): List<PlayEvent> = if (events is RandomAccess) events else ArrayList(events)
+
     companion object {
         const val MAX = 250_000
         private const val BROWSE_PREFIX = "song_"
+        private const val HEAD_LIMIT = 64
+        private const val QUIET_SAVE_MS = 15_000L
+        private const val SAFETY_SAVE_NS = 300_000_000_000L
+        private val EVENTS_TYPE = object : TypeToken<List<PlayEvent>>() {}.type
     }
 }

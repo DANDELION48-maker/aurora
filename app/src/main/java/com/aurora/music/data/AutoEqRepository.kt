@@ -27,9 +27,8 @@ val EqDeviceKind.description: String get() = appString(when (this) {
     EqDeviceKind.SPEAKERS -> R.string.text_measured_speaker_correction_from_spinorama_including_bluetooth_mo_beaf02
 })
 
-class AutoEqRepository(private val context: Context) {
+class AutoEqRepository(private val context: Context, private val http: OkHttpClient = OkHttpClient()) {
 
-    private val http = OkHttpClient()
     @Volatile private var index: List<EqProfile>? = null
 
     suspend fun ensureIndex(): List<EqProfile> {

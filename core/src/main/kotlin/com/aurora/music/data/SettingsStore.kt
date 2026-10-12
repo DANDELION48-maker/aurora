@@ -58,7 +58,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
             showAlbum = p[Keys.DISCORD_SHOW_ALBUM] ?: true,
             activityName = p[Keys.DISCORD_ACTIVITY_NAME] ?: "aurora",
         )
-    }
+    }.distinctUntilChanged()
 
     val lastfm: Flow<LastfmAccount> = dataStore.data.map { p ->
         LastfmAccount(
@@ -67,15 +67,15 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
             imageUrl = p[Keys.LASTFM_IMAGE].orEmpty(),
             enabled = p[Keys.LASTFM_ENABLED] ?: true,
         )
-    }
+    }.distinctUntilChanged()
 
     val lastfmKeys: Flow<Pair<String, String>> = dataStore.data.map { p ->
         (p[Keys.LASTFM_API_KEY].orEmpty()) to (p[Keys.LASTFM_SECRET].orEmpty())
-    }
-
-    val lastfmArtistRules: Flow<List<ScrobbleArtistRule>> = dataStore.data.map { p ->
-        runCatching { ScrobbleArtistRulesCodec.decode(p[Keys.LASTFM_ARTIST_RULES]) }.getOrDefault(emptyList())
     }.distinctUntilChanged()
+
+    val lastfmArtistRules: Flow<List<ScrobbleArtistRule>> = dataStore.data
+        .map { it[Keys.LASTFM_ARTIST_RULES] }.distinctUntilChanged()
+        .map { runCatching { ScrobbleArtistRulesCodec.decode(it) }.getOrDefault(emptyList()) }.distinctUntilChanged()
 
     val listenBrainz: Flow<ListenBrainzAccount> = dataStore.data.map { p ->
         ListenBrainzAccount(
@@ -83,7 +83,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
             username = p[Keys.LISTENBRAINZ_USER].orEmpty(),
             enabled = p[Keys.LISTENBRAINZ_ENABLED] ?: true,
         )
-    }
+    }.distinctUntilChanged()
 
     val uiPrefs: Flow<UiPrefs> = dataStore.data.map { p ->
         UiPrefs(
@@ -116,7 +116,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
             lyricsSync = (p[Keys.UI_LYRICS_SYNC] ?: LyricsSync.WORD).coerceIn(LyricsSync.LINE, LyricsSync.VOCALS),
             lyricsTranslate = p[Keys.UI_LYRICS_TRANSLATE] ?: false,
         )
-    }
+    }.distinctUntilChanged()
 
     val audioPrefs: Flow<AudioPrefs> = dataStore.data.map(::readAudioPrefs).distinctUntilChanged()
 
@@ -136,7 +136,14 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     val processingRack: Flow<ProcessingRack> = processingSettings.map { it.rack }.distinctUntilChanged()
 
     private fun readProcessingRack(p: Preferences, audio: AudioPrefs, mono: Boolean): ProcessingRack =
-        p[Keys.PROCESSING_RACK]?.let { ProcessingRackCodec.decode(it).getOrNull() } ?: ProcessingRack.legacy(audio, mono)
+        p[Keys.PROCESSING_RACK]?.let { decodeRack(it) } ?: ProcessingRack.legacy(audio, mono)
+
+    @Volatile private var rackMemo: Pair<String, ProcessingRack?>? = null
+
+    private fun decodeRack(json: String): ProcessingRack? {
+        rackMemo?.let { if (it.first == json) return it.second }
+        return ProcessingRackCodec.decode(json).getOrNull().also { rackMemo = json to it }
+    }
 
     suspend fun setProcessingRack(rack: ProcessingRack): Result<Unit> = withContext(Dispatchers.IO) {
         runCatching {
@@ -459,11 +466,12 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     }
 
     val processingRouteRules: Flow<ProcessingRouteRules> = dataStore.data
-        .map { ProcessingRouteCodec.decode(it[Keys.PROCESSING_ROUTES]).getOrThrow() }.distinctUntilChanged()
+        .map { it[Keys.PROCESSING_ROUTES] }.distinctUntilChanged()
+        .map { ProcessingRouteCodec.decode(it).getOrThrow() }.distinctUntilChanged()
 
-    val outputRatePolicy = dataStore.data.map {
-        OutputRatePolicyCodec.decode(it[Keys.OUTPUT_RATE_POLICY]).getOrThrow()
-    }.distinctUntilChanged()
+    val outputRatePolicy = dataStore.data
+        .map { it[Keys.OUTPUT_RATE_POLICY] }.distinctUntilChanged()
+        .map { OutputRatePolicyCodec.decode(it).getOrThrow() }.distinctUntilChanged()
 
     suspend fun setOutputRatePolicy(value: com.aurora.music.playback.engine.OutputRatePolicy): Result<Unit> = impulseResult {
         val encoded = OutputRatePolicyCodec.encode(value)
@@ -477,9 +485,9 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         }
     }
 
-    val rackSubchains: Flow<List<RackSubchain>> = dataStore.data.map {
-        RackSubchainCodec.decode(it[Keys.RACK_SUBCHAINS]).getOrThrow()
-    }.distinctUntilChanged()
+    val rackSubchains: Flow<List<RackSubchain>> = dataStore.data
+        .map { it[Keys.RACK_SUBCHAINS] }.distinctUntilChanged()
+        .map { RackSubchainCodec.decode(it).getOrThrow() }.distinctUntilChanged()
 
     suspend fun saveRackSubchain(chain: RackSubchain): Result<Unit> = withContext(Dispatchers.IO) {
         impulseResult {
@@ -526,17 +534,26 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         }
     }
 
-    val processingRackAssets: Flow<List<ImpulseLibraryEntry>> = dataStore.data.map { p ->
-        val audio = readAudioPrefs(p)
-        resolveRackAssets(p, readProcessingRack(p, audio, readPlaybackPrefs(p).monoAudio), strict = false)
-    }.distinctUntilChanged()
+    private data class RackAssetSources(val rack: String?, val active: String?, val subchains: String?, val library: String?)
 
-    private fun resolveRackAssets(p: Preferences, rack: ProcessingRack, strict: Boolean = true): List<ImpulseLibraryEntry> {
-        val ids = rack.nodes.mapNotNull { it.impulseId }.distinct()
+    // legacy racks carry no impulse ids so only the raw json matters
+    val processingRackAssets: Flow<List<ImpulseLibraryEntry>> = dataStore.data
+        .map { p -> RackAssetSources(p[Keys.PROCESSING_RACK], p[Keys.ACTIVE_RACK_IMPULSES], p[Keys.RACK_SUBCHAINS], p[Keys.IMPULSE_LIBRARY]) }
+        .distinctUntilChanged()
+        .map { s -> resolveRackAssets(s.rack?.let { decodeRack(it) }?.nodes.orEmpty(), s.active, s.subchains, s.library, strict = false) }
+        .distinctUntilChanged()
+        .flowOn(Dispatchers.Default)
+
+    private fun resolveRackAssets(p: Preferences, rack: ProcessingRack, strict: Boolean = true): List<ImpulseLibraryEntry> =
+        resolveRackAssets(rack.nodes, p[Keys.ACTIVE_RACK_IMPULSES], p[Keys.RACK_SUBCHAINS], p[Keys.IMPULSE_LIBRARY], strict)
+
+    private fun resolveRackAssets(nodes: List<ProcessingRackNode>, active: String?, subchains: String?, library: String?,
+        strict: Boolean): List<ImpulseLibraryEntry> {
+        val ids = nodes.mapNotNull { it.impulseId }.distinct()
         if (ids.isEmpty()) return emptyList()
-        val available = (ImpulseLibraryCodec.decodeLibrary(p[Keys.ACTIVE_RACK_IMPULSES]).getOrThrow() +
-            RackSubchainCodec.decode(p[Keys.RACK_SUBCHAINS]).getOrThrow().flatMap { it.impulseAssets } +
-            ImpulseLibraryCodec.decodeLibrary(p[Keys.IMPULSE_LIBRARY]).getOrThrow()).associateBy { it.id }
+        val available = (ImpulseLibraryCodec.decodeLibrary(active).getOrThrow() +
+            RackSubchainCodec.decode(subchains).getOrThrow().flatMap { it.impulseAssets } +
+            ImpulseLibraryCodec.decodeLibrary(library).getOrThrow()).associateBy { it.id }
         return ids.mapNotNull { id -> available[id].also { require(it != null || !strict) { "An impulse response is missing." } } }
     }
 
@@ -571,7 +588,8 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     }
 
     val presetRules: Flow<PresetRuleSet> = dataStore.data
-        .map { PresetRuleCodec.decode(it[Keys.PRESET_RULES]).getOrThrow() }.distinctUntilChanged()
+        .map { it[Keys.PRESET_RULES] }.distinctUntilChanged()
+        .map { PresetRuleCodec.decode(it).getOrThrow() }.distinctUntilChanged()
 
     suspend fun savePresetRule(rule: PresetRule): Result<Unit> = editPresetRules(rule.presetId) { rules ->
         val existing = rules.rules.indexOfFirst { it.id == rule.id }
@@ -938,7 +956,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
 
     private companion object { const val MAX_PRESET_IR_BYTES = 64L * 1024L * 1024L }
 
-    val offlineMode: Flow<Boolean> = dataStore.data.map { it[Keys.OFFLINE] ?: false }
+    val offlineMode: Flow<Boolean> = dataStore.data.map { it[Keys.OFFLINE] ?: false }.distinctUntilChanged()
 
     val audioCachePrefs: Flow<com.aurora.music.data.cache.AudioCachePrefs> = dataStore.data.map {
         com.aurora.music.data.cache.AudioCachePrefs(it[Keys.AUDIO_CACHE_ENABLED] ?: true,
@@ -950,11 +968,11 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         require(mb in com.aurora.music.data.cache.AudioCachePrefs.limitsMb)
         dataStore.edit { it[Keys.AUDIO_CACHE_LIMIT] = mb }
     }
-    val artworkLookupEnabled: Flow<Boolean> = dataStore.data.map { it[Keys.ARTWORK_LOOKUP] ?: true }
+    val artworkLookupEnabled: Flow<Boolean> = dataStore.data.map { it[Keys.ARTWORK_LOOKUP] ?: true }.distinctUntilChanged()
     val animatedCoversEnabled: Flow<Boolean> = dataStore.data.map { it[Keys.ANIMATED_COVERS] ?: true }.distinctUntilChanged()
     val animatedCoversFolder: Flow<String> = dataStore.data.map { it[Keys.ANIMATED_COVERS_FOLDER].orEmpty() }.distinctUntilChanged()
-    val lrclibEnabled: Flow<Boolean> = dataStore.data.map { it[Keys.LRCLIB] ?: true }
-    val dataSaver: Flow<Boolean> = dataStore.data.map { it[Keys.DATA_SAVER] ?: false }
+    val lrclibEnabled: Flow<Boolean> = dataStore.data.map { it[Keys.LRCLIB] ?: true }.distinctUntilChanged()
+    val dataSaver: Flow<Boolean> = dataStore.data.map { it[Keys.DATA_SAVER] ?: false }.distinctUntilChanged()
     val simpleMode: Flow<Boolean> = dataStore.data.map { it[Keys.SIMPLE_MODE] ?: false }.distinctUntilChanged()
     val insightsPrefs: Flow<InsightsPrefs> = dataStore.data.map {
         InsightsPrefs(it[Keys.INSIGHTS_ENABLED] ?: false, it[Keys.INSIGHTS_DEVICE] ?: true, it[Keys.INSIGHTS_AUDIO_PATH] ?: true,
@@ -962,7 +980,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     }.distinctUntilChanged()
     val onboardingSeen: Flow<Boolean?> = dataStore.data.map { it[Keys.ONBOARDING_SEEN] }.distinctUntilChanged()
     suspend fun setOnboardingSeen() = dataStore.edit { it[Keys.ONBOARDING_SEEN] = true }
-    val privateSession: Flow<Boolean> = dataStore.data.map { it[Keys.PRIVATE_SESSION] ?: false }
+    val privateSession: Flow<Boolean> = dataStore.data.map { it[Keys.PRIVATE_SESSION] ?: false }.distinctUntilChanged()
 
     val gesturePrefs: Flow<GesturePrefs> = dataStore.data.map { p ->
         GesturePrefs(
@@ -970,8 +988,8 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
             swipeDownDismiss = p[Keys.GESTURE_SWIPE_DISMISS] ?: true,
             doubleTapPause = p[Keys.GESTURE_DOUBLE_TAP] ?: true,
         )
-    }
-    val haptics: Flow<Boolean> = dataStore.data.map { it[Keys.HAPTICS] ?: false }
+    }.distinctUntilChanged()
+    val haptics: Flow<Boolean> = dataStore.data.map { it[Keys.HAPTICS] ?: false }.distinctUntilChanged()
 
     val alarmPrefs: Flow<AlarmPrefs> = dataStore.data.map { p ->
         AlarmPrefs(
@@ -979,30 +997,31 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
             hour = p[Keys.ALARM_HOUR] ?: 7,
             minute = p[Keys.ALARM_MINUTE] ?: 0,
         )
-    }
+    }.distinctUntilChanged()
 
-    val spotifyClientId: Flow<String> = dataStore.data.map { it[Keys.SPOTIFY_CLIENT_ID] ?: "" }
+    val spotifyClientId: Flow<String> = dataStore.data.map { it[Keys.SPOTIFY_CLIENT_ID] ?: "" }.distinctUntilChanged()
 
-    val acoustIdKey: Flow<String> = dataStore.data.map { it[Keys.ACOUSTID_KEY] ?: "" }
+    val acoustIdKey: Flow<String> = dataStore.data.map { it[Keys.ACOUSTID_KEY] ?: "" }.distinctUntilChanged()
 
     // distinctUntilChanged so a settings write doesnt re-fire and wipe a just-applied correction
-    val eqBindings: Flow<List<EqBinding>> = dataStore.data.map { parseBindings(it[Keys.EQ_BINDINGS]) }.distinctUntilChanged()
+    val eqBindings: Flow<List<EqBinding>> = dataStore.data.map { it[Keys.EQ_BINDINGS] }.distinctUntilChanged()
+        .map { parseBindings(it) }.distinctUntilChanged()
     val autoEqAutoSwitch: Flow<Boolean> = dataStore.data.map { it[Keys.AUTOEQ_SWITCH] ?: false }.distinctUntilChanged()
-    val activeEqProfile: Flow<String> = dataStore.data.map { it[Keys.AUTOEQ_PROFILE] ?: "" }
+    val activeEqProfile: Flow<String> = dataStore.data.map { it[Keys.AUTOEQ_PROFILE] ?: "" }.distinctUntilChanged()
 
     private fun parseBindings(json: String?): List<EqBinding> = runCatching {
         if (json.isNullOrBlank()) emptyList()
         else gson.fromJson<List<EqBinding>>(json, object : TypeToken<List<EqBinding>>() {}.type) ?: emptyList()
     }.getOrDefault(emptyList())
 
-    val pins: Flow<List<Pin>> = dataStore.data.map { p -> parsePins(p[Keys.PINS]) }
+    val pins: Flow<List<Pin>> = dataStore.data.map { it[Keys.PINS] }.distinctUntilChanged().map { parsePins(it) }
 
     private fun parsePins(json: String?): List<Pin> = runCatching {
         if (json.isNullOrBlank()) emptyList()
         else gson.fromJson<List<Pin>>(json, object : TypeToken<List<Pin>>() {}.type) ?: emptyList()
     }.getOrDefault(emptyList())
 
-    val smartPlaylists: Flow<List<SmartPlaylist>> = dataStore.data.map { p -> parseSmart(p[Keys.SMART_PLAYLISTS]) }
+    val smartPlaylists: Flow<List<SmartPlaylist>> = dataStore.data.map { it[Keys.SMART_PLAYLISTS] }.distinctUntilChanged().map { parseSmart(it) }
 
     private fun parseSmart(json: String?): List<SmartPlaylist> = runCatching {
         if (json.isNullOrBlank()) emptyList()
@@ -1019,7 +1038,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         p[Keys.SMART_PLAYLISTS] = gson.toJson(parseSmart(p[Keys.SMART_PLAYLISTS]).filterNot { it.id == id })
     }
 
-    val radioFavorites: Flow<List<RadioStation>> = dataStore.data.map { p -> parseRadio(p[Keys.RADIO_FAVORITES]) }
+    val radioFavorites: Flow<List<RadioStation>> = dataStore.data.map { it[Keys.RADIO_FAVORITES] }.distinctUntilChanged().map { parseRadio(it) }
 
     private fun parseRadio(json: String?): List<RadioStation> = runCatching {
         if (json.isNullOrBlank()) emptyList()
@@ -1036,7 +1055,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         p[Keys.RADIO_FAVORITES] = gson.toJson(parseRadio(p[Keys.RADIO_FAVORITES]).filterNot { it.uuid == uuid })
     }
 
-    val podcastSubs: Flow<List<Podcast>> = dataStore.data.map { p -> parsePodcasts(p[Keys.PODCAST_SUBS]) }
+    val podcastSubs: Flow<List<Podcast>> = dataStore.data.map { it[Keys.PODCAST_SUBS] }.distinctUntilChanged().map { parsePodcasts(it) }
 
     private fun parsePodcasts(json: String?): List<Podcast> = runCatching {
         if (json.isNullOrBlank()) emptyList()
@@ -1054,7 +1073,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     }
 
     // persisted locally because subsonic has no playlist-star
-    val likedPlaylists: Flow<Set<String>> = dataStore.data.map { it[Keys.LIKED_PLAYLISTS] ?: emptySet() }
+    val likedPlaylists: Flow<Set<String>> = dataStore.data.map { it[Keys.LIKED_PLAYLISTS] ?: emptySet() }.distinctUntilChanged()
 
     val session: Flow<Session?> = dataStore.data.map { p ->
         val s = Session(
@@ -1069,38 +1088,38 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
             clientVersion = p[Keys.CLIENT_VERSION].orEmpty(),
         )
         if (s.isValid) s else null
-    }
+    }.distinctUntilChanged()
 
     val playbackPrefs: Flow<PlaybackPrefs> = dataStore.data.map(::readPlaybackPrefs).distinctUntilChanged()
 
-    val visualizerPrefs: Flow<VisualizerPrefs> = dataStore.data.map(::readVisualizerPrefs)
+    val visualizerPrefs: Flow<VisualizerPrefs> = dataStore.data.map(::readVisualizerPrefs).distinctUntilChanged()
 
-    val sonicAutoAnalyze: Flow<Boolean> = dataStore.data.map { it[Keys.SONIC_AUTO_ANALYZE] ?: false }
+    val sonicAutoAnalyze: Flow<Boolean> = dataStore.data.map { it[Keys.SONIC_AUTO_ANALYZE] ?: false }.distinctUntilChanged()
     suspend fun setSonicAutoAnalyze(v: Boolean) = dataStore.edit { it[Keys.SONIC_AUTO_ANALYZE] = v }
 
     // off keeps artist names from ever leaving the device
-    val artistEnrichment: Flow<Boolean> = dataStore.data.map { it[Keys.ARTIST_ENRICHMENT] ?: true }
+    val artistEnrichment: Flow<Boolean> = dataStore.data.map { it[Keys.ARTIST_ENRICHMENT] ?: true }.distinctUntilChanged()
     suspend fun setArtistEnrichment(v: Boolean) = dataStore.edit { it[Keys.ARTIST_ENRICHMENT] = v }
 
-    val preferLocalSources: Flow<Boolean> = dataStore.data.map { it[Keys.PREFER_LOCAL] ?: true }
+    val preferLocalSources: Flow<Boolean> = dataStore.data.map { it[Keys.PREFER_LOCAL] ?: true }.distinctUntilChanged()
     suspend fun setPreferLocalSources(v: Boolean) = dataStore.edit { it[Keys.PREFER_LOCAL] = v }
 
-    val sourcePriority: Flow<List<String>> = dataStore.data.map { p ->
-        parseStringList(p[Keys.SOURCE_PRIORITY]).filter { it in DEFAULT_SOURCE_PRIORITY }
+    val sourcePriority: Flow<List<String>> = dataStore.data.map { it[Keys.SOURCE_PRIORITY] }.distinctUntilChanged().map { raw ->
+        parseStringList(raw).filter { it in DEFAULT_SOURCE_PRIORITY }
             .ifEmpty { DEFAULT_SOURCE_PRIORITY }
     }
     suspend fun setSourcePriority(order: List<String>) = dataStore.edit {
         it[Keys.SOURCE_PRIORITY] = gson.toJson(order.filter { t -> t in DEFAULT_SOURCE_PRIORITY }.distinct())
     }
 
-    val unifiedLibrary: Flow<Boolean> = dataStore.data.map { it[Keys.UNIFIED_LIBRARY] ?: false }
+    val unifiedLibrary: Flow<Boolean> = dataStore.data.map { it[Keys.UNIFIED_LIBRARY] ?: false }.distinctUntilChanged()
     suspend fun setUnifiedLibrary(v: Boolean) = dataStore.edit { it[Keys.UNIFIED_LIBRARY] = v }
 
     // empty = every eligible saved source
-    val mergeSources: Flow<Set<String>> = dataStore.data.map { it[Keys.MERGE_SOURCES] ?: emptySet() }
+    val mergeSources: Flow<Set<String>> = dataStore.data.map { it[Keys.MERGE_SOURCES] ?: emptySet() }.distinctUntilChanged()
     suspend fun setMergeSources(keys: Set<String>) = dataStore.edit { it[Keys.MERGE_SOURCES] = keys }
 
-    val recentSearches: Flow<List<String>> = dataStore.data.map { parseStringList(it[Keys.RECENT_SEARCHES]) }
+    val recentSearches: Flow<List<String>> = dataStore.data.map { it[Keys.RECENT_SEARCHES] }.distinctUntilChanged().map { parseStringList(it) }
 
     private fun parseStringList(json: String?): List<String> = runCatching {
         if (json.isNullOrBlank()) emptyList()
@@ -1124,16 +1143,16 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
 
     suspend fun clearRecentSearches() = dataStore.edit { it.remove(Keys.RECENT_SEARCHES) }
 
-    val saveRecentSearches: Flow<Boolean> = dataStore.data.map { it[Keys.SAVE_SEARCHES] ?: true }
+    val saveRecentSearches: Flow<Boolean> = dataStore.data.map { it[Keys.SAVE_SEARCHES] ?: true }.distinctUntilChanged()
     suspend fun setSaveRecentSearches(v: Boolean) = dataStore.edit {
         it[Keys.SAVE_SEARCHES] = v
         if (!v) it.remove(Keys.RECENT_SEARCHES)
     }
 
-    val squigBaseUrl: Flow<String> = dataStore.data.map { it[Keys.SQUIG_BASE]?.takeIf { u -> u.isNotBlank() } ?: DEFAULT_SQUIG_BASE }
+    val squigBaseUrl: Flow<String> = dataStore.data.map { it[Keys.SQUIG_BASE]?.takeIf { u -> u.isNotBlank() } ?: DEFAULT_SQUIG_BASE }.distinctUntilChanged()
     suspend fun setSquigBaseUrl(v: String) = dataStore.edit { it[Keys.SQUIG_BASE] = v.trim().trimEnd('/') }
 
-    val squigTarget: Flow<String> = dataStore.data.map { it[Keys.SQUIG_TARGET]?.takeIf { t -> t.isNotBlank() } ?: DEFAULT_SQUIG_TARGET }
+    val squigTarget: Flow<String> = dataStore.data.map { it[Keys.SQUIG_TARGET]?.takeIf { t -> t.isNotBlank() } ?: DEFAULT_SQUIG_TARGET }.distinctUntilChanged()
     suspend fun setSquigTarget(v: String) = dataStore.edit { it[Keys.SQUIG_TARGET] = v.trim() }
 
     suspend fun setVisualizer(v: VisualizerPrefs) = dataStore.edit { p ->
@@ -1192,7 +1211,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         }
     }
 
-    val savedSessions: Flow<List<Session>> = dataStore.data.map { parseSessions(it[Keys.SAVED_SESSIONS]) }
+    val savedSessions: Flow<List<Session>> = dataStore.data.map { it[Keys.SAVED_SESSIONS] }.distinctUntilChanged().map { parseSessions(it) }
 
     private fun parseSessions(json: String?): List<Session> = runCatching {
         if (json.isNullOrBlank()) emptyList()
@@ -1342,6 +1361,10 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         }
     }
     suspend fun setDspGraphicBands(v: List<Float>) = editManualProcessing { it[Keys.DSP_GRAPHIC] = v.joinToString(",") }
+    suspend fun setDspGraphic(layout: Int, bands: List<Float>) = editManualProcessing {
+        it[Keys.DSP_GRAPHIC_LAYOUT] = layout
+        it[Keys.DSP_GRAPHIC] = bands.joinToString(",")
+    }
     suspend fun setDspParametric(v: List<ParamBand>) = editManualProcessing {
         it[Keys.DSP_PARAMETRIC] = ParamBandCodec.encodePreference(v)
     }
@@ -1444,8 +1467,8 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     suspend fun setDiscordActivityName(v: String) = dataStore.edit { it[Keys.DISCORD_ACTIVITY_NAME] = v }
     suspend fun setDiscordAppId(v: String) = dataStore.edit { it[Keys.DISCORD_APP_ID] = v.trim() }
 
-    val localProfile: Flow<LocalProfile> = dataStore.data.map {
-        runCatching { LocalProfileCodec.decode(it[Keys.LOCAL_PROFILE]) }.getOrDefault(LocalProfile())
+    val localProfile: Flow<LocalProfile> = dataStore.data.map { it[Keys.LOCAL_PROFILE] }.distinctUntilChanged().map {
+        runCatching { LocalProfileCodec.decode(it) }.getOrDefault(LocalProfile())
     }.distinctUntilChanged()
 
     suspend fun setLocalProfile(profile: LocalProfile) {
@@ -1453,8 +1476,8 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         dataStore.edit { it[Keys.LOCAL_PROFILE] = encoded }
     }
 
-    val artistSeparators: Flow<ArtistSeparators> = dataStore.data.map {
-        runCatching { ArtistSeparatorsCodec.decode(it[Keys.ARTIST_SEPARATORS]) }.getOrDefault(ArtistSeparators())
+    val artistSeparators: Flow<ArtistSeparators> = dataStore.data.map { it[Keys.ARTIST_SEPARATORS] }.distinctUntilChanged().map {
+        runCatching { ArtistSeparatorsCodec.decode(it) }.getOrDefault(ArtistSeparators())
     }.distinctUntilChanged()
 
     suspend fun setArtistSeparators(separators: ArtistSeparators) {

@@ -7,6 +7,9 @@ import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonToken
+import java.io.StringReader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -40,15 +43,22 @@ class DiscordGateway(
     private var seq: Int? = null
     private var heartbeatJob: Job? = null
     @Volatile private var closedByUser = false
+    private var backoffMs = MIN_BACKOFF_MS
+    private var fatalToken: String? = null
 
     @Synchronized fun connect(token: String, activity: JsonObject?) {
         if (token.isBlank()) return
         disconnect()
         this.token = token
         presenceThrottle.offer(activity)
+        if (token == fatalToken) return
         closedByUser = false
+        backoffMs = MIN_BACKOFF_MS
         open()
     }
+
+    // true if a rejected token was parked
+    @Synchronized fun clearFatal(): Boolean = (fatalToken != null).also { fatalToken = null }
 
     @Synchronized fun updateActivity(activity: JsonObject?) {
         presenceThrottle.offer(activity)
@@ -142,16 +152,38 @@ class DiscordGateway(
         heartbeatJob?.cancel(); presenceJob?.cancel(); presenceJob = null
         ws?.cancel(); ws = null
         onConnected(false)
+        val wait = backoffMs
+        backoffMs = (backoffMs * 2).coerceAtMost(MAX_BACKOFF_MS)
         reconnectJob = scope.launch {
-            delay(5000)
+            delay(wait)
             synchronized(this@DiscordGateway) { reconnectJob = null; if (!closedByUser) open() }
         }
     }
 
+    @Synchronized private fun closed(code: Int) {
+        if (code !in FATAL_CLOSE_CODES) return reconnect()
+        AppLog.d(TAG, "rejected with $code, waiting for new credentials")
+        fatalToken = token
+        ready = false; generation++
+        heartbeatJob?.cancel(); presenceJob?.cancel(); presenceJob = null; reconnectJob?.cancel()
+        ws?.cancel(); ws = null
+        onConnected(false)
+    }
+
     private inner class Listener(private val epoch: Long) : WebSocketListener() {
-        override fun onMessage(webSocket: WebSocket, text: String) = synchronized(this@DiscordGateway) {
-            if (epoch != generation || closedByUser) return@synchronized
-            val json = runCatching { JsonParser.parseString(text).asJsonObject }.getOrNull() ?: return@synchronized
+        override fun onMessage(webSocket: WebSocket, text: String) {
+            // only the sequence matters for ordinary dispatches so skip building their tree
+            if (text.contains("\"op\":0") && !text.contains("READY")) {
+                val s = dispatchSequence(text) ?: return
+                synchronized(this@DiscordGateway) { if (epoch == generation && !closedByUser) seq = s }
+                return
+            }
+            val json = runCatching { JsonParser.parseString(text).asJsonObject }.getOrNull() ?: return
+            synchronized(this@DiscordGateway) { handle(json) }
+        }
+
+        private fun handle(json: JsonObject) {
+            if (epoch != generation || closedByUser) return
             json.number("s")?.let { seq = it.toInt() }
             when (json.number("op")?.toInt() ?: -1) {
                 10 -> {
@@ -167,6 +199,7 @@ class DiscordGateway(
                     onUsername(name)
                     onConnected(true)
                     ready = true
+                    backoffMs = MIN_BACKOFF_MS
                     schedulePresence()
                 }
                 1 -> runCatching { ws?.send(heartbeat()) }
@@ -175,10 +208,16 @@ class DiscordGateway(
             }
         }
 
+        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) = synchronized(this@DiscordGateway) {
+            if (epoch != generation || closedByUser) return@synchronized
+            AppLog.d(TAG, "closing $code $reason")
+            closed(code)
+        }
+
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) = synchronized(this@DiscordGateway) {
             if (epoch != generation || closedByUser) return@synchronized
             AppLog.d(TAG, "closed $code $reason")
-            reconnect()
+            closed(code)
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) = synchronized(this@DiscordGateway) {
@@ -188,8 +227,24 @@ class DiscordGateway(
         }
     }
 
-    private companion object { const val TAG = "DiscordRpc" }
+    private companion object {
+        const val TAG = "DiscordRpc"
+        const val MIN_BACKOFF_MS = 5_000L
+        const val MAX_BACKOFF_MS = 300_000L
+        val FATAL_CLOSE_CODES = setOf(4004, 4010, 4011, 4012, 4013, 4014)
+    }
 }
+
+private fun dispatchSequence(text: String): Int? = runCatching {
+    JsonReader(StringReader(text)).use { reader ->
+        reader.beginObject()
+        while (reader.hasNext()) {
+            if (reader.nextName() == "s" && reader.peek() == JsonToken.NUMBER) return@use reader.nextInt()
+            reader.skipValue()
+        }
+        null
+    }
+}.getOrNull()
 
 private fun JsonObject.number(key: String): Number? = get(key)?.takeIf { it.isJsonPrimitive && it.asJsonPrimitive.isNumber }?.asNumber
 

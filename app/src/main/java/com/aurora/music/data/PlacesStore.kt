@@ -30,6 +30,7 @@ class PlacesStore(private val context: Context) {
     @Volatile private var fixedAt = Long.MIN_VALUE / 2
     @Volatile private var pending = false
     @Volatile private var lastFix: LocationFix? = null
+    @Volatile private var pointInterval = POINT_REFRESH_MS
 
     fun update(transform: (Places) -> Places) {
         val next = transform(state.value)
@@ -54,44 +55,81 @@ class PlacesStore(private val context: Context) {
     fun currentZone(): String? = sample(zone = true, point = false).first
 
     // low-power fixes only while something plays: every ten minutes for labels, every two for the location history map
+    // a fix another app already got is reused and the map interval stretches while the phone stays put
     fun sample(zone: Boolean, point: Boolean): Pair<String?, LocationFix?> {
         val now = SystemClock.elapsedRealtime()
         val wanted = (zone && state.value.configured) || point
-        val refresh = if (point) POINT_REFRESH_MS else REFRESH_MS
+        val refresh = if (point) pointInterval else REFRESH_MS
         if (wanted && !pending && now - fixedAt > refresh && permitted()) {
             pending = true
-            fix { location ->
+            fix(precise = false, maxAgeMs = if (point) POINT_REFRESH_MS else REFRESH_MS) { location ->
                 pending = false
                 fixedAt = SystemClock.elapsedRealtime()
+                val previous = lastFix
                 lastFix = location?.let { LocationFix(it.latitude, it.longitude, it.accuracy, fixedAt) }
+                if (point) pointInterval = nextPointInterval(previous, lastFix)
                 this.zone = location?.let { PlaceZones.zoneFor(it.latitude, it.longitude, it.accuracy, state.value) }
             }
         }
         return (if (zone) this.zone?.takeIf { now - fixedAt <= STALE_MS } else null) to
-            (if (point) lastFix?.takeIf { now - it.at <= POINT_STALE_MS } else null)
+            (if (point) lastFix?.takeIf { now - it.at <= pointInterval + POINT_STALE_SLACK_MS } else null)
     }
 
     suspend fun currentLocation(): Location? = withTimeoutOrNull(20_000) {
-        suspendCancellableCoroutine { continuation -> fix { if (continuation.isActive) continuation.resume(it) } }
+        suspendCancellableCoroutine { continuation -> fix(precise = true, maxAgeMs = 0L) { if (continuation.isActive) continuation.resume(it) } }
     }
 
-    private fun fix(done: (Location?) -> Unit) {
+    private fun nextPointInterval(previous: LocationFix?, current: LocationFix?): Long {
+        if (previous == null || current == null) return POINT_REFRESH_MS
+        val moved = FloatArray(1)
+        Location.distanceBetween(previous.latitude, previous.longitude, current.latitude, current.longitude, moved)
+        val still = moved[0] <= maxOf(STILL_RADIUS_M, previous.accuracyM, current.accuracyM)
+        return if (still) (pointInterval * 2).coerceAtMost(POINT_MAX_REFRESH_MS) else POINT_REFRESH_MS
+    }
+
+    // background samples never wake gps; only the explicit set-to-here action may
+    private fun fix(precise: Boolean, maxAgeMs: Long, done: (Location?) -> Unit) {
         val manager = context.getSystemService(LocationManager::class.java)
+        if (manager == null || !permitted()) return done(null)
+        if (maxAgeMs > 0) recentFix(manager, maxAgeMs)?.let { return done(it) }
         val providers = buildList {
+            if (!precise && Build.VERSION.SDK_INT >= 31) add(LocationManager.FUSED_PROVIDER)
             add(LocationManager.NETWORK_PROVIDER)
-            if (Build.VERSION.SDK_INT >= 31) add(LocationManager.FUSED_PROVIDER)
-            add(LocationManager.GPS_PROVIDER)
+            if (precise && Build.VERSION.SDK_INT >= 31) add(LocationManager.FUSED_PROVIDER)
+            if (precise) add(LocationManager.GPS_PROVIDER)
         }
-        val provider = providers.firstOrNull { runCatching { manager?.isProviderEnabled(it) == true }.getOrDefault(false) }
-        if (manager == null || provider == null || !permitted()) return done(null)
+        val provider = providers.firstOrNull { runCatching { manager.isProviderEnabled(it) }.getOrDefault(false) }
+            ?: return done(null)
         try {
-            if (Build.VERSION.SDK_INT >= 30) manager.getCurrentLocation(provider, null, ContextCompat.getMainExecutor(context)) { done(it) }
-            else done(manager.getLastKnownLocation(provider))
+            val executor = ContextCompat.getMainExecutor(context)
+            when {
+                !precise && Build.VERSION.SDK_INT >= 31 -> manager.getCurrentLocation(provider,
+                    android.location.LocationRequest.Builder(0L)
+                        .setQuality(android.location.LocationRequest.QUALITY_LOW_POWER)
+                        .setDurationMillis(15_000L)
+                        .build(),
+                    null, executor) { done(it) }
+                Build.VERSION.SDK_INT >= 30 -> manager.getCurrentLocation(provider, null, executor) { done(it) }
+                else -> done(manager.getLastKnownLocation(provider))
+            }
         } catch (_: SecurityException) {
             done(null)
         } catch (_: IllegalArgumentException) {
             done(null)
         }
+    }
+
+    private fun recentFix(manager: LocationManager, maxAgeMs: Long): Location? {
+        val nowNs = SystemClock.elapsedRealtimeNanos()
+        val providers = buildList {
+            add(LocationManager.PASSIVE_PROVIDER)
+            if (Build.VERSION.SDK_INT >= 31) add(LocationManager.FUSED_PROVIDER)
+            add(LocationManager.NETWORK_PROVIDER)
+        }
+        return providers.mapNotNull { provider ->
+            runCatching { manager.getLastKnownLocation(provider) }.getOrNull()
+        }.filter { (nowNs - it.elapsedRealtimeNanos) / 1_000_000 in 0..maxAgeMs && it.accuracy <= MAX_REUSE_ACCURACY_M }
+            .maxByOrNull { it.elapsedRealtimeNanos }
     }
 
     private fun load(): Places = runCatching {
@@ -102,6 +140,9 @@ class PlacesStore(private val context: Context) {
         const val REFRESH_MS = 10 * 60_000L
         const val STALE_MS = 30 * 60_000L
         const val POINT_REFRESH_MS = 2 * 60_000L
-        const val POINT_STALE_MS = 5 * 60_000L
+        const val POINT_MAX_REFRESH_MS = 8 * 60_000L
+        const val POINT_STALE_SLACK_MS = 3 * 60_000L
+        const val STILL_RADIUS_M = 60f
+        const val MAX_REUSE_ACCURACY_M = 200f
     }
 }

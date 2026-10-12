@@ -61,8 +61,8 @@ data class MetadataMatch(
 
 // musicbrainz requires a descriptive user-agent and rate-limits ~1 req/s
 
-class MusicBrainzClient {
-    private val http = OkHttpClient.Builder()
+class MusicBrainzClient(base: OkHttpClient = OkHttpClient()) {
+    private val http = base.newBuilder()
         .addInterceptor { chain ->
             chain.proceed(
                 chain.request().newBuilder()

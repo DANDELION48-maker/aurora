@@ -41,7 +41,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -56,6 +55,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aurora.music.AuroraApplication
 import com.aurora.music.data.VisualizerPrefs
@@ -81,9 +81,9 @@ fun VisualizerScreen(state: PlayerUiState, onClose: () -> Unit) {
     val accent by rememberDominantColor(song.artworkUrl, song.accent)
 
     // run analyser only while screen visible
-    DisposableEffect(Unit) {
+    LifecycleStartEffect(Unit) {
         controller.start()
-        onDispose { controller.stop() }
+        onStopOrDispose { controller.stop() }
     }
     LaunchedEffect(prefs.barCount, prefs.fftSize, prefs.smoothing, prefs.sensitivity, prefs.minHz, prefs.maxHz, prefs.peakHold, prefs.fpsCap) {
         controller.applyPrefs(prefs)

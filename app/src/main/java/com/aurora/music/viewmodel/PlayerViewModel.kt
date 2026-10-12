@@ -39,6 +39,7 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -56,7 +57,6 @@ data class PlayerUiState(
     val current: Song = EMPTY_SONG,
     val queue: List<Song> = emptyList(),
     val isPlaying: Boolean = false,
-    val positionSec: Float = 0f,
     val shuffle: Boolean = false,
     val repeat: RepeatMode = RepeatMode.OFF,
     val expanded: Boolean = false,
@@ -79,7 +79,7 @@ data class PlayerUiState(
     val canSelectVideoQuality: Boolean = false,
 ) {
     val durationSec: Int get() = if (isLive) 0 else timelineDurationSec.takeIf { it > 0 } ?: current.durationSec
-    val progress: Float get() = if (durationSec == 0) 0f else (positionSec / durationSec).coerceIn(0f, 1f)
+    fun progressAt(positionSec: Float): Float = if (durationSec == 0) 0f else (positionSec / durationSec).coerceIn(0f, 1f)
     val isCurrentLiked: Boolean get() = likedIds.contains(current.id)
     val hasTrack: Boolean get() = current.id.isNotEmpty()
 }
@@ -91,6 +91,11 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
 
     private val _state = MutableStateFlow(PlayerUiState())
     val state: StateFlow<PlayerUiState> = _state.asStateFlow()
+
+    // position ticks live apart from the main state so they don't recompose the whole app shell
+    private val _position = MutableStateFlow(0f)
+    val position: StateFlow<Float> = _position.asStateFlow()
+    private val activelyPlaying = MutableStateFlow(false)
 
     private var controller: MediaController? = null
     private val companionVideo = CompanionVideoController(
@@ -130,6 +135,11 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     @Volatile private var playingAccountKey: String = ""
     private var openRestoreAttempted = false
     private var lastPersistMs = 0L
+    private var savedTracks: List<com.aurora.music.data.SavedTrack> = emptyList()
+    private var savedTracksFor: Map<String, Song>? = null
+    private var savedTracksCount = -1
+    private var savedTracksDirty = true
+    private var lastSavedQueue: Pair<String, SavedQueue>? = null
     // clearing for account switch must not overwrite the saved queue
     @Volatile private var suppressPersist = false
     private var playStartMs: Long = 0L
@@ -139,6 +149,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
 
     private val listener = object : Player.Listener {
         override fun onEvents(player: Player, events: Player.Events) {
+            if (events.contains(Player.EVENT_TIMELINE_CHANGED)) savedTracksDirty = true
             syncFromController()
             if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) companionVideo.sync(forceSeek = true)
             if (events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED) && player.playbackState == Player.STATE_ENDED) {
@@ -150,7 +161,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
 
         override fun onMediaItemTransition(item: MediaItem?, reason: Int) {
             // reset position so the bar doesn't show the previous track during the gap usb sink lags across a skip
-            _state.update { it.copy(positionSec = 0f) }
+            _position.value = 0f
             if (_state.value.sleepEndOfTrack && reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
                 controller?.pause()
                 _state.update { it.copy(sleepEndOfTrack = false) }
@@ -248,7 +259,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         // on account change save outgoing queue first stop then restore incoming epoch only bumps on real transitions
         viewModelScope.launch {
             container.accountEpoch.drop(1).collect {
-                persistQueue()
+                persistQueue(force = true)
                 container.queueStore.requestFlush()
                 suppressPersist = true         // clearing below must not wipe what we just saved
                 stopPlayback()
@@ -273,11 +284,12 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         lastRecordedId = null
         lastNowPlayingId = null
         _state.update {
-            it.copy(current = EMPTY_SONG, queue = emptyList(), isPlaying = false, positionSec = 0f, currentIndex = 0, expanded = false)
+            it.copy(current = EMPTY_SONG, queue = emptyList(), isPlaying = false, currentIndex = 0, expanded = false)
         }
+        _position.value = 0f
     }
 
-    private fun persistQueue() {
+    private fun persistQueue(force: Boolean = false) {
         // The editable mix is persisted by MixStore; do not restore it as an ordinary queue.
         if (container.mixController.activeProject != null) return
         if (suppressPersist) return
@@ -286,15 +298,29 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         if (key.isBlank()) return
         // don't clear on an empty controller it fires at startup before restore and wipes what we're about to restore
         if (c.mediaItemCount == 0 || c.currentMediaItem?.mediaId.orEmpty().startsWith("aurora-mix:")) return
-        val songs = (0 until c.mediaItemCount).mapNotNull { songById[c.getMediaItemAt(it).mediaId] }
-        if (songs.isEmpty()) return
-        container.queueStore.save(key, SavedQueue(
-            tracks = songs.filterNot { it.id.startsWith("aurora-mix:") }.map { it.toSavedTrack() },
+        // the track list only gets rebuilt when the timeline or the song map changed
+        val tracks = savedTracks.takeIf { !savedTracksDirty && savedTracksFor === songById && savedTracksCount == c.mediaItemCount }
+            ?: (0 until c.mediaItemCount).mapNotNull { songById[c.getMediaItemAt(it).mediaId] }
+                .filterNot { it.id.startsWith("aurora-mix:") }.map { it.toSavedTrack() }
+                .also { savedTracks = it; savedTracksFor = songById; savedTracksCount = c.mediaItemCount; savedTracksDirty = false }
+        if (tracks.isEmpty()) return
+        val queue = SavedQueue(
+            tracks = tracks,
             currentIndex = c.currentMediaItemIndex.coerceAtLeast(0),
             positionSec = (c.currentPosition / 1000).toInt().coerceAtLeast(0),
             shuffle = c.shuffleModeEnabled,
             repeat = when (c.repeatMode) { Player.REPEAT_MODE_ALL -> 1; Player.REPEAT_MODE_ONE -> 2; else -> 0 },
-        ))
+        )
+        val last = lastSavedQueue
+        val now = System.currentTimeMillis()
+        if (!force && last != null && last.first == key && last.second.copy(positionSec = queue.positionSec) == queue) {
+            // a moving position alone is saved every few seconds while playing and exactly on pause
+            if (last.second.positionSec == queue.positionSec) return
+            if (c.effectivelyPlaying && now - lastPersistMs < POSITION_PERSIST_MS) return
+        }
+        lastPersistMs = now
+        lastSavedQueue = key to queue
+        container.queueStore.save(key, queue)
     }
 
     private fun restoreQueue(sq: SavedQueue) {
@@ -308,9 +334,10 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         c.repeatMode = when (sq.repeat) { 1 -> Player.REPEAT_MODE_ALL; 2 -> Player.REPEAT_MODE_ONE; else -> Player.REPEAT_MODE_OFF }
         c.prepare()   // buffer at saved position but stay paused
         _state.update {
-            it.copy(queue = delivery.songs, current = songs[idx], positionSec = sq.positionSec.toFloat(), isPlaying = false, currentIndex = delivery.currentIndex, shuffle = sq.shuffle,
+            it.copy(queue = delivery.songs, current = songs[idx], isPlaying = false, currentIndex = delivery.currentIndex, shuffle = sq.shuffle,
                 repeat = when (sq.repeat) { 1 -> RepeatMode.ALL; 2 -> RepeatMode.ONE; else -> RepeatMode.OFF })
         }
+        _position.value = sq.positionSec.toFloat()
         if (sq.shuffle) {
             // queue is already in saved order tell the service shuffle is on and remember that order
             c.sendCustomCommand(
@@ -378,20 +405,23 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
 
     fun preferredDeviceId(): Int = container.preferredAudioDeviceId.value
 
+    // sleeps while paused and slows to 1 s when no screen is showing the position
     private fun startTicker() {
         ticker?.cancel()
         ticker = viewModelScope.launch {
-            while (true) {
-                delay(200)
-                val c = controller ?: continue
+            activelyPlaying.collectLatest { playing ->
                 companionVideo.sync()
-                if (c.effectivelyPlaying) {
+                if (!playing) return@collectLatest
+                while (true) {
+                    delay(if (_position.subscriptionCount.value > 0) 200 else 1000)
+                    val c = controller ?: continue
+                    companionVideo.sync()
+                    if (!c.effectivelyPlaying) continue
                     val posSec = (c.currentPosition / 1000f).coerceAtLeast(0f)
-                    _state.update { it.copy(positionSec = posSec) }
+                    _position.value = posSec
                     maybeNowPlaying()
                     recordIfPlayed(posSec)
-                    val now = System.currentTimeMillis()
-                    if (now - lastPersistMs > 2000) { lastPersistMs = now; persistQueue() }
+                    persistQueue()
                 }
             }
         }
@@ -431,7 +461,6 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
                     Player.REPEAT_MODE_ALL -> RepeatMode.ALL
                     else -> RepeatMode.OFF
                 },
-                positionSec = (c.currentPosition / 1000f).coerceAtLeast(0f),
                 queue = if (q.isNotEmpty()) q else it.queue,
                 currentIndex = c.currentMediaItemIndex.coerceAtLeast(0),
                 bpm = ki?.bpm ?: 0,
@@ -439,6 +468,8 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
                 keyName = ki?.name ?: "",
             )
         }
+        _position.value = (c.currentPosition / 1000f).coerceAtLeast(0f)
+        activelyPlaying.value = c.effectivelyPlaying
         maybeEnrichLocal(_state.value.current)
         persistQueue()
     }
@@ -530,7 +561,8 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         c.play()
         // fresh context plays in order make sure shuffle is off
         sendShuffle(0)
-        _state.update { it.copy(queue = delivery.songs, currentIndex = delivery.currentIndex, current = contextual[idx], positionSec = 0f, isPlaying = true) }
+        _state.update { it.copy(queue = delivery.songs, currentIndex = delivery.currentIndex, current = contextual[idx], isPlaying = true) }
+        _position.value = 0f
     }
 
     fun play(song: Song) = playAll(listOf(song), 0)
@@ -782,7 +814,8 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         c.playbackParameters = currentParams()
         c.prepare()
         c.play()
-        _state.update { it.copy(queue = delivery.songs, currentIndex = delivery.currentIndex, current = shuffled[0], positionSec = 0f, isPlaying = true, shuffle = true) }
+        _state.update { it.copy(queue = delivery.songs, currentIndex = delivery.currentIndex, current = shuffled[0], isPlaying = true, shuffle = true) }
+        _position.value = 0f
         // pass the original order so disabling shuffle restores it
         c.sendCustomCommand(
             SessionCommand(PlaybackService.CMD_SHUFFLE, android.os.Bundle().apply {
@@ -1014,7 +1047,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
 
     override fun onCleared() {
         companionVideo.clear()
-        persistQueue()
+        persistQueue(force = true)
         container.queueStore.requestFlush()
         ticker?.cancel()
         queueFillJob?.cancel()
@@ -1026,6 +1059,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
 
     private companion object {
         const val SLEEP_FADE_MS = 6_000L
+        const val POSITION_PERSIST_MS = 15_000L
         // each MediaItem's parcelled metadata (artwork uri, title/artist/album, extras) is a few KB;
         // a binder transaction caps near 1mb, so a few hundred full items can silently get truncated
         // by the session. deliverQueue keeps the initial setMediaItems call well under that.

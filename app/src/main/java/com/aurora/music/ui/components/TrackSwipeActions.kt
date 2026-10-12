@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
 import com.aurora.music.AuroraApplication
@@ -81,16 +80,16 @@ internal fun TrackSwipeActions(
     val action = if (selected != TrackSwipeAction.NONE) selected
         else if (offset >= 0) TrackSwipeAction.PLAY_NEXT else TrackSwipeAction.QUEUE
     val colors = MaterialTheme.colorScheme
-    val background by animateColorAsState(if (action == TrackSwipeAction.LIKE || action == TrackSwipeAction.PLAYLISTS)
-        colors.primaryContainer else colors.secondaryContainer, label = "swipeActionColor")
-    val foreground = if (action == TrackSwipeAction.LIKE || action == TrackSwipeAction.PLAYLISTS)
-        colors.onPrimaryContainer else colors.onSecondaryContainer
 
-    Box(modifier.fillMaxWidth().clip(shape).onSizeChanged { width = it.width }.pointerInput(enabled, shortDistance, longDistance) {
+    // the width is only captured once a drag starts so rows don't compose twice on first layout
+    Box(modifier.fillMaxWidth().clip(shape).pointerInput(enabled) {
         if (!enabled) return@pointerInput
         awaitEachGesture {
             val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
             if (returning) return@awaitEachGesture
+            val rowWidth = size.width
+            val shortDistance = minOf(72.dp.toPx(), rowWidth * .22f).coerceAtLeast(1f)
+            val longDistance = minOf(180.dp.toPx(), rowWidth * .55f).coerceAtLeast(shortDistance + 1f)
             var dragging = false
             var released = false
             var lastAction = TrackSwipeAction.NONE
@@ -108,9 +107,10 @@ internal fun TrackSwipeActions(
                         if (abs(delta.y) > viewConfiguration.touchSlop && abs(delta.y) > abs(delta.x)) break
                         if (abs(delta.x) <= viewConfiguration.touchSlop) continue
                         dragging = true
+                        width = rowWidth
                     }
                     change.consume()
-                    offset = (delta.x - sign(delta.x) * viewConfiguration.touchSlop).coerceIn(-width * .8f, width * .8f)
+                    offset = (delta.x - sign(delta.x) * viewConfiguration.touchSlop).coerceIn(-rowWidth * .8f, rowWidth * .8f)
                     val next = trackSwipeAction(offset, shortDistance, longDistance)
                     if (next != lastAction && next != TrackSwipeAction.NONE) {
                         container.haptic()
@@ -133,6 +133,10 @@ internal fun TrackSwipeActions(
         }
     }) {
         if (abs(offset) > .5f) {
+            val background by animateColorAsState(if (action == TrackSwipeAction.LIKE || action == TrackSwipeAction.PLAYLISTS)
+                colors.primaryContainer else colors.secondaryContainer, label = "swipeActionColor")
+            val foreground = if (action == TrackSwipeAction.LIKE || action == TrackSwipeAction.PLAYLISTS)
+                colors.onPrimaryContainer else colors.onSecondaryContainer
             Box(Modifier.matchParentSize().background(background),
                 contentAlignment = if (offset > 0) Alignment.CenterStart else Alignment.CenterEnd) {
                 AnimatedContent(action, label = "trackSwipeAction") { visibleAction ->

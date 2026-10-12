@@ -24,8 +24,8 @@ private data class ItunesPodcast(
     @SerializedName("artworkUrl100") val artworkUrl100: String? = "",
 )
 
-class PodcastClient {
-    private val http = OkHttpClient.Builder()
+class PodcastClient(base: OkHttpClient = OkHttpClient()) {
+    private val http = base.newBuilder()
         .connectTimeout(12, TimeUnit.SECONDS)
         .readTimeout(25, TimeUnit.SECONDS)
         .build()

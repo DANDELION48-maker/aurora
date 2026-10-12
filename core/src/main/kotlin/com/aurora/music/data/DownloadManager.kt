@@ -12,13 +12,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.net.URI
-import java.security.MessageDigest
+import java.util.concurrent.atomic.AtomicBoolean
 
 data class DownloadedSong(
     val id: String,
@@ -111,12 +113,19 @@ class DownloadManager(
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val pendingSongs = mutableMapOf<String, DownloadOwner>()
     private val pendingCollections = mutableMapOf<String, DownloadOwner>()
+    private val downloadGate = Semaphore(PARALLEL_DOWNLOADS)
 
     private val _downloads = MutableStateFlow(loadIndex())
     val downloads: StateFlow<Map<String, DownloadedSong>> = _downloads.asStateFlow()
 
     private val _collections = MutableStateFlow(loadCollections())
     val collections: StateFlow<List<DownloadedCollection>> = _collections.asStateFlow()
+
+    private val indexWriter = ConflatedWrite(indexFile) { _downloads.value.values.toList() }
+    private val collectionsWriter = ConflatedWrite(collectionsFile) { _collections.value }
+
+    private class OriginalIndex(val source: Map<String, DownloadedSong>, val byOriginal: Map<String, List<DownloadedSong>>)
+    @Volatile private var originalIndex: OriginalIndex? = null
 
     @Synchronized
     fun downloadCollection(id: String, kind: String, title: String, subtitle: String, coverUrl: String, songs: List<Song>): Boolean {
@@ -167,7 +176,7 @@ class DownloadManager(
     @Synchronized
     fun removeCollection(col: DownloadedCollection, canRemoveTrack: (DownloadedSong) -> Boolean = { true }): Boolean {
         if (_collections.value.none { it == col }) return false
-        col.trackIds.mapNotNull(::get).filter(canRemoveTrack).forEach { removeDownload(it) }
+        removeEntries(col.trackIds.mapNotNull(::get).filter(canRemoveTrack))
         runCatching { if (col.coverPath.isNotBlank()) File(col.coverPath).delete() }
         _collections.update { it.filterNot { c -> c == col } }
         saveCollections()
@@ -177,15 +186,23 @@ class DownloadManager(
     private val _states = MutableStateFlow<Map<String, DownloadState>>(emptyMap())
     val states: StateFlow<Map<String, DownloadState>> = _states.asStateFlow()
 
+    init {
+        scope.launch { dropMissingFiles() }
+    }
+
     fun isDownloaded(id: String): Boolean = _downloads.value.containsKey(id)
     fun get(id: String): DownloadedSong? = _downloads.value[id]
 
     // also matches merged-namespaced keys downloads keyed by wrapped id but localize looks up raw id
     fun getByOriginalId(originalId: String, providerId: String? = null): DownloadedSong? =
         _downloads.value[originalId]?.takeIf { providerId == null || it.playbackSource?.providerId == providerId }
-            ?: _downloads.value.values.firstOrNull {
-                stripMergeNamespace(it.id) == originalId && (providerId == null || it.playbackSource?.providerId == providerId)
-            }
+            ?: byOriginalId()[originalId]?.firstOrNull { providerId == null || it.playbackSource?.providerId == providerId }
+
+    private fun byOriginalId(): Map<String, List<DownloadedSong>> {
+        val current = _downloads.value
+        originalIndex?.takeIf { it.source === current }?.let { return it.byOriginal }
+        return current.values.groupBy { stripMergeNamespace(it.id) }.also { originalIndex = OriginalIndex(current, it) }
+    }
 
     private fun copiedSource(song: Song): Boolean =
         song.streamUrl.startsWith("aurora-extension:") || song.streamUrl.startsWith("aurora-cache:")
@@ -229,7 +246,7 @@ class DownloadManager(
         }.getOrElse { setState(song.id, DownloadState.Failed); return false }
         pendingSongs[song.id] = owner
         setState(song.id, DownloadState.Queued)
-        scope.launch { doDownload(song.copy(playbackSource = identity), request) }
+        scope.launch { downloadGate.withPermit { doDownload(song.copy(playbackSource = identity), request) } }
         return true
     }
 
@@ -252,8 +269,28 @@ class DownloadManager(
         return true
     }
 
+    @Synchronized
+    fun removeDownloads(ids: Collection<String>) {
+        val current = _downloads.value
+        removeEntries(ids.mapNotNull { current[it] })
+    }
+
+    @Synchronized
+    private fun removeEntries(entries: List<DownloadedSong>) {
+        val doomed = entries.filter { _downloads.value[it.id] == it }.distinctBy { it.id }
+        if (doomed.isEmpty()) return
+        doomed.forEach { d ->
+            runCatching { File(d.audioPath).delete() }
+            runCatching { if (d.coverPath.isNotBlank()) File(d.coverPath).delete() }
+        }
+        val ids = doomed.mapTo(HashSet()) { it.id }
+        _downloads.update { it - ids }
+        _states.update { it - ids }
+        saveIndex()
+    }
+
     fun clearAll() {
-        _downloads.value.keys.toList().forEach { removeDownload(it) }
+        removeDownloads(_downloads.value.keys.toList())
     }
 
     fun totalBytes(): Long = _downloads.value.values.sumOf {
@@ -272,9 +309,10 @@ class DownloadManager(
                 val sentinel = if (song.streamUrl.startsWith("aurora-yt://")) song.streamUrl else resolvedUrl
                 resolveSentinel(sentinel) ?: throw IOException("No stream found for this track")
             } else resolvedUrl
-            if (request.cached) requireNotNull(copyCached) { "Cached audio is unavailable." }(audioUrl, audioFile) { p -> setState(song.id, DownloadState.Downloading(p)) }
-            else if (request.extension) requireNotNull(copyExtension) { "Extension downloads are unavailable." }(audioUrl, audioFile) { p -> setState(song.id, DownloadState.Downloading(p)) }
-            else downloadTo(audioUrl, audioFile) { p -> setState(song.id, DownloadState.Downloading(p)) }
+            val progress = progressReporter(song.id)
+            if (request.cached) requireNotNull(copyCached) { "Cached audio is unavailable." }(audioUrl, audioFile, progress)
+            else if (request.extension) requireNotNull(copyExtension) { "Extension downloads are unavailable." }(audioUrl, audioFile, progress)
+            else downloadTo(audioUrl, audioFile, progress)
             val coverFile = File(dir, "$stem.jpg")
             runCatching { if (!request.cached && song.artworkUrl.isNotBlank()) downloadTo(song.artworkUrl, coverFile) {} }
             val entry = DownloadedSong(
@@ -301,8 +339,20 @@ class DownloadManager(
         }
     }
 
-    private fun fileStem(serverId: String, id: String): String = MessageDigest.getInstance("SHA-256")
-        .digest("$serverId\u0000$id".toByteArray(Charsets.UTF_8)).joinToString("") { "%02x".format(it) }
+    private fun fileStem(serverId: String, id: String): String = sha256Hex("$serverId\u0000$id")
+
+    private fun progressReporter(id: String): (Float) -> Unit {
+        var last = 0f
+        var lastAt = System.nanoTime()
+        return { p ->
+            val now = System.nanoTime()
+            if ((p >= 1f && last < 1f) || (kotlin.math.abs(p - last) >= 0.01f && now - lastAt >= PROGRESS_INTERVAL_NS)) {
+                last = p
+                lastAt = now
+                setState(id, DownloadState.Downloading(p))
+            }
+        }
+    }
 
     private fun downloadTo(url: String, file: File, onProgress: (Float) -> Unit) {
         if (url.startsWith("content://") || url.startsWith("file://")) {
@@ -333,16 +383,21 @@ class DownloadManager(
 
     private fun setState(id: String, state: DownloadState) = _states.update { it + (id to state) }
 
+    // missing files are pruned in the background so startup skips a stat per download
     private fun loadIndex(): Map<String, DownloadedSong> = runCatching {
         if (!indexFile.exists()) return@runCatching emptyMap<String, DownloadedSong>()
         val type = object : TypeToken<List<DownloadedSong>>() {}.type
         val list: List<DownloadedSong> = gson.fromJson(indexFile.readText(), type) ?: emptyList()
-        list.filter { File(it.audioPath).exists() }.associateBy { it.id }
+        list.associateBy { it.id }
     }.getOrDefault(emptyMap())
 
-    private fun saveIndex() = runCatching {
-        indexFile.writeText(gson.toJson(_downloads.value.values.toList()))
+    private fun dropMissingFiles() {
+        val stale = _downloads.value.values.filterNot { File(it.audioPath).exists() }.associateBy { it.id }
+        if (stale.isEmpty()) return
+        synchronized(this) { _downloads.update { current -> current.filterNot { (id, entry) -> stale[id] === entry } } }
     }
+
+    private fun saveIndex() = indexWriter.request()
 
     private fun loadCollections(): List<DownloadedCollection> = runCatching {
         if (!collectionsFile.exists()) return@runCatching emptyList<DownloadedCollection>()
@@ -350,7 +405,25 @@ class DownloadManager(
         gson.fromJson<List<DownloadedCollection>>(collectionsFile.readText(), type) ?: emptyList()
     }.getOrDefault(emptyList())
 
-    private fun saveCollections() = runCatching {
-        collectionsFile.writeText(gson.toJson(_collections.value))
+    private fun saveCollections() = collectionsWriter.request()
+
+    private inner class ConflatedWrite(private val file: File, private val content: () -> Any) {
+        private val pending = AtomicBoolean(false)
+
+        fun request() {
+            if (pending.compareAndSet(false, true)) scope.launch { write() }
+        }
+
+        private fun write() {
+            synchronized(this) {
+                pending.set(false)
+                runCatching { persistBackupFileAtomically(file, gson.toJson(content()).toByteArray(Charsets.UTF_8)) }
+            }
+        }
+    }
+
+    private companion object {
+        const val PARALLEL_DOWNLOADS = 3
+        const val PROGRESS_INTERVAL_NS = 250_000_000L
     }
 }

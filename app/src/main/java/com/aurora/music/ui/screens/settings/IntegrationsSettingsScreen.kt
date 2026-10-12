@@ -26,7 +26,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aurora.music.AuroraApplication
 import com.aurora.music.data.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun IntegrationsSettingsScreen(
@@ -121,14 +126,14 @@ fun AcoustIdIntegrationScreen(contentPadding: PaddingValues, onBack: () -> Unit)
     val ctx = LocalContext.current
     val container = appContainer()
     val saved by container.settingsStore.acoustIdKey.collectAsStateWithLifecycle(initialValue = "")
-    var key by remember(saved) { mutableStateOf(saved) }
-    val scope = rememberCoroutineScope()
+    var key by remember { mutableStateOf<String?>(null) }
+    DebouncedSave(key) { container.settingsStore.setAcoustIdKey(it.trim()) }
     SettingsPage("AcoustID", contentPadding, onBack) {
         item {
             SettingsGroup {
                 OutlinedTextField(
-                    value = key,
-                    onValueChange = { key = it; scope.launch { container.settingsStore.setAcoustIdKey(it.trim()) } },
+                    value = key ?: saved,
+                    onValueChange = { key = it },
                     label = { Text(appString(R.string.text_application_api_key_f3749c)) },
                     supportingText = { Text(if (saved.isBlank()) appString(R.string.text_required_for_audio_identification_e2b915) else appString(R.string.text_key_saved_163134)) },
                     singleLine = true,
@@ -286,10 +291,12 @@ fun DiscordIntegrationScreen(contentPadding: PaddingValues, onBack: () -> Unit, 
             item { SettingsSectionTitle(appString(R.string.text_artwork_bfbeaf)) }
             item {
                 SettingsGroup {
-                    var appId by remember(acct.appId) { mutableStateOf(acct.appId) }
-                    var imgur by remember(acct.imgurClientId) { mutableStateOf(acct.imgurClientId) }
-                    OutlinedTextField(appId, { appId = it; scope.launch { container.settingsStore.setDiscordAppId(it.trim()) } }, label = { Text(appString(R.string.text_discord_application_id_2ac458)) }, supportingText = { Text(appString(R.string.text_enables_cover_artwork_40a2d2)) }, singleLine = true, modifier = fieldModifier())
-                    OutlinedTextField(imgur, { imgur = it; scope.launch { container.settingsStore.setDiscordImgur(it.trim()) } }, label = { Text(appString(R.string.text_imgur_client_id_f5e499)) }, supportingText = { Text(appString(R.string.text_optional_publishes_local_and_private_server_covers_563e93)) }, singleLine = true, modifier = fieldModifier())
+                    var appId by remember { mutableStateOf<String?>(null) }
+                    var imgur by remember { mutableStateOf<String?>(null) }
+                    DebouncedSave(appId) { container.settingsStore.setDiscordAppId(it.trim()) }
+                    DebouncedSave(imgur) { container.settingsStore.setDiscordImgur(it.trim()) }
+                    OutlinedTextField(appId ?: acct.appId, { appId = it }, label = { Text(appString(R.string.text_discord_application_id_2ac458)) }, supportingText = { Text(appString(R.string.text_enables_cover_artwork_40a2d2)) }, singleLine = true, modifier = fieldModifier())
+                    OutlinedTextField(imgur ?: acct.imgurClientId, { imgur = it }, label = { Text(appString(R.string.text_imgur_client_id_f5e499)) }, supportingText = { Text(appString(R.string.text_optional_publishes_local_and_private_server_covers_563e93)) }, singleLine = true, modifier = fieldModifier())
                 }
             }
             item { SettingsSectionTitle(appString(R.string.text_account_85dfa3)) }
@@ -357,6 +364,26 @@ private fun SettingsPage(title: String, contentPadding: PaddingValues, onBack: (
 
 @Composable
 private fun appContainer() = (LocalContext.current.applicationContext as AuroraApplication).container
+
+// typed text persists after a 500 ms pause or when the field leaves instead of on every keystroke
+@Composable
+private fun <T : Any> DebouncedSave(draft: T?, persist: suspend (T) -> Unit) {
+    val latest by rememberUpdatedState(draft)
+    val write by rememberUpdatedState(persist)
+    LaunchedEffect(Unit) {
+        var pending: T? = null
+        try {
+            snapshotFlow { latest }.filterNotNull().collectLatest { value ->
+                pending = value
+                delay(500)
+                write(value)
+                pending = null
+            }
+        } finally {
+            pending?.let { value -> withContext(NonCancellable) { write(value) } }
+        }
+    }
+}
 
 private fun fieldModifier() = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 7.dp)
 

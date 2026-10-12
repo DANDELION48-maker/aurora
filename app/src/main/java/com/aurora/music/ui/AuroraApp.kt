@@ -76,6 +76,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -128,6 +129,8 @@ import com.aurora.music.viewmodel.PlayerViewModel
 import com.aurora.music.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.distinctUntilChanged
 import com.aurora.music.model.accent
 
 @Composable
@@ -160,12 +163,12 @@ fun AuroraApp() {
     val downloadsMap by container.downloadManager.downloads.collectAsStateWithLifecycle()
     val localMode = session?.type == com.aurora.music.data.ServerType.LOCAL
     val localAppearance by container.localProfileAppearance.collectAsStateWithLifecycle()
-    val profileAppearance = com.aurora.music.data.profileAppearance(session, localAppearance)
+    val profileAppearance = remember(session, localAppearance) { com.aurora.music.data.profileAppearance(session, localAppearance) }
     val serverTagEditing = session?.let { container.repository.supportsServerTagEdit } ?: false
     // pins scoped to the active connection
     val currentServer = session?.server ?: ""
     val allPins by container.settingsStore.pins.collectAsStateWithLifecycle(initialValue = emptyList())
-    val pins = allPins.filter { it.serverId == currentServer }
+    val pins = remember(allPins, currentServer) { allPins.filter { it.serverId == currentServer } }
     val gesturePrefs by container.settingsStore.gesturePrefs.collectAsStateWithLifecycle(initialValue = com.aurora.music.data.GesturePrefs())
     val offlineMode by container.offline.collectAsStateWithLifecycle()
     val downloadAccountEpoch by container.accountEpoch.collectAsStateWithLifecycle()
@@ -174,7 +177,12 @@ fun AuroraApp() {
         container.repository.downloadedIds()
     }
 
-    val downloadStates by container.downloadManager.states.collectAsStateWithLifecycle()
+    // only the count lives at the root; per-chunk progress recomposes just the banner
+    val activeDownloads by remember(container) {
+        container.downloadManager.states.map { states ->
+            states.values.count { it is com.aurora.music.data.DownloadState.Queued || it is com.aurora.music.data.DownloadState.Downloading }
+        }.distinctUntilChanged()
+    }.collectAsStateWithLifecycle(initialValue = 0)
 
     val snackbarHostState = remember { SnackbarHostState() }
     androidx.compose.runtime.LaunchedEffect(container) {
@@ -213,13 +221,6 @@ fun AuroraApp() {
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    // active means still queued or in flight
-    val activeDownloads = downloadStates.values.count {
-        it is com.aurora.music.data.DownloadState.Queued || it is com.aurora.music.data.DownloadState.Downloading
-    }
-    val downloadProgress = downloadStates.values
-        .mapNotNull { (it as? com.aurora.music.data.DownloadState.Downloading)?.progress }
-        .let { if (it.isEmpty()) 0f else it.sum() / activeDownloads.coerceAtLeast(1) }
     // announce when a batch finishes active falls back to zero
     var hadActiveDownloads by remember { mutableStateOf(false) }
     androidx.compose.runtime.LaunchedEffect(activeDownloads) {
@@ -227,7 +228,7 @@ fun AuroraApp() {
             hadActiveDownloads = true
         } else if (hadActiveDownloads) {
             hadActiveDownloads = false
-            val failed = downloadStates.values.count { it is com.aurora.music.data.DownloadState.Failed }
+            val failed = container.downloadManager.states.value.values.count { it is com.aurora.music.data.DownloadState.Failed }
             snackbarHostState.showSnackbar(
                 if (failed > 0) appString(R.string.text_download_finished_failed_21e6b1, (failed)) else appString(R.string.text_download_complete_95efb3),
                 duration = androidx.compose.material3.SnackbarDuration.Short,
@@ -336,6 +337,14 @@ fun AuroraApp() {
     }
 
     val playerColors = rememberPlayerColorScheme(playerState.current.artworkUrl, playerState.current.accent)
+    // the opaque expanded player hides the page and glass chrome so they stop rendering under it
+    val playerTransition = androidx.compose.animation.core.updateTransition(playerState.expanded, label = "player")
+    val playerSurfaceOffset = remember { androidx.compose.runtime.mutableFloatStateOf(0f) }
+    val hiddenBehindPlayer = Modifier.graphicsLayer {
+        val covered = playerTransition.currentState && playerTransition.targetState && !playerTransition.isRunning &&
+            playerSurfaceOffset.floatValue == 0f
+        alpha = if (covered) 0f else 1f
+    }
 
     fun navigateTopLevel(route: String) {
         if (navController.currentDestination?.route == route) return
@@ -814,7 +823,7 @@ fun AuroraApp() {
             AmbientBackground(glassLayers?.let { Modifier.layerBackdrop(it.ambient) } ?: Modifier)
             if (rail) {
                 Box(
-                    Modifier.fillMaxHeight().then(
+                    hiddenBehindPlayer.fillMaxHeight().then(
                         if (dockVisible) Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(androidx.compose.foundation.layout.WindowInsetsSides.Bottom))
                             .padding(bottom = dockHeight + 12.dp) else Modifier
                     ),
@@ -838,7 +847,7 @@ fun AuroraApp() {
                 }
             }
             Scaffold(
-                modifier = Modifier.padding(start = if (rail) shell.navWidth + navGap else 0.dp).then(
+                modifier = hiddenBehindPlayer.padding(start = if (rail) shell.navWidth + navGap else 0.dp).then(
                     if (dockVisible) Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(androidx.compose.foundation.layout.WindowInsetsSides.Bottom))
                         .padding(bottom = dockHeight + 12.dp + panelSpacing) else Modifier
                 ),
@@ -857,7 +866,7 @@ fun AuroraApp() {
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             if (activeDownloads > 0) {
-                                DownloadProgressBanner(count = activeDownloads, progress = downloadProgress)
+                                DownloadProgressBanner(count = activeDownloads)
                                 Spacer(Modifier.height(8.dp))
                             }
                             if (offlineMode) {
@@ -941,7 +950,7 @@ fun AuroraApp() {
                             onOpenInsights = { w -> navController.navigate("${Routes.INSIGHTS}/${w.period.name}/${w.start}") })
                     }
                     composable(Routes.HOME) {
-                        val homeVM: HomeViewModel = viewModel()
+                        val homeVM: HomeViewModel = viewModel(viewModelStoreOwner = activityOwner)
                         val homeState by homeVM.state.collectAsStateWithLifecycle()
                         HomeScreen(
                             contentPadding = inner,
@@ -993,7 +1002,8 @@ fun AuroraApp() {
                         )
                     }
                     composable(Routes.LIBRARY) {
-                        val libraryVM: LibraryViewModel = viewModel()
+                        // activity scoped so switching tabs doesn't refetch and rebuild the whole library
+                        val libraryVM: LibraryViewModel = viewModel(viewModelStoreOwner = activityOwner)
                         val libraryState by libraryVM.state.collectAsStateWithLifecycle()
                         // m3u export staged here written once the user picks a file
                         var pendingM3u by remember { mutableStateOf<String?>(null) }
@@ -1195,7 +1205,7 @@ fun AuroraApp() {
                     composable(Routes.PROFILE) {
                         var editing by remember { mutableStateOf(false) }
                         if (editing && localMode) com.aurora.music.ui.screens.profile.LocalProfileDialog(onDismiss = { editing = false })
-                        val homeVM: HomeViewModel = viewModel()
+                        val homeVM: HomeViewModel = viewModel(viewModelStoreOwner = activityOwner)
                         val homeState by homeVM.state.collectAsStateWithLifecycle()
                         ProfileScreen(
                             contentPadding = inner,
@@ -1425,7 +1435,7 @@ fun AuroraApp() {
                     onToggleLike = { playerVM.toggleLikeCurrent() },
                     onOpenOutput = { showOutput = true },
                     onPane = { showPane(it) },
-                    modifier = Modifier.align(Alignment.BottomCenter)
+                    modifier = Modifier.align(Alignment.BottomCenter).then(hiddenBehindPlayer)
                         .windowInsetsPadding(WindowInsets.navigationBars)
                         .padding(start = 12.dp, end = 12.dp, bottom = 12.dp)
                         .onSizeChanged { dockHeight = with(density) { it.height.toDp() } },
@@ -1433,13 +1443,14 @@ fun AuroraApp() {
             }
 
             MaterialTheme(colorScheme = playerColors) {
-            AnimatedVisibility(
-                visible = playerState.expanded,
+            playerTransition.AnimatedVisibility(
+                visible = { it },
                 enter = slideInVertically(animationSpec = tween(320)) { it } + fadeIn(tween(220)),
                 exit = slideOutVertically(animationSpec = tween(280)) { it } + fadeOut(tween(180)),
             ) {
                 PlayerScreen(
                     state = playerState,
+                    surfaceOffset = playerSurfaceOffset,
                     videoPlayer = playerVM.videoPlayer,
                     onVideoQualityChange = playerVM::setVideoQuality,
                     onRequestVideo = { playerVM.requestMusicVideo { confirm(it) } },
@@ -1574,7 +1585,12 @@ fun AuroraApp() {
 }
 
 @Composable
-private fun DownloadProgressBanner(count: Int, progress: Float) {
+private fun DownloadProgressBanner(count: Int) {
+    val container = (LocalContext.current.applicationContext as AuroraApplication).container
+    val states by container.downloadManager.states.collectAsStateWithLifecycle()
+    // active means still queued or in flight
+    val progress = states.values.mapNotNull { (it as? com.aurora.music.data.DownloadState.Downloading)?.progress }
+        .let { if (it.isEmpty()) 0f else it.sum() / count.coerceAtLeast(1) }
     val classic = com.aurora.music.ui.theme.LocalUiPrefs.current.themeStyle == com.aurora.music.data.ThemeStyle.AURORA
     val animated by androidx.compose.animation.core.animateFloatAsState(
         targetValue = progress.coerceIn(0f, 1f),

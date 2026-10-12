@@ -6,8 +6,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -73,12 +74,17 @@ class QueueStore(filesDir: File, private val persist: (File, ByteArray) -> Unit 
 
     private val map: MutableMap<String, SavedQueue> = load()
     @Volatile private var dirty = false
+    private var pendingFlush: Job? = null
 
-    init {
-        scope.launch {
-            while (isActive) {
-                kotlinx.coroutines.delay(3000)
-                if (dirty) flushNow()
+    // one delayed flush per burst of saves instead of a forever-running poll
+    private fun scheduleFlush() {
+        if (pendingFlush?.isActive == true) return
+        pendingFlush = scope.launch {
+            delay(3000)
+            // clear first so a save landing during the write schedules its own flush
+            synchronized(lock) {
+                pendingFlush = null
+                flushNow()
             }
         }
     }
@@ -92,12 +98,12 @@ class QueueStore(filesDir: File, private val persist: (File, ByteArray) -> Unit 
 
     fun save(accountKey: String, queue: SavedQueue) {
         if (accountKey.isBlank()) return
-        synchronized(lock) { map[accountKey] = queue; dirty = true }
+        synchronized(lock) { map[accountKey] = queue; dirty = true; scheduleFlush() }
     }
 
     fun clear(accountKey: String) {
         if (accountKey.isBlank()) return
-        synchronized(lock) { if (map.remove(accountKey) != null) dirty = true }
+        synchronized(lock) { if (map.remove(accountKey) != null) { dirty = true; scheduleFlush() } }
     }
 
     fun requestFlush() { scope.launch { flushNow() } }
@@ -121,7 +127,7 @@ class QueueStore(filesDir: File, private val persist: (File, ByteArray) -> Unit 
             runCatching {
                 persist(file, gson.toJson(map).toByteArray(Charsets.UTF_8))
                 dirty = false
-            }
+            }.onFailure { scheduleFlush() }
         }
     }
 }

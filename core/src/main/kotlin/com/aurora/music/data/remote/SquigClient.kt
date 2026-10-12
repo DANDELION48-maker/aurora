@@ -14,8 +14,8 @@ import java.net.URI
 import java.util.concurrent.TimeUnit
 
 // cloudflare instances 403 default bot agents so every request carries a browser user-agent
-class SquigClient {
-    private val http = OkHttpClient.Builder()
+class SquigClient(base: OkHttpClient = OkHttpClient()) {
+    private val http = base.newBuilder()
         .connectTimeout(12, TimeUnit.SECONDS)
         .readTimeout(20, TimeUnit.SECONDS)
         .build()

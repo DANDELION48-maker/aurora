@@ -15,15 +15,15 @@ class PlayerTimelineTest {
     }
 
     @Test fun vodUsesDecodedDurationForProgressAndSeeking() {
-        val state = PlayerUiState(current = video, timelineDurationSec = 240, positionSec = 60f)
+        val state = PlayerUiState(current = video, timelineDurationSec = 240)
         assertFalse(state.isLive)
         assertEquals(240, state.durationSec)
-        assertEquals(0.25f, state.progress, 0.0001f)
+        assertEquals(0.25f, state.progressAt(60f), 0.0001f)
     }
 
     @Test fun liveDvrWindowDoesNotBecomeSongDuration() {
         val state = PlayerUiState(current = video, timelineDurationSec = 14_400, isLive = true)
         assertEquals(0, state.durationSec)
-        assertEquals(0f, state.progress)
+        assertEquals(0f, state.progressAt(60f))
     }
 }

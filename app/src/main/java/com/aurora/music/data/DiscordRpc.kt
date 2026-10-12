@@ -6,6 +6,9 @@ import com.aurora.music.data.remote.ImgurUploader
 import com.aurora.music.model.Song
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import androidx.core.graphics.drawable.toBitmap
@@ -45,6 +48,9 @@ class DiscordRpc(
     @Volatile private var lastSong: Song? = null
     @Volatile private var lastPlaying = false
     @Volatile private var lastPositionSec = 0f
+    // the gateway stays up only while playing plus a grace period after pause or stop
+    @Volatile private var active = false
+    private var idleJob: Job? = null
 
     private val imagesPossible: Boolean get() = appId.isNotBlank()
     private fun imgurId(): String = imgurClientId
@@ -59,15 +65,18 @@ class DiscordRpc(
                     appId = acct.appId
                     showAlbum = acct.showAlbum
                     activityName = acct.activityName
+                    if (gateway.clearFatal()) connectedToken = null
+                    // a fresh login connects once so ready can fill in the username
+                    if (token.isNotBlank() && enabled && acct.username.isBlank() && !active) { active = true; scheduleIdle() }
                     reconcile()
-                    if (token.isNotBlank() && enabled) gateway.updateActivity(lastSong?.takeIf { lastPlaying }?.let { buildActivity(it, true, currentPosition()) })
+                    if (connectedToken != null) gateway.updateActivity(lastSong?.takeIf { lastPlaying }?.let { buildActivity(it, true, currentPosition()) })
                 }
             }
         }
     }
 
     private fun reconcile() {
-        if (token.isBlank() || !enabled) {
+        if (token.isBlank() || !enabled || !active) {
             if (connectedToken != null) { gateway.disconnect(); connectedToken = null }
             return
         }
@@ -84,8 +93,25 @@ class DiscordRpc(
         if (!changed) return
         lastSong = song; lastPlaying = isPlaying; lastPositionSec = positionSec
         positionAt = android.os.SystemClock.elapsedRealtime()
+        if (isPlaying) {
+            idleJob?.cancel(); idleJob = null
+            active = true
+        } else if (active) scheduleIdle()
         if (token.isBlank() || !enabled) return
+        reconcile()
         gateway.updateActivity(if (isPlaying) buildActivity(song, true, positionSec) else null)
+    }
+
+    private fun scheduleIdle() {
+        if (idleJob != null) return
+        idleJob = scope.launch {
+            delay(IDLE_DISCONNECT_MS)
+            synchronized(this@DiscordRpc) {
+                if (!isActive) return@synchronized
+                idleJob = null
+                if (!lastPlaying) { active = false; reconcile() }
+            }
+        }
     }
 
     private fun currentPosition() = lastPositionSec + if (lastPlaying) (android.os.SystemClock.elapsedRealtime() - positionAt).coerceAtLeast(0) / 1000f else 0f
@@ -167,7 +193,10 @@ class DiscordRpc(
         }
     }
 
-    private companion object { const val TAG = "DiscordRpc" }
+    private companion object {
+        const val TAG = "DiscordRpc"
+        const val IDLE_DISCONNECT_MS = 120_000L
+    }
 }
 
 internal fun discordActivity(song: Song, showAlbum: Boolean, activityName: String, positionSec: Float, now: Long = System.currentTimeMillis()): JsonObject {

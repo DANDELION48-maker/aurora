@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -36,6 +38,7 @@ import kotlin.math.abs
 internal fun DragToDismiss(
     onDismiss: () -> Unit,
     enabled: Boolean = true,
+    offsetState: MutableFloatState? = null,
     content: @Composable () -> Unit,
 ) {
     val density = LocalDensity.current
@@ -45,7 +48,10 @@ internal fun DragToDismiss(
     val reverseVelocity = with(density) { 600.dp.toPx() }
     val dismiss by rememberUpdatedState(onDismiss)
     val scope = rememberCoroutineScope()
-    var offset by remember { mutableFloatStateOf(0f) }
+    val offsetHolder = offsetState ?: remember { mutableFloatStateOf(0f) }
+    var offset by offsetHolder
+    // a hoisted offset outlives this surface so it must not reopen still dragged away
+    if (offsetState != null) DisposableEffect(offsetState) { onDispose { offsetState.floatValue = 0f } }
     var height by remember { mutableIntStateOf(0) }
     var completed by remember { mutableStateOf(false) }
     var settling by remember { mutableStateOf<Job?>(null) }

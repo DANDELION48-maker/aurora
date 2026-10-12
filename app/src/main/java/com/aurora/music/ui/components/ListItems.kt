@@ -90,8 +90,8 @@ fun SongRow(
     TrackSwipeActions(modifier, shape, isLiked, enabled = !menuOpen && !showPlaylists,
         onPlayNext = onPlayNext, onQueue = onAddToQueue, onLike = onToggleLike,
         onPlaylists = { showPlaylists = true }) {
-    androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxWidth()) {
-    val albumColumn = tablet && showAlbum && maxWidth >= 680.dp && song.album.isNotBlank()
+    // only tablets need the measured width so phones skip the per-row subcomposition
+    val wide: @Composable (Boolean) -> Unit = { albumColumn ->
     val target = if (tablet) 48.dp else 36.dp
     Row(
         modifier = Modifier
@@ -236,6 +236,9 @@ fun SongRow(
         }
     }
     }
+    if (tablet && showAlbum && song.album.isNotBlank()) {
+        androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxWidth()) { wide(maxWidth >= 680.dp) }
+    } else wide(false)
     }
     }
     if (showPlaylists) TrackPlaylistsSheet(song, onDismiss = { showPlaylists = false })

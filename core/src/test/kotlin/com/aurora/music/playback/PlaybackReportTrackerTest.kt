@@ -202,15 +202,15 @@ class PlaybackReportTrackerTest {
         assertEquals(1, harness.events().count { it == PlaybackReportEvent.SCROBBLE })
     }
 
-    @Test fun sendsProgressAtTenSecondsAndImmediatelyOnStateChangesOrSeeks() {
+    @Test fun sendsProgressAtThirtySecondsAndImmediatelyOnStateChangesOrSeeks() {
         val harness = Harness()
         harness.update(snapshot())
-        repeat(9) { harness.update(snapshot(position = (it + 1) * 1000L), elapsed = 1000) }
+        repeat(29) { harness.update(snapshot(position = (it + 1) * 1000L), elapsed = 1000) }
         assertEquals(listOf(PlaybackReportEvent.START), harness.events())
-        harness.update(snapshot(position = 10_000), elapsed = 1000)
-        harness.update(snapshot(position = 20_000), discontinuity = true)
-        harness.update(snapshot(position = 20_000, state = PlaybackReportState.PAUSED))
-        assertEquals(listOf(PlaybackReportEvent.START, PlaybackReportEvent.PROGRESS,
+        harness.update(snapshot(position = 30_000), elapsed = 1000)
+        harness.update(snapshot(position = 40_000), discontinuity = true)
+        harness.update(snapshot(position = 40_000, state = PlaybackReportState.PAUSED))
+        assertEquals(listOf(PlaybackReportEvent.START, PlaybackReportEvent.SCROBBLE, PlaybackReportEvent.PROGRESS,
             PlaybackReportEvent.PROGRESS, PlaybackReportEvent.PROGRESS), harness.events())
     }
 

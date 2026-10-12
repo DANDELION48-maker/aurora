@@ -8,12 +8,12 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.os.SystemClock
 import android.provider.MediaStore
 import androidx.media3.common.util.UnstableApi
 import com.aurora.music.model.Album
 import com.aurora.music.model.Artist
 import com.aurora.music.model.Song
+import com.aurora.music.playback.dsd.DsdFileMetadata
 import com.aurora.music.playback.dsd.DsdMetadataReader
 import com.aurora.music.util.accentArgbFor
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +26,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.resume
 
@@ -38,7 +39,9 @@ class LocalLibrary(
 
     @Volatile private var loaded = false
     private val mutex = Mutex()
-    @Volatile private var lastAutoScanMs = -AUTO_SCAN_GAP_MS
+    @Volatile private var indexedSignature: List<Long>? = null
+    @androidx.annotation.OptIn(UnstableApi::class)
+    private val dsdCache = ConcurrentHashMap<String, Pair<String, DsdFileMetadata>>()
 
     @Volatile override var songs: List<Song> = emptyList(); private set
     @Volatile override var albums: List<Album> = emptyList(); private set
@@ -89,15 +92,34 @@ class LocalLibrary(
         return LocalRescan.result(before, songKeys())
     }
 
-    // files copied onto the device stay hidden from other apps until android scans them, so scan the music folders too
+    // change notifications only rebuild when the indexed rows really changed the media scanner stays manual
     suspend fun syncWithMediaStore(): Boolean {
-        val now = SystemClock.elapsedRealtime()
-        if (now - lastAutoScanMs >= AUTO_SCAN_GAP_MS) {
-            lastAutoScanMs = now
-            requestMediaScan(LocalRescan.roots(standardFolders() + dirOf.values), SCAN_TIMEOUT_MS)
-            lastAutoScanMs = SystemClock.elapsedRealtime()
-        }
+        val current = withContext(Dispatchers.IO) { mediaSignature() }
+        if (current != null && current == indexedSignature) return false
         return refresh()
+    }
+
+    private fun mediaSignature(): List<Long>? = runCatching {
+        rowSignature(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, "${MediaStore.Audio.Media.IS_MUSIC} != 0", null) +
+            rowSignature(MediaStore.Files.getContentUri("external"), DSD_SELECTION, DSD_ARGS)
+    }.getOrNull()
+
+    private fun rowSignature(uri: Uri, selection: String, args: Array<String>?): List<Long> {
+        val generations = Build.VERSION.SDK_INT >= 30
+        val columns = if (generations) arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DATE_MODIFIED, MediaStore.MediaColumns.GENERATION_MODIFIED)
+            else arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DATE_MODIFIED)
+        var rows = 0L
+        var hash = 17L
+        val cursor = context.contentResolver.query(uri, columns, selection, args, "${MediaStore.MediaColumns._ID} ASC") ?: return listOf(-1L)
+        cursor.use { c ->
+            while (c.moveToNext()) {
+                rows++
+                hash = hash * 31 + c.getLong(0)
+                hash = hash * 31 + c.getLong(1)
+                if (generations) hash = hash * 31 + c.getLong(2)
+            }
+        }
+        return listOf(rows, hash)
     }
 
     private fun songKeys(): Set<String> = songs.mapTo(HashSet()) { it.path.ifBlank { it.id } }
@@ -171,7 +193,16 @@ class LocalLibrary(
     }
 
     @androidx.annotation.OptIn(UnstableApi::class)
+    private fun dsdMetadata(song: Song, stamp: String?): DsdFileMetadata? {
+        if (stamp != null) dsdCache[song.streamUrl]?.takeIf { it.first == stamp }?.let { return it.second }
+        val read = DsdMetadataReader.read(context, Uri.parse(song.streamUrl))
+        if (stamp != null && read != null) dsdCache[song.streamUrl] = stamp to read
+        return read
+    }
+
+    @androidx.annotation.OptIn(UnstableApi::class)
     private suspend fun scan(separators: ArtistSeparators) = withContext(Dispatchers.IO) {
+        val signature = mediaSignature()
         val collection = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         val cols = arrayListOf(
             MediaStore.Audio.Media._ID,
@@ -186,6 +217,8 @@ class LocalLibrary(
             MediaStore.Audio.Media.DATE_ADDED,
             MediaStore.Audio.Media.DISPLAY_NAME,
             MediaStore.Audio.Media.MIME_TYPE,
+            MediaStore.Audio.Media.DATE_MODIFIED,
+            MediaStore.Audio.Media.SIZE,
             @Suppress("DEPRECATION") MediaStore.Audio.Media.DATA,
         )
         if (Build.VERSION.SDK_INT >= 30) {
@@ -202,6 +235,7 @@ class LocalLibrary(
         val albumYear = HashMap<String, Int>()
         val dirs = HashMap<String, String>()
         val order = HashMap<String, Int>()
+        val stamps = HashMap<String, String>()
         runCatching {
             context.contentResolver.query(collection, projection, selection, null, sort)?.use { c ->
                 val idCol = c.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
@@ -215,6 +249,8 @@ class LocalLibrary(
                 val addedCol = c.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_ADDED)
                 val nameCol = c.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME)
                 val mimeCol = c.getColumnIndex(MediaStore.Audio.Media.MIME_TYPE)
+                val modifiedCol = c.getColumnIndex(MediaStore.Audio.Media.DATE_MODIFIED)
+                val sizeCol = c.getColumnIndex(MediaStore.Audio.Media.SIZE)
                 val bitrateCol = c.getColumnIndex(MediaStore.Audio.Media.BITRATE)
                 val genreCol = if (Build.VERSION.SDK_INT >= 30) c.getColumnIndex(MediaStore.Audio.Media.GENRE) else -1
                 val trackCol = c.getColumnIndex(MediaStore.Audio.Media.TRACK)
@@ -234,6 +270,8 @@ class LocalLibrary(
                     val display = if (nameCol >= 0) c.getString(nameCol) else null
                     val mime = if (mimeCol >= 0) c.getString(mimeCol) else null
                     val suffix = suffixFrom(display, mime)
+                    if ((suffix == "dsf" || suffix == "dff") && modifiedCol >= 0 && sizeCol >= 0)
+                        stamps[id.toString()] = "${c.getLong(modifiedCol)}:${c.getLong(sizeCol)}"
                     val bitrateKbps = if (bitrateCol >= 0) (runCatching { c.getInt(bitrateCol) }.getOrDefault(0) / 1000) else 0
                     val art = albumArtUri(albumId)
                     val uri = ContentUris.withAppendedId(collection, id).toString()
@@ -270,12 +308,13 @@ class LocalLibrary(
                 }
             }
         }
-        out += visibleDsdFiles(out.mapTo(hashSetOf()) { it.id }, dirs)
+        out += visibleDsdFiles(out.mapTo(hashSetOf()) { it.id }, dirs, stamps)
+        dsdCache.keys.retainAll(out.filter { it.suffix == "dsf" || it.suffix == "dff" }.mapTo(HashSet()) { it.streamUrl })
         for (index in out.indices) {
             currentCoroutineContext().ensureActive()
             val song = out[index]
             if (song.suffix != "dsf" && song.suffix != "dff") continue
-            val file = DsdMetadataReader.read(context, Uri.parse(song.streamUrl)) ?: continue
+            val file = dsdMetadata(song, stamps[song.id]) ?: continue
             val tags = file.metadata
             val artist = tags.artist?.toString()?.takeIf(String::isNotBlank) ?: song.artist
             val album = tags.albumTitle?.toString()?.takeIf(String::isNotBlank) ?: song.album
@@ -298,6 +337,7 @@ class LocalLibrary(
             (tags.releaseYear ?: tags.recordingYear)?.takeIf { it > 0 }?.let { albumYear[albumId] = it }
         }
         out += SacdLibrary(context).songs()
+        indexedSignature = signature
         positions = order
         rawSongs = out
         indexArtists(separators)
@@ -320,19 +360,21 @@ class LocalLibrary(
             .sortedByDescending { albumDateAdded[it.id] ?: 0L }
     }
 
-    private fun visibleDsdFiles(indexed: Set<String>, dirs: MutableMap<String, String>): List<Song> {
+    private fun visibleDsdFiles(indexed: Set<String>, dirs: MutableMap<String, String>, stamps: MutableMap<String, String>): List<Song> {
         val collection = MediaStore.Files.getContentUri("external")
         val columns = arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DISPLAY_NAME,
             MediaStore.MediaColumns.MIME_TYPE, MediaStore.MediaColumns.DATE_ADDED,
+            MediaStore.MediaColumns.DATE_MODIFIED, MediaStore.MediaColumns.SIZE,
             @Suppress("DEPRECATION") MediaStore.MediaColumns.DATA)
-        val selection = "${MediaStore.MediaColumns.DISPLAY_NAME} LIKE ? OR ${MediaStore.MediaColumns.DISPLAY_NAME} LIKE ?"
         val files = ArrayList<Song>()
         runCatching {
-            context.contentResolver.query(collection, columns, selection, arrayOf("%.dsf", "%.dff"), null)?.use { cursor ->
+            context.contentResolver.query(collection, columns, DSD_SELECTION, DSD_ARGS, null)?.use { cursor ->
                 val idColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID)
                 val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
                 val mimeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)
                 val addedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
+                val modifiedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_MODIFIED)
+                val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)
                 @Suppress("DEPRECATION") val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
                 while (cursor.moveToNext()) {
                     val mediaId = cursor.getLong(idColumn)
@@ -341,6 +383,7 @@ class LocalLibrary(
                     val suffix = suffixFrom(name, cursor.getString(mimeColumn))
                     if (suffix != "dsf" && suffix != "dff") continue
                     val id = "local-dsd-$mediaId"
+                    stamps[id] = "${cursor.getLong(modifiedColumn)}:${cursor.getLong(sizeColumn)}"
                     val path = cursor.getString(pathColumn).orEmpty()
                     val folder = path.substringBeforeLast('/', "")
                     if (folder.isNotBlank()) dirs[id] = folder
@@ -373,6 +416,7 @@ class LocalLibrary(
         const val SCAN_TIMEOUT_MS = 60_000L
         const val FULL_SCAN_TIMEOUT_MS = 300_000L
         const val MAX_LEGACY_SCAN_FILES = 20_000
-        const val AUTO_SCAN_GAP_MS = 15_000L
+        val DSD_SELECTION = "${MediaStore.MediaColumns.DISPLAY_NAME} LIKE ? OR ${MediaStore.MediaColumns.DISPLAY_NAME} LIKE ?"
+        val DSD_ARGS = arrayOf("%.dsf", "%.dff")
     }
 }

@@ -96,9 +96,13 @@ class NetworkQueuePlayer(
         private set
     val shuffleRestoreIds: List<String>? get() = original?.mapNotNull { uid -> queue.firstOrNull { it.uid == uid }?.item?.mediaId }
 
+    // a paused receiver is polled slowly until a local play wakes the loop
+    private val pollWake = kotlinx.coroutines.channels.Channel<Unit>(kotlinx.coroutines.channels.Channel.CONFLATED)
+
     private val pollJob = scope.launch {
             while (isActive) {
-                delay(750)
+                if (wanted) delay(750)
+                else if (withTimeoutOrNull(5_000) { pollWake.receive() } != null) continue
                 if (!ready || loading || shuttingDown) continue
                 val revision = generation
                 val controls = controlsRevision
@@ -370,6 +374,7 @@ class NetworkQueuePlayer(
         } else if (wanted && ended) { position = 0; load() }
         else if (wanted && !ready && !loading) load()
         else command { receiver.playing(wanted) }
+        if (wanted) pollWake.trySend(Unit)
         return Futures.immediateVoidFuture()
     }
     override fun handleSeek(mediaItemIndex: Int, positionMs: Long, seekCommand: Int): ListenableFuture<*> {

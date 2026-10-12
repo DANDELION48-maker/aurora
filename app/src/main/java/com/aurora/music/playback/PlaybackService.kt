@@ -58,6 +58,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -88,6 +90,15 @@ class PlaybackService : MediaLibraryService() {
     private var mixPlayer: com.aurora.music.mix.MixPlayer? = null
     @Volatile private var lastIrPath: String = ""
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    // periodic work only runs while something is audible or fading
+    private val engaged = MutableStateFlow(false)
+    private var lastNowPlaying: NowPlaying? = null
+    private val wakeModes = java.util.IdentityHashMap<ExoPlayer, Int>()
+    private val volumeReceiver = object : android.content.BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: android.content.Intent?) {
+            if (intent?.getIntExtra(VOLUME_STREAM_EXTRA, -1) == android.media.AudioManager.STREAM_MUSIC) updateSignalPath()
+        }
+    }
 
     private var audioEffects: AudioEffectsController? = null
     @Volatile private var crossfadeMs: Int = 0
@@ -371,6 +382,8 @@ class PlaybackService : MediaLibraryService() {
         startAudioObservers(audioAttributes)
         (getSystemService(AUDIO_SERVICE) as android.media.AudioManager)
             .registerAudioDeviceCallback(outputCallback, android.os.Handler(mainLooper))
+        androidx.core.content.ContextCompat.registerReceiver(this, volumeReceiver,
+            android.content.IntentFilter(VOLUME_ACTION), androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED)
     }
 
     private fun attachSignalEvidence(owner: ExoPlayer, evidence: SinkEvidence) {
@@ -394,7 +407,7 @@ class PlaybackService : MediaLibraryService() {
             override fun onAudioDecoderInitialized(eventTime: AnalyticsListener.EventTime, decoderName: String,
                 initializedTimestampMs: Long, initializationDurationMs: Long) {
                 // Decoder names are platform component identifiers, not track/server metadata.
-                evidence.decoder = decoderName.takeIf { it.matches(Regex("[A-Za-z0-9_.-]{1,160}")) }
+                evidence.decoder = decoderName.takeIf { it.matches(DECODER_NAME) }
             }
             override fun onAudioTrackInitialized(eventTime: AnalyticsListener.EventTime, audioTrackConfig: AudioSink.AudioTrackConfig) {
                 evidence.tracks.initialized(audioTrackConfig)
@@ -437,10 +450,17 @@ class PlaybackService : MediaLibraryService() {
                 } else if (usbFallback == UsbFallbackPolicy.PAUSE) player.pause()
             }
             override fun onEvents(p: Player, events: Player.Events) {
-                if (p !== player) return
+                if (events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION) || events.contains(Player.EVENT_TIMELINE_CHANGED) ||
+                    events.contains(Player.EVENT_REPEAT_MODE_CHANGED) || events.contains(Player.EVENT_SHUFFLE_MODE_ENABLED_CHANGED)
+                ) applyWakeMode(owner)
+                if (p !== player) { refreshEngaged(); return }
                 if (xfadeActive && (events.contains(Player.EVENT_IS_PLAYING_CHANGED) || events.contains(Player.EVENT_PLAY_WHEN_READY_CHANGED))) {
                     fadePlayer?.playWhenReady = p.isPlaying
                 }
+                refreshEngaged()
+                if (events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION) || events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) ||
+                    events.contains(Player.EVENT_TIMELINE_CHANGED)
+                ) applyIdleGain()
                 if (!xfadeActive && events.contains(Player.EVENT_TIMELINE_CHANGED)) {
                     clearPrepared()
                     preparedFailedKey = null
@@ -562,6 +582,8 @@ class PlaybackService : MediaLibraryService() {
                     runCatching { player.setAudioAttributes(audioAttributes, !independentOutput) }
                 }
                 applyAudioEngine()
+                applyIdleGain()
+                if (crossfadeMs <= 0 && !xfadeActive) clearPrepared()
             }
         }
         scope.launch {
@@ -589,24 +611,68 @@ class PlaybackService : MediaLibraryService() {
 
         scope.launch {
             while (isActive) {
-                // ramp finely while a fade is in flight idle replaygain tracking needs only a coarse tick
-                delay(if (xfadeActive || sleepFadeActive || wakeFadeActive) 25L else 100L)
+                engaged.first { it }
+                while (refreshEngaged()) {
+                    tickAudio()
+                    // ramp finely while a fade is in flight idle replaygain tracking needs only a coarse tick
+                    delay(if (mediaSession?.player !== player) 1000L else if (xfadeActive || sleepFadeActive || wakeFadeActive) 25L else 100L)
+                }
                 tickAudio()
             }
         }
+        // USB engine and volume/fade changes need snapshots even without a Media3 track event.
         scope.launch {
             while (isActive) {
-                delay(1000)
-                val active = mediaSession?.player
-                playbackReporting.observe(active)
-                val nativeUsb = active === player && usbSink?.isNativeEngineActive == true && player.playWhenReady
-                listeningHistory.track(active, nativeUsb)
-                listeningDetails.track(active, nativeUsb)
+                engaged.first { it }
+                do {
+                    if (container.signalPath.subscriptionCount.value == 0) updateSignalPath()
+                    delay(1000)
+                    trackPlayback()
+                } while (refreshEngaged())
+                updateSignalPath()
             }
         }
-        // USB engine and volume/fade changes need snapshots even without a Media3 track event.
-        scope.launch { while (isActive) { delay(500); updateSignalPath() } }
+        scope.launch {
+            container.signalPath.subscriptionCount.map { it > 0 }.distinctUntilChanged().collectLatest { watched ->
+                if (watched) while (true) { updateSignalPath(); delay(500) }
+            }
+        }
     }
+
+    private fun trackPlayback() {
+        val active = mediaSession?.player
+        playbackReporting.observe(active)
+        val nativeUsb = active === player && usbSink?.isNativeEngineActive == true && player.playWhenReady
+        listeningHistory.track(active, nativeUsb)
+        listeningDetails.track(active, nativeUsb)
+    }
+
+    private fun refreshEngaged(): Boolean = playbackEngaged().also { engaged.value = it }
+
+    private fun playbackEngaged(): Boolean {
+        if (!::player.isInitialized) return false
+        val local = mediaSession?.player === player
+        if (local && (sleepFadeActive || wakeFadeActive)) return true
+        if (xfadeActive && (player.playWhenReady || fadePlayer?.playWhenReady == true)) return true
+        if (local && player.playWhenReady && usbSink?.isNativeEngineActive == true) return true
+        val active = mediaSession?.player ?: return false
+        return active.playWhenReady && active.playbackState != Player.STATE_IDLE && active.playbackState != Player.STATE_ENDED
+    }
+
+    private fun applyIdleGain() {
+        if (mediaSession?.player !== player || xfadeActive || sleepFadeActive || wakeFadeActive) return
+        player.volume = replayGainMultiplier()
+    }
+
+    // local-only stretches drop the wifi lock a network neighbour keeps it for the resolve gap
+    private fun applyWakeMode(target: ExoPlayer) {
+        val current = target.currentMediaItem ?: return
+        val next = target.nextMediaItemIndex.takeIf { it != C.INDEX_UNSET }?.let { target.getMediaItemAt(it) }
+        val mode = if (isLocalItem(current) && (next == null || isLocalItem(next))) C.WAKE_MODE_LOCAL else C.WAKE_MODE_NETWORK
+        if (wakeModes.put(target, mode) != mode) target.setWakeMode(mode)
+    }
+
+    private fun isLocalItem(item: MediaItem) = item.localConfiguration?.uri?.scheme?.lowercase().orEmpty() in LOCAL_SCHEMES
 
     // runtime-switchable via volatile flags no rebuild the two eq engines are mutually exclusive so they never stack
     private fun applyAudioEngine() {
@@ -745,6 +811,7 @@ class PlaybackService : MediaLibraryService() {
     }
 
     private fun updateSignalPath() {
+        refreshEngaged()
         try { updateSignalPathSnapshot() }
         finally { updateListeningLevels() }
     }
@@ -893,7 +960,7 @@ class PlaybackService : MediaLibraryService() {
         val sourceFormat = if (dsd != null) SignalFormat(dsd.bitRate, 1, dsd.channels, "DSD")
             else if (nativeFlac) decoded else source?.let { pcmFormat(it.sampleRate, it.pcmEncoding, it.channelCount) }
         val codec = if (dsd != null) "${dsd.container} / DSD" else if (nativeFlac) "FLAC" else source?.sampleMimeType?.substringAfter('/')?.uppercase()
-            ?.takeIf { it.matches(Regex("[A-Z0-9.+_-]{1,60}")) }.orEmpty()
+            ?.takeIf { it.matches(CODEC_NAME) }.orEmpty()
         val track = state?.track
         val trackFormat = track?.let { pcmFormat(it.sampleRate, it.encoding, Integer.bitCount(it.channelConfig)) }
         // Media3 uses float only for high-resolution decoded PCM. A PCM16 source still runs processors
@@ -1016,7 +1083,7 @@ class PlaybackService : MediaLibraryService() {
         val mixerDevice = device ?: automaticMixerCandidate
         requestBitPerfect(mixerDevice, track, (opportunisticMixer || exclusiveFallback) && mixerDevice != null && isUsb(mixerDevice.type),
             exactOnly = !exclusiveFallback)
-        if (state != null && (!usb || processedUsb) && raw != null && !state.spectrumBusy &&
+        if (container.signalPath.subscriptionCount.value > 0 && state != null && (!usb || processedUsb) && raw != null && !state.spectrumBusy &&
             (player.isPlaying || state.spectrum == null || state.spectrumGeneration != state.beforeMeter.spectrum.generation) &&
             System.nanoTime() - state.spectrumRequestedAt > 450_000_000L) {
             state.spectrumBusy = true
@@ -1238,7 +1305,7 @@ class PlaybackService : MediaLibraryService() {
     }
 
     private fun clearPrepared() {
-        fadePlayer?.run { volume = 0f; pause(); clearMediaItems() }
+        fadePlayer?.takeIf { it.mediaItemCount > 0 }?.run { volume = 0f; pause(); clearMediaItems() }
         preparedKey = null
     }
 
@@ -1380,6 +1447,7 @@ class PlaybackService : MediaLibraryService() {
                     mixPlayer?.let { it.sleepFade(ms); return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS)) }
                     if (ms > 0) { sleepFadeMs = ms; sleepFadeStartMs = android.os.SystemClock.elapsedRealtime(); sleepFadeActive = true }
                     else { sleepFadeActive = false; player.volume = replayGainMultiplier() }
+                    refreshEngaged()
                 }
             }
             return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
@@ -1703,6 +1771,8 @@ class PlaybackService : MediaLibraryService() {
             isPlaying = active.isPlaying,
             hasTrack = item != null,
         )
+        if (np == lastNowPlaying) return
+        lastNowPlaying = np
         nowPlaying.save(np)
         NowPlayingBus.state.value = np
         WidgetBridge.refresh(this)
@@ -1844,6 +1914,7 @@ class PlaybackService : MediaLibraryService() {
             wakeFadeStartMs = android.os.SystemClock.elapsedRealtime()
             wakeFadeActive = true
             player.play()
+            refreshEngaged()
             publishNowPlaying()
             postAlarmNotification()
         }
@@ -1878,6 +1949,7 @@ class PlaybackService : MediaLibraryService() {
         networkServer?.close(); networkServer = null
         scope.cancel()
         runCatching { (getSystemService(AUDIO_SERVICE) as android.media.AudioManager).unregisterAudioDeviceCallback(outputCallback) }
+        runCatching { unregisterReceiver(volumeReceiver) }
         requestBitPerfect(null, null, false)
         mixPlayer?.release()
         mixPlayer = null
@@ -1919,5 +1991,10 @@ class PlaybackService : MediaLibraryService() {
         const val ACTION_ALARM = "com.aurora.music.action.ALARM"
         const val ACTION_ALARM_DISMISS = "com.aurora.music.action.ALARM_DISMISS"
         private const val ALARM_NOTIF_ID = 0xA1A
+        private const val VOLUME_ACTION = "android.media.VOLUME_CHANGED_ACTION"
+        private const val VOLUME_STREAM_EXTRA = "android.media.EXTRA_VOLUME_STREAM_TYPE"
+        private val LOCAL_SCHEMES = setOf("file", "content", "android.resource", "aurora-sacd", "aurora-cache")
+        private val DECODER_NAME = Regex("[A-Za-z0-9_.-]{1,160}")
+        private val CODEC_NAME = Regex("[A-Z0-9.+_-]{1,60}")
     }
 }

@@ -26,7 +26,7 @@ class SmartPlaylistEngine(
 ) {
 
     fun evaluate(sp: SmartPlaylist, source: List<Song>): List<Song> {
-        val events = playHistory.history.value
+        val events = playHistory.snapshot()
         val playCounts = events.groupingBy { it.songId }.eachCount()
         val lastPlayed = HashMap<String, Long>()
         for (e in events) lastPlayed[e.songId] = maxOf(lastPlayed[e.songId] ?: 0L, e.timestamp)

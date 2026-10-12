@@ -48,12 +48,12 @@ data class AppUpdateState(
     } == true
 }
 
-class AppUpdater(context: Context) {
+class AppUpdater(context: Context, base: OkHttpClient = OkHttpClient()) {
     private val context = context.applicationContext
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val downloads = context.getSystemService(DownloadManager::class.java)
     private val prefs = context.getSharedPreferences("app_updates", Context.MODE_PRIVATE)
-    private val client = OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)
+    private val client = base.newBuilder().connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(20, TimeUnit.SECONDS).callTimeout(30, TimeUnit.SECONDS).build()
     private val mutableState = MutableStateFlow(AppUpdateState())
     val state = mutableState.asStateFlow()

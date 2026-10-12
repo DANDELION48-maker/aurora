@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aurora.music.AuroraApplication
 import com.aurora.music.data.VisualizerPrefs
@@ -61,7 +62,7 @@ fun VisualizerSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) 
     fun save(p: VisualizerPrefs) { scope.launch { store.setVisualizer(p) } }
 
     // Drive the analyser so the preview reacts to whatever is playing.
-    DisposableEffect(Unit) { controller.start(); onDispose { controller.stop() } }
+    LifecycleStartEffect(Unit) { controller.start(); onStopOrDispose { controller.stop() } }
     LaunchedEffect(prefs.barCount, prefs.fftSize, prefs.smoothing, prefs.sensitivity, prefs.minHz, prefs.maxHz, prefs.peakHold, prefs.fpsCap) {
         controller.applyPrefs(prefs)
     }

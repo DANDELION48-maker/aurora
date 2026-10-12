@@ -15,7 +15,7 @@ data class LastfmSession(val name: String, val key: String)
 data class LastfmUser(val name: String, val imageUrl: String, val playcount: Long)
 
 // authenticated calls signed: api_sig = md5(params sorted by name as key+value + secret) excluding format
-class LastfmClient(private val apiKey: String, private val secret: String, private val http: OkHttpClient = OkHttpClient()) {
+class LastfmClient(private val apiKey: String, private val secret: String, private val http: OkHttpClient = sharedHttp) {
     private val gson = Gson()
 
     val configured: Boolean get() = apiKey.isNotBlank() && !apiKey.startsWith("YOUR_")
@@ -122,5 +122,9 @@ class LastfmClient(private val apiKey: String, private val secret: String, priva
     private data class UserObj(val name: String? = null, val playcount: String? = null, val image: List<Img>? = null)
     private data class Img(@SerializedName("#text") val text: String? = null, val size: String? = null)
 
-    private companion object { const val BASE = "https://ws.audioscrobbler.com/2.0/" }
+    private companion object {
+        const val BASE = "https://ws.audioscrobbler.com/2.0/"
+        // one connection pool for every key rebuild
+        val sharedHttp by lazy { OkHttpClient() }
+    }
 }

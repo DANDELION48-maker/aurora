@@ -24,8 +24,8 @@ private data class RbStationDto(
     val homepage: String? = "",
 )
 
-class RadioBrowserClient {
-    private val http = OkHttpClient.Builder()
+class RadioBrowserClient(base: OkHttpClient = OkHttpClient()) {
+    private val http = base.newBuilder()
         .connectTimeout(12, TimeUnit.SECONDS)
         .readTimeout(20, TimeUnit.SECONDS)
         .build()

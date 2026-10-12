@@ -42,6 +42,7 @@ class YouTubeDownloader(
     private val context: Context,
     private val resolver: YoutubeResolver,
     private val prefs: suspend () -> YouTubeDownloadPrefs,
+    private val http: OkHttpClient = OkHttpClient(),
     private val account: suspend () -> YouTubeMusicWebSession?,
 ) {
     sealed interface State {
@@ -52,7 +53,6 @@ class YouTubeDownloader(
         data object Failed : State
     }
 
-    private val http = OkHttpClient()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val gate = Semaphore(2)
     private val work = File(context.cacheDir, "youtube-downloads")

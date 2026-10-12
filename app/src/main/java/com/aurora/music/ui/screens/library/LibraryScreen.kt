@@ -34,6 +34,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -194,17 +196,20 @@ fun LibraryScreen(
     val sort = state.sort
     val layout = state.layout
     val libColumns = com.aurora.music.ui.theme.LocalUiPrefs.current.libraryColumns.coerceIn(2, 4)
-    val actions = LibActions(
-        isLiked = { id -> likedIds.contains(id) },
-        onPlay = { r -> onPlayCollection(r.id, r.kind) },
-        onShuffle = { r -> onShuffleCollection(r.id, r.kind) },
-        onQueue = { r -> onQueueCollection(r.id, r.kind) },
-        onToggleLike = { r -> onToggleLikeKind(r.id, r.kind) },
-        onDelete = { r -> onDeletePlaylist(r.id) },
-        onEditSmart = { r -> onEditSmart(r.id) },
-        onDeleteSmart = { r -> onDeleteSmart(r.id) },
-        onExport = { r -> onExportPlaylist(r.id, r.kind, r.title) },
-    )
+    val actions = remember(likedIds, onPlayCollection, onShuffleCollection, onQueueCollection, onToggleLikeKind,
+        onDeletePlaylist, onEditSmart, onDeleteSmart, onExportPlaylist) {
+        LibActions(
+            isLiked = { id -> likedIds.contains(id) },
+            onPlay = { r -> onPlayCollection(r.id, r.kind) },
+            onShuffle = { r -> onShuffleCollection(r.id, r.kind) },
+            onQueue = { r -> onQueueCollection(r.id, r.kind) },
+            onToggleLike = { r -> onToggleLikeKind(r.id, r.kind) },
+            onDelete = { r -> onDeletePlaylist(r.id) },
+            onEditSmart = { r -> onEditSmart(r.id) },
+            onDeleteSmart = { r -> onDeleteSmart(r.id) },
+            onExport = { r -> onExportPlaylist(r.id, r.kind, r.title) },
+        )
+    }
 
     Column(Modifier.fillMaxWidth().padding(top = topInset)) {
         // ---- header: identity + stats ----
@@ -322,7 +327,10 @@ fun LibraryScreen(
                 onPlayAllSongs = onPlayAllSongs, onPlaySong = onPlaySong,
             )
             LibraryFilter.DOWNLOADED -> {
-                val dlRows = state.downloadedRows.map { LibRow(it.title, appString(R.string.downloaded_collection), it.coverUrl, it.accent, it.id, it.kind) }
+                val dlRows = remember(state.downloadedRows) {
+                    state.downloadedRows.map { LibRow(it.title, appString(R.string.downloaded_collection), it.coverUrl, it.accent, it.id, it.kind) }
+                        .distinctBy { "${it.kind}:${it.id}" }
+                }
                 if (dlRows.isEmpty()) {
                     EmptyHint(appString(R.string.text_no_downloads_yet_9647c1), appString(R.string.text_albums_and_playlists_you_download_live_here_e4c7ba))
                 } else {
@@ -330,7 +338,13 @@ fun LibraryScreen(
                 }
             }
             else -> {
-                val rows = buildRows(state, filter, sort, pins)
+                // artists aggregate over the whole song list so only rebuild when an input really changed
+                val rows = remember(filter, sort, pins, state.playlists, state.smartPlaylists, state.albums, state.artists,
+                    state.likedSongCount, state.likedCover,
+                    if (filter == LibraryFilter.ARTISTS) state.songs else null,
+                    if (filter == LibraryFilter.ARTISTS) state.localPlayCounts else null) {
+                    buildRows(state, filter, sort, pins)
+                }
                 if (rows.isEmpty()) {
                     EmptyHint(appString(R.string.text_nothing_here_yet_e89225), appString(R.string.text_your_will_show_up_once_the_server_has_some_ced31f, (filter.label.lowercase())))
                 } else {
@@ -626,7 +640,8 @@ private fun SongsTab(
     onPlayAllSongs: (shuffle: Boolean) -> Unit,
     onPlaySong: (Song) -> Unit,
 ) {
-    val songs = sortedSongs(state.songs, sort, state.localPlayCounts)
+    val playCounts = if (sort == LibrarySort.MOST_PLAYED) state.localPlayCounts else emptyMap()
+    val songs = remember(state.songs, sort, playCounts) { sortedSongs(state.songs, sort, playCounts) }
     if (songs.isEmpty() && !state.loading) {
         EmptyHint(appString(R.string.text_no_songs_e6bbe2), appString(R.string.text_songs_from_your_server_appear_here_e4db53))
         return
@@ -679,7 +694,7 @@ private fun SongsTab(
 
     Box(Modifier.fillMaxSize()) {
         LazyColumn(Modifier.fillMaxSize().padding(horizontal = 8.dp), state = listState, contentPadding = PaddingValues(bottom = bottom)) {
-            items(songs.size) { i ->
+            items(songs.size, contentType = { "song" }) { i ->
                 val s = songs[i]
                 SongRow(
                     s, isPlaying = s.id == currentSongId && isPlaying, isLiked = likedIds.contains(s.id),
@@ -730,7 +745,7 @@ private fun RowsContent(
         val scope = rememberCoroutineScope()
         Box(Modifier.fillMaxSize()) {
             LazyColumn(Modifier.fillMaxSize().padding(horizontal = 8.dp), state = listState, contentPadding = PaddingValues(bottom = bottom)) {
-                items(rows.size) { i -> LibListItem(rows[i], actions) { onOpen(rows[i]) } }
+                items(rows, key = { "${it.kind}:${it.id}" }, contentType = { "row" }) { r -> LibListItem(r, actions) { onOpen(r) } }
             }
             if (sort == LibrarySort.ALPHABETICAL && rows.size > 30) {
                 AlphabetRail(
@@ -750,7 +765,7 @@ private fun RowsContent(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            items(rows.size) { i -> LibGridItem(rows[i], actions) { onOpen(rows[i]) } }
+            items(rows, key = { "${it.kind}:${it.id}" }, contentType = { "row" }) { r -> LibGridItem(r, actions) { onOpen(r) } }
         }
     }
 }
@@ -824,25 +839,33 @@ private fun sortedSongs(songs: List<Song>, sort: LibrarySort, localPlayCounts: M
     com.aurora.music.viewmodel.sortLibrarySongs(songs, sort, localPlayCounts)
 
 private fun buildRows(state: LibraryUiState, filter: LibraryFilter, sort: LibrarySort, pins: List<com.aurora.music.data.Pin>): List<LibRow> {
-    val smart = state.smartPlaylists.map {
+    val smart = if (filter != LibraryFilter.PLAYLISTS) emptyList() else state.smartPlaylists.map {
         val n = it.rules.orEmpty().size
         LibRow(it.name ?: appString(R.string.text_smart_playlist_f77ad7), appString(R.string.smart_rule_count, appPlural(R.plurals.rule_count, (n))), "", accentFor(it.id ?: "smart"), it.id ?: "", "smart", badge = appString(R.string.text_auto_50c3f1))
     }
-    val playlists = smart + state.playlists.map { LibRow(it.title, appString(R.string.playlist_track_count, appPlural(R.plurals.track_count, (it.songCount))), it.coverUrl, it.accent, it.id, "playlist") }
-    val albums = state.albums.map {
+    val playlists = if (filter != LibraryFilter.PLAYLISTS) emptyList() else smart + state.playlists.map { LibRow(it.title, appString(R.string.playlist_track_count, appPlural(R.plurals.track_count, (it.songCount))), it.coverUrl, it.accent, it.id, "playlist") }
+    val albumLabel = appString(R.string.text_album_dfb4c9)
+    val albums = if (filter != LibraryFilter.ALBUMS) emptyList() else state.albums.map {
         val label = it.typeLabel.localizedMediaType()
         LibRow(
             it.title, "$label • ${it.artist}", it.artworkUrl, accentFor(it.id), it.id, "album",
-            badge = if (label == appString(R.string.text_album_dfb4c9)) "" else label.uppercase(java.util.Locale.getDefault()),
+            badge = if (label == albumLabel) "" else label.uppercase(java.util.Locale.getDefault()),
             sortPlayCount = it.playCount, sortRecencySec = it.year.toLong(),
         )
     }
     // no per-artist play/added data from the server aggregate over whatever song pages are currently loaded
-    val artists = state.artists.map { ar ->
-        val tracks = state.songs.filter { it.artistId == ar.id }
-        val plays = tracks.sumOf { maxOf(it.playCount, state.localPlayCounts[it.id] ?: 0) }
-        val recency = tracks.maxOfOrNull { it.dateAddedSec } ?: 0L
-        LibRow(ar.name, appString(R.string.text_artist_6c3f3d), ar.imageUrl, accentFor(ar.id), ar.id, "artist", circle = true, sortPlayCount = plays, sortRecencySec = recency)
+    val artists = if (filter != LibraryFilter.ARTISTS) emptyList() else {
+        val plays = HashMap<String, Int>()
+        val recency = HashMap<String, Long>()
+        for (song in state.songs) {
+            plays[song.artistId] = (plays[song.artistId] ?: 0) + maxOf(song.playCount, state.localPlayCounts[song.id] ?: 0)
+            if (song.dateAddedSec > (recency[song.artistId] ?: 0L)) recency[song.artistId] = song.dateAddedSec
+        }
+        val artistLabel = appString(R.string.text_artist_6c3f3d)
+        state.artists.map { ar ->
+            LibRow(ar.name, artistLabel, ar.imageUrl, accentFor(ar.id), ar.id, "artist", circle = true,
+                sortPlayCount = plays[ar.id] ?: 0, sortRecencySec = recency[ar.id] ?: 0L)
+        }
     }
     val base = when (filter) {
         LibraryFilter.PLAYLISTS -> playlists
@@ -851,19 +874,19 @@ private fun buildRows(state: LibraryUiState, filter: LibraryFilter, sort: Librar
         else -> emptyList()
     }
     val sorted = when (sort) {
-        LibrarySort.ALPHABETICAL -> base.sortedBy { it.title.lowercase() }
-        LibrarySort.CREATOR -> base.sortedBy { it.subtitle.lowercase() }
+        LibrarySort.ALPHABETICAL -> base.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+        LibrarySort.CREATOR -> base.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.subtitle })
         // playlists carry neither signal so they keep their loaded (roughly alphabetical) order
         LibrarySort.MOST_PLAYED -> base.sortedByDescending { it.sortPlayCount }
         LibrarySort.RECENT -> base.sortedByDescending { it.sortRecencySec }
     }
-    if (filter != LibraryFilter.PLAYLISTS) return sorted
+    if (filter != LibraryFilter.PLAYLISTS) return sorted.distinctBy { "${it.kind}:${it.id}" }
 
     // playlists tab keeps liked songs on top pinned entries stay deduped
     val pinned = pins.map { it.kind to it.id }.toSet()
     val deduped = sorted.filterNot { (it.kind to it.id) in pinned }
     val liked = LibRow(appString(R.string.text_liked_songs_58c3a9), appString(R.string.playlist_track_count, appPlural(R.plurals.track_count, (state.likedSongCount))), state.likedCover, accentFor("liked"), "liked", "liked")
-    return listOf(liked) + deduped
+    return (listOf(liked) + deduped).distinctBy { "${it.kind}:${it.id}" }
 }
 
 @Composable

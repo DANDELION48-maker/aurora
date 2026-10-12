@@ -52,8 +52,8 @@ private data class WikiImage(val source: String? = "")
 private data class WikiContentUrls(val desktop: WikiPage? = null)
 private data class WikiPage(val page: String? = "")
 
-class ArtistInfoClient {
-    private val http = OkHttpClient.Builder()
+class ArtistInfoClient(base: OkHttpClient = OkHttpClient()) {
+    private val http = base.newBuilder()
         .addInterceptor { chain ->
             chain.proceed(chain.request().newBuilder().header("User-Agent", USER_AGENT).build())
         }

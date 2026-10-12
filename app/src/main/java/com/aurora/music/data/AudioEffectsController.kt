@@ -18,12 +18,20 @@ class AudioEffectsController(
     private var virtualizer: Virtualizer? = null
     private var loudness: LoudnessEnhancer? = null
 
-    var bandCount: Int = 5; private set
-    var bandFreqsHz: List<Int> = listOf(60, 230, 910, 3600, 14000); private set
-    var minBandMb: Int = -1500; private set
-    var maxBandMb: Int = 1500; private set
-    var presetNames: List<String> = emptyList(); private set
-    var available: Boolean = false; private set
+    @Volatile private var created = false
+    private var bands = 5
+    private var freqs: List<Int> = listOf(60, 230, 910, 3600, 14000)
+    private var minMb = -1500
+    private var maxMb = 1500
+    private var presets: List<String> = emptyList()
+    private var supported = false
+
+    val bandCount: Int get() { ensureCreated(); return bands }
+    val bandFreqsHz: List<Int> get() { ensureCreated(); return freqs }
+    val minBandMb: Int get() { ensureCreated(); return minMb }
+    val maxBandMb: Int get() { ensureCreated(); return maxMb }
+    val presetNames: List<String> get() { ensureCreated(); return presets }
+    val available: Boolean get() { ensureCreated(); return supported }
 
     /** Query enabled effects, rather than inferring success from their saved preferences. */
     fun activeEffectNames(): List<String> = buildList {
@@ -38,7 +46,6 @@ class AudioEffectsController(
     @Volatile private var lastPrefs: AudioPrefs? = null
 
     init {
-        create()
         scope.launch { settingsStore.audioPrefs.collect { lastPrefs = it; apply(it) } }
     }
 
@@ -48,22 +55,31 @@ class AudioEffectsController(
         lastPrefs?.let { apply(it) }
     }
 
-    private fun create() {
-        runCatching {
-            val eq = Equalizer(0, sessionId)
-            equalizer = eq
-            bandCount = eq.numberOfBands.toInt()
-            bandFreqsHz = (0 until bandCount).map { (eq.getCenterFreq(it.toShort()) / 1000) }
-            val range = eq.bandLevelRange
-            minBandMb = range[0].toInt()
-            maxBandMb = range[1].toInt()
-            presetNames = (0 until eq.numberOfPresets).map { eq.getPresetName(it.toShort()) }
-            available = true
+    private fun ensureCreated() {
+        if (created) return
+        synchronized(this) {
+            if (created) return
+            runCatching {
+                val eq = Equalizer(0, sessionId)
+                equalizer = eq
+                bands = eq.numberOfBands.toInt()
+                freqs = (0 until bands).map { (eq.getCenterFreq(it.toShort()) / 1000) }
+                val range = eq.bandLevelRange
+                minMb = range[0].toInt()
+                maxMb = range[1].toInt()
+                presets = (0 until eq.numberOfPresets).map { eq.getPresetName(it.toShort()) }
+                supported = true
+            }
+            runCatching { bassBoost = BassBoost(0, sessionId) }
+            runCatching { virtualizer = Virtualizer(0, sessionId) }
+            runCatching { loudness = LoudnessEnhancer(sessionId) }
+            created = true
         }
-        runCatching { bassBoost = BassBoost(0, sessionId) }
-        runCatching { virtualizer = Virtualizer(0, sessionId) }
-        runCatching { loudness = LoudnessEnhancer(sessionId) }
     }
+
+    // untouched effects stay uncreated until a system effect is actually wanted
+    private fun wanted(prefs: AudioPrefs): Boolean = prefs.dspMode == DspMode.SYSTEM &&
+        (prefs.eqEnabled || prefs.bassBoost > 0 || prefs.virtualizer > 0 || prefs.loudnessGain > 0)
 
     private fun apply(prefs: AudioPrefs) {
         if (!masterEnabled) {
@@ -73,15 +89,17 @@ class AudioEffectsController(
             runCatching { loudness?.setEnabled(false) }
             return
         }
+        if (!created && !wanted(prefs)) return
+        ensureCreated()
         runCatching {
             equalizer?.let { eq ->
                 eq.setEnabled(prefs.eqEnabled)
                 if (prefs.eqEnabled) {
-                    if (prefs.eqPreset in 0 until presetNames.size) {
+                    if (prefs.eqPreset in 0 until presets.size) {
                         eq.usePreset(prefs.eqPreset.toShort())
                     } else {
-                        for (i in 0 until bandCount) {
-                            val mb = prefs.eqBands.getOrElse(i) { 0 }.coerceIn(minBandMb, maxBandMb)
+                        for (i in 0 until bands) {
+                            val mb = prefs.eqBands.getOrElse(i) { 0 }.coerceIn(minMb, maxMb)
                             eq.setBandLevel(i.toShort(), mb.toShort())
                         }
                     }
@@ -109,8 +127,9 @@ class AudioEffectsController(
     }
 
     fun presetBandLevels(preset: Int): List<Int> = runCatching {
+        ensureCreated()
         val eq = equalizer ?: return emptyList()
         eq.usePreset(preset.toShort())
-        (0 until bandCount).map { eq.getBandLevel(it.toShort()).toInt() }
-    }.getOrDefault(List(bandCount) { 0 })
+        (0 until bands).map { eq.getBandLevel(it.toShort()).toInt() }
+    }.getOrDefault(List(bands) { 0 })
 }

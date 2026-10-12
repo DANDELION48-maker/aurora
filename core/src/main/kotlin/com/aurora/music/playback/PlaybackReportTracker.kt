@@ -61,7 +61,8 @@ class PlaybackReportTracker(
         }
         snapshot = current
         submitIfQualified()
-        if (previous?.state != current.state || previous?.playbackRate != current.playbackRate || discontinuity || nowMs - lastReport >= 10_000) {
+        if (previous?.state != current.state || previous?.playbackRate != current.playbackRate || discontinuity ||
+            current.state == PlaybackReportState.PLAYING && nowMs - lastReport >= 30_000) {
             send(PlaybackReportEvent.PROGRESS)
             lastReport = nowMs
         }

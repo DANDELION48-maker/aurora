@@ -47,8 +47,8 @@ class PlaybackReportingTest {
         now = play(a, 13_000, 40_000, now + 1_000)
         reporting.transition(EngineEvent.Transition(a, b, TransitionReason.AUTO, 199_000), state(b, 0), now)
 
-        assertEquals(listOf(START, PROGRESS, PROGRESS, PROGRESS, PROGRESS, SCROBBLE, PROGRESS, STOP), events("a"))
-        assertEquals(PlaybackReportState.PAUSED, reports.filter { it.song.id == "a" }[2].state)
+        assertEquals(listOf(START, PROGRESS, PROGRESS, SCROBBLE, STOP), events("a"))
+        assertEquals(PlaybackReportState.PAUSED, reports.filter { it.song.id == "a" }[1].state)
         assertTrue(reports.single { it.song.id == "a" && it.event == SCROBBLE }.listenedMs >= 30_000)
         assertEquals(199_000L, reports.last { it.song.id == "a" }.positionMs)
         assertEquals(listOf(START), events("b"))

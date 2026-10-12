@@ -196,13 +196,14 @@ private fun DockSeek(state: PlayerUiState, onSeek: (Float) -> Unit, showTimes: B
     val thumbColor by animateColorAsState(seekTarget, androidx.compose.animation.core.tween(750), label = "dockThumb")
     var dragging by remember(state.current.id) { mutableStateOf<Float?>(null) }
     var pending by remember(state.current.id) { mutableStateOf<Float?>(null) }
-    LaunchedEffect(state.progress) {
-        pending?.let { if (abs(state.progress - it) <= 0.02f) pending = null }
+    val progress = state.progressAt(LocalPlaybackPosition.current.value)
+    LaunchedEffect(progress) {
+        pending?.let { if (abs(progress - it) <= 0.02f) pending = null }
     }
     LaunchedEffect(pending) {
         if (pending != null) { delay(1500); pending = null }
     }
-    val value = dragging ?: pending ?: state.progress
+    val value = dragging ?: pending ?: progress
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         if (showTimes) Text(formatTime((value * duration).toInt()), style = MaterialTheme.typography.labelSmall,
             color = colors.onSurfaceVariant, modifier = Modifier.widthIn(min = 40.dp))

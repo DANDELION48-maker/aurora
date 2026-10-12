@@ -53,7 +53,10 @@ class AuroraActivity : AppCompatActivity() {
             val uiPrefs by container.settingsStore.uiPrefs.collectAsStateWithLifecycle(initialValue = UiPrefs())
             AuroraTheme(uiPrefs = uiPrefs) {
                 BoxWithConstraints(Modifier.fillMaxSize()) {
-                    CompositionLocalProvider(LocalWindowLayout provides WindowLayout(maxWidth.value.toInt(), maxHeight.value.toInt())) {
+                    CompositionLocalProvider(
+                        LocalWindowLayout provides WindowLayout(maxWidth.value.toInt(), maxHeight.value.toInt()),
+                        com.aurora.music.ui.components.LocalPlaybackPosition provides playerViewModel.position.collectAsStateWithLifecycle(),
+                    ) {
                         com.aurora.music.ui.theme.GlassHost { AuroraApp() }
                     }
                 }

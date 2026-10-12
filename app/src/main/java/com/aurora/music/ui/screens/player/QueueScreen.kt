@@ -135,8 +135,9 @@ fun QueueContent(
 ) {
     val current = queue.getOrNull(currentIndex)
     val startIdx = (currentIndex + 1).coerceAtLeast(0)
-    val upcoming = (startIdx until queue.size).toList()
-    val played = (currentIndex - 1 downTo 0).toList()
+    // index math instead of queue-sized lists so long queues don't allocate per recomposition
+    val upcomingCount = (queue.size - startIdx).coerceAtLeast(0)
+    val playedCount = currentIndex.coerceIn(0, queue.size)
     val accent = MaterialTheme.colorScheme.primary
     val rowHeight = 64.dp
     val rowPx = with(LocalDensity.current) { rowHeight.toPx() }
@@ -165,9 +166,9 @@ fun QueueContent(
                         )
                         Icon(
                             Icons.Filled.DeleteSweep, appString(R.string.text_clear_queue_984301),
-                            tint = if (upcoming.isEmpty() || !editable) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f) else MaterialTheme.colorScheme.onSurface,
+                            tint = if (upcomingCount == 0 || !editable) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f) else MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.size(48.dp).clip(CircleShape)
-                                .clickable(enabled = upcoming.isNotEmpty() && editable, onClick = onClear).padding(12.dp),
+                                .clickable(enabled = upcomingCount > 0 && editable, onClick = onClear).padding(12.dp),
                         )
                     }
                 }
@@ -195,7 +196,7 @@ fun QueueContent(
                 }
 
                 LazyColumn(state = listState, modifier = Modifier.fillMaxWidth().weight(1f)) {
-                    if (played.isNotEmpty()) {
+                    if (playedCount > 0) {
                         item {
                             Row(
                                 Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp))
@@ -205,7 +206,7 @@ fun QueueContent(
                                 Icon(Icons.Filled.History, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(18.dp))
                                 Spacer(Modifier.width(8.dp))
                                 Text(
-                                    appString(R.string.text_previously_played_bf618e, (played.size)),
+                                    appString(R.string.text_previously_played_bf618e, (playedCount)),
                                     style = MaterialTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Black,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -218,8 +219,8 @@ fun QueueContent(
                             }
                         }
                         if (showHistory) {
-                            items(played.size) { hi ->
-                                val i = played[hi]
+                            items(playedCount) { hi ->
+                                val i = playedCount - 1 - hi
                                 QueueTrackRow(
                                     song = queue[i], index = null, rowHeight = rowHeight,
                                     dimmed = true, onClick = { onJump(i) }, onRemove = null, dragHandle = null,
@@ -230,15 +231,15 @@ fun QueueContent(
 
                     item {
                         Text(
-                            if (upcoming.isEmpty()) appString(R.string.text_nothing_up_next_295357) else appString(R.string.queue_track_count, appPlural(R.plurals.track_count, (upcoming.size))),
+                            if (upcomingCount == 0) appString(R.string.text_nothing_up_next_295357) else appString(R.string.queue_track_count, appPlural(R.plurals.track_count, (upcomingCount))),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Black,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(vertical = 8.dp),
                         )
                     }
-                    items(upcoming.size) { vi ->
-                        val i = upcoming[vi]
+                    items(upcomingCount) { vi ->
+                        val i = startIdx + vi
                         val dragging = i == dragIndex
                         QueueTrackRow(
                             song = queue[i],

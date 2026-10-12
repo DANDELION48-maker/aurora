@@ -97,7 +97,7 @@ class StorageInventory(private val context: Context, private val container: AppC
     suspend fun removeDownloads(serverId: String? = null) = withContext(Dispatchers.IO) {
         val manager = container.downloadManager
         manager.collections.value.filter { serverId == null || it.serverId.orEmpty() == serverId }.forEach { manager.removeCollection(it) }
-        manager.downloads.value.values.filter { serverId == null || it.serverId.orEmpty() == serverId }.forEach { manager.removeDownload(it.id) }
+        manager.removeDownloads(manager.downloads.value.values.filter { serverId == null || it.serverId.orEmpty() == serverId }.map { it.id })
     }
 
     suspend fun clearArtwork() {

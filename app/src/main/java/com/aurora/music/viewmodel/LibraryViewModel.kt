@@ -12,11 +12,15 @@ import com.aurora.music.model.LibrarySort
 import com.aurora.music.model.Playlist
 import com.aurora.music.model.Song
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -43,8 +47,8 @@ data class LibraryUiState(
 
 // single source of truth for library song order so the on-screen list and the queue built on Play match
 fun sortLibrarySongs(songs: List<Song>, sort: LibrarySort, localPlayCounts: Map<String, Int>): List<Song> = when (sort) {
-    LibrarySort.ALPHABETICAL -> songs.sortedBy { it.title.lowercase() }
-    LibrarySort.CREATOR -> songs.sortedBy { it.artist.lowercase() }
+    LibrarySort.ALPHABETICAL -> songs.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+    LibrarySort.CREATOR -> songs.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.artist })
     // server play count wins when reported; local history fills the gap for local files/spotify
     LibrarySort.MOST_PLAYED -> songs.sortedByDescending { maxOf(it.playCount, localPlayCounts[it.id] ?: 0) }
     LibrarySort.RECENT -> songs.sortedByDescending { it.dateAddedSec }
@@ -80,9 +84,13 @@ class LibraryViewModel(app: Application) : AndroidViewModel(app) {
             }
         }
         viewModelScope.launch {
-            container.playHistory.history.collect { events ->
-                _state.update { s -> s.copy(localPlayCounts = events.groupingBy { it.songId }.eachCount()) }
-            }
+            // listening ticks only grow the newest event so counts change with size or a new head
+            container.playHistory.history
+                .distinctUntilChanged { a, b -> a.size == b.size && a.firstOrNull()?.songId == b.firstOrNull()?.songId && a.firstOrNull()?.timestamp == b.firstOrNull()?.timestamp }
+                .map { events -> events.groupingBy { it.songId }.eachCount() }
+                .distinctUntilChanged()
+                .flowOn(Dispatchers.Default)
+                .collect { counts -> _state.update { s -> s.copy(localPlayCounts = counts) } }
         }
     }
 

@@ -152,6 +152,7 @@ import com.aurora.music.model.accent
 @Composable
 fun PlayerScreen(
     state: PlayerUiState,
+    surfaceOffset: androidx.compose.runtime.MutableFloatState? = null,
     onCollapse: () -> Unit,
     onTogglePlay: () -> Unit,
     onNext: () -> Unit,
@@ -265,7 +266,7 @@ fun PlayerScreen(
 
     // player is outside the scaffold so LocalContentColor defaults to black provide it explicitly
     CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
-    DragToDismiss(onDismiss = onCollapse, enabled = gestures.swipeDownDismiss && !showLyrics) {
+    DragToDismiss(onDismiss = onCollapse, enabled = gestures.swipeDownDismiss && !showLyrics, offsetState = surfaceOffset) {
     Box(
         Modifier
             .fillMaxSize()
@@ -563,8 +564,6 @@ fun PlayerScreen(
             Spacer(Modifier.height(8.dp))
 
             SeekBar(
-                progress = state.progress,
-                positionSec = state.positionSec.toInt(),
                 durationSec = state.durationSec,
                 isLive = state.isLive,
                 accent = playerAccent,
@@ -874,8 +873,6 @@ private fun CompactTransport(
             }
         }
         SeekBar(
-            progress = state.progress,
-            positionSec = state.positionSec.toInt(),
             durationSec = state.durationSec,
             isLive = state.isLive,
             accent = accent,
@@ -1040,8 +1037,6 @@ private fun FullscreenMusicVideo(
                     .padding(horizontal = 20.dp, vertical = 16.dp),
             ) {
                 SeekBar(
-                    progress = state.progress,
-                    positionSec = state.positionSec.toInt(),
                     durationSec = state.durationSec,
                     isLive = state.isLive,
                     accent = Color.White,
@@ -1134,8 +1129,6 @@ private fun BottomUtil(icon: androidx.compose.ui.graphics.vector.ImageVector, la
 
 @Composable
 private fun SeekBar(
-    progress: Float,
-    positionSec: Int,
     durationSec: Int,
     isLive: Boolean,
     accent: Color,
@@ -1146,6 +1139,9 @@ private fun SeekBar(
     onInteraction: () -> Unit = {},
     onSeekingChanged: (Boolean) -> Unit = {},
 ) {
+    val position = com.aurora.music.ui.components.LocalPlaybackPosition.current.value
+    val positionSec = position.toInt()
+    val progress = if (durationSec == 0) 0f else (position / durationSec).coerceIn(0f, 1f)
     val sliderInteractionSource = remember { MutableInteractionSource() }
     val currentOnInteraction by rememberUpdatedState(onInteraction)
     val currentOnSeekingChanged by rememberUpdatedState(onSeekingChanged)
@@ -1209,7 +1205,7 @@ private fun GlassArtBackdrop(song: com.aurora.music.model.Song, modifier: Modifi
     val base = MaterialTheme.colorScheme.background
     Box(modifier.background(base).clipToBounds()) {
         Artwork(song.artworkUrl, song.accent, Modifier.fillMaxSize().graphicsLayer { scaleX = 1.35f; scaleY = 1.35f }
-            .blur(110.dp, BlurredEdgeTreatment.Rectangle), corner = 0.dp)
+            .blur(110.dp, BlurredEdgeTreatment.Rectangle), corner = 0.dp, decodeSize = 128)
         Box(Modifier.fillMaxSize().background(Brush.verticalGradient(
             if (dark) listOf(Color.Black.copy(alpha = .12f), Color.Black.copy(alpha = .3f), Color.Black.copy(alpha = .5f))
             else listOf(Color.White.copy(alpha = .1f), Color.White.copy(alpha = .3f), Color.White.copy(alpha = .55f)))))

@@ -144,7 +144,22 @@ fun DetailScreen(
     val baseScheme = MaterialTheme.colorScheme
     val accentInk = com.aurora.music.ui.theme.readableAccent(accent, baseScheme.background.luminance() < 0.5f)
     com.aurora.music.ui.theme.ProvideContextAccent(accentInk)
-    val albumScheme = baseScheme.copy(primary = accentInk, onPrimary = if (accentInk.luminance() > 0.5f) Color.Black else Color.White)
+    val albumScheme = remember(baseScheme, accentInk) {
+        baseScheme.copy(primary = accentInk, onPrimary = if (accentInk.luminance() > 0.5f) Color.Black else Color.White)
+    }
+    // the header accent animates on open so list derivations stay out of the per-frame path
+    val isSongMix = info.typeLabel.equals("Playlist", true) || info.typeLabel.equals("Smart playlist", true) || info.typeLabel.equals("Liked", true)
+    val genres = remember(tracks, isSongMix) {
+        if (isSongMix) tracks.mapNotNull { t -> t.genre.trim().takeIf { it.isNotBlank() } }
+            .distinctBy { it.lowercase() }.sortedWith(String.CASE_INSENSITIVE_ORDER) else emptyList()
+    }
+    val shown = remember(tracks, genreFilter, query, searchOpen) {
+        val genreShown = genreFilter?.let { g -> tracks.filter { it.genre.equals(g, true) } } ?: tracks
+        if (query.isBlank() || !searchOpen) genreShown
+        else genreShown.filter { it.title.contains(query, true) || it.artist.contains(query, true) }
+    }
+    val allDownloaded = remember(tracks, downloadedIds) { tracks.isNotEmpty() && tracks.all { downloadedIds.contains(it.id) } }
+    val albumShelves = remember(data.albums) { data.albums.partition { it.typeLabel == "EP" || it.typeLabel == "Single" } }
 
     val listState = androidx.compose.foundation.lazy.rememberLazyListState()
     androidx.compose.runtime.LaunchedEffect(listState, state.canLoadMore) {
@@ -195,7 +210,6 @@ fun DetailScreen(
                     )
                 }
                 if (canDownload) {
-                    val allDownloaded = tracks.isNotEmpty() && tracks.all { downloadedIds.contains(it.id) }
                     Icon(
                         if (allDownloaded) Icons.Filled.DownloadDone else Icons.Filled.Download,
                         if (allDownloaded) appString(R.string.text_remove_downloads_cbe8be) else appString(R.string.text_download_a479c9),
@@ -334,7 +348,7 @@ fun DetailScreen(
 
         if (info.isArtist && data.albums.isNotEmpty()) {
             // eps and singles get their own shelf so they stop masquerading as albums
-            val (short, full) = data.albums.partition { it.typeLabel == "EP" || it.typeLabel == "Single" }
+            val (short, full) = albumShelves
             if (full.isNotEmpty()) {
                 item {
                     SectionHeader(appString(R.string.text_albums_4c45e7), Modifier.padding(horizontal = 20.dp, vertical = 8.dp))
@@ -412,8 +426,6 @@ fun DetailScreen(
         }
 
         // playlists mix genres so offer chips for the ones actually present
-        val isSongMix = info.typeLabel.equals("Playlist", true) || info.typeLabel.equals("Smart playlist", true) || info.typeLabel.equals("Liked", true)
-        val genres = if (isSongMix) tracks.mapNotNull { t -> t.genre.trim().takeIf { it.isNotBlank() } }.distinctBy { it.lowercase() }.sortedBy { it.lowercase() } else emptyList()
         if (genres.size > 1) {
             item {
                 androidx.compose.foundation.lazy.LazyRow(
@@ -440,11 +452,7 @@ fun DetailScreen(
             }
         }
 
-        val genreShown = genreFilter?.let { g -> tracks.filter { it.genre.equals(g, true) } } ?: tracks
-        val shown = if (query.isBlank() || !searchOpen) genreShown
-            else genreShown.filter { it.title.contains(query, true) || it.artist.contains(query, true) }
-
-        items(shown.size) { i ->
+        items(shown.size, contentType = { "song" }) { i ->
             val s = shown[i]
             SongRow(
                 song = s,

@@ -129,7 +129,6 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.okhttp)
     implementation("com.microsoft.onnxruntime:onnxruntime-android:1.24.3")
-    implementation(libs.okhttp.logging)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.palette)
     implementation(libs.newpipeextractor)

@@ -38,6 +38,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import androidx.media3.common.util.UnstableApi
+import coil.imageLoader
 import com.aurora.music.R
 import com.aurora.music.playback.NowPlaying
 import com.aurora.music.playback.NowPlayingStore
@@ -54,10 +55,9 @@ class AuroraWidget : GlanceAppWidget() {
     private suspend fun loadArt(context: Context, uri: String): Bitmap? {
         if (uri.isBlank()) return null
         return runCatching {
-            val loader = coil.ImageLoader(context)
             val request = coil.request.ImageRequest.Builder(context)
                 .data(uri).allowHardware(false).size(256).build()
-            (loader.execute(request).drawable as? BitmapDrawable)?.bitmap
+            (context.imageLoader.execute(request).drawable as? BitmapDrawable)?.bitmap
         }.getOrNull()
     }
 }
