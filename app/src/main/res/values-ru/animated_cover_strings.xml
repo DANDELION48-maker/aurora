@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">Анимированные обложки</string>
+    <string name="animated_covers_toggle">Анимированные обложки</string>
+    <string name="animated_covers_toggle_desc">Показывать движущиеся обложки в плеере и на страницах альбомов.</string>
+    <string name="animated_covers_folder">Папка с обложками</string>
+    <string name="animated_covers_folder_none">Не выбрана</string>
+    <string name="animated_covers_help">Называйте файлы по альбому, например «Исполнитель - Альбом.mp4» или «Альбом.webp». Для локальной музыки внутри этой папки также подойдут cover.mp4 или cover.webp рядом с треками.</string>
+    <string name="animated_covers_remove">Удалить папку</string>
+</resources>

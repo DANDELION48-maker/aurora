@@ -51,6 +51,9 @@ class LocalLibrary(
     @Volatile private var matchIndex: Map<String, List<Song>> = emptyMap()
 
     @Volatile private var dirOf: Map<String, String> = emptyMap()
+    @Volatile private var positions: Map<String, Int> = emptyMap()
+    // untagged files fall back to filename order, ties keep scan order
+    private val trackOrder = compareBy<Song>({ positions[it.id] ?: 0 }, { it.path.substringAfterLast('/').lowercase() })
 
     @Volatile override var folderRoot: String = ""; private set
 
@@ -137,8 +140,8 @@ class LocalLibrary(
 
     override fun browse(path: String): Pair<List<String>, List<Song>> = LocalCatalogIndex.browse(path, folderRoot, songs, dirOf)
 
-    fun songsIn(album: Album): List<Song> = songs.filter { it.albumId == album.id }
-    override fun songsByAlbumId(albumId: String): List<Song> = songs.filter { it.albumId == albumId }
+    fun songsIn(album: Album): List<Song> = songsByAlbumId(album.id)
+    override fun songsByAlbumId(albumId: String): List<Song> = songs.filter { it.albumId == albumId }.sortedWith(trackOrder)
     override fun artist(id: String): Artist? = artistIndex.artist(id)
     override fun songsByArtistId(artistId: String): List<Song> = artistIndex.songsBy(artistId)
     override fun albumsByArtistId(artistId: String): List<Album> =
@@ -147,6 +150,8 @@ class LocalLibrary(
 
     private fun albumArtUri(albumId: Long): String =
         if (albumId <= 0) "" else ContentUris.withAppendedId(ALBUM_ART_BASE, albumId).toString()
+
+    private fun leadingNumber(tag: String?): Int? = tag?.trim()?.takeWhile(Char::isDigit)?.toIntOrNull()?.takeIf { it > 0 }
 
     private fun suffixFrom(displayName: String?, mime: String?): String {
         displayName?.substringAfterLast('.', "")?.takeIf { it.isNotBlank() && it.length in 2..4 }?.let { return it.lowercase() }
@@ -186,6 +191,8 @@ class LocalLibrary(
         if (Build.VERSION.SDK_INT >= 30) {
             cols.add(MediaStore.Audio.Media.BITRATE) // columns absent pre-30
             cols.add(MediaStore.Audio.Media.GENRE)
+            cols.add(MediaStore.Audio.Media.CD_TRACK_NUMBER)
+            cols.add(MediaStore.Audio.Media.DISC_NUMBER)
         }
         val projection = cols.toTypedArray()
         val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
@@ -194,6 +201,7 @@ class LocalLibrary(
         val albumDateAdded = HashMap<String, Long>()
         val albumYear = HashMap<String, Int>()
         val dirs = HashMap<String, String>()
+        val order = HashMap<String, Int>()
         runCatching {
             context.contentResolver.query(collection, projection, selection, null, sort)?.use { c ->
                 val idCol = c.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
@@ -209,6 +217,9 @@ class LocalLibrary(
                 val mimeCol = c.getColumnIndex(MediaStore.Audio.Media.MIME_TYPE)
                 val bitrateCol = c.getColumnIndex(MediaStore.Audio.Media.BITRATE)
                 val genreCol = if (Build.VERSION.SDK_INT >= 30) c.getColumnIndex(MediaStore.Audio.Media.GENRE) else -1
+                val trackCol = c.getColumnIndex(MediaStore.Audio.Media.TRACK)
+                val cdTrackCol = if (Build.VERSION.SDK_INT >= 30) c.getColumnIndex(MediaStore.Audio.Media.CD_TRACK_NUMBER) else -1
+                val discCol = if (Build.VERSION.SDK_INT >= 30) c.getColumnIndex(MediaStore.Audio.Media.DISC_NUMBER) else -1
                 @Suppress("DEPRECATION") val dataCol = c.getColumnIndex(MediaStore.Audio.Media.DATA)
                 while (c.moveToNext()) {
                     val id = c.getLong(idCol)
@@ -228,6 +239,11 @@ class LocalLibrary(
                     val uri = ContentUris.withAppendedId(collection, id).toString()
                     val data = if (dataCol >= 0) c.getString(dataCol).orEmpty() else ""
                     if (data.contains('/')) dirs[id.toString()] = data.substringBeforeLast('/')
+                    // TRACK packs disc * 1000 + track; the raw tags are preferred when android exposes them
+                    val packed = if (trackCol >= 0) runCatching { c.getInt(trackCol) }.getOrDefault(0) else 0
+                    val track = leadingNumber(if (cdTrackCol >= 0) c.getString(cdTrackCol) else null) ?: (packed % 1000)
+                    val disc = leadingNumber(if (discCol >= 0) c.getString(discCol) else null) ?: (packed / 1000)
+                    if (track > 0 || disc > 0) order[id.toString()] = disc * 10_000 + track
                     val rg = if (data.isNotBlank()) gainProvider(data) else null
                     val sidAlbum = albumId.toString()
                     if (added > (albumDateAdded[sidAlbum] ?: 0L)) albumDateAdded[sidAlbum] = added
@@ -277,10 +293,12 @@ class LocalLibrary(
                 bitrateKbps = file.source.bitRate * file.source.channels / 1000,
                 genre = tags.genre?.toString()?.takeIf(String::isNotBlank) ?: song.genre,
             )
+            tags.trackNumber?.let { order[song.id] = (tags.discNumber ?: 0) * 10_000 + it }
             albumDateAdded[albumId] = maxOf(albumDateAdded[albumId] ?: 0, song.dateAddedSec)
             (tags.releaseYear ?: tags.recordingYear)?.takeIf { it > 0 }?.let { albumYear[albumId] = it }
         }
         out += SacdLibrary(context).songs()
+        positions = order
         rawSongs = out
         indexArtists(separators)
         matchIndex = LocalCatalogIndex.matchIndex(out)

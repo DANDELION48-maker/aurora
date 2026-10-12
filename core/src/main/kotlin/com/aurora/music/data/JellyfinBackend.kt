@@ -8,8 +8,6 @@ import com.aurora.music.data.remote.JellyfinPlaybackStopped
 import com.aurora.music.model.Album
 import com.aurora.music.model.Artist
 import com.aurora.music.model.DetailInfo
-import com.aurora.music.model.LyricLine
-import com.aurora.music.model.LyricWord
 import com.aurora.music.model.Playlist
 import com.aurora.music.model.Song
 import com.aurora.music.model.inferReleaseType

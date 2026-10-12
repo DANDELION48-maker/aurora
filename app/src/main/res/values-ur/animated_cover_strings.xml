@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">متحرک کور</string>
+    <string name="animated_covers_toggle">متحرک کور</string>
+    <string name="animated_covers_toggle_desc">ناؤ پلیئنگ اور البم صفحات پر متحرک آرٹ ورک دکھائیں۔</string>
+    <string name="animated_covers_folder">کور فولڈر</string>
+    <string name="animated_covers_folder_none">سیٹ نہیں</string>
+    <string name="animated_covers_help">فائلوں کا نام البم کے مطابق رکھیں، جیسے “فنکار - البم.mp4” یا “البم.webp”۔ اس فولڈر میں رکھی گئی مقامی موسیقی اپنے ٹریکس کے ساتھ cover.mp4 یا cover.webp بھی استعمال کر سکتی ہے۔</string>
+    <string name="animated_covers_remove">فولڈر ہٹائیں</string>
+</resources>

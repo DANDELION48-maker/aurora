@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">Pochettes animées</string>
+    <string name="animated_covers_toggle">Pochettes animées</string>
+    <string name="animated_covers_toggle_desc">Affiche des pochettes animées dans le lecteur et sur les pages d’album.</string>
+    <string name="animated_covers_folder">Dossier des pochettes</string>
+    <string name="animated_covers_folder_none">Non défini</string>
+    <string name="animated_covers_help">Nommez les fichiers d’après l’album, par exemple « Artiste - Album.mp4 » ou « Album.webp ». La musique locale stockée dans ce dossier peut aussi utiliser cover.mp4 ou cover.webp à côté de ses pistes.</string>
+    <string name="animated_covers_remove">Retirer le dossier</string>
+</resources>

@@ -71,6 +71,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.aurora.music.model.Song
 import com.aurora.music.ui.components.Artwork
+import com.aurora.music.ui.components.CoverKey
 import com.aurora.music.ui.components.Eyebrow
 import com.aurora.music.ui.components.SectionHeader
 import com.aurora.music.ui.components.SongRow
@@ -138,6 +139,7 @@ fun DetailScreen(
     val tracks = data.tracks
     // artists often lack a server image fall back to enriched wiki photo
     val effectiveArt = info.artUrl.ifBlank { artistInfo?.imageUrl.orEmpty() }
+    val albumCover = if (itemKind == "album") CoverKey(info.title, info.subtitle, tracks.firstOrNull { it.path.isNotBlank() }?.path.orEmpty()) else null
     val accent by com.aurora.music.util.rememberDominantColor(effectiveArt, info.accent)
     val baseScheme = MaterialTheme.colorScheme
     val accentInk = com.aurora.music.ui.theme.readableAccent(accent, baseScheme.background.luminance() < 0.5f)
@@ -251,7 +253,7 @@ fun DetailScreen(
                 }
                 Row(Modifier.fillMaxWidth().padding(horizontal = gutter, vertical = 8.dp), verticalAlignment = Alignment.Bottom) {
                     val art = headerArt
-                    Artwork(effectiveArt, info.accent, Modifier.size(art), corner = if (info.isArtist) art / 2 else 20.dp)
+                    Artwork(effectiveArt, info.accent, Modifier.size(art), corner = if (info.isArtist) art / 2 else 20.dp, animated = albumCover)
                     Spacer(Modifier.width(24.dp))
                     Column(Modifier.weight(1f)) {
                         Eyebrow(info.typeLabel.localizedMediaType().uppercase(java.util.Locale.getDefault()), accent)
@@ -277,9 +279,9 @@ fun DetailScreen(
                         listOf(accent.copy(alpha = .22f), MaterialTheme.colorScheme.background))))
                     Artwork(effectiveArt, info.accent,
                         Modifier.align(Alignment.CenterStart).padding(start = 24.dp, top = 48.dp).size(260.dp),
-                        corner = if (info.isArtist) 130.dp else 20.dp)
+                        corner = if (info.isArtist) 130.dp else 20.dp, animated = albumCover)
                 } else {
-                Artwork(effectiveArt, info.accent, Modifier.matchParentSize(), corner = 0.dp)
+                Artwork(effectiveArt, info.accent, Modifier.matchParentSize(), corner = 0.dp, animated = albumCover)
                 Box(
                     Modifier.matchParentSize().background(
                         Brush.verticalGradient(

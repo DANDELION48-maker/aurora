@@ -115,6 +115,7 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
     implementation("androidx.exifinterface:exifinterface:1.3.7")
     implementation(libs.lottie.compose)
     implementation(libs.media3.exoplayer)

@@ -81,6 +81,8 @@ internal object SettingsKeys {
     val AUTOPLAY_RADIO = booleanPreferencesKey("autoplay_radio")
     val OFFLINE = booleanPreferencesKey("offline_mode")
     val ARTWORK_LOOKUP = booleanPreferencesKey("artwork_lookup_enabled")
+    val ANIMATED_COVERS = booleanPreferencesKey("animated_covers_enabled")
+    val ANIMATED_COVERS_FOLDER = stringPreferencesKey("animated_covers_folder")
     val LRCLIB = booleanPreferencesKey("lrclib_enabled")
     val DATA_SAVER = booleanPreferencesKey("data_saver")
     val SIMPLE_MODE = booleanPreferencesKey("simple_mode")

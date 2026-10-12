@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">Copertine animate</string>
+    <string name="animated_covers_toggle">Copertine animate</string>
+    <string name="animated_covers_toggle_desc">Mostra copertine in movimento in Riproduzione e nelle pagine degli album.</string>
+    <string name="animated_covers_folder">Cartella copertine</string>
+    <string name="animated_covers_folder_none">Non impostata</string>
+    <string name="animated_covers_help">Dai ai file il nome dell’album, ad esempio “Artista - Album.mp4” o “Album.webp”. La musica locale salvata in questa cartella può usare anche cover.mp4 o cover.webp accanto ai brani.</string>
+    <string name="animated_covers_remove">Rimuovi cartella</string>
+</resources>

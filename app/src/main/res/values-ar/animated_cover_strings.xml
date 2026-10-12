@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">أغلفة متحركة</string>
+    <string name="animated_covers_toggle">أغلفة متحركة</string>
+    <string name="animated_covers_toggle_desc">عرض أغلفة متحركة في شاشة التشغيل الحالي وصفحات الألبومات.</string>
+    <string name="animated_covers_folder">مجلد الأغلفة</string>
+    <string name="animated_covers_folder_none">غير محدد</string>
+    <string name="animated_covers_help">سمِّ الملفات باسم الألبوم، مثل “الفنان - الألبوم.mp4” أو “الألبوم.webp”. يمكن للموسيقى المحلية المحفوظة داخل هذا المجلد أيضًا استخدام cover.mp4 أو cover.webp بجانب مقاطعها.</string>
+    <string name="animated_covers_remove">إزالة المجلد</string>
+</resources>

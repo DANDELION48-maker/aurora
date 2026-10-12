@@ -74,17 +74,6 @@ data class Playlist(
     val accentArgb: Long = 0xFF28D572,
 )
 
-data class LyricWord(val startMs: Long, val endMs: Long, val text: String)
-
-data class LyricLine(
-    val timeSec: Int,
-    val text: String,
-    val startMs: Long = timeSec * 1000L,
-    val words: List<LyricWord> = emptyList(),
-) {
-    val displayText: String get() = if (words.isEmpty()) text else words.joinToString("") { it.text }
-}
-
 data class DetailInfo(
     val title: String,
     val subtitle: String,

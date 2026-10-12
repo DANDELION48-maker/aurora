@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">Animierte Cover</string>
+    <string name="animated_covers_toggle">Animierte Cover</string>
+    <string name="animated_covers_toggle_desc">Bewegte Cover in der Wiedergabe und auf Albumseiten anzeigen.</string>
+    <string name="animated_covers_folder">Cover-Ordner</string>
+    <string name="animated_covers_folder_none">Nicht festgelegt</string>
+    <string name="animated_covers_help">Benenne Dateien nach dem Album, z. B. „Künstler - Album.mp4“ oder „Album.webp“. Lokale Musik in diesem Ordner kann außerdem cover.mp4 oder cover.webp neben ihren Titeln verwenden.</string>
+    <string name="animated_covers_remove">Ordner entfernen</string>
+</resources>

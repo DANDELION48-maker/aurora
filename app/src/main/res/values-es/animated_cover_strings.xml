@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">Portadas animadas</string>
+    <string name="animated_covers_toggle">Portadas animadas</string>
+    <string name="animated_covers_toggle_desc">Muestra portadas en movimiento en Reproduciendo y en las páginas de álbumes.</string>
+    <string name="animated_covers_folder">Carpeta de portadas</string>
+    <string name="animated_covers_folder_none">Sin configurar</string>
+    <string name="animated_covers_help">Nombra los archivos según el álbum, como “Artista - Álbum.mp4” o “Álbum.webp”. La música local guardada dentro de esta carpeta también puede usar cover.mp4 o cover.webp junto a sus pistas.</string>
+    <string name="animated_covers_remove">Quitar carpeta</string>
+</resources>

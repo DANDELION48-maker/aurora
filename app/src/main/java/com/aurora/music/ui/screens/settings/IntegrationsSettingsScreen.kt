@@ -69,6 +69,7 @@ fun IntegrationsSettingsScreen(
             }
         }
         item { ArtworkLookupSettings() }
+        item { AnimatedCoverSettings() }
         item {
             Text(
                 appString(R.string.text_connections_are_optional_aurora_s_own_library_playback_history_an_d7c6c7),

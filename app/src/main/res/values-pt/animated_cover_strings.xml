@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">Capas animadas</string>
+    <string name="animated_covers_toggle">Capas animadas</string>
+    <string name="animated_covers_toggle_desc">Mostra capas em movimento em Tocando agora e nas páginas de álbuns.</string>
+    <string name="animated_covers_folder">Pasta de capas</string>
+    <string name="animated_covers_folder_none">Não definida</string>
+    <string name="animated_covers_help">Nomeie os arquivos com o nome do álbum, como “Artista - Álbum.mp4” ou “Álbum.webp”. Músicas locais guardadas nesta pasta também podem usar cover.mp4 ou cover.webp ao lado das faixas.</string>
+    <string name="animated_covers_remove">Remover pasta</string>
+</resources>

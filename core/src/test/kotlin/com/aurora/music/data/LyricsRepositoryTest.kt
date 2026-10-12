@@ -161,7 +161,7 @@ class LyricsRepositoryTest {
     @Test fun disabledLookupAndSyncedServerLyricsSkipLrcLib() = runBlocking {
         val calls = mutableListOf<HttpUrl>()
         assertNull(repository(calls, enabled = false).lyricsFor(song))
-        val server = Lyrics(listOf(com.aurora.music.model.LyricLine(0, "Server lyrics")), true, "Server")
+        val server = Lyrics(listOf(LyricLine(0, "Server lyrics")), true, "Server")
         val backend = Proxy.newProxyInstance(MediaBackend::class.java.classLoader, arrayOf(MediaBackend::class.java)) { _, method, _ ->
             check(method.name == "serverLyrics"); server
         } as MediaBackend

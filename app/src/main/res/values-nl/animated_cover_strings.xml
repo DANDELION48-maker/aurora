@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">Geanimeerde hoezen</string>
+    <string name="animated_covers_toggle">Geanimeerde hoezen</string>
+    <string name="animated_covers_toggle_desc">Toon bewegende albumhoezen bij Nu aan het afspelen en op albumpagina’s.</string>
+    <string name="animated_covers_folder">Map met hoezen</string>
+    <string name="animated_covers_folder_none">Niet ingesteld</string>
+    <string name="animated_covers_help">Geef bestanden de naam van het album, zoals “Artiest - Album.mp4” of “Album.webp”. Lokale muziek in deze map kan ook cover.mp4 of cover.webp naast de nummers gebruiken.</string>
+    <string name="animated_covers_remove">Map verwijderen</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">Animated Covers</string>
+    <string name="animated_covers_toggle">Animated covers</string>
+    <string name="animated_covers_toggle_desc">Play moving artwork on Now Playing and album pages.</string>
+    <string name="animated_covers_folder">Covers folder</string>
+    <string name="animated_covers_folder_none">Not set</string>
+    <string name="animated_covers_help">Name files after the album, like “Artist - Album.mp4” or “Album.webp”. Local music stored inside this folder can also use cover.mp4 or cover.webp next to its tracks.</string>
+    <string name="animated_covers_remove">Remove folder</string>
+</resources>

@@ -131,6 +131,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import com.aurora.music.data.SeekStyle
 import com.aurora.music.data.ThemeStyle
 import com.aurora.music.ui.components.Artwork
+import com.aurora.music.ui.components.CoverKey
 import com.aurora.music.ui.components.Waveform
 import com.aurora.music.ui.components.formatTime
 import com.aurora.music.ui.theme.LocalUiPrefs
@@ -456,11 +457,12 @@ fun PlayerScreen(
                         }
                     } else {
                         val artModifier = Modifier.size(artSide)
+                        val cover = CoverKey(song.album, song.artist, song.path)
                         if (classic) {
-                            Artwork(song.artworkUrl, song.accent, artModifier, corner = 20.dp)
+                            Artwork(song.artworkUrl, song.accent, artModifier, corner = 20.dp, animated = cover)
                         } else {
                             Box(artModifier.auroraPanel(MaterialTheme.shapes.large, emphasized = true).padding(6.dp)) {
-                                Artwork(song.artworkUrl, song.accent, Modifier.fillMaxSize(), corner = 20.dp)
+                                Artwork(song.artworkUrl, song.accent, Modifier.fillMaxSize(), corner = 20.dp, animated = cover)
                             }
                         }
                     }

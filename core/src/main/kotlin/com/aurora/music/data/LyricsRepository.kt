@@ -1,7 +1,5 @@
 package com.aurora.music.data
 
-import com.aurora.music.model.LyricLine
-import com.aurora.music.model.LyricWord
 import com.aurora.music.model.Song
 import com.aurora.music.util.TrackMatch
 import com.google.gson.Gson
@@ -17,6 +15,17 @@ import java.util.concurrent.TimeUnit
 import java.text.Normalizer
 import java.util.Locale
 import kotlin.math.abs
+
+data class LyricWord(val startMs: Long, val endMs: Long, val text: String)
+
+data class LyricLine(
+    val timeSec: Int,
+    val text: String,
+    val startMs: Long = timeSec * 1000L,
+    val words: List<LyricWord> = emptyList(),
+) {
+    val displayText: String get() = if (words.isEmpty()) text else words.joinToString("") { it.text }
+}
 
 data class Lyrics(val lines: List<LyricLine>, val synced: Boolean, val source: String)
 

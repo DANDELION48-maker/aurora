@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">Hareketli Kapaklar</string>
+    <string name="animated_covers_toggle">Hareketli kapaklar</string>
+    <string name="animated_covers_toggle_desc">Şimdi Çalıyor ekranında ve albüm sayfalarında hareketli kapak göster.</string>
+    <string name="animated_covers_folder">Kapak klasörü</string>
+    <string name="animated_covers_folder_none">Ayarlanmadı</string>
+    <string name="animated_covers_help">Dosyaları albüme göre adlandırın, örneğin “Sanatçı - Albüm.mp4” veya “Albüm.webp”. Bu klasörde saklanan yerel müzikler, parçaların yanındaki cover.mp4 veya cover.webp dosyalarını da kullanabilir.</string>
+    <string name="animated_covers_remove">Klasörü kaldır</string>
+</resources>

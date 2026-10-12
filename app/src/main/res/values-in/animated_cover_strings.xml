@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">Sampul Animasi</string>
+    <string name="animated_covers_toggle">Sampul animasi</string>
+    <string name="animated_covers_toggle_desc">Tampilkan sampul bergerak di Sedang Diputar dan halaman album.</string>
+    <string name="animated_covers_folder">Folder sampul</string>
+    <string name="animated_covers_folder_none">Belum diatur</string>
+    <string name="animated_covers_help">Beri nama file sesuai album, seperti “Artis - Album.mp4” atau “Album.webp”. Musik lokal yang disimpan di folder ini juga dapat memakai cover.mp4 atau cover.webp di samping lagunya.</string>
+    <string name="animated_covers_remove">Hapus folder</string>
+</resources>

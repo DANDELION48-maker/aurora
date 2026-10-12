@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">Animowane okładki</string>
+    <string name="animated_covers_toggle">Animowane okładki</string>
+    <string name="animated_covers_toggle_desc">Pokazuj ruchome okładki w odtwarzaczu i na stronach albumów.</string>
+    <string name="animated_covers_folder">Folder z okładkami</string>
+    <string name="animated_covers_folder_none">Nie ustawiono</string>
+    <string name="animated_covers_help">Nazwij pliki tak jak album, np. „Wykonawca - Album.mp4” lub „Album.webp”. Lokalna muzyka zapisana w tym folderze może też używać plików cover.mp4 lub cover.webp obok utworów.</string>
+    <string name="animated_covers_remove">Usuń folder</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">움직이는 커버</string>
+    <string name="animated_covers_toggle">움직이는 커버</string>
+    <string name="animated_covers_toggle_desc">재생 화면과 앨범 페이지에서 움직이는 아트워크를 표시합니다.</string>
+    <string name="animated_covers_folder">커버 폴더</string>
+    <string name="animated_covers_folder_none">설정 안 됨</string>
+    <string name="animated_covers_help">파일 이름을 앨범 이름으로 지정하세요. 예: “아티스트 - 앨범.mp4” 또는 “앨범.webp”. 이 폴더 안에 저장된 로컬 음악은 트랙 옆의 cover.mp4 또는 cover.webp도 사용할 수 있습니다.</string>
+    <string name="animated_covers_remove">폴더 제거</string>
+</resources>

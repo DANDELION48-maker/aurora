@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">एनिमेटेड कवर</string>
+    <string name="animated_covers_toggle">एनिमेटेड कवर</string>
+    <string name="animated_covers_toggle_desc">नाउ प्लेइंग और एल्बम पेजों पर चलती हुई आर्टवर्क दिखाएँ।</string>
+    <string name="animated_covers_folder">कवर फ़ोल्डर</string>
+    <string name="animated_covers_folder_none">सेट नहीं है</string>
+    <string name="animated_covers_help">फ़ाइलों का नाम एल्बम के नाम पर रखें, जैसे “कलाकार - एल्बम.mp4” या “एल्बम.webp”। इस फ़ोल्डर में रखा लोकल संगीत अपने ट्रैकों के पास cover.mp4 या cover.webp का भी उपयोग कर सकता है।</string>
+    <string name="animated_covers_remove">फ़ोल्डर हटाएँ</string>
+</resources>

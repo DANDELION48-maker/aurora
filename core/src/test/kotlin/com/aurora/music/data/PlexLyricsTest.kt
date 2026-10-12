@@ -3,7 +3,6 @@ package com.aurora.music.data
 import com.aurora.music.data.remote.PlexClient
 import com.aurora.music.data.remote.PlexException
 import com.aurora.music.data.remote.testClientInfo
-import com.aurora.music.model.LyricLine
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout

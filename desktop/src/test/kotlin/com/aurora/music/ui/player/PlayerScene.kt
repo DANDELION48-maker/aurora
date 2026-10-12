@@ -21,7 +21,7 @@ import com.aurora.music.desktop.platform.DesktopPaths
 import com.aurora.music.desktop.player.PlayerUiState
 import com.aurora.music.desktop.player.RepeatMode
 import com.aurora.music.desktop.ui.LocalDesktopContainer
-import com.aurora.music.model.LyricLine
+import com.aurora.music.data.LyricLine
 import com.aurora.music.model.Song
 import com.aurora.music.ui.components.AmbientBackground
 import com.aurora.music.ui.layout.LocalWindowLayout

@@ -1,6 +1,5 @@
 package com.aurora.music.data
 
-import com.aurora.music.model.LyricWord
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

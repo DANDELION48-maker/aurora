@@ -1,7 +1,5 @@
 package com.aurora.music.data
 
-import com.aurora.music.model.LyricLine
-import com.aurora.music.model.LyricWord
 import java.lang.Character.UnicodeScript
 import java.text.Normalizer
 import kotlin.math.roundToInt

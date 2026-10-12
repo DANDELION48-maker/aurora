@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">アニメーションカバー</string>
+    <string name="animated_covers_toggle">アニメーションカバー</string>
+    <string name="animated_covers_toggle_desc">再生中画面とアルバムページで動くアートワークを表示します。</string>
+    <string name="animated_covers_folder">カバーフォルダ</string>
+    <string name="animated_covers_folder_none">未設定</string>
+    <string name="animated_covers_help">ファイル名はアルバム名にします（例：「アーティスト - アルバム.mp4」や「アルバム.webp」）。このフォルダ内に保存したローカル音楽は、トラックと同じ場所の cover.mp4 や cover.webp も使えます。</string>
+    <string name="animated_covers_remove">フォルダを解除</string>
+</resources>

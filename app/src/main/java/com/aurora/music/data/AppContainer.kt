@@ -332,6 +332,7 @@ class AppContainer(context: Context) {
         appContext::openUri, com.aurora.music.data.artwork.AndroidArtworkImages,
         offline = { offlineToggle || !networkUp }, enabled = { settingsStore.artworkLookupEnabled.first() },
         separators = { settingsStore.artistSeparators.first() })
+    val animatedCovers = AnimatedCovers(appContext, settingsStore, scope)
 
     val repository: MusicRepository = MusicRepository(
         backendProvider = { backend },

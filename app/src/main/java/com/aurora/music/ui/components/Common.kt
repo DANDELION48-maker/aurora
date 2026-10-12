@@ -43,6 +43,7 @@ fun Artwork(
     modifier: Modifier = Modifier,
     corner: Dp = 12.dp,
     contentScale: ContentScale = ContentScale.Crop,
+    animated: CoverKey? = null,
 ) {
     // Keep flush artwork and circular avatars intact; frame music covers to match the identity.
     val artCorner = if (corner == 0.dp || corner >= 22.dp) corner else when (LocalUiPrefs.current.themeStyle) {
@@ -69,6 +70,7 @@ fun Artwork(
             loading = { Box(Modifier.fillMaxSize().background(placeholder)) },
             error = { Box(Modifier.fillMaxSize().background(placeholder)) },
         )
+        if (animated != null) AnimatedCoverLayer(animated, Modifier.fillMaxSize())
     }
 }
 

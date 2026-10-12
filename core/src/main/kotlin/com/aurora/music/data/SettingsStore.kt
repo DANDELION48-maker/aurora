@@ -949,6 +949,8 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         dataStore.edit { it[Keys.AUDIO_CACHE_LIMIT] = mb }
     }
     val artworkLookupEnabled: Flow<Boolean> = dataStore.data.map { it[Keys.ARTWORK_LOOKUP] ?: true }
+    val animatedCoversEnabled: Flow<Boolean> = dataStore.data.map { it[Keys.ANIMATED_COVERS] ?: true }.distinctUntilChanged()
+    val animatedCoversFolder: Flow<String> = dataStore.data.map { it[Keys.ANIMATED_COVERS_FOLDER].orEmpty() }.distinctUntilChanged()
     val lrclibEnabled: Flow<Boolean> = dataStore.data.map { it[Keys.LRCLIB] ?: true }
     val dataSaver: Flow<Boolean> = dataStore.data.map { it[Keys.DATA_SAVER] ?: false }
     val simpleMode: Flow<Boolean> = dataStore.data.map { it[Keys.SIMPLE_MODE] ?: false }.distinctUntilChanged()
@@ -1234,6 +1236,8 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     suspend fun setAutoplayRadio(v: Boolean) = dataStore.edit { it[Keys.AUTOPLAY_RADIO] = v }
     suspend fun setOfflineMode(v: Boolean) = dataStore.edit { it[Keys.OFFLINE] = v }
     suspend fun setArtworkLookupEnabled(v: Boolean) = dataStore.edit { it[Keys.ARTWORK_LOOKUP] = v }
+    suspend fun setAnimatedCoversEnabled(v: Boolean) = dataStore.edit { it[Keys.ANIMATED_COVERS] = v }
+    suspend fun setAnimatedCoversFolder(uri: String) = dataStore.edit { it[Keys.ANIMATED_COVERS_FOLDER] = uri }
     suspend fun setLrclibEnabled(v: Boolean) = dataStore.edit { it[Keys.LRCLIB] = v }
     suspend fun setDataSaver(v: Boolean) = dataStore.edit { it[Keys.DATA_SAVER] = v }
     suspend fun setSimpleMode(v: Boolean) = dataStore.edit { it[Keys.SIMPLE_MODE] = v }

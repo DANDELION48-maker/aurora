@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animated_covers_title">动态封面</string>
+    <string name="animated_covers_toggle">动态封面</string>
+    <string name="animated_covers_toggle_desc">在正在播放和专辑页面显示动态封面。</string>
+    <string name="animated_covers_folder">封面文件夹</string>
+    <string name="animated_covers_folder_none">未设置</string>
+    <string name="animated_covers_help">按专辑命名文件，例如“艺人 - 专辑.mp4”或“专辑.webp”。存放在此文件夹内的本地音乐也可以使用曲目旁的 cover.mp4 或 cover.webp。</string>
+    <string name="animated_covers_remove">移除文件夹</string>
+</resources>
