@@ -553,6 +553,7 @@
     <string name="text_cutoff_118de3" formatted="false">"Corte"</string>
     <string name="text_cymatics_459c6a" formatted="false">"Cimática"</string>
     <string name="text_dac_gain_setting_4940ab" formatted="false">"Ajuste de ganancia del DAC"</string>
+    <string name="text_dac_hardware_volume_752c71" formatted="false">"Volumen por hardware del DAC"</string>
     <string name="text_dac_output_v_rms_full_scale_sine_28c8da" formatted="false">"Salida del DAC (V RMS, seno a escala completa)"</string>
     <string name="text_dac_voltage_e5b76c" formatted="false">"Voltaje del DAC"</string>
     <string name="text_daily_728298" formatted="false">"Diario"</string>
@@ -2117,6 +2118,7 @@
     <string name="text_vocals_backing_d8ce42" formatted="false">"Voces y base"</string>
     <string name="text_vocals_only_337845" formatted="false">"Solo voces"</string>
     <string name="text_voice_search_9df53f" formatted="false">"Búsqueda por voz"</string>
+    <string name="text_volume_buttons_set_the_dac_s_own_volume_the_audio_stays_bit_perfe_a4d608" formatted="false">"Los botones de volumen ajustan el volumen propio del DAC. El audio sigue siendo bit-perfect."</string>
     <string name="text_volume_changed_the_comparison_stopped_09aa40" formatted="false">"El volumen cambió. La comparación se detuvo."</string>
     <string name="text_volume_leveling_a9df98" formatted="false">"Nivelación de volumen"</string>
     <string name="text_volume_loudness_0e8ee1" formatted="false">"Volumen y sonoridad"</string>

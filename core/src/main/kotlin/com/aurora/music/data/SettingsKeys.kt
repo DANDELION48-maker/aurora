@@ -56,6 +56,7 @@ internal object SettingsKeys {
     val USB_OUTPUT_MODE = stringPreferencesKey(UsbOutputPolicy.MODE_KEY)
     val USB_DSD_MODE = stringPreferencesKey("usb_dsd_mode")
     val USB_DSD_EXPERIMENTAL = booleanPreferencesKey("usb_dsd_experimental")
+    val USB_HARDWARE_VOLUME = booleanPreferencesKey("usb_hardware_volume")
     val USB_FALLBACK_POLICY = stringPreferencesKey(UsbOutputPolicy.FALLBACK_KEY)
     val INDEPENDENT_OUTPUT = booleanPreferencesKey("independent_output")
     val VIZ_STYLE = intPreferencesKey("viz_style")

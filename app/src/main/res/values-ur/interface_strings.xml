@@ -553,6 +553,7 @@
     <string name="text_cutoff_118de3" formatted="false">"\u2067کٹ آف\u2069"</string>
     <string name="text_cymatics_459c6a" formatted="false">"\u2067سائمیٹکس\u2069"</string>
     <string name="text_dac_gain_setting_4940ab" formatted="false">"\u2067DAC گین ترتیب\u2069"</string>
+    <string name="text_dac_hardware_volume_752c71" formatted="false">"\u2067DAC ہارڈویئر والیوم\u2069"</string>
     <string name="text_dac_output_v_rms_full_scale_sine_28c8da" formatted="false">"\u2067DAC آؤٹ پٹ (V RMS، فل اسکیل سائن)\u2069"</string>
     <string name="text_dac_voltage_e5b76c" formatted="false">"\u2067DAC وولٹیج\u2069"</string>
     <string name="text_daily_728298" formatted="false">"\u2067روزانہ\u2069"</string>
@@ -2117,6 +2118,7 @@
     <string name="text_vocals_backing_d8ce42" formatted="false">"\u2067ووکلز اور بیکنگ\u2069"</string>
     <string name="text_vocals_only_337845" formatted="false">"\u2067صرف ووکلز\u2069"</string>
     <string name="text_voice_search_9df53f" formatted="false">"\u2067صوتی تلاش\u2069"</string>
+    <string name="text_volume_buttons_set_the_dac_s_own_volume_the_audio_stays_bit_perfe_a4d608" formatted="false">"\u2067والیوم بٹن DAC کا اپنا والیوم بدلتے ہیں۔ آڈیو bit-perfect رہتا ہے۔\u2069"</string>
     <string name="text_volume_changed_the_comparison_stopped_09aa40" formatted="false">"\u2067والیوم بدل گیا۔ موازنہ رک گیا۔\u2069"</string>
     <string name="text_volume_leveling_a9df98" formatted="false">"\u2067والیوم لیولنگ\u2069"</string>
     <string name="text_volume_loudness_0e8ee1" formatted="false">"\u2067والیوم اور لاؤڈنیس\u2069"</string>

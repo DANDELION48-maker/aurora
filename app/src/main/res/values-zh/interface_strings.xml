@@ -553,6 +553,7 @@
     <string name="text_cutoff_118de3" formatted="false">"截止频率"</string>
     <string name="text_cymatics_459c6a" formatted="false">"声波图形"</string>
     <string name="text_dac_gain_setting_4940ab" formatted="false">"DAC 增益设置"</string>
+    <string name="text_dac_hardware_volume_752c71" formatted="false">"DAC 硬件音量"</string>
     <string name="text_dac_output_v_rms_full_scale_sine_28c8da" formatted="false">"DAC 输出（V RMS，满刻度正弦波）"</string>
     <string name="text_dac_voltage_e5b76c" formatted="false">"DAC 电压"</string>
     <string name="text_daily_728298" formatted="false">"每日"</string>
@@ -2117,6 +2118,7 @@
     <string name="text_vocals_backing_d8ce42" formatted="false">"人声和伴奏"</string>
     <string name="text_vocals_only_337845" formatted="false">"仅人声"</string>
     <string name="text_voice_search_9df53f" formatted="false">"语音搜索"</string>
+    <string name="text_volume_buttons_set_the_dac_s_own_volume_the_audio_stays_bit_perfe_a4d608" formatted="false">"音量键调节 DAC 自身的音量，音频保持 bit-perfect。"</string>
     <string name="text_volume_changed_the_comparison_stopped_09aa40" formatted="false">"音量已变化。对比已停止。"</string>
     <string name="text_volume_leveling_a9df98" formatted="false">"音量平衡"</string>
     <string name="text_volume_loudness_0e8ee1" formatted="false">"音量与响度"</string>

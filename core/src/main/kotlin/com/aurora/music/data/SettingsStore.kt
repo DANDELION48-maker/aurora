@@ -1264,6 +1264,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     suspend fun setUsbOutputMode(v: UsbOutputMode) = editManualProcessing { it[Keys.USB_OUTPUT_MODE] = v.name }
     suspend fun setUsbDsdMode(v: UsbDsdMode) { dataStore.edit { it[Keys.USB_DSD_MODE] = v.name } }
     suspend fun setUsbDsdExperimental(v: Boolean) { dataStore.edit { it[Keys.USB_DSD_EXPERIMENTAL] = v } }
+    suspend fun setUsbHardwareVolume(v: Boolean) { dataStore.edit { it[Keys.USB_HARDWARE_VOLUME] = v } }
     suspend fun setUsbFallbackPolicy(v: UsbFallbackPolicy) = editManualProcessing { it[Keys.USB_FALLBACK_POLICY] = v.name }
     suspend fun setIndependentOutput(v: Boolean) = editManualProcessing { it[Keys.INDEPENDENT_OUTPUT] = v }
     suspend fun setScrobble(v: Boolean) = dataStore.edit { it[Keys.SCROBBLE] = v }

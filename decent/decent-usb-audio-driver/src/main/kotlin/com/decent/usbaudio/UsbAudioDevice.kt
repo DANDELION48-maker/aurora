@@ -23,6 +23,8 @@ class UsbAudioDevice private constructor(private val context: Context) {
     private var cachedDeviceInfo: UsbAudioDeviceInfo? = null
     private var selectedFormat: UsbAudioFormat? = null
     private val rates = mutableMapOf<Pair<Int, Int>, List<UsbRateRange>>()
+    // per feature unit, null once a unit's range proved unreadable or unusable
+    private val volumeRanges = mutableMapOf<Int, Triple<Int, Int, Int>?>()
     @Volatile var lastFailure: String? = null; private set
 
     companion object {
@@ -30,6 +32,8 @@ class UsbAudioDevice private constructor(private val context: Context) {
         fun getInstance(context: Context): UsbAudioDevice = instance ?: synchronized(this) {
             instance ?: UsbAudioDevice(context.applicationContext).also { instance = it }
         }
+        private const val MUTE = 1
+        private const val VOLUME = 2
     }
 
     fun isAudioOutput(device: UsbDevice): Boolean = (0 until device.interfaceCount).any { index ->
@@ -243,6 +247,61 @@ class UsbAudioDevice private constructor(private val context: Context) {
     @Synchronized fun setSampleRate(sampleRateHz: Int): Boolean =
         selectedFormat?.let { configureFormat(it, sampleRateHz).verified } == true
 
+    // dac feature unit volume, null when the open device has no writable volume
+    @Synchronized fun readHardwareVolume(): UsbHardwareVolume? {
+        val conn = connection ?: return null
+        val format = selectedFormat ?: return null
+        val unit = format.volumeUnit ?: return null
+        if (!claimInterface(format.controlInterfaceId)) return null
+        val channel = unit.volumeTargets.first()
+        if (unit.unitId !in volumeRanges) volumeRanges[unit.unitId] = readVolumeRange(conn, format, unit.unitId, channel)
+            ?.takeIf { UsbHardwareVolume.of(it.first, it.second, it.third, it.second, false) != null }
+        val range = volumeRanges[unit.unitId] ?: return null
+        val current = getFeature(conn, format, unit.unitId, VOLUME, channel, 2)?.let { UsbAudioDescriptors.s16(it, 0) } ?: return null
+        val muted = unit.muteTargets.firstOrNull()?.let { getFeature(conn, format, unit.unitId, MUTE, it, 1)?.get(0)?.toInt() == 1 } == true
+        return UsbHardwareVolume.of(range.first, range.second, range.third, current, muted)
+    }
+
+    @Synchronized fun setHardwareVolume(level: Int, mute: Boolean): Boolean {
+        val conn = connection ?: return false
+        val format = selectedFormat ?: return false
+        val unit = format.volumeUnit ?: return false
+        val range = volumeRanges[unit.unitId] ?: return false
+        if (!claimInterface(format.controlInterfaceId)) return false
+        val muteTargets = unit.muteTargets
+        val target = if (mute && muteTargets.isEmpty()) range.first else level
+        val bytes = byteArrayOf(target.toByte(), (target shr 8).toByte())
+        val volumeSet = unit.volumeTargets.map { setFeature(conn, format, unit.unitId, VOLUME, it, bytes) }.all { it }
+        val muteSet = muteTargets.map { setFeature(conn, format, unit.unitId, MUTE, it, byteArrayOf(if (mute) 1 else 0)) }.all { it }
+        return volumeSet && muteSet
+    }
+
+    private fun readVolumeRange(conn: UsbDeviceConnection, format: UsbAudioFormat, unit: Int, channel: Int): Triple<Int, Int, Int>? {
+        if (format.protocol == 0x20) {
+            val head = getFeature(conn, format, unit, VOLUME, channel, 2, request = 2) ?: return null
+            val count = UsbAudioDescriptors.u16(head, 0)
+            if (count !in 1..64) return null
+            val bytes = getFeature(conn, format, unit, VOLUME, channel, 2 + count * 6, request = 2) ?: return null
+            return runCatching { UsbAudioDescriptors.parseVolumeRange(bytes) }.getOrNull()
+        }
+        // uac1 GET_MIN, GET_MAX, GET_RES
+        fun read(request: Int) = getFeature(conn, format, unit, VOLUME, channel, 2, request)
+        val min = read(0x82) ?: return null
+        val max = read(0x83) ?: return null
+        val res = read(0x84) ?: return null
+        return Triple(UsbAudioDescriptors.s16(min, 0), UsbAudioDescriptors.s16(max, 0), UsbAudioDescriptors.u16(res, 0))
+    }
+
+    private fun getFeature(conn: UsbDeviceConnection, format: UsbAudioFormat, unit: Int, selector: Int, channel: Int, length: Int,
+        request: Int = if (format.protocol == 0x20) 1 else 0x81): ByteArray? {
+        val data = ByteArray(length)
+        val read = conn.controlTransfer(0xa1, request, selector shl 8 or channel, unit shl 8 or format.controlInterfaceId, data, length, 500)
+        return data.takeIf { read == length }
+    }
+
+    private fun setFeature(conn: UsbDeviceConnection, format: UsbAudioFormat, unit: Int, selector: Int, channel: Int, data: ByteArray): Boolean =
+        conn.controlTransfer(0x21, 1, selector shl 8 or channel, unit shl 8 or format.controlInterfaceId, data, data.size, 500) == data.size
+
     @Synchronized fun findAltSettingForBitDepth(targetBitDepth: Int): Pair<Int, Int> =
         cachedDeviceInfo?.formats.orEmpty().filter { it.unsupportedReason == null && it.validBits >= targetBitDepth }
             .minByOrNull { it.containerBytes }?.let { it.alternateSetting to it.containerBits } ?: (-1 to 0)
@@ -252,6 +311,7 @@ class UsbAudioDevice private constructor(private val context: Context) {
         val fd = conn?.fileDescriptor
         claimed.asReversed().forEach { runCatching { conn?.releaseInterface(it) } }
         claimed.clear(); connection = null; currentDevice = null; cachedDeviceInfo = null; selectedFormat = null; rates.clear()
+        volumeRanges.clear()
         conn?.close()
         if (fd != null) UsbAudioStream.nativeConnectionClosed(fd)
     }

@@ -107,6 +107,7 @@ internal fun readPlaybackPrefs(p: Preferences): PlaybackPrefs =
         usbFallbackPolicy = UsbOutputPolicy.decodeFallback(p[Keys.USB_FALLBACK_POLICY]).getOrThrow(),
         usbDsdMode = p[Keys.USB_DSD_MODE]?.let { value -> UsbDsdMode.entries.firstOrNull { it.name == value } } ?: UsbDsdMode.PCM,
         usbDsdExperimental = p[Keys.USB_DSD_EXPERIMENTAL] ?: false,
+        usbHardwareVolume = p[Keys.USB_HARDWARE_VOLUME] ?: true,
         independentOutput = p[Keys.INDEPENDENT_OUTPUT] ?: false,
         outputRatePolicy = OutputRatePolicyCodec.decode(p[Keys.OUTPUT_RATE_POLICY]).getOrThrow(),
     )

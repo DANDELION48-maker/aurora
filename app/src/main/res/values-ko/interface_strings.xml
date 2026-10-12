@@ -553,6 +553,7 @@
     <string name="text_cutoff_118de3" formatted="false">"차단 주파수"</string>
     <string name="text_cymatics_459c6a" formatted="false">"사이매틱스"</string>
     <string name="text_dac_gain_setting_4940ab" formatted="false">"DAC 게인 설정"</string>
+    <string name="text_dac_hardware_volume_752c71" formatted="false">"DAC 하드웨어 볼륨"</string>
     <string name="text_dac_output_v_rms_full_scale_sine_28c8da" formatted="false">"DAC 출력 (V RMS, 풀스케일 사인파)"</string>
     <string name="text_dac_voltage_e5b76c" formatted="false">"DAC 전압"</string>
     <string name="text_daily_728298" formatted="false">"매일"</string>
@@ -2117,6 +2118,7 @@
     <string name="text_vocals_backing_d8ce42" formatted="false">"보컬 및 반주"</string>
     <string name="text_vocals_only_337845" formatted="false">"보컬만"</string>
     <string name="text_voice_search_9df53f" formatted="false">"음성 검색"</string>
+    <string name="text_volume_buttons_set_the_dac_s_own_volume_the_audio_stays_bit_perfe_a4d608" formatted="false">"볼륨 버튼으로 DAC 자체 볼륨을 조절합니다. 오디오는 bit-perfect로 유지됩니다."</string>
     <string name="text_volume_changed_the_comparison_stopped_09aa40" formatted="false">"볼륨이 바뀌어 비교가 중지되었습니다."</string>
     <string name="text_volume_leveling_a9df98" formatted="false">"볼륨 평준화"</string>
     <string name="text_volume_loudness_0e8ee1" formatted="false">"볼륨 및 라우드니스"</string>

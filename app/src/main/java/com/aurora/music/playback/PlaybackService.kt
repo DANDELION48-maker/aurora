@@ -96,7 +96,9 @@ class PlaybackService : MediaLibraryService() {
     private val wakeModes = java.util.IdentityHashMap<ExoPlayer, Int>()
     private val volumeReceiver = object : android.content.BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: android.content.Intent?) {
-            if (intent?.getIntExtra(VOLUME_STREAM_EXTRA, -1) == android.media.AudioManager.STREAM_MUSIC) updateSignalPath()
+            if (intent?.getIntExtra(VOLUME_STREAM_EXTRA, -1) != android.media.AudioManager.STREAM_MUSIC) return
+            hardwareVolume?.onMediaVolumeChanged()
+            updateSignalPath()
         }
     }
 
@@ -193,6 +195,7 @@ class PlaybackService : MediaLibraryService() {
 
     private var usbSink: com.decent.usbaudio.media3.UsbAudioSink? = null
     private var processedUsbSink: ProcessedUsbAudioSink? = null
+    private var hardwareVolume: UsbHardwareVolumeController? = null
     private var rawDsdSink: com.aurora.music.playback.dsd.RawDsdAudioSink? = null
     @Volatile private var rawDsdFailure: String? = null
     private var usbMode = UsbOutputMode.DIRECT
@@ -353,6 +356,7 @@ class PlaybackService : MediaLibraryService() {
         // Keep paired YouTube video buffered in audio mode so revealing it does not reconfigure playback.
         attachSignalEvidence(player, initialEvidence)
         if (bitPerfectUsb) usbSink?.attachToPlayer(player)
+        if (bitPerfectUsb && usbMode == UsbOutputMode.DIRECT) hardwareVolume = UsbHardwareVolumeController(this)
 
         // usb host permission isnt persisted across process restarts so re-acquire on startup else sink silently falls back to normal output
         if (bitPerfectUsb) {
@@ -575,6 +579,7 @@ class PlaybackService : MediaLibraryService() {
                 exclusiveUsbPref = prefs.bitPerfectUsb
                 usbModePref = prefs.usbOutputMode
                 usbFallbackPref = prefs.usbFallbackPolicy
+                hardwareVolume?.enabled = prefs.usbHardwareVolume != false
                 // independent output: drop audio focus so other apps keep playing through the speaker while
                 // aurora streams to its own device. handleAudioFocus is runtime-switchable via setAudioAttributes.
                 if (prefs.independentOutput != independentOutput) {
@@ -626,6 +631,7 @@ class PlaybackService : MediaLibraryService() {
                 engaged.first { it }
                 do {
                     if (container.signalPath.subscriptionCount.value == 0) updateSignalPath()
+                    hardwareVolume?.poll()
                     delay(1000)
                     trackPlayback()
                 } while (refreshEngaged())
@@ -1044,6 +1050,10 @@ class PlaybackService : MediaLibraryService() {
         }
         val rg = replayGainMultiplier()
         if (usb && !processedUsb) {
+            hardwareVolume?.state?.let { hw ->
+                nodes += "DAC hardware volume " + (if (hw.muted) "muted" else String.format(java.util.Locale.US, "%.1f dB", hw.current / 256.0)) +
+                    " (USB feature unit; samples unchanged)"
+            }
             if (rg != 1f) bypassed += "ReplayGain (native output ignores player volume)"
             if (player.volume != 1f) bypassed += "Player volume / fades (native output ignores player volume)"
             if (nativeFlac && kotlin.math.abs(native!!.nativeSpeed - 1.0) > 0.00001) {
@@ -1950,6 +1960,7 @@ class PlaybackService : MediaLibraryService() {
         scope.cancel()
         runCatching { (getSystemService(AUDIO_SERVICE) as android.media.AudioManager).unregisterAudioDeviceCallback(outputCallback) }
         runCatching { unregisterReceiver(volumeReceiver) }
+        hardwareVolume?.close()
         requestBitPerfect(null, null, false)
         mixPlayer?.release()
         mixPlayer = null

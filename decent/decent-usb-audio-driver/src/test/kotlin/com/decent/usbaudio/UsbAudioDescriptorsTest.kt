@@ -150,6 +150,73 @@ class UsbAudioDescriptorsTest {
         assertNotNull(format.copy(fullSpeed = false, maxPacketSize = 1025).unsupportedReason)
     }
 
+    // uac2() plus input terminal 8 -> feature unit 10 -> speaker, and a microphone chain with its own feature unit
+    private fun uac2WithVolume(masterControls: Int = 0x0f): ByteArray {
+        val base = uac2()
+        val at = (0 until base.size - 2).first { base[it] == 17.toByte() && base[it + 1] == 0x24.toByte() && base[it + 2] == 2.toByte() } + 17
+        val units = bytes(
+            18, 0x24, 6, 10, 8, masterControls, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            12, 0x24, 3, 11, 1, 3, 0, 10, 23, 0, 0, 0,
+            17, 0x24, 2, 20, 1, 2, 0, 23, 2, 3, 0, 0, 0, 0, 0, 0, 0,
+            18, 0x24, 6, 21, 20, 0x0f, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            12, 0x24, 3, 22, 1, 1, 0, 21, 23, 0, 0, 0)
+        return base.copyOfRange(0, at) + units + base.copyOfRange(at, base.size)
+    }
+
+    @Test fun findsOnlyTheWritableFeatureUnitOnThePlaybackPath() {
+        assertEquals(UsbVolumeUnit(10, listOf(0), listOf(0)), UsbAudioDescriptors.parse(uac2WithVolume()).formats.single().volumeUnit)
+        assertNull(UsbAudioDescriptors.parse(uac2WithVolume(0x05)).formats.single().volumeUnit)
+        assertNull(UsbAudioDescriptors.parse(uac2()).formats.single().volumeUnit)
+    }
+
+    @Test fun uac1FeatureUnitFallsBackToPerChannelVolume() {
+        val descriptors = bytes(9, 2, 0, 0, 2, 1, 0, 0x80, 50,
+            9, 4, 0, 0, 0, 1, 1, 0, 0,
+            12, 0x24, 2, 1, 1, 1, 0, 2, 3, 0, 0, 0,
+            10, 0x24, 6, 2, 1, 1, 1, 2, 2, 0,
+            9, 0x24, 3, 3, 1, 3, 0, 2, 0,
+            9, 4, 1, 1, 1, 1, 2, 0, 0,
+            7, 0x24, 1, 1, 0, 1, 0, 11, 0x24, 2, 1, 2, 3, 24, 1, 0x80, 0xbb, 0,
+            7, 5, 1, 9, 0x20, 1, 1)
+        val unit = UsbAudioDescriptors.parse(descriptors).formats.single().volumeUnit!!
+        assertEquals(2, unit.unitId)
+        assertEquals(listOf(1, 2), unit.volumeTargets)
+        assertEquals(listOf(0), unit.muteTargets)
+    }
+
+    @Test fun hardwareVolumeMapsPhoneStepsEvenlyInDecibelsAndRoundTrips() {
+        val volume = UsbHardwareVolume.of(-59 * 256, 0, 256, -20 * 256, false)!!
+        for (step in 0..15) {
+            val level = volume.levelFor(step / 15.0)
+            assertEquals(0, level % 256)
+            assertEquals(step, Math.round(volume.copy(current = level).fraction * 15).toInt())
+        }
+        assertEquals(-59 * 256, volume.levelFor(0.0)); assertEquals(0, volume.levelFor(1.0))
+        assertEquals(0.0, volume.copy(muted = true).fraction, 0.0)
+    }
+
+    @Test fun hardwareVolumeNeverBoostsAndUsesAPracticalSpan() {
+        val wide = UsbHardwareVolume.of(-32768, 6 * 256, 128, 0, false)!!
+        assertEquals(-32767, wide.minimum)
+        assertEquals(0, wide.levelFor(1.0))
+        assertEquals(-60 * 256, wide.levelFor(0.0))
+        assertEquals(1.0, wide.copy(current = 6 * 256).fraction, 0.0)
+        assertEquals(-30 * 256, wide.levelFor(0.5))
+        assertNull(UsbHardwareVolume.of(0, 0, 256, 0, false))
+        assertEquals(1, UsbHardwareVolume.of(-256, 0, 0, 0, false)!!.step)
+    }
+
+    @Test fun uac2VolumeRangeMergesSubranges() {
+        val one = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putShort(1)
+            .putShort((-59 * 256).toShort()).putShort(0).putShort(256).array()
+        assertEquals(Triple(-59 * 256, 0, 256), UsbAudioDescriptors.parseVolumeRange(one))
+        val two = ByteBuffer.allocate(14).order(ByteOrder.LITTLE_ENDIAN).putShort(2)
+            .putShort((-100 * 256).toShort()).putShort((-50 * 256).toShort()).putShort(512)
+            .putShort((-50 * 256).toShort()).putShort(0).putShort(256).array()
+        assertEquals(Triple(-100 * 256, 0, 256), UsbAudioDescriptors.parseVolumeRange(two))
+        assertThrows(IllegalArgumentException::class.java) { UsbAudioDescriptors.parseVolumeRange(two.copyOf(13)) }
+    }
+
     @Test fun clockRangesValidateLengthsAndRespectDiscreteSteps() {
         val bytes = ByteBuffer.allocate(26).order(ByteOrder.LITTLE_ENDIAN).putShort(2)
             .putInt(44100).putInt(176400).putInt(44100).putInt(48000).putInt(48000).putInt(0).array()

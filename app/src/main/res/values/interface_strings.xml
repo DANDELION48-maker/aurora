@@ -553,6 +553,7 @@
     <string name="text_cutoff_118de3" formatted="false">"Cutoff"</string>
     <string name="text_cymatics_459c6a" formatted="false">"Cymatics"</string>
     <string name="text_dac_gain_setting_4940ab" formatted="false">"DAC gain setting"</string>
+    <string name="text_dac_hardware_volume_752c71" formatted="false">"DAC hardware volume"</string>
     <string name="text_dac_output_v_rms_full_scale_sine_28c8da" formatted="false">"DAC output (V RMS, full-scale sine)"</string>
     <string name="text_dac_voltage_e5b76c" formatted="false">"DAC voltage"</string>
     <string name="text_daily_728298" formatted="false">"Daily"</string>
@@ -2117,6 +2118,7 @@
     <string name="text_vocals_backing_d8ce42" formatted="false">"Vocals &amp; backing"</string>
     <string name="text_vocals_only_337845" formatted="false">"Vocals only"</string>
     <string name="text_voice_search_9df53f" formatted="false">"Voice search"</string>
+    <string name="text_volume_buttons_set_the_dac_s_own_volume_the_audio_stays_bit_perfe_a4d608" formatted="false">"Volume buttons set the DAC\'s own volume. The audio stays bit-perfect."</string>
     <string name="text_volume_changed_the_comparison_stopped_09aa40" formatted="false">"Volume changed. The comparison stopped."</string>
     <string name="text_volume_leveling_a9df98" formatted="false">"Volume Leveling"</string>
     <string name="text_volume_loudness_0e8ee1" formatted="false">"Volume &amp; Loudness"</string>

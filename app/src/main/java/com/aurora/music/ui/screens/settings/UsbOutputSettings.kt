@@ -6,6 +6,7 @@ import com.aurora.music.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Usb
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,6 +26,7 @@ fun UsbOutputSettings(
     onFallback: (UsbFallbackPolicy) -> Unit,
     onDsdMode: (UsbDsdMode) -> Unit,
     onExperimentalDsd: (Boolean) -> Unit,
+    onHardwareVolume: (Boolean) -> Unit,
 ) {
     SettingsGroup {
         SettingsSwitchRow(Icons.Filled.Usb, appString(R.string.text_usb_dac_output_c6adc2), appString(R.string.text_restart_aurora_to_apply_usb_settings_2757a4),
@@ -44,6 +46,9 @@ fun UsbOutputSettings(
                 onFallback(UsbFallbackPolicy.entries[it])
             }
             if (prefs.usbOutputMode == UsbOutputMode.DIRECT) {
+                SettingsSwitchRow(Icons.AutoMirrored.Filled.VolumeUp, appString(R.string.text_dac_hardware_volume_752c71),
+                    appString(R.string.text_volume_buttons_set_the_dac_s_own_volume_the_audio_stays_bit_perfe_a4d608),
+                    prefs.usbHardwareVolume != false, onHardwareVolume)
                 SegmentedRow(appString(R.string.text_dsd_files_d4d480), listOf("PCM", "DoP", appString(R.string.text_native_4fc6e7)), (prefs.usbDsdMode ?: UsbDsdMode.PCM).ordinal) {
                     onDsdMode(UsbDsdMode.entries[it])
                 }

@@ -68,6 +68,7 @@ data class PlaybackPrefs(
     val usbFallbackPolicy: UsbFallbackPolicy = UsbFallbackPolicy.PAUSE,
     val usbDsdMode: UsbDsdMode? = null,
     val usbDsdExperimental: Boolean? = null,
+    val usbHardwareVolume: Boolean? = null,
 )
 
 object VisualizerStyle {

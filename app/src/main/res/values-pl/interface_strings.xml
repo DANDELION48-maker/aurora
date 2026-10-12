@@ -553,6 +553,7 @@
     <string name="text_cutoff_118de3" formatted="false">"Częstotliwość odcięcia"</string>
     <string name="text_cymatics_459c6a" formatted="false">"Cymatyka"</string>
     <string name="text_dac_gain_setting_4940ab" formatted="false">"Ustawienie wzmocnienia DAC"</string>
+    <string name="text_dac_hardware_volume_752c71" formatted="false">"Głośność sprzętowa DAC"</string>
     <string name="text_dac_output_v_rms_full_scale_sine_28c8da" formatted="false">"Wyjście DAC (V RMS, sinus pełnej skali)"</string>
     <string name="text_dac_voltage_e5b76c" formatted="false">"Napięcie DAC"</string>
     <string name="text_daily_728298" formatted="false">"Codziennie"</string>
@@ -2117,6 +2118,7 @@
     <string name="text_vocals_backing_d8ce42" formatted="false">"Wokal i podkład"</string>
     <string name="text_vocals_only_337845" formatted="false">"Tylko wokal"</string>
     <string name="text_voice_search_9df53f" formatted="false">"Wyszukiwanie głosowe"</string>
+    <string name="text_volume_buttons_set_the_dac_s_own_volume_the_audio_stays_bit_perfe_a4d608" formatted="false">"Przyciski głośności ustawiają głośność samego DAC. Dźwięk pozostaje bit-perfect."</string>
     <string name="text_volume_changed_the_comparison_stopped_09aa40" formatted="false">"Zmieniono głośność. Porównanie zostało zatrzymane."</string>
     <string name="text_volume_leveling_a9df98" formatted="false">"Wyrównywanie głośności"</string>
     <string name="text_volume_loudness_0e8ee1" formatted="false">"Głośność i loudness"</string>

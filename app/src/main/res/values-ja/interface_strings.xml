@@ -553,6 +553,7 @@
     <string name="text_cutoff_118de3" formatted="false">"カットオフ"</string>
     <string name="text_cymatics_459c6a" formatted="false">"サイマティクス"</string>
     <string name="text_dac_gain_setting_4940ab" formatted="false">"DAC のゲイン設定"</string>
+    <string name="text_dac_hardware_volume_752c71" formatted="false">"DAC のハードウェア音量"</string>
     <string name="text_dac_output_v_rms_full_scale_sine_28c8da" formatted="false">"DAC 出力 (V RMS、フルスケール正弦波)"</string>
     <string name="text_dac_voltage_e5b76c" formatted="false">"DAC 電圧"</string>
     <string name="text_daily_728298" formatted="false">"毎日"</string>
@@ -2117,6 +2118,7 @@
     <string name="text_vocals_backing_d8ce42" formatted="false">"ボーカルと伴奏"</string>
     <string name="text_vocals_only_337845" formatted="false">"ボーカルのみ"</string>
     <string name="text_voice_search_9df53f" formatted="false">"音声検索"</string>
+    <string name="text_volume_buttons_set_the_dac_s_own_volume_the_audio_stays_bit_perfe_a4d608" formatted="false">"音量ボタンで DAC 本体の音量を調整します。音声は bit-perfect のままです。"</string>
     <string name="text_volume_changed_the_comparison_stopped_09aa40" formatted="false">"音量が変わったため、比較を停止しました。"</string>
     <string name="text_volume_leveling_a9df98" formatted="false">"音量の均一化"</string>
     <string name="text_volume_loudness_0e8ee1" formatted="false">"音量とラウドネス"</string>

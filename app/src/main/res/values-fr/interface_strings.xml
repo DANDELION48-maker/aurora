@@ -553,6 +553,7 @@
     <string name="text_cutoff_118de3" formatted="false">"Coupure"</string>
     <string name="text_cymatics_459c6a" formatted="false">"Cymatique"</string>
     <string name="text_dac_gain_setting_4940ab" formatted="false">"Réglage de gain du DAC"</string>
+    <string name="text_dac_hardware_volume_752c71" formatted="false">"Volume matériel du DAC"</string>
     <string name="text_dac_output_v_rms_full_scale_sine_28c8da" formatted="false">"Sortie du DAC (V RMS, sinus pleine échelle)"</string>
     <string name="text_dac_voltage_e5b76c" formatted="false">"Tension du DAC"</string>
     <string name="text_daily_728298" formatted="false">"Quotidien"</string>
@@ -2117,6 +2118,7 @@
     <string name="text_vocals_backing_d8ce42" formatted="false">"Voix et accompagnement"</string>
     <string name="text_vocals_only_337845" formatted="false">"Voix uniquement"</string>
     <string name="text_voice_search_9df53f" formatted="false">"Recherche vocale"</string>
+    <string name="text_volume_buttons_set_the_dac_s_own_volume_the_audio_stays_bit_perfe_a4d608" formatted="false">"Les boutons de volume règlent le volume propre du DAC. Le son reste bit-perfect."</string>
     <string name="text_volume_changed_the_comparison_stopped_09aa40" formatted="false">"Le volume a changé. La comparaison s\'est arrêtée."</string>
     <string name="text_volume_leveling_a9df98" formatted="false">"Nivellement du volume"</string>
     <string name="text_volume_loudness_0e8ee1" formatted="false">"Volume et loudness"</string>

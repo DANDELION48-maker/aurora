@@ -553,6 +553,7 @@
     <string name="text_cutoff_118de3" formatted="false">"Afsnijfrequentie"</string>
     <string name="text_cymatics_459c6a" formatted="false">"Cymatica"</string>
     <string name="text_dac_gain_setting_4940ab" formatted="false">"Gain-instelling van DAC"</string>
+    <string name="text_dac_hardware_volume_752c71" formatted="false">"Hardwarevolume van de DAC"</string>
     <string name="text_dac_output_v_rms_full_scale_sine_28c8da" formatted="false">"DAC-uitgang (V RMS, sinus op volle schaal)"</string>
     <string name="text_dac_voltage_e5b76c" formatted="false">"DAC-spanning"</string>
     <string name="text_daily_728298" formatted="false">"Dagelijks"</string>
@@ -2117,6 +2118,7 @@
     <string name="text_vocals_backing_d8ce42" formatted="false">"Zang &amp; begeleiding"</string>
     <string name="text_vocals_only_337845" formatted="false">"Alleen zang"</string>
     <string name="text_voice_search_9df53f" formatted="false">"Spraakgestuurd zoeken"</string>
+    <string name="text_volume_buttons_set_the_dac_s_own_volume_the_audio_stays_bit_perfe_a4d608" formatted="false">"De volumeknoppen regelen het volume van de DAC zelf. Het geluid blijft bit-perfect."</string>
     <string name="text_volume_changed_the_comparison_stopped_09aa40" formatted="false">"Volume gewijzigd. De vergelijking is gestopt."</string>
     <string name="text_volume_leveling_a9df98" formatted="false">"Volumenivellering"</string>
     <string name="text_volume_loudness_0e8ee1" formatted="false">"Volume &amp; luidheid"</string>

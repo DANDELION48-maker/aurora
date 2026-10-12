@@ -553,6 +553,7 @@
     <string name="text_cutoff_118de3" formatted="false">"कटऑफ़"</string>
     <string name="text_cymatics_459c6a" formatted="false">"साइमैटिक्स"</string>
     <string name="text_dac_gain_setting_4940ab" formatted="false">"DAC गेन सेटिंग"</string>
+    <string name="text_dac_hardware_volume_752c71" formatted="false">"DAC हार्डवेयर वॉल्यूम"</string>
     <string name="text_dac_output_v_rms_full_scale_sine_28c8da" formatted="false">"DAC आउटपुट (V RMS, फ़ुल-स्केल साइन)"</string>
     <string name="text_dac_voltage_e5b76c" formatted="false">"DAC वोल्टेज"</string>
     <string name="text_daily_728298" formatted="false">"दैनिक"</string>
@@ -2117,6 +2118,7 @@
     <string name="text_vocals_backing_d8ce42" formatted="false">"वोकल और बैकिंग"</string>
     <string name="text_vocals_only_337845" formatted="false">"केवल वोकल"</string>
     <string name="text_voice_search_9df53f" formatted="false">"वॉइस सर्च"</string>
+    <string name="text_volume_buttons_set_the_dac_s_own_volume_the_audio_stays_bit_perfe_a4d608" formatted="false">"वॉल्यूम बटन DAC का अपना वॉल्यूम बदलते हैं। ऑडियो bit-perfect रहता है।"</string>
     <string name="text_volume_changed_the_comparison_stopped_09aa40" formatted="false">"वॉल्यूम बदल गया। तुलना रुक गई।"</string>
     <string name="text_volume_leveling_a9df98" formatted="false">"वॉल्यूम लेवलिंग"</string>
     <string name="text_volume_loudness_0e8ee1" formatted="false">"वॉल्यूम और लाउडनेस"</string>
