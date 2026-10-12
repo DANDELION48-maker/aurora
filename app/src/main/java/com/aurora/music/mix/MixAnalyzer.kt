@@ -3,6 +3,7 @@ package com.aurora.music.mix
 import android.content.Context
 import android.util.AtomicFile
 import com.aurora.music.data.AudioDecoder
+import com.aurora.music.data.diskBytes
 import com.aurora.music.model.Song
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -23,6 +24,8 @@ class MixAnalyzer(private val context: Context, private val resolve: (String) ->
             .joinToString("") { "%02x".format(it) } + ".json"))
 
     suspend fun cached(account: String, song: Song): MixAnalysis? = withContext(Dispatchers.IO) { read(file(account, song)) }
+    fun bytes(): Long = directory.diskBytes()
+    fun clear() { directory.listFiles()?.forEach { it.delete() } }
     private fun read(f: AtomicFile): MixAnalysis? = runCatching {
         val json = JSONObject(String(f.readFully(), Charsets.UTF_8))
         val peaks = json.getJSONArray("peaks")

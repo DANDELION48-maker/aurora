@@ -116,8 +116,9 @@ class AppContainer(context: Context) {
     // server base url stamped on downloads so they can be scoped per-server
     private fun currentServerId(): String = backend?.session?.server ?: ""
 
+    private val downloadsDir = java.io.File(appContext.filesDir, "downloads")
     val downloadManager: DownloadManager = DownloadManager(
-        java.io.File(appContext.filesDir, "downloads"), ::androidFileUri, appContext::openUri,
+        downloadsDir, ::androidFileUri, appContext::openUri,
         streamUrlProvider = { id, bitrate, lossless -> backend?.streamUrl(id, bitrate, lossless) },
         downloadBitrateProvider = { downloadBitrate },
         currentServerIdProvider = { currentServerId() },
@@ -339,6 +340,7 @@ class AppContainer(context: Context) {
         offline = { offlineToggle || !networkUp }, enabled = { settingsStore.artworkLookupEnabled.first() },
         separators = { settingsStore.artistSeparators.first() })
     val animatedCovers = AnimatedCovers(appContext, settingsStore, scope)
+    val storage by lazy { StorageInventory(appContext, this, downloadsDir) }
 
     val repository: MusicRepository = MusicRepository(
         backendProvider = { backend },

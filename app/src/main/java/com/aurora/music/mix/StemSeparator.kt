@@ -8,6 +8,7 @@ import androidx.media3.common.audio.SonicAudioProcessor
 import androidx.media3.common.util.UnstableApi
 import ai.onnxruntime.*
 import com.aurora.music.data.AudioDecoder
+import com.aurora.music.data.diskBytes
 import com.aurora.music.model.Song
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -38,6 +39,19 @@ class StemSeparator(private val context: Context, private val resolve: (String) 
     private val cache = File(context.cacheDir, "separated-stems-v1").apply { mkdirs() }
     private val model = File(models, "uvr-voc-ft.onnx")
     fun modelReady() = model.length() == MODEL_BYTES
+    fun modelBytes(): Long = models.diskBytes()
+    fun stemBytes(): Long = cache.diskBytes()
+
+    // false while a separation is running so its files are never pulled out from under it
+    suspend fun clearStems(): Boolean = withContext(Dispatchers.IO) {
+        if (!lock.tryLock()) return@withContext false
+        try { cache.listFiles()?.forEach { it.delete() }; true } finally { lock.unlock() }
+    }
+
+    suspend fun deleteModel(): Boolean = withContext(Dispatchers.IO) {
+        if (!lock.tryLock()) return@withContext false
+        try { models.listFiles()?.forEach { it.delete() }; true } finally { lock.unlock() }
+    }
     private fun key(account: String, song: Song) = sha("$account|${song.id}|${song.durationSec}|$MODEL_SHA256".toByteArray())
     private fun sha(bytes: ByteArray) = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
     fun cached(account: String, song: Song): SeparatedStems? {

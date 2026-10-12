@@ -1111,6 +1111,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         val q = query.trim()
         if (q.length < 2) return
         dataStore.edit { p ->
+            if (p[Keys.SAVE_SEARCHES] == false) return@edit
             val cur = parseStringList(p[Keys.RECENT_SEARCHES])
             val next = (listOf(q) + cur.filterNot { it.equals(q, ignoreCase = true) }).take(12)
             p[Keys.RECENT_SEARCHES] = gson.toJson(next)
@@ -1122,6 +1123,12 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     }
 
     suspend fun clearRecentSearches() = dataStore.edit { it.remove(Keys.RECENT_SEARCHES) }
+
+    val saveRecentSearches: Flow<Boolean> = dataStore.data.map { it[Keys.SAVE_SEARCHES] ?: true }
+    suspend fun setSaveRecentSearches(v: Boolean) = dataStore.edit {
+        it[Keys.SAVE_SEARCHES] = v
+        if (!v) it.remove(Keys.RECENT_SEARCHES)
+    }
 
     val squigBaseUrl: Flow<String> = dataStore.data.map { it[Keys.SQUIG_BASE]?.takeIf { u -> u.isNotBlank() } ?: DEFAULT_SQUIG_BASE }
     suspend fun setSquigBaseUrl(v: String) = dataStore.edit { it[Keys.SQUIG_BASE] = v.trim().trimEnd('/') }

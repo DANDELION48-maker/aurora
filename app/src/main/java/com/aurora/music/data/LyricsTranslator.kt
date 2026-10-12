@@ -68,6 +68,15 @@ class LyricsTranslator(private val canDownload: () -> Boolean) {
         emit(LyricsTranslation.Ready(result))
     }.catch { }
 
+    suspend fun packs(): List<String> = runCatching {
+        models.getDownloadedModels(TranslateRemoteModel::class.java).await().map { it.language }.sorted()
+    }.getOrDefault(emptyList())
+
+    suspend fun deletePack(language: String): Boolean = runCatching {
+        models.deleteDownloadedModel(TranslateRemoteModel.Builder(language).build()).await()
+        synchronized(recent) { recent.clear() }
+    }.isSuccess
+
     private fun supported(tag: String): String? =
         tag.takeUnless { it == "und" || "-" in it }?.let { TranslateLanguage.fromLanguageTag(if (it == "in") "id" else if (it == "iw") "he" else it) }
 

@@ -110,7 +110,7 @@ fun SettingsRowDivider() {
 }
 
 @Composable
-private fun RowScaffold(
+internal fun RowScaffold(
     icon: ImageVector?,
     title: String,
     subtitle: String?,

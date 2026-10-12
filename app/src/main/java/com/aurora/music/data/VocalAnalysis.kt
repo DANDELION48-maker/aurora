@@ -64,6 +64,13 @@ class VocalAnalysis(private val context: Context, private val canStream: () -> B
         .digest("${song.id}|${song.playbackSource?.providerId}|${song.durationSec}".toByteArray())
         .joinToString("") { "%02x".format(it) }
 
+    fun bytes(): Long = dir.diskBytes()
+
+    fun clear() {
+        synchronized(recent) { recent.clear() }
+        dir.deleteRecursively()
+    }
+
     private fun trim() {
         val files = dir.listFiles().orEmpty().sortedByDescending { it.lastModified() }
         files.drop(MAX_FILES).forEach { it.delete() }

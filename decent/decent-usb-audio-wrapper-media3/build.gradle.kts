@@ -17,7 +17,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions { jvmTarget = "17" }
 
     lint {
         abortOnError = false
@@ -35,4 +34,8 @@ dependencies {
 
     // JSch fork (maintained) — SFTP streaming with native offset seek.
     implementation("com.github.mwiede:jsch:0.2.23")
+}
+
+kotlin {
+    compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) }
 }

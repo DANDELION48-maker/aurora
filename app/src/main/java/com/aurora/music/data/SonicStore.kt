@@ -60,4 +60,12 @@ class SonicStore(context: Context) {
         if (account == active) _count.value = data(account).size
     }
     fun snapshot(account: String = active): Map<String, FloatArray> = synchronized(lock) { HashMap(data(account)) }
+    fun bytes(): Long = directory.diskBytes() + legacyDirectory.diskBytes()
+    fun clear() = synchronized(lock) {
+        accounts.clear()
+        directory.deleteRecursively()
+        directory.mkdirs()
+        legacyDirectory.deleteRecursively()
+        _count.value = 0
+    }
 }

@@ -24,7 +24,7 @@ val canSignRelease = releaseKeystore.exists() && releaseStorePassword != null
 
 android {
     namespace = "com.aurora.music"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = "27.0.12077973"
 
     defaultConfig {
@@ -69,9 +69,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -176,3 +173,7 @@ val compilePrecisionBenchmarkJni by tasks.registering {
 }
 tasks.matching { it.name.startsWith("merge") && it.name.endsWith("AndroidTestJniLibFolders") }
     .configureEach { dependsOn(compilePrecisionBenchmarkJni) }
+
+kotlin {
+    compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) }
+}

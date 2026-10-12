@@ -38,6 +38,16 @@ class ArtistInfoStore(filesDir: File, private val clock: () -> Long = { System.c
         }
     }
 
+    val size: Int get() = synchronized(lock) { data.entries.size }
+
+    fun bytes(): Long = file.length()
+
+    fun clear() = synchronized(lock) {
+        data = Persisted(VERSION)
+        file.delete()
+        Unit
+    }
+
     private companion object {
         const val VERSION = 1
         const val FRESH_MS = 30L * 24 * 60 * 60 * 1000

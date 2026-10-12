@@ -110,6 +110,7 @@ internal object SettingsKeys {
     val UNIFIED_LIBRARY = booleanPreferencesKey("unified_library")
     val MERGE_SOURCES = stringSetPreferencesKey("merge_sources")
     val RECENT_SEARCHES = stringPreferencesKey("recent_searches")
+    val SAVE_SEARCHES = booleanPreferencesKey("save_recent_searches")
     val SQUIG_BASE = stringPreferencesKey("squig_base_url")
     val SQUIG_TARGET = stringPreferencesKey("squig_target")
     val SAVED_SESSIONS = stringPreferencesKey("saved_sessions")
