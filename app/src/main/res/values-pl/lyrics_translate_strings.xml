@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_tap_hint">Stuknij kropkę, aby zobaczyć, co tam grało.</string>
+    <string name="lyrics_translate">Tłumacz teksty piosenek</string>
+    <string name="lyrics_translate_desc">Pokazuje pod każdym wersem krótkie tłumaczenie na język aplikacji. Tłumaczenie odbywa się na tym telefonie; każdy pakiet językowy (około 30 MB) jest pobierany tylko raz, przez Wi-Fi.</string>
+    <string name="lyrics_translate_downloading">Pobieranie pakietu językowego (%1$s)…</string>
+    <string name="lyrics_translate_wifi">Połącz się z Wi-Fi, aby pobrać pakiet językowy (%1$s)</string>
+</resources>

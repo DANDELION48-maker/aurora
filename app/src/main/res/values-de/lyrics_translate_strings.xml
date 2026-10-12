@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_tap_hint">Tippe auf einen Punkt, um zu sehen, was dort lief.</string>
+    <string name="lyrics_translate">Songtexte übersetzen</string>
+    <string name="lyrics_translate_desc">Zeigt unter jeder Zeile eine kleine Übersetzung in die App-Sprache. Die Übersetzung läuft auf diesem Telefon; jedes Sprachpaket (etwa 30 MB) wird einmalig über WLAN geladen.</string>
+    <string name="lyrics_translate_downloading">Sprachpaket wird geladen (%1$s)…</string>
+    <string name="lyrics_translate_wifi">Verbinde dich mit einem WLAN, um das Sprachpaket (%1$s) zu laden</string>
+</resources>

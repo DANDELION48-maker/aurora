@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_tap_hint">Toca un punto para ver qué sonó allí.</string>
+    <string name="lyrics_translate">Traducir letras</string>
+    <string name="lyrics_translate_desc">Muestra una pequeña traducción al idioma de la app bajo cada línea. La traducción se hace en este teléfono; cada paquete de idioma (unos 30 MB) se descarga una sola vez, por Wi-Fi.</string>
+    <string name="lyrics_translate_downloading">Descargando paquete de idioma (%1$s)…</string>
+    <string name="lyrics_translate_wifi">Conéctate a una red Wi-Fi para descargar el paquete de idioma (%1$s)</string>
+</resources>

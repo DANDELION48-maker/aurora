@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_tap_hint">点をタップすると、そこで再生した曲が表示されます。</string>
+    <string name="lyrics_translate">歌詞を翻訳</string>
+    <string name="lyrics_translate_desc">各行の下に、アプリの言語での翻訳を小さく表示します。翻訳はこのスマートフォン上で行われ、各言語パック（約 30 MB）は Wi-Fi 接続時に一度だけダウンロードされます。</string>
+    <string name="lyrics_translate_downloading">言語パックをダウンロード中（%1$s）…</string>
+    <string name="lyrics_translate_wifi">Wi-Fi に接続すると言語パック（%1$s）をダウンロードできます</string>
+</resources>

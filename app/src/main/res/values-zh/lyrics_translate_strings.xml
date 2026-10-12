@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_tap_hint">点按圆点，查看在那里播放过什么。</string>
+    <string name="lyrics_translate">翻译歌词</string>
+    <string name="lyrics_translate_desc">在每行歌词下方以小字显示应用语言的翻译。翻译在这部手机上完成；每个语言包（约 30 MB）只需通过 Wi-Fi 下载一次。</string>
+    <string name="lyrics_translate_downloading">正在下载语言包（%1$s）…</string>
+    <string name="lyrics_translate_wifi">连接 Wi-Fi 后即可下载语言包（%1$s）</string>
+</resources>

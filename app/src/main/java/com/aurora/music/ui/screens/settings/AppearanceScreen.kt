@@ -203,6 +203,11 @@ fun AppearanceScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenNa
                 }), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp))
             }
+            item {
+                SettingsSwitchRow(title = appString(R.string.lyrics_translate), subtitle = appString(R.string.lyrics_translate_desc), checked = prefs.lyricsTranslate) { v ->
+                    scope.launch { store.setLyricsTranslate(v) }
+                }
+            }
 
             item { SettingsSectionTitle(appString(R.string.text_miniplayer_4adff2)) }
             item {

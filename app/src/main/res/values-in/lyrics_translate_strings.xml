@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_tap_hint">Ketuk titik untuk melihat apa yang diputar di sana.</string>
+    <string name="lyrics_translate">Terjemahkan lirik</string>
+    <string name="lyrics_translate_desc">Menampilkan terjemahan kecil dalam bahasa aplikasi di bawah setiap baris. Terjemahan dilakukan di ponsel ini; setiap paket bahasa (sekitar 30 MB) diunduh sekali saja melalui Wi-Fi.</string>
+    <string name="lyrics_translate_downloading">Mengunduh paket bahasa (%1$s)…</string>
+    <string name="lyrics_translate_wifi">Sambungkan ke Wi-Fi untuk mengunduh paket bahasa (%1$s)</string>
+</resources>

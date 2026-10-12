@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_tap_hint">اضغط على نقطة لترى ما شُغّل هناك.</string>
+    <string name="lyrics_translate">ترجمة كلمات الأغاني</string>
+    <string name="lyrics_translate_desc">يعرض ترجمة صغيرة بلغة التطبيق أسفل كل سطر. تتم الترجمة على هذا الهاتف، وتُنزَّل كل حزمة لغة (نحو 30 ميغابايت) مرة واحدة فقط عبر Wi-Fi.</string>
+    <string name="lyrics_translate_downloading">جارٍ تنزيل حزمة اللغة (%1$s)…</string>
+    <string name="lyrics_translate_wifi">اتصل بشبكة Wi-Fi لتنزيل حزمة اللغة (%1$s)</string>
+</resources>

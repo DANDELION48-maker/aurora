@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_tap_hint">Orada ne çaldığını görmek için bir noktaya dokunun.</string>
+    <string name="lyrics_translate">Şarkı sözlerini çevir</string>
+    <string name="lyrics_translate_desc">Her satırın altında uygulamanın dilinde küçük bir çeviri gösterir. Çeviri bu telefonda yapılır; her dil paketi (yaklaşık 30 MB) Wi-Fi üzerinden bir kez indirilir.</string>
+    <string name="lyrics_translate_downloading">Dil paketi indiriliyor (%1$s)…</string>
+    <string name="lyrics_translate_wifi">Dil paketini (%1$s) indirmek için Wi-Fi’ye bağlanın</string>
+</resources>

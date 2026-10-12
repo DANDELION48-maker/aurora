@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_tap_hint">점을 탭하면 그곳에서 재생한 곡을 볼 수 있습니다.</string>
+    <string name="lyrics_translate">가사 번역</string>
+    <string name="lyrics_translate_desc">각 줄 아래에 앱 언어로 된 번역을 작게 표시합니다. 번역은 이 휴대폰에서 이루어지며, 각 언어 팩(약 30MB)은 Wi-Fi로 한 번만 다운로드됩니다.</string>
+    <string name="lyrics_translate_downloading">언어 팩 다운로드 중(%1$s)…</string>
+    <string name="lyrics_translate_wifi">언어 팩(%1$s)을 다운로드하려면 Wi-Fi에 연결하세요</string>
+</resources>

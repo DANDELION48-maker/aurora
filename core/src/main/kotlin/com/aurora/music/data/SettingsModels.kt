@@ -228,6 +228,7 @@ data class UiPrefs(
     val tabletPlayerSplit: Float = TabletSetting.PLAYER_SPLIT.default,
     val navLayout: String = "",
     val lyricsSync: Int = LyricsSync.WORD,
+    val lyricsTranslate: Boolean = false,
 )
 
 enum class TabletSetting(val default: Float, val range: ClosedFloatingPointRange<Float>) {

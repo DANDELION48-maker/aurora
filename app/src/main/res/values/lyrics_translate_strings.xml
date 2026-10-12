@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_tap_hint">Tap a dot to see what played there.</string>
+    <string name="lyrics_translate">Translate lyrics</string>
+    <string name="lyrics_translate_desc">Shows a small translation into the app’s language under each line. Translation runs on this phone; each language pack (about 30 MB) downloads once, over Wi-Fi.</string>
+    <string name="lyrics_translate_downloading">Downloading language pack (%1$s)…</string>
+    <string name="lyrics_translate_wifi">Connect to Wi-Fi to download the language pack (%1$s)</string>
+</resources>

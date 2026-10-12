@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_tap_hint">وہاں کیا چلا تھا یہ دیکھنے کے لیے کسی نقطے پر ٹیپ کریں۔</string>
+    <string name="lyrics_translate">گانوں کے بول کا ترجمہ کریں</string>
+    <string name="lyrics_translate_desc">ہر سطر کے نیچے ایپ کی زبان میں چھوٹا سا ترجمہ دکھاتا ہے۔ ترجمہ اسی فون پر ہوتا ہے؛ ہر زبان کا پیک (تقریباً 30 MB) Wi-Fi پر صرف ایک بار ڈاؤن لوڈ ہوتا ہے۔</string>
+    <string name="lyrics_translate_downloading">زبان کا پیک ڈاؤن لوڈ ہو رہا ہے (%1$s)…</string>
+    <string name="lyrics_translate_wifi">زبان کا پیک (%1$s) ڈاؤن لوڈ کرنے کے لیے Wi-Fi سے جڑیں</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_tap_hint">वहाँ क्या बजा था, यह देखने के लिए किसी बिंदु पर टैप करें।</string>
+    <string name="lyrics_translate">गीतों का अनुवाद करें</string>
+    <string name="lyrics_translate_desc">हर पंक्ति के नीचे ऐप की भाषा में छोटा अनुवाद दिखाता है। अनुवाद इसी फ़ोन पर होता है; हर भाषा पैक (लगभग 30 MB) Wi-Fi पर केवल एक बार डाउनलोड होता है।</string>
+    <string name="lyrics_translate_downloading">भाषा पैक डाउनलोड हो रहा है (%1$s)…</string>
+    <string name="lyrics_translate_wifi">भाषा पैक (%1$s) डाउनलोड करने के लिए Wi-Fi से कनेक्ट करें</string>
+</resources>

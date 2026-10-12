@@ -54,6 +54,7 @@ import com.aurora.music.AuroraApplication
 import com.aurora.music.R
 import com.aurora.music.data.Lyrics
 import com.aurora.music.data.LyricsSync
+import com.aurora.music.data.LyricsTranslation
 import com.aurora.music.data.VocalActivity
 import com.aurora.music.data.charFill
 import com.aurora.music.data.withWordTiming
@@ -176,6 +177,13 @@ internal fun LyricsScreen(
                         maxLines = 1, overflow = TextOverflow.Ellipsis)
                     Text(song.artist, color = Color.White.copy(alpha = .65f), fontSize = 13.sp,
                         maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+                val translating = com.aurora.music.ui.theme.LocalUiPrefs.current.lyricsTranslate
+                val scope = rememberCoroutineScope()
+                IconButton(onClick = { interactionVersion++; scope.launch { container.settingsStore.setLyricsTranslate(!translating) } },
+                    enabled = controlsVisible) {
+                    Icon(Icons.Default.Translate, appString(R.string.lyrics_translate),
+                        tint = if (translating) Color.White else Color.White.copy(alpha = .45f))
                 }
                 IconButton(onClick = onClose, enabled = controlsVisible) {
                     Icon(Icons.Default.KeyboardArrowDown, appString(R.string.text_collapse_9cf188), tint = Color.White)
@@ -403,6 +411,8 @@ private fun ImmersiveLyrics(source: Lyrics, song: Song, positionSec: Float, play
     }
     val lyrics = heard?.takeIf { it.first === source && it.second === vocals }?.third ?: estimate
     val lines = lyrics.lines
+    val translation = rememberTranslation(source)
+    val translated = (translation as? LyricsTranslation.Ready)?.lines?.takeIf { it.size == lines.size }
     val clock = rememberLyricsClock(positionSec, playing && mode != LyricsSync.LINE)
     val current by remember(lyrics) {
         derivedStateOf { if (lyrics.synced) lines.indexOfLast { it.startMs >= 0 && it.startMs <= clock.longValue } else -1 }
@@ -469,28 +479,47 @@ private fun ImmersiveLyrics(source: Lyrics, song: Song, positionSec: Float, play
                 val text = if (mode != LyricsSync.LINE && active && !browsing && line.words.isNotEmpty())
                     karaoke(line.displayText, line.charFill(clock.longValue), alpha)
                 else AnnotatedString(line.displayText.ifBlank { "•••" })
-                Text(text,
-                    onTextLayout = { textLayout = it },
-                    color = Color.White.copy(alpha = alpha), fontSize = if (compact) 22.sp else 30.sp,
-                    lineHeight = if (compact) 29.sp else 38.sp,
-                    fontWeight = FontWeight.Bold, letterSpacing = (-.5).sp,
-                    modifier = Modifier.fillMaxWidth().graphicsLayer {
-                        scaleX = scale; scaleY = scale; transformOrigin = TransformOrigin(0f, .5f)
-                    }.blur(soften.dp).semantics {
-                        selected = active
-                        if (seekable) onClick { seekLine(); true }
-                    }.padding(vertical = 6.dp).pointerInput(seekable) {
-                        detectTapGestures { point ->
-                            val layout = textLayout
-                            val line = layout?.getLineForVerticalPosition(point.y)
-                            val onText = layout != null && line != null &&
-                                point.y >= layout.getLineTop(line) && point.y < layout.getLineBottom(line) &&
-                                point.x >= layout.getLineLeft(line) && point.x < layout.getLineRight(line)
-                            if (onText && seekable) seekLine() else backgroundTap()
-                        }
-                    },
-                )
+                val meaning = translated?.getOrNull(index)
+                Column(Modifier.fillMaxWidth().graphicsLayer {
+                    scaleX = scale; scaleY = scale; transformOrigin = TransformOrigin(0f, .5f)
+                }.blur(soften.dp).semantics(mergeDescendants = true) {
+                    selected = active
+                    if (seekable) onClick { seekLine(); true }
+                }) {
+                    Text(text,
+                        onTextLayout = { textLayout = it },
+                        color = Color.White.copy(alpha = alpha), fontSize = if (compact) 22.sp else 30.sp,
+                        lineHeight = if (compact) 29.sp else 38.sp,
+                        fontWeight = FontWeight.Bold, letterSpacing = (-.5).sp,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp).pointerInput(seekable) {
+                            detectTapGestures { point ->
+                                val layout = textLayout
+                                val line = layout?.getLineForVerticalPosition(point.y)
+                                val onText = layout != null && line != null &&
+                                    point.y >= layout.getLineTop(line) && point.y < layout.getLineBottom(line) &&
+                                    point.x >= layout.getLineLeft(line) && point.x < layout.getLineRight(line)
+                                if (onText && seekable) seekLine() else backgroundTap()
+                            }
+                        },
+                    )
+                    if (meaning != null) Text(meaning,
+                        color = Color.White.copy(alpha = alpha * .6f), fontSize = if (compact) 14.sp else 17.sp,
+                        lineHeight = if (compact) 19.sp else 23.sp, fontWeight = FontWeight.Medium,
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp).pointerInput(seekable) {
+                            detectTapGestures { if (seekable) seekLine() else backgroundTap() }
+                        },
+                    )
+                }
             }
+        }
+        val pending = translation as? LyricsTranslation.Pending
+        if (pending != null) {
+            val language = java.util.Locale.forLanguageTag(pending.language)
+                .getDisplayLanguage(com.aurora.music.localization.AppStrings.context.resources.configuration.locales[0])
+            Text(appString(if (pending.needsWifi) R.string.lyrics_translate_wifi else R.string.lyrics_translate_downloading, language),
+                color = Color.White.copy(alpha = .8f), fontSize = 12.sp, fontWeight = FontWeight.Medium,
+                modifier = Modifier.align(Alignment.TopCenter).padding(top = 8.dp).clip(CircleShape)
+                    .background(Color.Black.copy(alpha = .4f)).padding(horizontal = 14.dp, vertical = 7.dp))
         }
         androidx.compose.animation.AnimatedVisibility(browsing && lyrics.synced,
             modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp)) {
@@ -501,6 +530,18 @@ private fun ImmersiveLyrics(source: Lyrics, song: Song, positionSec: Float, play
                     .padding(horizontal = 20.dp, vertical = 14.dp))
         }
     }
+}
+
+@Composable
+private fun rememberTranslation(lyrics: Lyrics): LyricsTranslation? {
+    val enabled = com.aurora.music.ui.theme.LocalUiPrefs.current.lyricsTranslate
+    val translator = (LocalContext.current.applicationContext as AuroraApplication).container.lyricsTranslator
+    val target = com.aurora.music.localization.AppStrings.context.resources.configuration.locales[0].language
+    val translation by produceState<LyricsTranslation?>(null, lyrics, enabled, target) {
+        value = null
+        if (enabled) translator.translate(lyrics.lines.map { it.displayText }, target).collect { value = it }
+    }
+    return translation
 }
 
 // only songs without real word timing are analyzed; the estimate shows until the result arrives

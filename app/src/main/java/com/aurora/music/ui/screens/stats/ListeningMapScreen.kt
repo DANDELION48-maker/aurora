@@ -11,13 +11,16 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DeleteForever
@@ -127,18 +130,21 @@ fun ListeningMapScreen(contentPadding: PaddingValues, onBack: () -> Unit, songId
             }
         }
         if (songId == null) PeriodPicker(window) { window = it; selected = null }
-        Box(Modifier.fillMaxWidth().weight(1f)) {
+        // the map view paints whole tiles past its edges, so it has to be clipped
+        Box(Modifier.fillMaxWidth().weight(1f).padding(horizontal = 12.dp).clip(RoundedCornerShape(20.dp))) {
             OsmMap(spots, focus?.key, highlighted?.id) { selected = it }
             if (plays != null && spots.isEmpty()) Text(appString(R.string.map_empty),
                 Modifier.align(Alignment.Center).clip(CircleShape).background(MaterialTheme.colorScheme.surface).padding(horizontal = 16.dp, vertical = 10.dp),
                 style = MaterialTheme.typography.bodyMedium)
         }
         val listed = focus?.plays ?: if (songId != null) plays.orEmpty().sortedByDescending { it.startedAt } else emptyList()
+        Spacer(Modifier.height(4.dp))
+        if (listed.isEmpty() && spots.isNotEmpty()) Text(appString(R.string.map_tap_hint), Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+            style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         if (listed.isNotEmpty()) {
-            Text(appString(R.string.map_plays_here, listed.size), Modifier.padding(start = 20.dp, top = 12.dp, bottom = 4.dp),
+            Text(appString(R.string.map_plays_here, listed.size), Modifier.padding(start = 20.dp, top = 8.dp, bottom = 4.dp),
                 style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-            LazyColumn(Modifier.fillMaxWidth().heightIn(max = 240.dp),
-                contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding() + 12.dp)) {
+            LazyColumn(Modifier.fillMaxWidth().heightIn(max = 240.dp), contentPadding = PaddingValues(bottom = 4.dp)) {
                 items(listed, key = { it.id }) { play ->
                     Row(Modifier.fillMaxWidth().clickable {
                         selected = spots.firstOrNull { s -> s.plays.any { it.id == play.id } }?.key
@@ -155,6 +161,7 @@ fun ListeningMapScreen(contentPadding: PaddingValues, onBack: () -> Unit, songId
                 }
             }
         }
+        Spacer(Modifier.height(contentPadding.calculateBottomPadding()))
     }
     if (confirmDelete) AlertDialog(
         onDismissRequest = { confirmDelete = false },
@@ -229,7 +236,7 @@ private fun OsmMap(spots: List<Spot>, focus: Pair<Long, Long>?, highlight: Strin
         }
         val target = spots.firstOrNull { it.key == focus }
         when {
-            target != null && memo.focused != focus -> view.controller.animateTo(target.point, maxOf(view.zoomLevelDouble, 16.0), 400L)
+            target != null && memo.focused != focus -> view.post { view.controller.animateTo(target.point, maxOf(view.zoomLevelDouble, 16.0), 400L) }
             memo.framed != spots && spots.size == 1 -> view.controller.setCenter(spots.first().point).also { view.controller.setZoom(16.0) }
             memo.framed != spots && spots.size > 1 -> view.post {
                 view.zoomToBoundingBox(BoundingBox.fromGeoPointsSafe(spots.map { it.point }).increaseByScale(1.3f), false)

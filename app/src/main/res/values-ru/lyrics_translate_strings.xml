@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="map_tap_hint">Нажмите на точку, чтобы увидеть, что там играло.</string>
+    <string name="lyrics_translate">Переводить тексты песен</string>
+    <string name="lyrics_translate_desc">Показывает под каждой строкой небольшой перевод на язык приложения. Перевод выполняется на этом телефоне; каждый языковой пакет (около 30 МБ) загружается один раз по Wi-Fi.</string>
+    <string name="lyrics_translate_downloading">Загрузка языкового пакета (%1$s)…</string>
+    <string name="lyrics_translate_wifi">Подключитесь к Wi-Fi, чтобы загрузить языковой пакет (%1$s)</string>
+</resources>

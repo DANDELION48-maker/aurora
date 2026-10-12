@@ -278,6 +278,8 @@ class AppContainer(context: Context) {
 
     val vocalAnalysis = VocalAnalysis(appContext) { !offlineToggle && networkUp && onWifi && !dataSaver }
 
+    val lyricsTranslator = LyricsTranslator { !offlineToggle && networkUp && onWifi && !dataSaver }
+
     // 0 = system default
     val preferredAudioDeviceId = MutableStateFlow(0)
 

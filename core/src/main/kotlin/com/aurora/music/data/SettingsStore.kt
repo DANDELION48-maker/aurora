@@ -114,6 +114,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
             tabletPlayerSplit = tabletValue(p, TabletSetting.PLAYER_SPLIT),
             navLayout = p[Keys.UI_NAV_LAYOUT] ?: "",
             lyricsSync = (p[Keys.UI_LYRICS_SYNC] ?: LyricsSync.WORD).coerceIn(LyricsSync.LINE, LyricsSync.VOCALS),
+            lyricsTranslate = p[Keys.UI_LYRICS_TRANSLATE] ?: false,
         )
     }
 
@@ -1368,6 +1369,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     suspend fun setCornerStyle(v: Int) = dataStore.edit { it[Keys.UI_CORNER_STYLE] = v }
     suspend fun setPlayerSeekStyle(v: Int) = dataStore.edit { it[Keys.UI_PLAYER_SEEK] = v }
     suspend fun setLyricsSync(v: Int) = dataStore.edit { it[Keys.UI_LYRICS_SYNC] = v }
+    suspend fun setLyricsTranslate(v: Boolean) = dataStore.edit { it[Keys.UI_LYRICS_TRANSLATE] = v }
     suspend fun setPlayerWaveBars(v: Int) = dataStore.edit { it[Keys.UI_PLAYER_WAVE_BARS] = v }
     suspend fun setPlayerArtSize(v: Float) = dataStore.edit { it[Keys.UI_PLAYER_ART] = v }
     suspend fun setPlayerGradient(v: Float) = dataStore.edit { it[Keys.UI_PLAYER_GRADIENT] = v }

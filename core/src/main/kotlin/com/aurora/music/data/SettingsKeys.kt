@@ -158,6 +158,7 @@ internal object SettingsKeys {
     val UI_CORNER_STYLE = intPreferencesKey("ui_corner_style")
     val UI_PLAYER_SEEK = intPreferencesKey("ui_player_seek")
     val UI_LYRICS_SYNC = intPreferencesKey("ui_lyrics_sync")
+    val UI_LYRICS_TRANSLATE = booleanPreferencesKey("ui_lyrics_translate")
     val UI_PLAYER_WAVE_BARS = intPreferencesKey("ui_player_wave_bars")
     val UI_PLAYER_ART = floatPreferencesKey("ui_player_art")
     val UI_PLAYER_GRADIENT = floatPreferencesKey("ui_player_gradient")
