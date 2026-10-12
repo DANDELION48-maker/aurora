@@ -51,11 +51,11 @@ fun styleColorScheme(style: Int, dark: Boolean): ColorScheme {
             Color(0xFF355B76), Color(0xFF005B95), Color(0xFF385DAC), Color(0xFF6C9DBD),
         )
         ThemeStyle.GLASS -> if (dark) listOf(
-            Color(0xFF101426), Color(0xFF1D253D), Color(0xFF303B57), Color(0xFFF5F6FF),
-            Color(0xFFCED3E9), Color(0xFFD4C6FF), Color(0xFF9DE5DF), Color(0xFF747F9D),
+            Color(0xFF04060C), Color(0xFF1C1C1E), Color(0xFF2C2C2E), Color(0xFFFFFFFF),
+            Color(0xFF98989F), Color(0xFF0A84FF), Color(0xFF64D2FF), Color(0xFF38383A),
         ) else listOf(
-            Color(0xFFEFF2FB), Color(0xFFFCFDFF), Color(0xFFE0E6F4), Color(0xFF222A44),
-            Color(0xFF505E7B), Color(0xFF5D42A4), Color(0xFF216D72), Color(0xFF99A8C4),
+            Color(0xFFF2F2F7), Color(0xFFFFFFFF), Color(0xFFE5E5EA), Color(0xFF000000),
+            Color(0xFF6C6C70), Color(0xFF007AFF), Color(0xFF32ADE6), Color(0xFFC6C6C8),
         )
         else -> if (dark) listOf(
             DarkBackground, DarkSurface, DarkSurfaceElevated, TextPrimaryDark,
@@ -71,7 +71,7 @@ fun styleColorScheme(style: Int, dark: Boolean): ColorScheme {
     val tertiary = palette[6]
     val outline = palette[7]
     val container = lerp(surface, accent, if (dark) 0.23f else 0.13f)
-    val onAccent = if (dark) background else Color.White
+    val onAccent = if (dark && style != ThemeStyle.GLASS) background else Color.White
     return base.copy(
         primary = accent, onPrimary = onAccent,
         primaryContainer = container, onPrimaryContainer = text,
@@ -100,13 +100,13 @@ fun Modifier.auroraPanel(
     emphasized: Boolean = false,
 ): Modifier {
     val style = LocalUiPrefs.current.themeStyle
+    if (style == ThemeStyle.GLASS) return glassPanel(shape, emphasized)
     val colors = MaterialTheme.colorScheme
     val dark = colors.background.luminance() < 0.3f
     val fill = colors.surfaceContainerHigh
     val edge = when (style) {
         ThemeStyle.RETRO -> colors.outline.copy(alpha = 0.75f)
         ThemeStyle.AERO -> colors.primary.copy(alpha = if (dark) 0.48f else 0.36f)
-        ThemeStyle.GLASS -> if (dark) Color.White.copy(alpha = 0.24f) else Color.White.copy(alpha = 0.94f)
         else -> colors.onSurface.copy(alpha = 0.06f)
     }
     val brush = when (style) {
@@ -117,16 +117,9 @@ fun Modifier.auroraPanel(
             0.5f to fill,
             1f to lerp(fill, colors.primary, 0.08f),
         )
-        ThemeStyle.GLASS -> Brush.linearGradient(listOf(
-            lerp(fill, Color.White, if (dark) 0.12f else 0.65f).copy(alpha = 0.94f),
-            fill.copy(alpha = 0.88f),
-            lerp(fill, colors.tertiary, 0.10f).copy(alpha = 0.96f),
-        ))
         else -> Brush.verticalGradient(listOf(fill.copy(alpha = 0.96f), fill.copy(alpha = 0.96f)))
     }
     return this.clip(shape)
-        // Floating controls sit over scrolling text; the shine must not reveal that text.
-        .then(if (emphasized && style == ThemeStyle.GLASS) Modifier.background(fill) else Modifier)
         .background(brush)
         .border(if (emphasized && style == ThemeStyle.RETRO) 1.5.dp else 1.dp, edge, shape)
 }
@@ -166,11 +159,30 @@ fun Modifier.auroraBackdrop(): Modifier {
                     drawLine(Color.White.copy(alpha = if (dark) 0.045f else 0.22f), Offset(w * 1.2f, 0f), Offset(-w * 0.4f, h), w * 0.22f)
                     drawLine(Color.White.copy(alpha = if (dark) 0.04f else 0.18f), Offset(w * 1.7f, 0f), Offset(w * 0.1f, h), w * 0.08f)
                 }
+                ThemeStyle.GLASS -> drawGlassBackdrop(colors.primary, colors.tertiary, dark)
                 else -> {
                     drawRect(topGlow)
                     drawRect(lowerGlow)
                 }
             }
         }
+    }
+}
+
+// deep wallpaper-like glows for the glass to bend and pick colour up from
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawGlassBackdrop(primary: Color, tertiary: Color, dark: Boolean) {
+    val w = size.width
+    val h = size.height
+    fun glow(color: Color, alpha: Float, x: Float, y: Float, r: Float) = drawRect(Brush.radialGradient(
+        listOf(color.copy(alpha = alpha), color.copy(alpha = alpha * .35f), Color.Transparent), Offset(w * x, h * y), w * r))
+    if (dark) {
+        glow(Color(0xFF0B3BB8), .55f, .95f, .78f, 1.25f)
+        glow(tertiary, .32f, .55f, 1.02f, .8f)
+        glow(primary, .26f, .1f, .55f, .7f)
+        glow(Color(0xFF2B1C7A), .3f, 1f, .12f, .9f)
+    } else {
+        glow(primary, .14f, .95f, .85f, 1.1f)
+        glow(tertiary, .16f, .1f, .95f, .9f)
+        glow(Color(0xFFFF6FB1), .08f, .9f, .08f, .9f)
     }
 }

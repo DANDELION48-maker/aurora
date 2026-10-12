@@ -115,6 +115,8 @@ dependencies {
     implementation(libs.coil.gif)
     implementation("androidx.exifinterface:exifinterface:1.3.7")
     implementation("org.osmdroid:osmdroid-android:6.1.20")
+    implementation("io.github.kyant0:backdrop:1.0.6")
+    implementation("io.github.kyant0:shapes:1.2.0")
     implementation("com.google.mlkit:translate:17.0.3")
     implementation("com.google.mlkit:language-id:17.0.6")
     implementation(libs.lottie.compose)

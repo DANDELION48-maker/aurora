@@ -103,7 +103,8 @@ fun SettingsScreen(
     val listState = rememberLazyListState()
     val appUpdate by container.appUpdater.state.collectAsStateWithLifecycle()
     androidx.compose.runtime.LaunchedEffect(container) { container.appUpdater.checkForUpdate() }
-    val downloads by container.downloadManager.downloads.collectAsStateWithLifecycle()
+    val storage by container.storage.usage.collectAsStateWithLifecycle()
+    androidx.compose.runtime.LaunchedEffect(container) { container.storage.refresh() }
     val signalPath by container.signalPath.collectAsStateWithLifecycle()
     val alarmSummary = alarmSettingsSummary()
     val signalSummary = if (!signalPath.active) appString(R.string.text_nothing_playing_13ae37) else buildList {
@@ -167,7 +168,8 @@ fun SettingsScreen(
                     SettingsRowDivider()
                     SettingsDestinationRow(Icons.Filled.MergeType, SettingsDestinations.sources, onClick = onOpenSources)
                     SettingsRowDivider()
-                    SettingsDestinationRow(Icons.Filled.Download, SettingsDestinations.storage, appString(R.string.text_downloaded_quality_and_offline_files_4bd602, (downloads.size)), onClick = onOpenDownloads)
+                    SettingsDestinationRow(Icons.Filled.Download, SettingsDestinations.storage,
+                        if (storage.ready) appString(R.string.storage_summary, storageSize(storage.total)) else SettingsDestinations.storage.description, onClick = onOpenDownloads)
                     SettingsRowDivider()
                     SettingsDestinationRow(Icons.Filled.AutoAwesome, SettingsDestinations.analysis, onClick = onOpenSonic)
                 }

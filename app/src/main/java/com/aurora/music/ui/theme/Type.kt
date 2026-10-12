@@ -44,7 +44,7 @@ fun auroraFontFamily(typeface: Int = AppTypeface.THEME_DEFAULT, style: Int = The
     AppTypeface.MANROPE -> Manrope
     else -> when (style) {
         ThemeStyle.RETRO -> FontFamily.Monospace
-        ThemeStyle.AERO -> FontFamily.SansSerif
+        ThemeStyle.AERO, ThemeStyle.GLASS -> FontFamily.SansSerif
         else -> DmSans
     }
 }
@@ -55,12 +55,17 @@ fun auroraTypography(scale: Float = 1f, style: Int = ThemeStyle.AURORA, typeface
     fun t(weight: FontWeight, size: Float, line: Float, letter: Float = 0f) = TextStyle(
         fontFamily = family,
         fontWeight = when {
-            style == ThemeStyle.GLASS && size >= 22f -> FontWeight.Light
+            style == ThemeStyle.GLASS && size >= 22f -> FontWeight.Bold
+            style == ThemeStyle.GLASS && weight == FontWeight.Medium -> FontWeight.SemiBold
             style == ThemeStyle.AERO && size >= 22f -> FontWeight.Normal
             else -> weight
         },
         fontSize = (size * s).sp, lineHeight = (line * s).sp,
-        letterSpacing = (if (style == ThemeStyle.RETRO) 0f else letter).sp,
+        letterSpacing = when {
+            style == ThemeStyle.RETRO -> 0f
+            style == ThemeStyle.GLASS && size >= 22f -> -0.02f * size
+            else -> letter
+        }.sp,
     )
     return Typography(
         displayLarge = t(FontWeight.Black, 40f, 46f, -0.5f),

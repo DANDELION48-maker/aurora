@@ -38,6 +38,7 @@ fun IntegrationsSettingsScreen(
     onOpenDiscord: () -> Unit,
     onOpenArtistInfo: () -> Unit,
     onOpenAcoustId: () -> Unit,
+    onOpenStorage: () -> Unit = {},
 ) {
     val store = appContainer().settingsStore
     val lrclib by store.lrclibEnabled.collectAsStateWithLifecycle(initialValue = true)
@@ -68,7 +69,7 @@ fun IntegrationsSettingsScreen(
                 IntegrationRow(Icons.Filled.Fingerprint, "AcoustID", appString(R.string.text_identify_tracks_from_their_audio_51a42b), if (acoustId.isBlank()) appString(R.string.text_not_set_93039e) else appString(R.string.text_ready_20c7c5), onOpenAcoustId)
             }
         }
-        item { ArtworkLookupSettings() }
+        item { ArtworkLookupSettings(onOpenStorage) }
         item { AnimatedCoverSettings() }
         item {
             Text(

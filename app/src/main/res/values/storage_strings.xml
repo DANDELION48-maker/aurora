@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="storage_description">Downloads, caches, analysis and history</string>
+    <string name="storage_summary">%1$s used · downloads, caches and history</string>
+    <string name="storage_used">Aurora uses %1$s</string>
+    <string name="storage_free">%1$s free on this device</string>
+    <string name="storage_measuring">Measuring storage…</string>
+    <string name="storage_part_downloads">Downloads</string>
+    <string name="storage_part_caches">Caches</string>
+    <string name="storage_part_analysis">Analysis &amp; models</string>
+    <string name="storage_part_other">App data</string>
+    <string name="storage_clear_caches">Clear all caches</string>
+    <string name="storage_clear_caches_title">Clear all caches?</string>
+    <string name="storage_clear_caches_message">This removes the audio cache, cover and image caches, vocal timing, separated stems, artist info and temporary files. Downloads, analysis, history and settings stay. Caches fill up again as you use Aurora.</string>
+    <string name="storage_caches_cleared">Caches cleared</string>
+    <string name="storage_stems_busy">Vocal separation is running, so its files were kept</string>
+    <string name="storage_cleared">Cleared</string>
+    <string name="storage_clear_failed">Couldn’t clear this. Try again.</string>
+    <string name="storage_clear">Clear</string>
+    <string name="storage_delete">Delete</string>
+    <string name="storage_remove">Remove</string>
+    <string name="storage_remove_all">Remove all</string>
+    <string name="storage_empty">Empty</string>
+
+    <string name="storage_downloads_title">Downloaded music</string>
+    <string name="storage_downloads_none">Nothing downloaded yet</string>
+    <string name="storage_remove_downloads_title">Remove all downloads?</string>
+    <string name="storage_remove_downloads_message">Every downloaded track and collection is deleted from this device, for all of your sources. You can download them again later.</string>
+    <string name="storage_remove_source_title">Remove downloads from %1$s?</string>
+    <string name="storage_remove_source_message">Tracks downloaded from this source are deleted from this device. Downloads from your other sources stay.</string>
+    <string name="storage_source_unknown">Other sources</string>
+    <string name="storage_youtube_note">Downloads from YouTube are saved to Music/Aurora on your phone and are managed by your file manager.</string>
+
+    <string name="storage_section_images">Covers &amp; images</string>
+    <string name="storage_cover_cache">Cover lookup cache</string>
+    <string name="storage_cover_cache_detail">%1$s of %2$s · found covers stay available offline</string>
+    <string name="storage_image_cache">Image cache</string>
+    <string name="storage_image_cache_detail">Artwork and photos already shown in the app</string>
+    <string name="storage_cover_cache_moved">Cover cache</string>
+    <string name="storage_cover_cache_moved_detail">Size and clearing are in Downloads &amp; Storage</string>
+
+    <string name="storage_section_analysis">Analysis &amp; models</string>
+    <string name="storage_sonic">Sonic analysis</string>
+    <string name="storage_sonic_clear_title">Clear sonic analysis?</string>
+    <string name="storage_sonic_clear_message">Sonic radio, Auto DJ and automatic mixes rely on it, so tracks are analysed again as you play or scan. Large libraries can take a while.</string>
+    <string name="storage_vocals">Vocal timing</string>
+    <string name="storage_vocals_detail">Made when lyrics follow the vocals</string>
+    <string name="storage_stem_model">Vocal separation model</string>
+    <string name="storage_stem_model_ready">Downloaded again the next time you separate a track</string>
+    <string name="storage_stem_model_missing">Not downloaded</string>
+    <string name="storage_stems">Separated stems</string>
+    <string name="storage_stems_detail">Vocal and backing tracks made for mixes</string>
+    <string name="storage_stems_clear_title">Clear separated stems?</string>
+    <string name="storage_stems_clear_message">Mixes that use vocals or backing tracks will separate those songs again when you open them.</string>
+    <string name="storage_model_delete_title">Delete the vocal separation model?</string>
+    <string name="storage_model_delete_message">The model (about 64 MB) downloads again the next time you separate vocals in a mix.</string>
+    <string name="storage_replaygain">ReplayGain scan</string>
+    <string name="storage_replaygain_clear_title">Clear ReplayGain results?</string>
+    <string name="storage_replaygain_clear_message">Volume leveling for on-device files stops until you scan again.</string>
+
+    <string name="storage_section_translation">Lyrics translation</string>
+    <string name="storage_language_pack">Language pack</string>
+    <string name="storage_language_none">No language packs downloaded</string>
+    <string name="storage_language_delete_title">Delete the %1$s language pack?</string>
+    <string name="storage_language_delete_message">It downloads again over Wi-Fi the next time lyrics need it.</string>
+
+    <string name="storage_section_history">History &amp; privacy</string>
+    <string name="storage_private_detail">Pause play history, detailed statistics and scrobbling</string>
+    <string name="storage_play_history">Play history</string>
+    <string name="storage_play_history_clear_title">Clear play history?</string>
+    <string name="storage_play_history_clear_message">Your stats, recaps, streaks and smart playlists start over. Plays already sent to your server, Last.fm or ListenBrainz are not affected.</string>
+    <string name="storage_save_searches">Save search history</string>
+    <string name="storage_save_searches_detail">Show your recent searches on the search screen</string>
+    <string name="storage_search_history">Search history</string>
+    <string name="storage_insights_off">Not recording</string>
+    <string name="storage_places_detail">Saved on this device only</string>
+    <string name="storage_levels">Listening level history</string>
+    <string name="storage_levels_clear_title">Clear listening level history?</string>
+    <string name="storage_levels_clear_message">Saved level samples are removed. Your headphone calibrations stay.</string>
+    <string name="storage_artist_info_clear_title">Clear artist information?</string>
+    <string name="storage_artist_info_clear_message">Biographies and photos are looked up again the next time you open an artist.</string>
+
+    <string name="storage_section_other">Other</string>
+    <string name="storage_temporary">Temporary files</string>
+    <string name="storage_temporary_detail">Leftovers from imports, conversions and transfers</string>
+
+    <plurals name="storage_tracks_analysed">
+        <item quantity="one">%1$d track analysed</item>
+        <item quantity="other">%1$d tracks analysed</item>
+    </plurals>
+    <plurals name="storage_plays">
+        <item quantity="one">%1$d play</item>
+        <item quantity="other">%1$d plays</item>
+    </plurals>
+    <plurals name="storage_searches">
+        <item quantity="one">%1$d recent search</item>
+        <item quantity="other">%1$d recent searches</item>
+    </plurals>
+    <plurals name="storage_level_samples">
+        <item quantity="one">%1$d saved sample</item>
+        <item quantity="other">%1$d saved samples</item>
+    </plurals>
+    <plurals name="storage_artists">
+        <item quantity="one">%1$d artist saved</item>
+        <item quantity="other">%1$d artists saved</item>
+    </plurals>
+</resources>

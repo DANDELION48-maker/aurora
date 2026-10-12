@@ -667,6 +667,7 @@ fun AuroraApp() {
                         onOpenDiscord = { nav.navigate(Routes.SETTINGS_INTEGRATION_DISCORD) },
                         onOpenArtistInfo = { nav.navigate(Routes.SETTINGS_INTEGRATION_ARTIST_INFO) },
                         onOpenAcoustId = { nav.navigate(Routes.SETTINGS_INTEGRATION_ACOUSTID) },
+                        onOpenStorage = { nav.navigate(Routes.SETTINGS_STORAGE) { launchSingleTop = true } },
                     )
                 }
                 composable(Routes.SETTINGS_INTEGRATION_LYRICS) {

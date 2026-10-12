@@ -16,7 +16,7 @@ data class SettingsDestination(val route: String, @androidx.annotation.StringRes
 object SettingsDestinations {
     val accounts = SettingsDestination(Routes.SETTINGS_ACCOUNTS, R.string.text_servers_accounts_59e105, R.string.text_switch_between_saved_logins_dfa5ef)
     val sources = SettingsDestination(Routes.SETTINGS_SOURCES, R.string.text_library_sources_101221, R.string.text_source_priority_and_unified_library_5d9b2c)
-    val storage = SettingsDestination(Routes.SETTINGS_STORAGE, R.string.text_downloads_storage_f7c580, R.string.text_download_quality_and_offline_files_157e78)
+    val storage = SettingsDestination(Routes.SETTINGS_STORAGE, R.string.text_downloads_storage_f7c580, R.string.storage_description)
     val analysis = SettingsDestination(Routes.SETTINGS_SONIC, R.string.text_library_analysis_discovery_211d17, R.string.text_library_scans_sonic_radio_and_auto_dj_dbb04a)
     val playback = SettingsDestination(Routes.SETTINGS_PLAYBACK, R.string.text_playback_quality_144407, R.string.text_streaming_quality_crossfade_gapless_and_speed_602d35)
     val output = SettingsDestination(Routes.SETTINGS_OUTPUT, R.string.text_audio_output_2b89cc, R.string.text_output_device_hi_res_and_usb_modes_58ec99)
