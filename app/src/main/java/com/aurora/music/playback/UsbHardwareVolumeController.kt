@@ -34,28 +34,35 @@ class UsbHardwareVolumeController(context: Context) {
         val hw = usb.readHardwareVolume() ?: return forget()
         state = hw
         if (hw.current == level && hw.muted == muted) return
+        val first = level == null
         level = hw.current
         muted = hw.muted
-        val max = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC).coerceAtLeast(1)
-        index = if (hw.fraction <= 0.0) 0 else Math.round(hw.fraction * max).toInt().coerceIn(1, max)
-        if (audio.getStreamVolume(AudioManager.STREAM_MUSIC) != index)
-            runCatching { audio.setStreamVolume(AudioManager.STREAM_MUSIC, index, 0) }
+        val max = maxIndex()
+        val wanted = if (hw.fraction <= 0.0) 0 else Math.round(hw.fraction * max).toInt().coerceIn(1, max)
+        val phone = audio.getStreamVolume(AudioManager.STREAM_MUSIC)
+        // first contact settles on the quieter side, android also refuses to raise a headset past its safe level
+        if (first && phone < wanted) return push(phone, max)
+        if (phone != wanted) runCatching { audio.setStreamVolume(AudioManager.STREAM_MUSIC, wanted, 0) }
+        index = audio.getStreamVolume(AudioManager.STREAM_MUSIC)
     }
 
     private fun apply() {
-        // the dac's level wins on first contact so connecting never jumps louder
-        val hw = state
-        if (level == null || hw == null) return follow()
+        if (level == null || state == null) return follow()
         val now = audio.getStreamVolume(AudioManager.STREAM_MUSIC)
-        if (now == index) return
-        val max = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC).coerceAtLeast(1)
-        if (!usb.setHardwareVolume(hw.levelFor(now.toDouble() / max), now == 0)) return forget()
-        index = now
+        if (now != index) push(now, maxIndex())
+    }
+
+    private fun push(phone: Int, max: Int) {
+        val hw = state ?: return
+        if (!usb.setHardwareVolume(hw.levelFor(phone.toDouble() / max), phone == 0)) return forget()
+        index = phone
         val after = usb.readHardwareVolume() ?: return forget()
         state = after
         level = after.current
         muted = after.muted
     }
+
+    private fun maxIndex() = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC).coerceAtLeast(1)
 
     private fun forget() {
         state = null
