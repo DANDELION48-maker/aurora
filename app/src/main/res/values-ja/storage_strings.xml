@@ -106,4 +106,5 @@
         <item quantity="one">保存したアーティスト：%1$d 人</item>
         <item quantity="other">保存したアーティスト：%1$d 人</item>
     </plurals>
+    <string name="storage_size_kb">%1$d KB</string>
 </resources>

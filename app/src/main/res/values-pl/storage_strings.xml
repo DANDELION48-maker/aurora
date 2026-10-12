@@ -116,4 +116,5 @@
         <item quantity="other">%1$d zapisanych wykonawców</item>
         <item quantity="many">%1$d zapisanych wykonawców</item>
     </plurals>
+    <string name="storage_size_kb">%1$d KB</string>
 </resources>

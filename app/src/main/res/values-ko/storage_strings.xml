@@ -106,4 +106,5 @@
         <item quantity="one">저장된 아티스트 %1$d명</item>
         <item quantity="other">저장된 아티스트 %1$d명</item>
     </plurals>
+    <string name="storage_size_kb">%1$d KB</string>
 </resources>

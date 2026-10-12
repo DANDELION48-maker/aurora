@@ -111,4 +111,5 @@
         <item quantity="other">%1$d artistes enregistrés</item>
         <item quantity="many">%1$d artistes enregistrés</item>
     </plurals>
+    <string name="storage_size_kb">%1$d Ko</string>
 </resources>

@@ -111,4 +111,5 @@
         <item quantity="other">%1$d artistas salvos</item>
         <item quantity="many">%1$d artistas salvos</item>
     </plurals>
+    <string name="storage_size_kb">%1$d KB</string>
 </resources>

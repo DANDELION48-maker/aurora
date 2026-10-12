@@ -1393,7 +1393,7 @@
     <string name="text_peak_hold_f1bbb5" formatted="false">"Tahan Puncak"</string>
     <string name="text_peak_rms_dbfs_95c5fb">"%1$s   Puncak %2$s · RMS %3$s dBFS"</string>
     <string name="text_peaking_filters_coverage_550db0">"%1$s filter peaking · cakupan %2$s–%3$s"</string>
-    <string name="text_pearlescent_surfaces_spacious_curves_soft_light_b4c29d" formatted="false">"Permukaan mutiara · lengkungan lapang · cahaya lembut"</string>
+    <string name="text_pearlescent_surfaces_spacious_curves_soft_light_b4c29d" formatted="false">"Kontrol kaca yang membiaskan cahaya · bilah tab mengambang · warna pekat"</string>
     <string name="text_permissions_d06d55" formatted="false">"Izin"</string>
     <string name="text_phase_f6371a" formatted="false">"Fase"</string>
     <string name="text_phase_is_saved_but_not_fitted_3bc04a" formatted="false">"Fase disimpan tetapi tidak disesuaikan."</string>

@@ -1393,7 +1393,7 @@
     <string name="text_peak_hold_f1bbb5" formatted="false">"Peak Hold"</string>
     <string name="text_peak_rms_dbfs_95c5fb">"%1$s   Peak %2$s · RMS %3$s dBFS"</string>
     <string name="text_peaking_filters_coverage_550db0">"%1$s peaking filters · coverage %2$s–%3$s"</string>
-    <string name="text_pearlescent_surfaces_spacious_curves_soft_light_b4c29d" formatted="false">"Pearlescent surfaces · spacious curves · soft light"</string>
+    <string name="text_pearlescent_surfaces_spacious_curves_soft_light_b4c29d" formatted="false">"Refractive glass controls · floating tab bar · deep color"</string>
     <string name="text_permissions_d06d55" formatted="false">"Permissions"</string>
     <string name="text_phase_f6371a" formatted="false">"Phase"</string>
     <string name="text_phase_is_saved_but_not_fitted_3bc04a" formatted="false">"Phase is saved but not fitted."</string>

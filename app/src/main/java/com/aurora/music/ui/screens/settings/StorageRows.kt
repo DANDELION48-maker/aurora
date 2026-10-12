@@ -1,6 +1,5 @@
 package com.aurora.music.ui.screens.settings
 
-import android.text.format.Formatter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,12 +33,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.aurora.music.R
 import com.aurora.music.data.StorageUsage
-import com.aurora.music.localization.AppStrings
 import com.aurora.music.localization.appString
 
 internal class StorageConfirm(val title: String, val message: String, val confirm: String, val action: () -> Unit)
 
-internal fun storageSize(bytes: Long): String = Formatter.formatShortFileSize(AppStrings.context, bytes.coerceAtLeast(0))
+internal fun storageSize(bytes: Long): String {
+    val value = bytes.coerceAtLeast(0)
+    return when {
+        value >= GIB -> appString(R.string.text_2f_gb_56759f).format(value / GIB.toDouble())
+        value >= MIB -> appString(R.string.text_1f_mb_ffb598).format(value / MIB.toDouble())
+        else -> appString(R.string.storage_size_kb, ((value + 1023) / 1024).toInt())
+    }
+}
+
+private const val MIB = 1024L * 1024
+private const val GIB = MIB * 1024
 
 internal fun storageDetail(bytes: Long, vararg parts: String): String =
     (listOfNotNull(storageSize(bytes).takeIf { bytes > 0 }) + parts.filter { it.isNotBlank() }).joinToString(" · ")
@@ -72,8 +80,8 @@ internal fun StorageRow(
 internal fun StorageOverview(usage: StorageUsage, clearing: Boolean, onClearCaches: () -> Unit) {
     val parts = listOf(
         Triple(appString(R.string.storage_part_downloads), usage.downloads, MaterialTheme.colorScheme.primary),
-        Triple(appString(R.string.storage_part_caches), usage.caches, MaterialTheme.colorScheme.tertiary),
-        Triple(appString(R.string.storage_part_analysis), usage.analysis, MaterialTheme.colorScheme.secondary),
+        Triple(appString(R.string.storage_part_caches), usage.caches, MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)),
+        Triple(appString(R.string.storage_part_analysis), usage.analysis, MaterialTheme.colorScheme.primary.copy(alpha = 0.32f)),
         Triple(appString(R.string.storage_part_other), usage.other, MaterialTheme.colorScheme.outline),
     )
     SettingsGroup {

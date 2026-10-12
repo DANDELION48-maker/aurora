@@ -116,4 +116,5 @@
         <item quantity="many">Сохранено %1$d исполнителей</item>
         <item quantity="other">Сохранено %1$d исполнителя</item>
     </plurals>
+    <string name="storage_size_kb">%1$d КБ</string>
 </resources>

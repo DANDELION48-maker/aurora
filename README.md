@@ -312,7 +312,7 @@ Use **JDK 21**, **Android SDK 35**, **NDK 27.0.12077973**, and **CMake 3.22.1**.
 
 For a signed release, configure your own keystore in [app/build.gradle.kts](app/build.gradle.kts), then run `:app:assembleRelease`.
 
-DM Sans, Plus Jakarta Sans, and Manrope are bundled under the SIL Open Font License. No separate font setup is needed. Choose a typeface in **Settings → Appearance**; the Aurora and Glass themes use DM Sans by default, while Retro and Aero retain their system fonts. The original licenses are available in **Settings → About → Font licenses** and [font notices](app/src/main/assets/font_licenses/README.md).
+DM Sans, Plus Jakarta Sans, and Manrope are bundled under the SIL Open Font License. No separate font setup is needed. Choose a typeface in **Settings → Appearance**; the Aurora theme uses DM Sans by default, while Liquid Glass, Retro and Aero use the system font. The original licenses are available in **Settings → About → Font licenses** and [font notices](app/src/main/assets/font_licenses/README.md).
 
 Run the unit tests and code checks with:
 

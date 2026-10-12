@@ -1393,7 +1393,7 @@
     <string name="text_peak_hold_f1bbb5" formatted="false">"\u2067پیک ہولڈ\u2069"</string>
     <string name="text_peak_rms_dbfs_95c5fb">"\u2067%1$s   پیک %2$s · RMS %3$s dBFS\u2069"</string>
     <string name="text_peaking_filters_coverage_550db0">"\u2067%1$s پیکنگ فلٹرز · کوریج %2$s–%3$s\u2069"</string>
-    <string name="text_pearlescent_surfaces_spacious_curves_soft_light_b4c29d" formatted="false">"\u2067موتی جیسی سطحیں · کشادہ خم · نرم روشنی\u2069"</string>
+    <string name="text_pearlescent_surfaces_spacious_curves_soft_light_b4c29d" formatted="false">"\u2067روشنی موڑنے والے شیشے کے کنٹرول · تیرتی ٹیب بار · گہرے رنگ\u2069"</string>
     <string name="text_permissions_d06d55" formatted="false">"\u2067اجازتیں\u2069"</string>
     <string name="text_phase_f6371a" formatted="false">"\u2067فیز\u2069"</string>
     <string name="text_phase_is_saved_but_not_fitted_3bc04a" formatted="false">"\u2067فیز محفوظ ہوتا ہے لیکن فٹ نہیں ہوتا۔\u2069"</string>

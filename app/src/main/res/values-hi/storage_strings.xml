@@ -106,4 +106,5 @@
         <item quantity="one">%1$d कलाकार सहेजा गया</item>
         <item quantity="other">%1$d कलाकार सहेजे गए</item>
     </plurals>
+    <string name="storage_size_kb">%1$d KB</string>
 </resources>

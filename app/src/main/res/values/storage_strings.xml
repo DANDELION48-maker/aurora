@@ -106,4 +106,5 @@
         <item quantity="one">%1$d artist saved</item>
         <item quantity="other">%1$d artists saved</item>
     </plurals>
+    <string name="storage_size_kb">%1$d KB</string>
 </resources>
