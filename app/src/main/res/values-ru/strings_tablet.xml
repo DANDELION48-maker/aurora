@@ -21,12 +21,12 @@
     <string name="tablet_player_split_hint">Разделитель также можно перетащить на экране воспроизведения.</string>
     <string name="tablet_reset">Сбросить макет для планшета</string>
 
-    <string name="nav_menu_title">Меню навигации</string>
-    <string name="nav_menu_summary">Выберите, что показывать в основном списке и в разделе «Ещё»</string>
+    <string name="nav_menu_title">Навигация</string>
+    <string name="nav_menu_summary">Панель вкладок и боковое меню</string>
     <string name="nav_section_main">Основное</string>
     <string name="nav_section_more">Ещё</string>
     <string name="nav_section_hidden">Не показано</string>
-    <string name="nav_menu_hint">Меняйте порядок стрелками. Откройте меню пункта, чтобы перенести его между разделами или убрать.</string>
+    <string name="nav_menu_hint">Открывается по нажатию на фото профиля, а на планшетах и компьютерах становится боковой панелью. Пункты из «Основного» видны сразу, пункты из «Ещё» лежат в папке ниже.</string>
     <string name="nav_move_up">Выше</string>
     <string name="nav_move_down">Ниже</string>
     <string name="nav_move_to_main">Перенести в основное</string>
@@ -37,10 +37,21 @@
     <string name="nav_locked">Всегда в основном</string>
     <string name="nav_simple_mode_hidden">Скрыто в простом режиме</string>
     <string name="nav_empty_section">Здесь пока пусто</string>
-    <string name="nav_reset">Сбросить меню навигации</string>
+    <string name="nav_reset">Сбросить боковое меню</string>
     <string name="nav_placement_options">Параметры размещения</string>
 
     <string name="home_empty_title">Музыки пока нет</string>
     <string name="home_empty_body">Подключите музыкальный сервер или аккаунт стримингового сервиса либо добавьте музыку на это устройство.</string>
     <string name="home_add_source">Добавить источник</string>
+    <string name="nav_tabbar_title">Панель вкладок</string>
+    <string name="nav_tabbar_hint">Панель внизу экрана. Выберите от 2 до 5 вкладок и расставьте их в любом порядке.</string>
+    <string name="nav_tabbar_rail_note">На экране такого размера используется боковая панель, поэтому панель вкладок видна только на телефонах.</string>
+    <string name="nav_tabbar_more">Вкладка «Ещё»</string>
+    <string name="nav_tabbar_more_hint">Добавляет вкладку со всем остальным</string>
+    <string name="nav_tabbar_full">Панель вкладок заполнена</string>
+    <string name="nav_tabbar_add">Добавить вкладку</string>
+    <string name="nav_tabbar_remove">Убрать вкладку</string>
+    <string name="nav_tabbar_reset">Сбросить панель вкладок</string>
+    <string name="nav_tab_locked">Всегда вкладка</string>
+    <string name="nav_sidemenu_title">Боковое меню</string>
 </resources>

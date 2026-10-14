@@ -19,12 +19,12 @@
     <string name="tablet_player_split">\u2067ابھی چل رہا ہے اسپلٹ\u2069</string>
     <string name="tablet_player_split_hint">\u2067آپ ابھی چل رہا ہے میں ڈیوائیڈر کو گھسیٹ بھی سکتے ہیں۔\u2069</string>
     <string name="tablet_reset">\u2067ٹیبلٹ لے آؤٹ ری سیٹ کریں\u2069</string>
-    <string name="nav_menu_title">\u2067نیویگیشن مینو\u2069</string>
-    <string name="nav_menu_summary">\u2067منتخب کریں کہ مرکزی فہرست میں اور مزید کے تحت کیا نظر آئے\u2069</string>
+    <string name="nav_menu_title">\u2067نیویگیشن\u2069</string>
+    <string name="nav_menu_summary">\u2067ٹیب بار اور سائیڈ مینو\u2069</string>
     <string name="nav_section_main">\u2067مرکزی\u2069</string>
     <string name="nav_section_more">\u2067مزید\u2069</string>
     <string name="nav_section_hidden">\u2067نہیں دکھائے گئے\u2069</string>
-    <string name="nav_menu_hint">\u2067آئٹمز کی ترتیب بدلنے کے لیے تیر استعمال کریں۔ کسی آئٹم کو مرکزی اور مزید کے درمیان منتقل کرنے یا ہٹانے کے لیے اس کے مینو کو تھپتھپائیں۔\u2069</string>
+    <string name="nav_menu_hint">\u2067یہ آپ کی پروفائل تصویر سے کھلتا ہے، اور ٹیبلیٹ اور کمپیوٹر پر سائیڈ بار بن جاتا ہے۔ مرکزی کے آئٹم سیدھے دکھائی دیتے ہیں؛ مزید کے آئٹم نیچے ایک فولڈر میں رہتے ہیں۔\u2069</string>
     <string name="nav_move_up">\u2067اوپر لے جائیں\u2069</string>
     <string name="nav_move_down">\u2067نیچے لے جائیں\u2069</string>
     <string name="nav_move_to_main">\u2067مرکزی میں منتقل کریں\u2069</string>
@@ -35,9 +35,20 @@
     <string name="nav_locked">\u2067ہمیشہ مرکزی میں\u2069</string>
     <string name="nav_simple_mode_hidden">\u2067سادہ موڈ آن ہونے پر چھپا رہتا ہے\u2069</string>
     <string name="nav_empty_section">\u2067ابھی یہاں کچھ نہیں ہے\u2069</string>
-    <string name="nav_reset">\u2067نیویگیشن مینو ری سیٹ کریں\u2069</string>
+    <string name="nav_reset">\u2067سائیڈ مینو ری سیٹ کریں\u2069</string>
     <string name="nav_placement_options">\u2067جگہ کے اختیارات\u2069</string>
     <string name="home_empty_title">\u2067ابھی کوئی موسیقی نہیں\u2069</string>
     <string name="home_empty_body">\u2067کوئی میوزک سرور یا اسٹریمنگ اکاؤنٹ جوڑیں، یا اس آلے پر محفوظ موسیقی شامل کریں۔\u2069</string>
     <string name="home_add_source">\u2067سورس شامل کریں\u2069</string>
+    <string name="nav_tabbar_title">\u2067ٹیب بار\u2069</string>
+    <string name="nav_tabbar_hint">\u2067اسکرین کے نیچے والی بار۔ 2 سے 5 ٹیب چنیں اور انہیں کسی بھی ترتیب میں رکھیں۔\u2069</string>
+    <string name="nav_tabbar_rail_note">\u2067اس اسکرین سائز پر سائیڈ بار استعمال ہوتا ہے، اس لیے ٹیب بار صرف فون پر دکھائی دیتی ہے۔\u2069</string>
+    <string name="nav_tabbar_more">\u2067مزید ٹیب\u2069</string>
+    <string name="nav_tabbar_more_hint">\u2067ایک ٹیب شامل کرتا ہے جس میں باقی سب کچھ ہوتا ہے\u2069</string>
+    <string name="nav_tabbar_full">\u2067ٹیب بار بھر گئی ہے\u2069</string>
+    <string name="nav_tabbar_add">\u2067ٹیب شامل کریں\u2069</string>
+    <string name="nav_tabbar_remove">\u2067ٹیب ہٹائیں\u2069</string>
+    <string name="nav_tabbar_reset">\u2067ٹیب بار ری سیٹ کریں\u2069</string>
+    <string name="nav_tab_locked">\u2067ہمیشہ ایک ٹیب\u2069</string>
+    <string name="nav_sidemenu_title">\u2067سائیڈ مینو\u2069</string>
 </resources>

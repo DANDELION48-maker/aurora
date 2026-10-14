@@ -19,12 +19,12 @@
     <string name="tablet_player_split">Divisione di In riproduzione</string>
     <string name="tablet_player_split_hint">Puoi anche trascinare il divisore in In riproduzione.</string>
     <string name="tablet_reset">Reimposta layout tablet</string>
-    <string name="nav_menu_title">Menu di navigazione</string>
-    <string name="nav_menu_summary">Scegli cosa compare nell\'elenco principale e in Altro</string>
+    <string name="nav_menu_title">Navigazione</string>
+    <string name="nav_menu_summary">Barra delle schede e menu laterale</string>
     <string name="nav_section_main">Principale</string>
     <string name="nav_section_more">Altro</string>
     <string name="nav_section_hidden">Non mostrato</string>
-    <string name="nav_menu_hint">Usa le frecce per riordinare le voci. Tocca il menu di una voce per spostarla tra Principale e Altro, o per rimuoverla.</string>
+    <string name="nav_menu_hint">Si apre dalla tua immagine del profilo e diventa la barra laterale su tablet e computer. Gli elementi di Principale sono elencati direttamente; quelli di Altro stanno in una cartella sotto.</string>
     <string name="nav_move_up">Sposta su</string>
     <string name="nav_move_down">Sposta giù</string>
     <string name="nav_move_to_main">Sposta in Principale</string>
@@ -35,9 +35,20 @@
     <string name="nav_locked">Sempre in Principale</string>
     <string name="nav_simple_mode_hidden">Nascosto quando la Modalità semplice è attiva</string>
     <string name="nav_empty_section">Ancora niente qui</string>
-    <string name="nav_reset">Reimposta menu di navigazione</string>
+    <string name="nav_reset">Reimposta menu laterale</string>
     <string name="nav_placement_options">Opzioni di posizionamento</string>
     <string name="home_empty_title">Ancora nessuna musica</string>
     <string name="home_empty_body">Collega un server musicale o un account di streaming, oppure aggiungi la musica salvata su questo dispositivo.</string>
     <string name="home_add_source">Aggiungi sorgente</string>
+    <string name="nav_tabbar_title">Barra delle schede</string>
+    <string name="nav_tabbar_hint">La barra nella parte inferiore dello schermo. Scegli da 2 a 5 schede e mettile nell\'ordine che preferisci.</string>
+    <string name="nav_tabbar_rail_note">Con queste dimensioni dello schermo si usa la barra laterale, quindi la barra delle schede appare solo sui telefoni.</string>
+    <string name="nav_tabbar_more">Scheda Altro</string>
+    <string name="nav_tabbar_more_hint">Aggiunge una scheda che elenca tutto il resto</string>
+    <string name="nav_tabbar_full">La barra delle schede è piena</string>
+    <string name="nav_tabbar_add">Aggiungi scheda</string>
+    <string name="nav_tabbar_remove">Rimuovi scheda</string>
+    <string name="nav_tabbar_reset">Reimposta barra delle schede</string>
+    <string name="nav_tab_locked">Sempre una scheda</string>
+    <string name="nav_sidemenu_title">Menu laterale</string>
 </resources>

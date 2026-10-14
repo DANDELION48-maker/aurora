@@ -19,12 +19,12 @@
     <string name="tablet_player_split">지금 재생 중 분할</string>
     <string name="tablet_player_split_hint">지금 재생 중 화면에서 구분선을 끌 수도 있습니다.</string>
     <string name="tablet_reset">태블릿 레이아웃 초기화</string>
-    <string name="nav_menu_title">탐색 메뉴</string>
-    <string name="nav_menu_summary">기본 목록과 더보기에 표시할 항목 선택</string>
+    <string name="nav_menu_title">탐색</string>
+    <string name="nav_menu_summary">탭 바와 사이드 메뉴</string>
     <string name="nav_section_main">기본</string>
     <string name="nav_section_more">더보기</string>
     <string name="nav_section_hidden">표시 안 함</string>
-    <string name="nav_menu_hint">화살표로 항목 순서를 바꾸세요. 항목의 메뉴를 탭하면 기본과 더보기 사이로 옮기거나 제거할 수 있습니다.</string>
+    <string name="nav_menu_hint">프로필 사진을 눌러 열며, 태블릿과 컴퓨터에서는 사이드바가 됩니다. 기본 항목은 바로 표시되고, 더보기 항목은 그 아래 폴더에 들어갑니다.</string>
     <string name="nav_move_up">위로 이동</string>
     <string name="nav_move_down">아래로 이동</string>
     <string name="nav_move_to_main">기본으로 이동</string>
@@ -35,9 +35,20 @@
     <string name="nav_locked">항상 기본에 표시</string>
     <string name="nav_simple_mode_hidden">간편 모드가 켜져 있는 동안 숨김</string>
     <string name="nav_empty_section">아직 아무것도 없습니다</string>
-    <string name="nav_reset">탐색 메뉴 초기화</string>
+    <string name="nav_reset">사이드 메뉴 초기화</string>
     <string name="nav_placement_options">배치 옵션</string>
     <string name="home_empty_title">아직 음악이 없습니다</string>
     <string name="home_empty_body">음악 서버나 스트리밍 계정을 연결하거나, 이 기기에 저장된 음악을 추가하세요.</string>
     <string name="home_add_source">소스 추가</string>
+    <string name="nav_tabbar_title">탭 바</string>
+    <string name="nav_tabbar_hint">화면 아래쪽 바입니다. 탭을 2~5개 골라 원하는 순서로 배치하세요.</string>
+    <string name="nav_tabbar_rail_note">이 화면 크기에서는 사이드바를 사용하므로 탭 바는 휴대폰에서만 표시됩니다.</string>
+    <string name="nav_tabbar_more">더보기 탭</string>
+    <string name="nav_tabbar_more_hint">나머지 모든 항목을 보여 주는 탭을 추가합니다</string>
+    <string name="nav_tabbar_full">탭 바가 가득 찼습니다</string>
+    <string name="nav_tabbar_add">탭 추가</string>
+    <string name="nav_tabbar_remove">탭 제거</string>
+    <string name="nav_tabbar_reset">탭 바 초기화</string>
+    <string name="nav_tab_locked">항상 탭으로 표시</string>
+    <string name="nav_sidemenu_title">사이드 메뉴</string>
 </resources>

@@ -19,12 +19,12 @@
     <string name="tablet_player_split">Partage de Lecture en cours</string>
     <string name="tablet_player_split_hint">Vous pouvez aussi faire glisser le séparateur dans Lecture en cours.</string>
     <string name="tablet_reset">Réinitialiser la disposition tablette</string>
-    <string name="nav_menu_title">Menu de navigation</string>
-    <string name="nav_menu_summary">Choisissez ce qui apparaît dans la liste principale et sous Plus</string>
+    <string name="nav_menu_title">Navigation</string>
+    <string name="nav_menu_summary">Barre d\'onglets et menu latéral</string>
     <string name="nav_section_main">Principal</string>
     <string name="nav_section_more">Plus</string>
     <string name="nav_section_hidden">Non affichés</string>
-    <string name="nav_menu_hint">Utilisez les flèches pour réorganiser les éléments. Touchez le menu d\'un élément pour le déplacer entre Principal et Plus, ou pour le retirer.</string>
+    <string name="nav_menu_hint">S\'ouvre depuis votre photo de profil et devient la barre latérale sur tablette et ordinateur. Les éléments Principal y figurent directement ; ceux de Plus sont rangés dans un dossier en dessous.</string>
     <string name="nav_move_up">Monter</string>
     <string name="nav_move_down">Descendre</string>
     <string name="nav_move_to_main">Déplacer vers Principal</string>
@@ -35,9 +35,20 @@
     <string name="nav_locked">Toujours dans Principal</string>
     <string name="nav_simple_mode_hidden">Masqué tant que le Mode simple est activé</string>
     <string name="nav_empty_section">Rien ici pour l\'instant</string>
-    <string name="nav_reset">Réinitialiser le menu de navigation</string>
+    <string name="nav_reset">Réinitialiser le menu latéral</string>
     <string name="nav_placement_options">Options d\'emplacement</string>
     <string name="home_empty_title">Pas encore de musique</string>
     <string name="home_empty_body">Connectez un serveur de musique ou un compte de streaming, ou ajoutez de la musique stockée sur cet appareil.</string>
     <string name="home_add_source">Ajouter une source</string>
+    <string name="nav_tabbar_title">Barre d\'onglets</string>
+    <string name="nav_tabbar_hint">La barre en bas de l\'écran. Choisissez de 2 à 5 onglets et placez-les dans l\'ordre de votre choix.</string>
+    <string name="nav_tabbar_rail_note">Cette taille d\'écran utilise la barre latérale, la barre d\'onglets n\'apparaît donc que sur téléphone.</string>
+    <string name="nav_tabbar_more">Onglet Plus</string>
+    <string name="nav_tabbar_more_hint">Ajoute un onglet qui liste tout le reste</string>
+    <string name="nav_tabbar_full">La barre d\'onglets est pleine</string>
+    <string name="nav_tabbar_add">Ajouter un onglet</string>
+    <string name="nav_tabbar_remove">Retirer l\'onglet</string>
+    <string name="nav_tabbar_reset">Réinitialiser la barre d\'onglets</string>
+    <string name="nav_tab_locked">Toujours un onglet</string>
+    <string name="nav_sidemenu_title">Menu latéral</string>
 </resources>

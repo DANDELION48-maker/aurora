@@ -19,12 +19,12 @@
     <string name="tablet_player_split">Podział Teraz odtwarzane</string>
     <string name="tablet_player_split_hint">Możesz też przeciągnąć separator w widoku Teraz odtwarzane.</string>
     <string name="tablet_reset">Resetuj układ tabletu</string>
-    <string name="nav_menu_title">Menu nawigacji</string>
-    <string name="nav_menu_summary">Wybierz, co pojawia się na liście głównej i w sekcji Więcej</string>
+    <string name="nav_menu_title">Nawigacja</string>
+    <string name="nav_menu_summary">Pasek kart i menu boczne</string>
     <string name="nav_section_main">Główne</string>
     <string name="nav_section_more">Więcej</string>
     <string name="nav_section_hidden">Niewyświetlane</string>
-    <string name="nav_menu_hint">Użyj strzałek, aby zmienić kolejność. Dotknij menu elementu, aby przenieść go między Głównymi a Więcej lub go usunąć.</string>
+    <string name="nav_menu_hint">Otwiera się po dotknięciu zdjęcia profilowego, a na tabletach i komputerach staje się paskiem bocznym. Elementy z sekcji Główne są widoczne od razu, a te z Więcej trafiają do folderu poniżej.</string>
     <string name="nav_move_up">Przenieś w górę</string>
     <string name="nav_move_down">Przenieś w dół</string>
     <string name="nav_move_to_main">Przenieś do Głównych</string>
@@ -35,9 +35,20 @@
     <string name="nav_locked">Zawsze w Głównych</string>
     <string name="nav_simple_mode_hidden">Ukryte, gdy włączony jest Tryb prosty</string>
     <string name="nav_empty_section">Nic tu jeszcze nie ma</string>
-    <string name="nav_reset">Resetuj menu nawigacji</string>
+    <string name="nav_reset">Resetuj menu boczne</string>
     <string name="nav_placement_options">Opcje rozmieszczenia</string>
     <string name="home_empty_title">Brak muzyki</string>
     <string name="home_empty_body">Połącz serwer muzyczny lub konto streamingowe albo dodaj muzykę zapisaną na tym urządzeniu.</string>
     <string name="home_add_source">Dodaj źródło</string>
+    <string name="nav_tabbar_title">Pasek kart</string>
+    <string name="nav_tabbar_hint">Pasek u dołu ekranu. Wybierz od 2 do 5 kart i ułóż je w dowolnej kolejności.</string>
+    <string name="nav_tabbar_rail_note">Przy tym rozmiarze ekranu używany jest pasek boczny, więc pasek kart pojawia się tylko na telefonach.</string>
+    <string name="nav_tabbar_more">Karta Więcej</string>
+    <string name="nav_tabbar_more_hint">Dodaje kartę z listą wszystkiego innego</string>
+    <string name="nav_tabbar_full">Pasek kart jest pełny</string>
+    <string name="nav_tabbar_add">Dodaj kartę</string>
+    <string name="nav_tabbar_remove">Usuń kartę</string>
+    <string name="nav_tabbar_reset">Resetuj pasek kart</string>
+    <string name="nav_tab_locked">Zawsze jako karta</string>
+    <string name="nav_sidemenu_title">Menu boczne</string>
 </resources>

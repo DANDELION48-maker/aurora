@@ -19,12 +19,12 @@
     <string name="tablet_player_split">Aufteilung der aktuellen Wiedergabe</string>
     <string name="tablet_player_split_hint">Du kannst auch den Trenner in der aktuellen Wiedergabe ziehen.</string>
     <string name="tablet_reset">Tablet-Layout zurücksetzen</string>
-    <string name="nav_menu_title">Navigationsmenü</string>
-    <string name="nav_menu_summary">Wähle, was in der Hauptliste und unter „Mehr“ erscheint</string>
+    <string name="nav_menu_title">Navigation</string>
+    <string name="nav_menu_summary">Tableiste und Seitenmenü</string>
     <string name="nav_section_main">Hauptliste</string>
     <string name="nav_section_more">Mehr</string>
     <string name="nav_section_hidden">Nicht angezeigt</string>
-    <string name="nav_menu_hint">Ordne Einträge mit den Pfeilen neu an. Tippe auf das Menü eines Eintrags, um ihn zwischen Hauptliste und „Mehr“ zu verschieben oder zu entfernen.</string>
+    <string name="nav_menu_hint">Öffnet sich über dein Profilbild und wird auf Tablets und Computern zur Seitenleiste. Einträge der Hauptliste stehen direkt darin, Einträge unter „Mehr“ in einem Ordner darunter.</string>
     <string name="nav_move_up">Nach oben</string>
     <string name="nav_move_down">Nach unten</string>
     <string name="nav_move_to_main">In Hauptliste verschieben</string>
@@ -35,9 +35,20 @@
     <string name="nav_locked">Immer in der Hauptliste</string>
     <string name="nav_simple_mode_hidden">Ausgeblendet, solange der einfache Modus aktiv ist</string>
     <string name="nav_empty_section">Hier ist noch nichts</string>
-    <string name="nav_reset">Navigationsmenü zurücksetzen</string>
+    <string name="nav_reset">Seitenmenü zurücksetzen</string>
     <string name="nav_placement_options">Platzierungsoptionen</string>
     <string name="home_empty_title">Noch keine Musik</string>
     <string name="home_empty_body">Verbinde einen Musikserver oder ein Streaming-Konto oder füge Musik hinzu, die auf diesem Gerät gespeichert ist.</string>
     <string name="home_add_source">Quelle hinzufügen</string>
+    <string name="nav_tabbar_title">Tableiste</string>
+    <string name="nav_tabbar_hint">Die Leiste unten auf dem Bildschirm. Wähle 2 bis 5 Tabs in beliebiger Reihenfolge.</string>
+    <string name="nav_tabbar_rail_note">Bei dieser Bildschirmgröße wird die Seitenleiste verwendet, die Tableiste erscheint nur auf Smartphones.</string>
+    <string name="nav_tabbar_more">Tab „Mehr“</string>
+    <string name="nav_tabbar_more_hint">Fügt einen Tab hinzu, der alles Weitere auflistet</string>
+    <string name="nav_tabbar_full">Die Tableiste ist voll</string>
+    <string name="nav_tabbar_add">Tab hinzufügen</string>
+    <string name="nav_tabbar_remove">Tab entfernen</string>
+    <string name="nav_tabbar_reset">Tableiste zurücksetzen</string>
+    <string name="nav_tab_locked">Immer ein Tab</string>
+    <string name="nav_sidemenu_title">Seitenmenü</string>
 </resources>

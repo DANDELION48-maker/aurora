@@ -19,12 +19,12 @@
     <string name="tablet_player_split">División de En reproducción</string>
     <string name="tablet_player_split_hint">También puedes arrastrar el divisor en En reproducción.</string>
     <string name="tablet_reset">Restablecer diseño para tablet</string>
-    <string name="nav_menu_title">Menú de navegación</string>
-    <string name="nav_menu_summary">Elige qué aparece en la lista principal y en Más</string>
+    <string name="nav_menu_title">Navegación</string>
+    <string name="nav_menu_summary">Barra de pestañas y menú lateral</string>
     <string name="nav_section_main">Principal</string>
     <string name="nav_section_more">Más</string>
     <string name="nav_section_hidden">No se muestran</string>
-    <string name="nav_menu_hint">Usa las flechas para reordenar los elementos. Toca el menú de un elemento para moverlo entre Principal y Más, o para quitarlo.</string>
+    <string name="nav_menu_hint">Se abre desde tu foto de perfil y se convierte en la barra lateral en tabletas y ordenadores. Los elementos de Principal aparecen directamente; los de Más quedan en una carpeta debajo.</string>
     <string name="nav_move_up">Subir</string>
     <string name="nav_move_down">Bajar</string>
     <string name="nav_move_to_main">Mover a Principal</string>
@@ -35,9 +35,20 @@
     <string name="nav_locked">Siempre en Principal</string>
     <string name="nav_simple_mode_hidden">Oculto mientras el Modo sencillo está activado</string>
     <string name="nav_empty_section">Aún no hay nada aquí</string>
-    <string name="nav_reset">Restablecer menú de navegación</string>
+    <string name="nav_reset">Restablecer menú lateral</string>
     <string name="nav_placement_options">Opciones de ubicación</string>
     <string name="home_empty_title">Aún no hay música</string>
     <string name="home_empty_body">Conecta un servidor de música o una cuenta de streaming, o añade música guardada en este dispositivo.</string>
     <string name="home_add_source">Añadir fuente</string>
+    <string name="nav_tabbar_title">Barra de pestañas</string>
+    <string name="nav_tabbar_hint">La barra de la parte inferior de la pantalla. Elige de 2 a 5 pestañas y ordénalas como quieras.</string>
+    <string name="nav_tabbar_rail_note">Con este tamaño de pantalla se usa la barra lateral, así que la barra de pestañas solo aparece en móviles.</string>
+    <string name="nav_tabbar_more">Pestaña Más</string>
+    <string name="nav_tabbar_more_hint">Añade una pestaña que muestra todo lo demás</string>
+    <string name="nav_tabbar_full">La barra de pestañas está llena</string>
+    <string name="nav_tabbar_add">Añadir pestaña</string>
+    <string name="nav_tabbar_remove">Quitar pestaña</string>
+    <string name="nav_tabbar_reset">Restablecer barra de pestañas</string>
+    <string name="nav_tab_locked">Siempre es una pestaña</string>
+    <string name="nav_sidemenu_title">Menú lateral</string>
 </resources>

@@ -21,12 +21,12 @@
     <string name="tablet_player_split_hint">You can also drag the divider in Now Playing.</string>
     <string name="tablet_reset">Reset Tablet Layout</string>
 
-    <string name="nav_menu_title">Navigation Menu</string>
-    <string name="nav_menu_summary">Choose what appears in the main list and under More</string>
+    <string name="nav_menu_title">Navigation</string>
+    <string name="nav_menu_summary">Tab bar and side menu</string>
     <string name="nav_section_main">Main</string>
     <string name="nav_section_more">More</string>
     <string name="nav_section_hidden">Not Shown</string>
-    <string name="nav_menu_hint">Use the arrows to reorder items. Tap an item\'s menu to move it between Main and More, or to remove it.</string>
+    <string name="nav_menu_hint">Opens from your profile picture, and becomes the sidebar on tablets and computers. Main items are listed directly; More items sit in a folder below them.</string>
     <string name="nav_move_up">Move up</string>
     <string name="nav_move_down">Move down</string>
     <string name="nav_move_to_main">Move to Main</string>
@@ -37,10 +37,21 @@
     <string name="nav_locked">Always in Main</string>
     <string name="nav_simple_mode_hidden">Hidden while Simple Mode is on</string>
     <string name="nav_empty_section">Nothing here yet</string>
-    <string name="nav_reset">Reset Navigation Menu</string>
+    <string name="nav_reset">Reset side menu</string>
     <string name="nav_placement_options">Placement options</string>
 
     <string name="home_empty_title">No Music Yet</string>
     <string name="home_empty_body">Connect a music server or streaming account, or add music stored on this device.</string>
     <string name="home_add_source">Add Source</string>
+    <string name="nav_tabbar_title">Tab bar</string>
+    <string name="nav_tabbar_hint">The bar at the bottom of the screen. Pick 2 to 5 tabs and put them in any order.</string>
+    <string name="nav_tabbar_rail_note">This screen size uses the sidebar, so the tab bar only shows on phones.</string>
+    <string name="nav_tabbar_more">More tab</string>
+    <string name="nav_tabbar_more_hint">Adds a tab that lists everything else</string>
+    <string name="nav_tabbar_full">The tab bar is full</string>
+    <string name="nav_tabbar_add">Add tab</string>
+    <string name="nav_tabbar_remove">Remove tab</string>
+    <string name="nav_tabbar_reset">Reset tab bar</string>
+    <string name="nav_tab_locked">Always a tab</string>
+    <string name="nav_sidemenu_title">Side menu</string>
 </resources>

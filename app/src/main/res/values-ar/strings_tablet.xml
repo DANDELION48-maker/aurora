@@ -19,12 +19,12 @@
     <string name="tablet_player_split">\u2067تقسيم قيد التشغيل الآن\u2069</string>
     <string name="tablet_player_split_hint">\u2067يمكنك أيضًا سحب الفاصل في قيد التشغيل الآن.\u2069</string>
     <string name="tablet_reset">\u2067إعادة ضبط تخطيط الجهاز اللوحي\u2069</string>
-    <string name="nav_menu_title">\u2067قائمة التنقل\u2069</string>
-    <string name="nav_menu_summary">\u2067اختر ما يظهر في القائمة الرئيسية وتحت المزيد\u2069</string>
+    <string name="nav_menu_title">\u2067التنقل\u2069</string>
+    <string name="nav_menu_summary">\u2067شريط علامات التبويب والقائمة الجانبية\u2069</string>
     <string name="nav_section_main">\u2067الرئيسية\u2069</string>
     <string name="nav_section_more">\u2067المزيد\u2069</string>
     <string name="nav_section_hidden">\u2067غير معروض\u2069</string>
-    <string name="nav_menu_hint">\u2067استخدم الأسهم لإعادة ترتيب العناصر. انقر على قائمة العنصر لنقله بين الرئيسية والمزيد أو لإزالته.\u2069</string>
+    <string name="nav_menu_hint">\u2067تُفتح من صورة ملفك الشخصي، وتصبح الشريط الجانبي على الأجهزة اللوحية والحواسيب. تظهر عناصر الرئيسية مباشرة، وتوضع عناصر المزيد في مجلد أسفلها.\u2069</string>
     <string name="nav_move_up">\u2067نقل لأعلى\u2069</string>
     <string name="nav_move_down">\u2067نقل لأسفل\u2069</string>
     <string name="nav_move_to_main">\u2067النقل إلى الرئيسية\u2069</string>
@@ -35,9 +35,20 @@
     <string name="nav_locked">\u2067دائمًا في الرئيسية\u2069</string>
     <string name="nav_simple_mode_hidden">\u2067مخفي أثناء تفعيل الوضع البسيط\u2069</string>
     <string name="nav_empty_section">\u2067لا شيء هنا بعد\u2069</string>
-    <string name="nav_reset">\u2067إعادة ضبط قائمة التنقل\u2069</string>
+    <string name="nav_reset">\u2067إعادة ضبط القائمة الجانبية\u2069</string>
     <string name="nav_placement_options">\u2067خيارات الموضع\u2069</string>
     <string name="home_empty_title">\u2067لا توجد موسيقى بعد\u2069</string>
     <string name="home_empty_body">\u2067اربط خادم موسيقى أو حساب بث، أو أضف موسيقى مخزّنة على هذا الجهاز.\u2069</string>
     <string name="home_add_source">\u2067إضافة مصدر\u2069</string>
+    <string name="nav_tabbar_title">\u2067شريط علامات التبويب\u2069</string>
+    <string name="nav_tabbar_hint">\u2067الشريط في أسفل الشاشة. اختر من 2 إلى 5 علامات تبويب ورتّبها كما تشاء.\u2069</string>
+    <string name="nav_tabbar_rail_note">\u2067يستخدم حجم الشاشة هذا الشريط الجانبي، لذا يظهر شريط علامات التبويب على الهواتف فقط.\u2069</string>
+    <string name="nav_tabbar_more">\u2067علامة تبويب المزيد\u2069</string>
+    <string name="nav_tabbar_more_hint">\u2067تضيف علامة تبويب تعرض كل شيء آخر\u2069</string>
+    <string name="nav_tabbar_full">\u2067شريط علامات التبويب ممتلئ\u2069</string>
+    <string name="nav_tabbar_add">\u2067إضافة علامة تبويب\u2069</string>
+    <string name="nav_tabbar_remove">\u2067إزالة علامة التبويب\u2069</string>
+    <string name="nav_tabbar_reset">\u2067إعادة ضبط شريط علامات التبويب\u2069</string>
+    <string name="nav_tab_locked">\u2067دائمًا علامة تبويب\u2069</string>
+    <string name="nav_sidemenu_title">\u2067القائمة الجانبية\u2069</string>
 </resources>

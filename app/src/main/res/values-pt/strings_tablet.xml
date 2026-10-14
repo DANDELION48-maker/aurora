@@ -19,12 +19,12 @@
     <string name="tablet_player_split">Divisão de Tocando agora</string>
     <string name="tablet_player_split_hint">Você também pode arrastar o divisor em Tocando agora.</string>
     <string name="tablet_reset">Redefinir layout para tablet</string>
-    <string name="nav_menu_title">Menu de navegação</string>
-    <string name="nav_menu_summary">Escolha o que aparece na lista principal e em Mais</string>
+    <string name="nav_menu_title">Navegação</string>
+    <string name="nav_menu_summary">Barra de abas e menu lateral</string>
     <string name="nav_section_main">Principal</string>
     <string name="nav_section_more">Mais</string>
     <string name="nav_section_hidden">Não mostrados</string>
-    <string name="nav_menu_hint">Use as setas para reordenar os itens. Toque no menu de um item para movê-lo entre Principal e Mais, ou para removê-lo.</string>
+    <string name="nav_menu_hint">Abre a partir da sua foto de perfil e vira a barra lateral em tablets e computadores. Os itens de Principal aparecem diretamente; os de Mais ficam em uma pasta abaixo.</string>
     <string name="nav_move_up">Mover para cima</string>
     <string name="nav_move_down">Mover para baixo</string>
     <string name="nav_move_to_main">Mover para Principal</string>
@@ -35,9 +35,20 @@
     <string name="nav_locked">Sempre em Principal</string>
     <string name="nav_simple_mode_hidden">Oculto enquanto o Modo simples está ativado</string>
     <string name="nav_empty_section">Ainda não há nada aqui</string>
-    <string name="nav_reset">Redefinir menu de navegação</string>
+    <string name="nav_reset">Redefinir menu lateral</string>
     <string name="nav_placement_options">Opções de posicionamento</string>
     <string name="home_empty_title">Ainda não há música</string>
     <string name="home_empty_body">Conecte um servidor de música ou uma conta de streaming, ou adicione músicas guardadas neste dispositivo.</string>
     <string name="home_add_source">Adicionar fonte</string>
+    <string name="nav_tabbar_title">Barra de abas</string>
+    <string name="nav_tabbar_hint">A barra na parte inferior da tela. Escolha de 2 a 5 abas e coloque-as em qualquer ordem.</string>
+    <string name="nav_tabbar_rail_note">Este tamanho de tela usa a barra lateral, então a barra de abas só aparece em celulares.</string>
+    <string name="nav_tabbar_more">Aba Mais</string>
+    <string name="nav_tabbar_more_hint">Adiciona uma aba que lista todo o resto</string>
+    <string name="nav_tabbar_full">A barra de abas está cheia</string>
+    <string name="nav_tabbar_add">Adicionar aba</string>
+    <string name="nav_tabbar_remove">Remover aba</string>
+    <string name="nav_tabbar_reset">Redefinir barra de abas</string>
+    <string name="nav_tab_locked">Sempre é uma aba</string>
+    <string name="nav_sidemenu_title">Menu lateral</string>
 </resources>

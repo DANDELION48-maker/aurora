@@ -19,12 +19,12 @@
     <string name="tablet_player_split">“正在播放”分栏</string>
     <string name="tablet_player_split_hint">你也可以在“正在播放”中拖动分隔条。</string>
     <string name="tablet_reset">重置平板布局</string>
-    <string name="nav_menu_title">导航菜单</string>
-    <string name="nav_menu_summary">选择主列表和“更多”中显示的内容</string>
+    <string name="nav_menu_title">导航</string>
+    <string name="nav_menu_summary">标签栏和侧边菜单</string>
     <string name="nav_section_main">主列表</string>
     <string name="nav_section_more">更多</string>
     <string name="nav_section_hidden">未显示</string>
-    <string name="nav_menu_hint">使用箭头调整项目顺序。点按项目的菜单，可在“主列表”和“更多”之间移动或将其移除。</string>
+    <string name="nav_menu_hint">从个人头像打开，在平板和电脑上会变成侧边栏。主列表中的项目直接列出；“更多”中的项目放在下方的文件夹里。</string>
     <string name="nav_move_up">上移</string>
     <string name="nav_move_down">下移</string>
     <string name="nav_move_to_main">移到主列表</string>
@@ -35,9 +35,20 @@
     <string name="nav_locked">始终在主列表中</string>
     <string name="nav_simple_mode_hidden">简单模式开启时隐藏</string>
     <string name="nav_empty_section">这里还没有内容</string>
-    <string name="nav_reset">重置导航菜单</string>
+    <string name="nav_reset">重置侧边菜单</string>
     <string name="nav_placement_options">位置选项</string>
     <string name="home_empty_title">还没有音乐</string>
     <string name="home_empty_body">连接音乐服务器或流媒体账号，或添加存储在此设备上的音乐。</string>
     <string name="home_add_source">添加来源</string>
+    <string name="nav_tabbar_title">标签栏</string>
+    <string name="nav_tabbar_hint">屏幕底部的栏。选择 2 到 5 个标签，并按任意顺序排列。</string>
+    <string name="nav_tabbar_rail_note">此屏幕尺寸使用侧边栏，因此标签栏只在手机上显示。</string>
+    <string name="nav_tabbar_more">“更多”标签</string>
+    <string name="nav_tabbar_more_hint">添加一个列出其余所有项目的标签</string>
+    <string name="nav_tabbar_full">标签栏已满</string>
+    <string name="nav_tabbar_add">添加标签</string>
+    <string name="nav_tabbar_remove">移除标签</string>
+    <string name="nav_tabbar_reset">重置标签栏</string>
+    <string name="nav_tab_locked">始终作为标签</string>
+    <string name="nav_sidemenu_title">侧边菜单</string>
 </resources>

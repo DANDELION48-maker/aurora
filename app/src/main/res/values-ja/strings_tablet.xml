@@ -19,12 +19,12 @@
     <string name="tablet_player_split">再生中の分割</string>
     <string name="tablet_player_split_hint">再生中の画面で区切り線をドラッグすることもできます。</string>
     <string name="tablet_reset">タブレットのレイアウトをリセット</string>
-    <string name="nav_menu_title">ナビゲーションメニュー</string>
-    <string name="nav_menu_summary">メインリストと「その他」に表示する項目を選択</string>
+    <string name="nav_menu_title">ナビゲーション</string>
+    <string name="nav_menu_summary">タブバーとサイドメニュー</string>
     <string name="nav_section_main">メイン</string>
     <string name="nav_section_more">その他</string>
     <string name="nav_section_hidden">非表示</string>
-    <string name="nav_menu_hint">矢印で項目を並べ替えます。項目のメニューをタップすると、メインと「その他」の間で移動したり削除したりできます。</string>
+    <string name="nav_menu_hint">プロフィール画像から開き、タブレットやパソコンではサイドバーになります。メインの項目はそのまま並び、「その他」の項目はその下のフォルダにまとめられます。</string>
     <string name="nav_move_up">上に移動</string>
     <string name="nav_move_down">下に移動</string>
     <string name="nav_move_to_main">メインに移動</string>
@@ -35,9 +35,20 @@
     <string name="nav_locked">常にメインに表示</string>
     <string name="nav_simple_mode_hidden">シンプルモードがオンの間は非表示</string>
     <string name="nav_empty_section">まだ何もありません</string>
-    <string name="nav_reset">ナビゲーションメニューをリセット</string>
+    <string name="nav_reset">サイドメニューをリセット</string>
     <string name="nav_placement_options">配置のオプション</string>
     <string name="home_empty_title">まだ音楽がありません</string>
     <string name="home_empty_body">音楽サーバーやストリーミングアカウントを接続するか、このデバイスに保存した音楽を追加してください。</string>
     <string name="home_add_source">ソースを追加</string>
+    <string name="nav_tabbar_title">タブバー</string>
+    <string name="nav_tabbar_hint">画面下部のバーです。2〜5個のタブを選び、好きな順番に並べられます。</string>
+    <string name="nav_tabbar_rail_note">この画面サイズではサイドバーを使うため、タブバーはスマートフォンでのみ表示されます。</string>
+    <string name="nav_tabbar_more">「その他」タブ</string>
+    <string name="nav_tabbar_more_hint">ほかのすべての項目を一覧表示するタブを追加します</string>
+    <string name="nav_tabbar_full">タブバーがいっぱいです</string>
+    <string name="nav_tabbar_add">タブを追加</string>
+    <string name="nav_tabbar_remove">タブを削除</string>
+    <string name="nav_tabbar_reset">タブバーをリセット</string>
+    <string name="nav_tab_locked">常にタブとして表示</string>
+    <string name="nav_sidemenu_title">サイドメニュー</string>
 </resources>

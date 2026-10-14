@@ -60,6 +60,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Downloading
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -308,6 +311,7 @@ fun AuroraApp() {
     var showVisualizer by rememberSaveable { mutableStateOf(false) }
     var showOutput by rememberSaveable { mutableStateOf(false) }
     var showSleep by rememberSaveable { mutableStateOf(false) }
+    var showNavMore by remember { mutableStateOf(false) }
     var playerPaneRequest by remember { mutableStateOf<PlayerPane?>(null) }
     fun showPane(pane: PlayerPane) {
         if (windowLayout.canShowSidePanel) {
@@ -891,7 +895,8 @@ fun AuroraApp() {
                                 )
                                 Spacer(Modifier.height(8.dp))
                             }
-                            if (!rail) FloatingNav(currentRoute) { navigateTopLevel(it) }
+                            if (!rail) FloatingNav(currentRoute, navLayout.bar, navLayout.barMore,
+                                onNavigate = { navigateTopLevel(it) }, onMore = { showNavMore = true })
                         }
                         }
                     }
@@ -1536,6 +1541,17 @@ fun AuroraApp() {
 
     BackHandler(enabled = playerState.expanded && !showMix) { playerVM.setExpanded(false) }
 
+    if (showNavMore) {
+        val inBar = navLayout.bar.map { it.id }.toSet()
+        NavMoreSheet(
+            items = (navLayout.main + navLayout.more).filter { it.id !in inBar }.distinctBy { it.id },
+            currentRoute = currentRoute,
+            onOpen = { item -> showNavMore = false; openNavItem(item) },
+            onSettings = { showNavMore = false; navController.navigate(Routes.SETTINGS) { launchSingleTop = true } },
+            onDismiss = { showNavMore = false },
+        )
+    }
+
     MaterialTheme(colorScheme = playerColors) {
     if (showSpeedSheet) {
         SpeedPitchSheet(
@@ -1645,9 +1661,15 @@ private suspend fun playlistMutation(block: suspend () -> Boolean): Boolean = tr
 }
 
 @Composable
-private fun FloatingNav(currentRoute: String?, onNavigate: (String) -> Unit) {
+private fun FloatingNav(
+    currentRoute: String?,
+    tabs: List<com.aurora.music.navigation.NavMenuItem>,
+    moreTab: Boolean,
+    onNavigate: (String) -> Unit,
+    onMore: () -> Unit,
+) {
     if (com.aurora.music.ui.theme.isGlassTheme()) {
-        GlassFloatingNav(currentRoute, onNavigate)
+        GlassFloatingNav(currentRoute, tabs, moreTab, onNavigate, onMore)
         return
     }
     val classic = com.aurora.music.ui.theme.LocalUiPrefs.current.themeStyle == com.aurora.music.data.ThemeStyle.AURORA
@@ -1662,30 +1684,36 @@ private fun FloatingNav(currentRoute: String?, onNavigate: (String) -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        topLevelDestinations.forEach { dest ->
-            val selected = currentRoute == dest.route
-            val bg by animateColorAsState(
-                if (selected) MaterialTheme.colorScheme.primary else Color.Transparent,
-                label = "navBg",
-            )
-            val content = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-            Row(
-                modifier = Modifier
-                    .weight(if (selected) 1.4f else 1f)
-                    .clip(if (classic) RoundedCornerShape(50) else MaterialTheme.shapes.small)
-                    .background(bg)
-                    .clickable { onNavigate(dest.route) }
-                    .padding(vertical = 12.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(if (selected) dest.selectedIcon else dest.unselectedIcon, dest.label, tint = content, modifier = Modifier.size(22.dp))
-                AnimatedVisibility(visible = selected) {
-                    Row {
-                        Spacer(Modifier.width(8.dp))
-                        Text(dest.label, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = content)
-                    }
-                }
+        tabs.forEach { tab ->
+            val selected = currentRoute == tab.route
+            NavTab(tab.shortLabel, if (selected) tab.selectedIcon else tab.icon, selected, classic, Modifier.weight(if (selected) 1.4f else 1f)) {
+                onNavigate(tab.route)
+            }
+        }
+        if (moreTab) NavTab(appString(R.string.text_more_4bab2d), Icons.Filled.MoreHoriz, false, classic, Modifier.weight(1f), onMore)
+    }
+}
+
+@Composable
+private fun NavTab(label: String, icon: androidx.compose.ui.graphics.vector.ImageVector, selected: Boolean, classic: Boolean,
+    modifier: Modifier, onClick: () -> Unit) {
+    val bg by animateColorAsState(if (selected) MaterialTheme.colorScheme.primary else Color.Transparent, label = "navBg")
+    val content = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+    Row(
+        modifier = modifier
+            .clip(if (classic) RoundedCornerShape(50) else MaterialTheme.shapes.small)
+            .background(bg)
+            .clickable(onClickLabel = label, onClick = onClick)
+            .padding(vertical = 12.dp, horizontal = 6.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(icon, label, tint = content, modifier = Modifier.size(22.dp))
+        AnimatedVisibility(visible = selected) {
+            Row {
+                Spacer(Modifier.width(8.dp))
+                Text(label, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = content,
+                    maxLines = 1, softWrap = false, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
             }
         }
     }
@@ -1693,15 +1721,24 @@ private fun FloatingNav(currentRoute: String?, onNavigate: (String) -> Unit) {
 
 // ios 26 layout: tabs in one glass capsule, search as its own glass circle
 @Composable
-private fun GlassFloatingNav(currentRoute: String?, onNavigate: (String) -> Unit) {
+private fun GlassFloatingNav(
+    currentRoute: String?,
+    tabs: List<com.aurora.music.navigation.NavMenuItem>,
+    moreTab: Boolean,
+    onNavigate: (String) -> Unit,
+    onMore: () -> Unit,
+) {
     val backdrop = com.aurora.music.ui.theme.LocalGlassBackdrop.current
-    val search = topLevelDestinations.firstOrNull { it.route == Routes.SEARCH }
-    val tabs = topLevelDestinations.filter { it != search }
+    val search = tabs.firstOrNull { it.route == Routes.SEARCH }
+    val capsule = tabs.filter { it != search }
+    val moreLabel = appString(R.string.text_more_4bab2d)
+    val glassTabs = capsule.map { com.aurora.music.ui.components.glass.GlassTab(it.shortLabel, it.selectedIcon) } +
+        if (moreTab) listOf(com.aurora.music.ui.components.glass.GlassTab(moreLabel, Icons.Filled.MoreHoriz)) else emptyList()
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         com.aurora.music.ui.components.glass.GlassTabBar(
-            tabs = tabs.map { com.aurora.music.ui.components.glass.GlassTab(it.label, it.selectedIcon) },
-            selectedIndex = tabs.indexOfFirst { it.route == currentRoute },
-            onSelect = { onNavigate(tabs[it].route) },
+            tabs = glassTabs,
+            selectedIndex = capsule.indexOfFirst { it.route == currentRoute },
+            onSelect = { index -> capsule.getOrNull(index)?.let { onNavigate(it.route) } ?: onMore() },
             backdrop = backdrop,
             modifier = Modifier.weight(1f),
         )
@@ -1713,11 +1750,47 @@ private fun GlassFloatingNav(currentRoute: String?, onNavigate: (String) -> Unit
                 backdrop = backdrop,
                 modifier = Modifier.size(64.dp),
                 selected = selected,
-                contentDescription = search.label,
+                contentDescription = search.shortLabel,
             ) {
                 Icon(search.selectedIcon, null, Modifier.size(28.dp),
                     tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)
             }
         }
+    }
+}
+
+// everything the tab bar leaves out so a phone never depends on finding the side menu
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+@Composable
+private fun NavMoreSheet(
+    items: List<com.aurora.music.navigation.NavMenuItem>,
+    currentRoute: String?,
+    onOpen: (com.aurora.music.navigation.NavMenuItem) -> Unit,
+    onSettings: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    androidx.compose.material3.ModalBottomSheet(onDismissRequest = onDismiss, containerColor = MaterialTheme.colorScheme.surface) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp).padding(bottom = 24.dp)) {
+            Text(appString(R.string.text_more_4bab2d), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp))
+            items.forEach { item -> NavSheetRow(item.icon, item.label, currentRoute == item.route) { onOpen(item) } }
+            NavSheetRow(Icons.Filled.Settings, appString(R.string.text_settings_c7f73b), currentRoute == Routes.SETTINGS, onSettings)
+        }
+    }
+}
+
+@Composable
+private fun NavSheetRow(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, selected: Boolean, onClick: () -> Unit) {
+    val content = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+    Row(
+        Modifier.fillMaxWidth().clip(MaterialTheme.shapes.small)
+            .background(if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.14f) else Color.Transparent)
+            .clickable(onClick = onClick).padding(horizontal = 8.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(icon, null, tint = content, modifier = Modifier.size(24.dp))
+        Spacer(Modifier.width(16.dp))
+        Text(label, style = MaterialTheme.typography.titleSmall, fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium, color = content)
     }
 }

@@ -81,7 +81,7 @@ fun TabletNavigationRail(currentRoute: String?, items: List<NavMenuItem>, onOpen
                     colors = colors,
                     onClick = { onOpen(item) },
                     icon = { Icon(item.icon, null) },
-                    label = { Text(railLabel(item), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    label = { Text(item.shortLabel, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     modifier = Modifier.padding(vertical = 4.dp),
                 )
             }
@@ -96,9 +96,6 @@ fun TabletNavigationRail(currentRoute: String?, items: List<NavMenuItem>, onOpen
         Spacer(Modifier.height(16.dp))
     }
 }
-
-private fun railLabel(item: NavMenuItem): String =
-    if (item.route == Routes.LIBRARY) appString(R.string.text_library_b8100f) else item.label
 
 @Composable
 fun TabletSidebar(

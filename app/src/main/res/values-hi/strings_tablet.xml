@@ -19,12 +19,12 @@
     <string name="tablet_player_split">अभी चल रहा है स्प्लिट</string>
     <string name="tablet_player_split_hint">आप अभी चल रहा है में डिवाइडर को खींच भी सकते हैं।</string>
     <string name="tablet_reset">टैबलेट लेआउट रीसेट करें</string>
-    <string name="nav_menu_title">नेविगेशन मेन्यू</string>
-    <string name="nav_menu_summary">चुनें कि मुख्य सूची में और अधिक के नीचे क्या दिखे</string>
+    <string name="nav_menu_title">नेविगेशन</string>
+    <string name="nav_menu_summary">टैब बार और साइड मेन्यू</string>
     <string name="nav_section_main">मुख्य</string>
     <string name="nav_section_more">अधिक</string>
     <string name="nav_section_hidden">नहीं दिखाए गए</string>
-    <string name="nav_menu_hint">आइटम का क्रम बदलने के लिए तीरों का उपयोग करें। किसी आइटम को मुख्य और अधिक के बीच ले जाने या हटाने के लिए उसके मेन्यू पर टैप करें।</string>
+    <string name="nav_menu_hint">यह आपकी प्रोफ़ाइल फ़ोटो से खुलता है और टैबलेट व कंप्यूटर पर साइडबार बन जाता है। मुख्य के आइटम सीधे दिखते हैं; अधिक के आइटम नीचे एक फ़ोल्डर में रहते हैं।</string>
     <string name="nav_move_up">ऊपर ले जाएँ</string>
     <string name="nav_move_down">नीचे ले जाएँ</string>
     <string name="nav_move_to_main">मुख्य में ले जाएँ</string>
@@ -35,9 +35,20 @@
     <string name="nav_locked">हमेशा मुख्य में</string>
     <string name="nav_simple_mode_hidden">सिंपल मोड चालू होने पर छिपा रहता है</string>
     <string name="nav_empty_section">अभी यहाँ कुछ नहीं है</string>
-    <string name="nav_reset">नेविगेशन मेन्यू रीसेट करें</string>
+    <string name="nav_reset">साइड मेन्यू रीसेट करें</string>
     <string name="nav_placement_options">प्लेसमेंट विकल्प</string>
     <string name="home_empty_title">अभी कोई संगीत नहीं</string>
     <string name="home_empty_body">कोई म्यूज़िक सर्वर या स्ट्रीमिंग खाता कनेक्ट करें, या इस डिवाइस पर रखा संगीत जोड़ें।</string>
     <string name="home_add_source">स्रोत जोड़ें</string>
+    <string name="nav_tabbar_title">टैब बार</string>
+    <string name="nav_tabbar_hint">स्क्रीन के नीचे वाला बार। 2 से 5 टैब चुनें और उन्हें किसी भी क्रम में रखें।</string>
+    <string name="nav_tabbar_rail_note">इस स्क्रीन साइज़ पर साइडबार इस्तेमाल होता है, इसलिए टैब बार सिर्फ़ फ़ोन पर दिखता है।</string>
+    <string name="nav_tabbar_more">अधिक टैब</string>
+    <string name="nav_tabbar_more_hint">एक टैब जोड़ता है जिसमें बाकी सब कुछ होता है</string>
+    <string name="nav_tabbar_full">टैब बार भर गया है</string>
+    <string name="nav_tabbar_add">टैब जोड़ें</string>
+    <string name="nav_tabbar_remove">टैब हटाएँ</string>
+    <string name="nav_tabbar_reset">टैब बार रीसेट करें</string>
+    <string name="nav_tab_locked">हमेशा एक टैब</string>
+    <string name="nav_sidemenu_title">साइड मेन्यू</string>
 </resources>

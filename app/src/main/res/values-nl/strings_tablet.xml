@@ -19,12 +19,12 @@
     <string name="tablet_player_split">Verdeling van Nu aan het afspelen</string>
     <string name="tablet_player_split_hint">Je kunt ook de scheidingslijn in Nu aan het afspelen verslepen.</string>
     <string name="tablet_reset">Tabletindeling resetten</string>
-    <string name="nav_menu_title">Navigatiemenu</string>
-    <string name="nav_menu_summary">Kies wat er in de hoofdlijst en onder Meer staat</string>
+    <string name="nav_menu_title">Navigatie</string>
+    <string name="nav_menu_summary">Tabbalk en zijmenu</string>
     <string name="nav_section_main">Hoofdlijst</string>
     <string name="nav_section_more">Meer</string>
     <string name="nav_section_hidden">Niet getoond</string>
-    <string name="nav_menu_hint">Gebruik de pijlen om items te herschikken. Tik op het menu van een item om het tussen Hoofdlijst en Meer te verplaatsen of te verwijderen.</string>
+    <string name="nav_menu_hint">Opent vanuit je profielfoto en wordt de zijbalk op tablets en computers. Items uit de hoofdlijst staan er direct in; items onder Meer zitten in een map eronder.</string>
     <string name="nav_move_up">Omhoog verplaatsen</string>
     <string name="nav_move_down">Omlaag verplaatsen</string>
     <string name="nav_move_to_main">Naar Hoofdlijst verplaatsen</string>
@@ -35,9 +35,20 @@
     <string name="nav_locked">Altijd in Hoofdlijst</string>
     <string name="nav_simple_mode_hidden">Verborgen zolang Eenvoudige modus aan staat</string>
     <string name="nav_empty_section">Hier is nog niets</string>
-    <string name="nav_reset">Navigatiemenu resetten</string>
+    <string name="nav_reset">Zijmenu herstellen</string>
     <string name="nav_placement_options">Plaatsingsopties</string>
     <string name="home_empty_title">Nog geen muziek</string>
     <string name="home_empty_body">Verbind een muziekserver of streamingaccount, of voeg muziek toe die op dit apparaat staat.</string>
     <string name="home_add_source">Bron toevoegen</string>
+    <string name="nav_tabbar_title">Tabbalk</string>
+    <string name="nav_tabbar_hint">De balk onderaan het scherm. Kies 2 tot 5 tabs in elke gewenste volgorde.</string>
+    <string name="nav_tabbar_rail_note">Bij dit schermformaat wordt de zijbalk gebruikt, dus de tabbalk verschijnt alleen op telefoons.</string>
+    <string name="nav_tabbar_more">Tab Meer</string>
+    <string name="nav_tabbar_more_hint">Voegt een tab toe die al het andere toont</string>
+    <string name="nav_tabbar_full">De tabbalk is vol</string>
+    <string name="nav_tabbar_add">Tab toevoegen</string>
+    <string name="nav_tabbar_remove">Tab verwijderen</string>
+    <string name="nav_tabbar_reset">Tabbalk herstellen</string>
+    <string name="nav_tab_locked">Altijd een tab</string>
+    <string name="nav_sidemenu_title">Zijmenu</string>
 </resources>

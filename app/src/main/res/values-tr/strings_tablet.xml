@@ -19,12 +19,12 @@
     <string name="tablet_player_split">Şimdi çalıyor bölmesi</string>
     <string name="tablet_player_split_hint">Şimdi çalıyor\'da ayırıcıyı da sürükleyebilirsiniz.</string>
     <string name="tablet_reset">Tablet düzenini sıfırla</string>
-    <string name="nav_menu_title">Gezinme menüsü</string>
-    <string name="nav_menu_summary">Ana listede ve Diğer altında nelerin görüneceğini seçin</string>
+    <string name="nav_menu_title">Gezinme</string>
+    <string name="nav_menu_summary">Sekme çubuğu ve yan menü</string>
     <string name="nav_section_main">Ana</string>
     <string name="nav_section_more">Diğer</string>
     <string name="nav_section_hidden">Gösterilmeyenler</string>
-    <string name="nav_menu_hint">Öğeleri yeniden sıralamak için okları kullanın. Bir öğeyi Ana ile Diğer arasında taşımak veya kaldırmak için menüsüne dokunun.</string>
+    <string name="nav_menu_hint">Profil fotoğrafından açılır, tablet ve bilgisayarlarda kenar çubuğuna dönüşür. Ana bölümündeki öğeler doğrudan listelenir; Diğer bölümündekiler altındaki bir klasörde durur.</string>
     <string name="nav_move_up">Yukarı taşı</string>
     <string name="nav_move_down">Aşağı taşı</string>
     <string name="nav_move_to_main">Ana\'ya taşı</string>
@@ -35,9 +35,20 @@
     <string name="nav_locked">Her zaman Ana\'da</string>
     <string name="nav_simple_mode_hidden">Basit mod açıkken gizlenir</string>
     <string name="nav_empty_section">Burada henüz bir şey yok</string>
-    <string name="nav_reset">Gezinme menüsünü sıfırla</string>
+    <string name="nav_reset">Yan menüyü sıfırla</string>
     <string name="nav_placement_options">Yerleşim seçenekleri</string>
     <string name="home_empty_title">Henüz müzik yok</string>
     <string name="home_empty_body">Bir müzik sunucusu veya akış hesabı bağlayın ya da bu cihazda saklanan müzikleri ekleyin.</string>
     <string name="home_add_source">Kaynak ekle</string>
+    <string name="nav_tabbar_title">Sekme çubuğu</string>
+    <string name="nav_tabbar_hint">Ekranın altındaki çubuk. 2 ile 5 arasında sekme seçip istediğin sıraya koy.</string>
+    <string name="nav_tabbar_rail_note">Bu ekran boyutunda kenar çubuğu kullanılır, bu yüzden sekme çubuğu yalnızca telefonlarda görünür.</string>
+    <string name="nav_tabbar_more">Diğer sekmesi</string>
+    <string name="nav_tabbar_more_hint">Geri kalan her şeyi listeleyen bir sekme ekler</string>
+    <string name="nav_tabbar_full">Sekme çubuğu dolu</string>
+    <string name="nav_tabbar_add">Sekme ekle</string>
+    <string name="nav_tabbar_remove">Sekmeyi kaldır</string>
+    <string name="nav_tabbar_reset">Sekme çubuğunu sıfırla</string>
+    <string name="nav_tab_locked">Her zaman bir sekme</string>
+    <string name="nav_sidemenu_title">Yan menü</string>
 </resources>
