@@ -91,16 +91,18 @@ class SpotifyWebBackend(
     }
 
     override suspend fun allAlbums(): List<Album> =
-        runCatching { library("Albums").mapNotNull { album(it.obj("data"), it.string("_uri")) } }.getOrDefault(emptyList())
+        runCatching { library("Albums").mapNotNull { album(it.obj("data"), it.string("_uri")) } }
+            .onFailure { AppLog.d(TAG, "library albums failed: ${it.message}") }.getOrDefault(emptyList())
 
     override suspend fun allArtists(): List<Artist> =
-        runCatching { library("Artists").mapNotNull { artist(it.obj("data"), it.string("_uri")) } }.getOrDefault(emptyList())
+        runCatching { library("Artists").mapNotNull { artist(it.obj("data"), it.string("_uri")) } }
+            .onFailure { AppLog.d(TAG, "library artists failed: ${it.message}") }.getOrDefault(emptyList())
 
     override suspend fun allPlaylists(): List<Playlist> = runCatching {
         withCounts(library("Playlists").mapNotNull { item ->
             playlist(item.obj("data"), item.string("_uri"))?.let { it to item.obj("data").string("revisionId") }
         })
-    }.getOrDefault(emptyList())
+    }.onFailure { AppLog.d(TAG, "library playlists failed: ${it.message}") }.getOrDefault(emptyList())
 
     // the library listing carries no track counts, so each playlist's header is read once per revision
     private suspend fun withCounts(entries: List<Pair<Playlist, String>>): List<Playlist> = coroutineScope {
@@ -396,10 +398,29 @@ class SpotifyWebBackend(
         true
     }.getOrDefault(false)
 
-    // creating and renaming go through spotify's playlist service, not the web player api
-    override suspend fun createPlaylist(name: String): Boolean = false
+    override suspend fun createPlaylist(name: String): Boolean = createPlaylistWithId(name) != null
 
-    override suspend fun updatePlaylist(id: String, name: String?, comment: String?): Boolean = false
+    // a new playlist only shows up in the library once it's added to the rootlist
+    override suspend fun createPlaylistWithId(name: String): String? = runCatching {
+        val body = element(mapOf("ops" to listOf(listAttributesOp(JsonObject().apply { addProperty("name", name.trim()) }, emptyList())))).asJsonObject
+        val uri = gql.playlistService("/playlist/v2/playlist", body).string("uri").takeIf { it.startsWith(PLAYLIST) } ?: return@runCatching null
+        q("addItemsToRootlist", "uris" to listOf(uri))
+        uri.removePrefix(PLAYLIST)
+    }.onFailure { AppLog.d(TAG, "create playlist failed: ${it.message}") }.getOrNull()
+
+    // a blank description is cleared the way the web player does it, by naming it as having no value
+    override suspend fun updatePlaylist(id: String, name: String?, comment: String?): Boolean = runCatching {
+        val values = JsonObject()
+        val cleared = ArrayList<String>()
+        name?.trim()?.takeIf { it.isNotEmpty() }?.let { values.addProperty("name", it) }
+        comment?.let { if (it.isBlank()) cleared += "LIST_DESCRIPTION" else values.addProperty("description", it.trim()) }
+        if (values.size() == 0 && cleared.isEmpty()) return@runCatching true
+        gql.playlistService("/playlist/v2/playlist/$id/changes", element(mapOf("deltas" to listOf(mapOf(
+            "ops" to listOf(listAttributesOp(values, cleared)),
+            "info" to mapOf("source" to mapOf("client" to "WEBPLAYER")),
+        )))).asJsonObject)
+        true
+    }.onFailure { AppLog.d(TAG, "update playlist failed: ${it.message}") }.getOrDefault(false)
 
     override suspend fun deletePlaylist(id: String): Boolean = setStarred(id, false, "playlist")
 
@@ -506,6 +527,15 @@ class SpotifyWebBackend(
 }
 
 private fun cursor(kind: String, id: String, handed: Int) = "$kind|$id|$handed"
+
+// one list-attributes op as the web player's playlist service expects it; creating takes bare ops, changes wrap them with info
+private fun listAttributesOp(values: JsonObject, cleared: List<String>): Map<String, Any> = mapOf(
+    "kind" to "UPDATE_LIST_ATTRIBUTES",
+    "updateListAttributes" to mapOf("newAttributes" to buildMap<String, Any> {
+        put("values", values)
+        if (cleared.isNotEmpty()) put("noValue", cleared)
+    }),
+)
 
 private fun album(a: JsonObject, fallbackUri: String = ""): Album? {
     val uri = a.string("uri").ifBlank { fallbackUri }

@@ -157,6 +157,15 @@ object SpotifyWebPlayer {
             }).then(function (r) { post({ type: 'result', id: id, status: r.status, body: r.body, hash: r.hash }); },
               function (e) { post({ type: 'result', id: id, status: 0, body: String(e && e.message || e), hash: '' }); });
           };
+          state.playlistService = function (id, path, body) {
+            if (!/^\/playlist\/v2\//.test(path)) { post({ type: 'result', id: id, status: -1, body: '', hash: '' }); return; }
+            nativeFetch('https://spclient.wg.spotify.com' + path, {
+              method: 'POST',
+              headers: Object.assign({ 'content-type': 'application/json;charset=UTF-8', accept: 'application/json' }, state.headers),
+              body: JSON.stringify(body)
+            }).then(function (r) { return r.text().then(function (t) { post({ type: 'result', id: id, status: r.status, body: t, hash: '' }); }); },
+              function (e) { post({ type: 'result', id: id, status: 0, body: String(e && e.message || e), hash: '' }); });
+          };
         })();
     """.trimIndent()
 
@@ -274,14 +283,25 @@ class SpotifyPage(val view: WebView, private val operations: SpotifyOperations) 
         return data
     }
 
-    private suspend fun send(operation: String, variables: JsonObject, hash: String, rescan: Boolean): Reply {
+    override suspend fun playlistService(path: String, body: JsonObject): JsonObject {
+        if (!path.startsWith("/playlist/v2/")) throw SpotifyGraphqlException("not a playlist service path", -1)
+        if (!awaitReady(READY_TIMEOUT_MS)) throw SpotifyGraphqlException("web player did not start")
+        if (signedIn == false) throw SpotifyGraphqlException("signed out", 401)
+        val reply = call(path) { id -> "window.__aurora && window.__aurora.playlistService($id, ${JSONObject.quote(path)}, $body)" }
+        if (reply.status !in 200..299) throw SpotifyGraphqlException("playlist service failed with ${reply.status}: ${reply.body.take(300)}", reply.status)
+        return runCatching { JsonParser.parseString(reply.body).asJsonObject }.getOrNull() ?: JsonObject()
+    }
+
+    private suspend fun send(operation: String, variables: JsonObject, hash: String, rescan: Boolean): Reply =
+        call(operation) { id -> "window.__aurora && window.__aurora.query($id, ${JSONObject.quote(operation)}, $variables, ${JSONObject.quote(hash)}, $rescan)" }
+
+    private suspend fun call(label: String, script: (Int) -> String): Reply {
         val id = ids.incrementAndGet()
         val reply = CompletableDeferred<Reply>()
         calls[id] = reply
         try {
-            val script = "window.__aurora && window.__aurora.query($id, ${JSONObject.quote(operation)}, $variables, ${JSONObject.quote(hash)}, $rescan)"
-            withContext(Dispatchers.Main) { view.evaluateJavascript(script, null) }
-            return withTimeoutOrNull(QUERY_TIMEOUT_MS) { reply.await() } ?: throw SpotifyGraphqlException("$operation timed out")
+            withContext(Dispatchers.Main) { view.evaluateJavascript(script(id), null) }
+            return withTimeoutOrNull(QUERY_TIMEOUT_MS) { reply.await() } ?: throw SpotifyGraphqlException("$label timed out")
         } finally {
             calls.remove(id)
         }
@@ -316,22 +336,26 @@ class SpotifyWebBridge(context: Context) {
     private val idle = Runnable { if (inFlight.get() == 0) reset() else scheduleIdle() }
 
     fun account(cookie: () -> String): SpotifyGraphql = object : SpotifyGraphql {
-        override suspend fun query(operation: String, variables: JsonObject): JsonObject = run(cookie(), operation, variables)
+        override suspend fun query(operation: String, variables: JsonObject): JsonObject =
+            run(cookie()) { it.query(operation, variables) }
+
+        override suspend fun playlistService(path: String, body: JsonObject): JsonObject =
+            run(cookie()) { it.playlistService(path, body) }
     }
 
-    private suspend fun run(cookie: String, operation: String, variables: JsonObject): JsonObject {
+    private suspend fun run(cookie: String, request: suspend (SpotifyPage) -> JsonObject): JsonObject {
         if (cookie.isBlank()) throw SpotifyGraphqlException("signed out", 401)
         inFlight.incrementAndGet()
         try {
             val current = open(cookie)
             return try {
-                current.query(operation, variables)
+                request(current)
             } catch (e: SpotifyGraphqlException) {
                 if (e.status != 401) throw e
                 // the page's token ran out; a fresh start mints a new one
                 withContext(Dispatchers.Main) { close(current) }
                 try {
-                    open(cookie).query(operation, variables)
+                    request(open(cookie))
                 } catch (again: SpotifyGraphqlException) {
                     // still refused, so the saved login itself expired; stop restarting the page for every call
                     if (again.status == 401) failedAt = SystemClock.elapsedRealtime()
