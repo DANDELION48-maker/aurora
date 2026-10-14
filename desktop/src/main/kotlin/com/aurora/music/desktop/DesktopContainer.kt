@@ -226,7 +226,7 @@ class DesktopContainer(
                         (mergeSourceKeys.isEmpty() || session.accountKey() in mergeSourceKeys))) _sourceErrors.tryEmit(message)
             }
             ServerType.LOCAL -> LocalBackend(folderLibrary, localStore, session)
-            ServerType.SPOTIFY, ServerType.YOUTUBE_MUSIC, ServerType.EXTENSION -> null
+            ServerType.SPOTIFY, ServerType.YOUTUBE_MUSIC, ServerType.SOUNDCLOUD, ServerType.EXTENSION -> null
         }
     }
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soundcloud_card_detail">"Je likes, playlists en feed"</string>
+    <string name="soundcloud_connect_title">"SoundCloud koppelen"</string>
+    <string name="soundcloud_connect_subtitle">"Je likes, playlists en de artiesten die je volgt"</string>
+    <string name="soundcloud_sign_in">"Inloggen bij SoundCloud"</string>
+    <string name="soundcloud_sign_in_hint">"Log in op de pagina van SoundCloud. Aurora koppelt zodra je bent ingelogd."</string>
+    <string name="soundcloud_waiting">"Log in om verder te gaan. Wordt inloggen met Google hier geweigerd, log dan in met je e-mailadres."</string>
+    <string name="soundcloud_details">"Aurora gebruikt de onofficiële webinterface van SoundCloud en bewaart je login versleuteld op dit apparaat."</string>
+    <string name="soundcloud_connect_failed">"SoundCloud kon niet worden gekoppeld. Probeer het opnieuw."</string>
+    <string name="soundcloud_page_failed">"De inlogpagina kon niet laden. Controleer je verbinding en laad opnieuw."</string>
+</resources>

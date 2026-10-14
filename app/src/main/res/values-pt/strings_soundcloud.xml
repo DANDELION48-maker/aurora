@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soundcloud_card_detail">"Suas curtidas, playlists e feed"</string>
+    <string name="soundcloud_connect_title">"Conectar SoundCloud"</string>
+    <string name="soundcloud_connect_subtitle">"Suas curtidas, playlists e os artistas que você segue"</string>
+    <string name="soundcloud_sign_in">"Entrar no SoundCloud"</string>
+    <string name="soundcloud_sign_in_hint">"Entre na página do SoundCloud. O Aurora conecta assim que você entrar."</string>
+    <string name="soundcloud_waiting">"Entre para continuar. Se o login com Google for recusado aqui, entre com seu e-mail."</string>
+    <string name="soundcloud_details">"O Aurora usa a interface web não oficial do SoundCloud e guarda seu login criptografado neste dispositivo."</string>
+    <string name="soundcloud_connect_failed">"Não foi possível conectar o SoundCloud. Tente novamente."</string>
+    <string name="soundcloud_page_failed">"Não foi possível carregar a página de login. Verifique sua conexão e recarregue."</string>
+</resources>

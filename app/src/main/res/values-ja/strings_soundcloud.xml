@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soundcloud_card_detail">"いいね、プレイリスト、フィード"</string>
+    <string name="soundcloud_connect_title">"SoundCloud に接続"</string>
+    <string name="soundcloud_connect_subtitle">"いいね、プレイリスト、フォロー中のアーティスト"</string>
+    <string name="soundcloud_sign_in">"SoundCloud にサインイン"</string>
+    <string name="soundcloud_sign_in_hint">"SoundCloud のページでサインインしてください。サインインすると Aurora が接続します。"</string>
+    <string name="soundcloud_waiting">"続けるにはサインインしてください。ここで Google のサインインが拒否された場合は、メールアドレスでサインインしてください。"</string>
+    <string name="soundcloud_details">"Aurora は SoundCloud の非公式ウェブインターフェースを使い、サインイン情報をこの端末に暗号化して保存します。"</string>
+    <string name="soundcloud_connect_failed">"SoundCloud に接続できませんでした。もう一度お試しください。"</string>
+    <string name="soundcloud_page_failed">"サインインページを読み込めませんでした。接続を確認して再読み込みしてください。"</string>
+</resources>

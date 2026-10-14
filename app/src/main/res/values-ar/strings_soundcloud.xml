@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soundcloud_card_detail">"إعجاباتك وقوائم التشغيل والخلاصة"</string>
+    <string name="soundcloud_connect_title">"ربط SoundCloud"</string>
+    <string name="soundcloud_connect_subtitle">"إعجاباتك وقوائم التشغيل والفنانون الذين تتابعهم"</string>
+    <string name="soundcloud_sign_in">"تسجيل الدخول إلى SoundCloud"</string>
+    <string name="soundcloud_sign_in_hint">"سجّل الدخول من صفحة SoundCloud. يتصل Aurora فور تسجيل دخولك."</string>
+    <string name="soundcloud_waiting">"سجّل الدخول للمتابعة. إذا رُفض تسجيل الدخول عبر Google هنا، فسجّل الدخول ببريدك الإلكتروني."</string>
+    <string name="soundcloud_details">"يستخدم Aurora واجهة الويب غير الرسمية لـ SoundCloud ويحفظ تسجيل دخولك مشفّرًا على هذا الجهاز."</string>
+    <string name="soundcloud_connect_failed">"تعذّر ربط SoundCloud. حاول مرة أخرى."</string>
+    <string name="soundcloud_page_failed">"تعذّر تحميل صفحة تسجيل الدخول. تحقّق من اتصالك وأعد التحميل."</string>
+</resources>

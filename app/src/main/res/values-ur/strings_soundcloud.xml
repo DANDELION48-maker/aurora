@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soundcloud_card_detail">"آپ کی پسند، پلے لسٹس اور فیڈ"</string>
+    <string name="soundcloud_connect_title">"SoundCloud جوڑیں"</string>
+    <string name="soundcloud_connect_subtitle">"آپ کی پسند، پلے لسٹس اور وہ فنکار جنہیں آپ فالو کرتے ہیں"</string>
+    <string name="soundcloud_sign_in">"SoundCloud میں سائن ان کریں"</string>
+    <string name="soundcloud_sign_in_hint">"SoundCloud کے صفحے پر سائن ان کریں۔ سائن ان ہوتے ہی Aurora جڑ جائے گا۔"</string>
+    <string name="soundcloud_waiting">"جاری رکھنے کے لیے سائن ان کریں۔ اگر یہاں Google سائن ان مسترد ہو تو اپنی ای میل سے سائن ان کریں۔"</string>
+    <string name="soundcloud_details">"Aurora، SoundCloud کا غیر سرکاری ویب انٹرفیس استعمال کرتا ہے اور آپ کا سائن ان اس آلے پر خفیہ کر کے رکھتا ہے۔"</string>
+    <string name="soundcloud_connect_failed">"SoundCloud نہیں جڑ سکا۔ دوبارہ کوشش کریں۔"</string>
+    <string name="soundcloud_page_failed">"سائن ان صفحہ لوڈ نہیں ہو سکا۔ اپنا کنکشن چیک کر کے دوبارہ لوڈ کریں۔"</string>
+</resources>

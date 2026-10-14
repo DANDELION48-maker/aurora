@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soundcloud_card_detail">"Tus me gusta, listas y feed"</string>
+    <string name="soundcloud_connect_title">"Conectar SoundCloud"</string>
+    <string name="soundcloud_connect_subtitle">"Tus me gusta, listas y los artistas que sigues"</string>
+    <string name="soundcloud_sign_in">"Iniciar sesión en SoundCloud"</string>
+    <string name="soundcloud_sign_in_hint">"Inicia sesión en la página de SoundCloud. Aurora se conecta en cuanto entres."</string>
+    <string name="soundcloud_waiting">"Inicia sesión para continuar. Si aquí se rechaza el inicio con Google, usa tu correo electrónico."</string>
+    <string name="soundcloud_details">"Aurora usa la interfaz web no oficial de SoundCloud y guarda tu sesión cifrada en este dispositivo."</string>
+    <string name="soundcloud_connect_failed">"No se pudo conectar SoundCloud. Inténtalo de nuevo."</string>
+    <string name="soundcloud_page_failed">"No se pudo cargar la página de inicio de sesión. Revisa tu conexión y recarga."</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soundcloud_card_detail">"Your likes, playlists and feed"</string>
+    <string name="soundcloud_connect_title">"Connect SoundCloud"</string>
+    <string name="soundcloud_connect_subtitle">"Your likes, playlists and the artists you follow"</string>
+    <string name="soundcloud_sign_in">"Sign in to SoundCloud"</string>
+    <string name="soundcloud_sign_in_hint">"Sign in on SoundCloud\'s page. Aurora connects as soon as you\'re in."</string>
+    <string name="soundcloud_waiting">"Sign in to continue. If Google sign-in is refused here, sign in with your email instead."</string>
+    <string name="soundcloud_details">"Aurora uses SoundCloud\'s unofficial web interface and keeps your sign-in encrypted on this device."</string>
+    <string name="soundcloud_connect_failed">"Could not connect SoundCloud. Please try again."</string>
+    <string name="soundcloud_page_failed">"The sign-in page could not load. Check your connection and reload."</string>
+</resources>

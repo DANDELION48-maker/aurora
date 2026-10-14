@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soundcloud_card_detail">"你的喜欢、歌单和动态"</string>
+    <string name="soundcloud_connect_title">"连接 SoundCloud"</string>
+    <string name="soundcloud_connect_subtitle">"你的喜欢、歌单和关注的艺人"</string>
+    <string name="soundcloud_sign_in">"登录 SoundCloud"</string>
+    <string name="soundcloud_sign_in_hint">"在 SoundCloud 页面登录，登录后 Aurora 会立即连接。"</string>
+    <string name="soundcloud_waiting">"登录以继续。如果这里拒绝 Google 登录，请改用邮箱登录。"</string>
+    <string name="soundcloud_details">"Aurora 使用 SoundCloud 的非官方网页接口，并在此设备上加密保存你的登录信息。"</string>
+    <string name="soundcloud_connect_failed">"无法连接 SoundCloud，请重试。"</string>
+    <string name="soundcloud_page_failed">"无法加载登录页面。请检查网络后重新加载。"</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soundcloud_card_detail">"Beğenilerin, çalma listelerin ve akışın"</string>
+    <string name="soundcloud_connect_title">"SoundCloud\'u bağla"</string>
+    <string name="soundcloud_connect_subtitle">"Beğenilerin, çalma listelerin ve takip ettiğin sanatçılar"</string>
+    <string name="soundcloud_sign_in">"SoundCloud\'a giriş yap"</string>
+    <string name="soundcloud_sign_in_hint">"SoundCloud sayfasında giriş yap. Giriş yapar yapmaz Aurora bağlanır."</string>
+    <string name="soundcloud_waiting">"Devam etmek için giriş yap. Google ile giriş burada reddedilirse e-postanla giriş yap."</string>
+    <string name="soundcloud_details">"Aurora, SoundCloud\'un resmi olmayan web arayüzünü kullanır ve girişini bu cihazda şifreli olarak saklar."</string>
+    <string name="soundcloud_connect_failed">"SoundCloud bağlanamadı. Lütfen tekrar dene."</string>
+    <string name="soundcloud_page_failed">"Giriş sayfası yüklenemedi. Bağlantını kontrol edip yeniden yükle."</string>
+</resources>

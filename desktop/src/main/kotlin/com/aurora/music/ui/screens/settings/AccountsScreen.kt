@@ -111,6 +111,7 @@ private fun AccountRow(session: Session, isActive: Boolean, canForget: Boolean, 
     val badge = when (session.type) {
         ServerType.SPOTIFY -> "S"
         ServerType.YOUTUBE_MUSIC -> "Y"
+        ServerType.SOUNDCLOUD -> "SC"
         ServerType.JELLYFIN -> "J"
         ServerType.PLEX -> "P"
         ServerType.LOCAL -> "L"

@@ -302,6 +302,46 @@ data class AlarmPrefs(
     val minute: Int = 0,
 )
 
+data class ReverbPrefs(
+    val enabled: Boolean = false,
+    val preset: Int = ReverbPreset.HALL,    // -1 means custom
+    val mix: Float = 0.25f,
+    val decaySec: Float = 2.4f,
+    val size: Float = 0.7f,
+    val predelayMs: Float = 20f,
+    val damping: Float = 0.45f,
+    val lowCutHz: Float = 160f,
+    val highCutHz: Float = 9000f,
+    val width: Float = 1f,
+    val early: Float = 0.3f,
+    val modulation: Float = 0.35f,
+) {
+    fun clamped(): ReverbPrefs = copy(
+        mix = mix.finite(0.25f).coerceIn(0f, 1f), decaySec = decaySec.finite(2.4f).coerceIn(0.2f, 12f),
+        size = size.finite(0.7f).coerceIn(0f, 1f), predelayMs = predelayMs.finite(20f).coerceIn(0f, 200f),
+        damping = damping.finite(0.45f).coerceIn(0f, 1f), lowCutHz = lowCutHz.finite(160f).coerceIn(20f, 1000f),
+        highCutHz = highCutHz.finite(9000f).coerceIn(1500f, 20000f), width = width.finite(1f).coerceIn(0f, 1.5f),
+        early = early.finite(0.3f).coerceIn(0f, 1f), modulation = modulation.finite(0.35f).coerceIn(0f, 1f),
+    )
+    fun withPreset(id: Int): ReverbPrefs = ReverbPreset.ALL.getOrNull(id)?.let {
+        it.copy(enabled = enabled, preset = id, mix = mix)
+    } ?: this
+    private fun Float.finite(fallback: Float) = if (isFinite()) this else fallback
+}
+
+object ReverbPreset {
+    const val ROOM = 0; const val HALL = 1; const val PLATE = 2; const val CATHEDRAL = 3; const val AMBIENCE = 4; const val LUSH = 5
+    // mix is user-owned, presets only shape the space
+    val ALL = listOf(
+        ReverbPrefs(decaySec = 0.9f, size = 0.35f, predelayMs = 6f, damping = 0.55f, lowCutHz = 140f, highCutHz = 8000f, width = 0.9f, early = 0.6f, modulation = 0.2f),
+        ReverbPrefs(),
+        ReverbPrefs(decaySec = 1.9f, size = 0.5f, predelayMs = 8f, damping = 0.2f, lowCutHz = 220f, highCutHz = 12000f, width = 1.1f, early = 0.05f, modulation = 0.55f),
+        ReverbPrefs(decaySec = 6f, size = 1f, predelayMs = 45f, damping = 0.5f, lowCutHz = 120f, highCutHz = 7000f, width = 1.2f, early = 0.25f, modulation = 0.4f),
+        ReverbPrefs(decaySec = 0.5f, size = 0.2f, predelayMs = 0f, damping = 0.4f, lowCutHz = 250f, highCutHz = 10000f, width = 1f, early = 0.8f, modulation = 0.1f),
+        ReverbPrefs(decaySec = 3.8f, size = 0.85f, predelayMs = 30f, damping = 0.6f, lowCutHz = 180f, highCutHz = 6500f, width = 1.3f, early = 0.15f, modulation = 0.7f),
+    )
+}
+
 data class MusicHapticsPrefs(
     val enabled: Boolean = false,
     val intensity: Float = 0.8f,

@@ -30,6 +30,8 @@ class AccountAuthenticator(private val clientInfo: ClientInfo) {
                 ServerType.SPOTIFY -> throw IllegalStateException(appString(R.string.text_spotify_uses_the_connect_button_not_this_form_17d56a))
                 ServerType.YOUTUBE_MUSIC -> throw IllegalStateException(appString(R.string.text_youtube_music_uses_google_sign_in_0ba1e7))
                 ServerType.LOCAL -> throw IllegalStateException(appString(R.string.text_local_mode_doesn_t_use_this_form_78c2dc))
+                // not offered on desktop yet
+                ServerType.SOUNDCLOUD -> throw IllegalStateException("SoundCloud is not available on desktop yet.")
                 ServerType.EXTENSION -> throw IllegalStateException(appString(R.string.text_enable_this_source_in_advanced_audio_extensions_579558))
             }
         }

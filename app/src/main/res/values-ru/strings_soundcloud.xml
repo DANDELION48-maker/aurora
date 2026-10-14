@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soundcloud_card_detail">"Ваши лайки, плейлисты и лента"</string>
+    <string name="soundcloud_connect_title">"Подключить SoundCloud"</string>
+    <string name="soundcloud_connect_subtitle">"Ваши лайки, плейлисты и исполнители, на которых вы подписаны"</string>
+    <string name="soundcloud_sign_in">"Войти в SoundCloud"</string>
+    <string name="soundcloud_sign_in_hint">"Войдите на странице SoundCloud. Aurora подключится сразу после входа."</string>
+    <string name="soundcloud_waiting">"Войдите, чтобы продолжить. Если вход через Google здесь отклонён, войдите по электронной почте."</string>
+    <string name="soundcloud_details">"Aurora использует неофициальный веб-интерфейс SoundCloud и хранит данные входа в зашифрованном виде на этом устройстве."</string>
+    <string name="soundcloud_connect_failed">"Не удалось подключить SoundCloud. Попробуйте ещё раз."</string>
+    <string name="soundcloud_page_failed">"Не удалось загрузить страницу входа. Проверьте подключение и обновите страницу."</string>
+</resources>

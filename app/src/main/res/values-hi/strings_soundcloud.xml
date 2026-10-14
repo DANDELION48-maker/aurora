@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soundcloud_card_detail">"आपकी पसंद, प्लेलिस्ट और फ़ीड"</string>
+    <string name="soundcloud_connect_title">"SoundCloud जोड़ें"</string>
+    <string name="soundcloud_connect_subtitle">"आपकी पसंद, प्लेलिस्ट और आपके फ़ॉलो किए कलाकार"</string>
+    <string name="soundcloud_sign_in">"SoundCloud में साइन इन करें"</string>
+    <string name="soundcloud_sign_in_hint">"SoundCloud के पेज पर साइन इन करें। साइन इन होते ही Aurora जुड़ जाएगा।"</string>
+    <string name="soundcloud_waiting">"जारी रखने के लिए साइन इन करें। अगर यहाँ Google साइन-इन मना हो, तो अपने ईमेल से साइन इन करें।"</string>
+    <string name="soundcloud_details">"Aurora SoundCloud के अनौपचारिक वेब इंटरफ़ेस का उपयोग करता है और आपका साइन-इन इस डिवाइस पर एन्क्रिप्ट करके रखता है।"</string>
+    <string name="soundcloud_connect_failed">"SoundCloud नहीं जुड़ सका। कृपया फिर से कोशिश करें।"</string>
+    <string name="soundcloud_page_failed">"साइन-इन पेज लोड नहीं हो सका। अपना कनेक्शन जाँचें और रीलोड करें।"</string>
+</resources>
