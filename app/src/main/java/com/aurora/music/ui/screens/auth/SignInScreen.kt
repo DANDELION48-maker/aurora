@@ -102,7 +102,7 @@ fun SignInScreen(
     onAuthUrlOpened: () -> Unit = {},
     onLocal: () -> Unit = {},
     onConnectSpotify: (String) -> Unit = {},
-    onConnectSpotifyWeb: (String, String) -> Unit = { _, _ -> },
+    onConnectSpotifyWeb: (String, com.aurora.music.data.SpotifyWebProfile?) -> Unit = { _, _ -> },
     onConnectYouTubeMusic: (String) -> Unit = {},
     savedSessions: List<com.aurora.music.data.Session> = emptyList(),
     onUseSaved: (com.aurora.music.data.Session) -> Unit = {},

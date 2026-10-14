@@ -347,6 +347,7 @@ class SpotifyWebBridge(context: Context) {
     private suspend fun open(cookie: String): SpotifyPage = lock.withLock {
         withContext(Dispatchers.Main) { page?.takeIf { pageCookie == cookie } }?.let { return@withLock it }
         if (SystemClock.elapsedRealtime() - failedAt < RETRY_MS) throw SpotifyGraphqlException("web player unavailable")
+        val startedAt = SystemClock.elapsedRealtime()
         val fresh = withContext(Dispatchers.Main) {
             page?.let(::close)
             start(cookie)
@@ -357,6 +358,7 @@ class SpotifyWebBridge(context: Context) {
             AppLog.d(TAG, "hidden web player did not start")
             throw SpotifyGraphqlException("web player did not start")
         }
+        AppLog.d(TAG, "hidden web player ready in ${SystemClock.elapsedRealtime() - startedAt} ms, signed in=${fresh.signedIn}")
         fresh
     }
 

@@ -9,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.aurora.music.AuroraApplication
 import com.aurora.music.data.ServerType
 import com.aurora.music.data.Session
+import com.aurora.music.data.SpotifyWebBackend
+import com.aurora.music.data.SpotifyWebProfile
 import com.aurora.music.data.remote.JellyfinClient
 import com.aurora.music.data.remote.PlexClient
 import com.aurora.music.data.remote.PlexException
@@ -138,19 +140,17 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    // web-player login keeps only an encrypted reference to spotify's session cookie in the saved account
-    fun connectSpotifyWeb(accessToken: String, sessionCookie: String) {
+    // the saved account holds only an encrypted reference to spotify's session cookie
+    fun connectSpotifyWeb(sessionCookie: String, profile: SpotifyWebProfile?) {
+        if (sessionCookie.isBlank() || profile == null) {
+            _state.update { it.copy(loading = false, error = appString(R.string.spotify_web_failed)) }
+            return
+        }
         _state.update { it.copy(loading = true, error = null) }
         viewModelScope.launch {
-            val reference = if (sessionCookie.isBlank()) "" else withContext(Dispatchers.IO) { container.spotifyCredentials.save(sessionCookie) }
-            val session = withContext(Dispatchers.IO) { SpotifyClient.loginWithWebToken(accessToken, reference) }
-            if (session != null) {
-                container.applySession(session)
-                _state.update { it.copy(loading = false, error = null) }
-            } else {
-                if (reference.isNotBlank()) container.spotifyCredentials.remove(reference)
-                _state.update { it.copy(loading = false, error = appString(R.string.spotify_web_failed)) }
-            }
+            val reference = withContext(Dispatchers.IO) { container.spotifyCredentials.save(sessionCookie) }
+            container.applySession(SpotifyWebBackend.session(profile, reference))
+            _state.update { it.copy(loading = false, error = null) }
         }
     }
 
