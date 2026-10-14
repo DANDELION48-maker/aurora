@@ -4,13 +4,11 @@ import com.aurora.music.localization.appString
 import com.aurora.music.R
 
 import android.annotation.SuppressLint
-import android.util.Log
-import android.view.View
-import android.webkit.ConsoleMessage
+import android.view.ViewGroup
 import android.webkit.CookieManager
-import android.webkit.WebChromeClient
-import android.webkit.WebResourceError
+import android.webkit.WebStorage
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Arrangement
@@ -65,60 +63,70 @@ fun DiscordLoginScreen(contentPadding: PaddingValues, onBack: () -> Unit, onToke
             modifier = Modifier.fillMaxWidth().weight(1f),
             factory = { ctx ->
                 WebView(ctx).apply {
-                    // discord spa renders blank in a hardware-accelerated webview software layer forces a paint
-                    setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+                    // wrap_content makes webview resolve 100vh to 0 so discord's whole app collapses to nothing
+                    layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                     settings.javaScriptEnabled = true
                     settings.domStorageEnabled = true
-                    settings.databaseEnabled = true
                     settings.useWideViewPort = true
                     settings.loadWithOverviewMode = true
-                    settings.userAgentString =
-                        "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
+                    settings.allowFileAccess = false
+                    settings.allowContentAccess = false
+                    // the real chrome version minus the webview markers so discord serves its normal mobile site
+                    settings.userAgentString = settings.userAgentString.replace("; wv", "").replace(Regex(" Version/[\\d.]+"), "")
                     CookieManager.getInstance().setAcceptCookie(true)
-                    CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
-                    webChromeClient = object : WebChromeClient() {
-                        override fun onConsoleMessage(m: ConsoleMessage): Boolean {
-                            Log.d(TAG, "console: ${m.message()} @${m.sourceId()}:${m.lineNumber()}")
-                            return true
+                    var captured = false
+                    fun capture(token: String) {
+                        if (captured) return
+                        captured = true
+                        // aurora keeps its own copy so the web session's stored token is not left behind
+                        WebStorage.getInstance().deleteOrigin(DISCORD_ORIGIN)
+                        onToken(token)
+                    }
+                    // discord navigates inside the page after login so poll storage instead of waiting for a page load
+                    val poll = object : Runnable {
+                        override fun run() {
+                            if (captured || !isAttachedToWindow) return
+                            if (url?.startsWith(DISCORD_ORIGIN) == true) readToken(this@apply, ::capture)
+                            postDelayed(this, 1500)
                         }
                     }
-                    var captured = false
                     webViewClient = object : WebViewClient() {
                         override fun onPageFinished(view: WebView, url: String?) {
-                            Log.d(TAG, "finished $url")
-                            if (captured) return
-                            if (url != null && (url.contains("/channels") || url.contains("/app"))) {
-                                tryGrabToken(view, attemptsLeft = 8) { token ->
-                                    if (!captured) { captured = true; onToken(token) }
-                                }
-                            }
+                            view.removeCallbacks(poll)
+                            view.post(poll)
                         }
-                        override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
-                            Log.d(TAG, "error ${error.errorCode} ${error.description} url=${request.url} main=${request.isForMainFrame}")
+
+                        // signed-in api calls carry the token too in case discord stops keeping it in storage
+                        override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+                            val url = request.url
+                            if (!captured && url.host == "discord.com" && url.path.orEmpty().startsWith("/api/")) {
+                                request.requestHeaders.entries.firstOrNull { it.key.equals("authorization", true) }
+                                    ?.value?.trim()?.takeIf { it.isNotBlank() && !it.startsWith("Bot ") }
+                                    ?.let { token -> view.post { capture(token) } }
+                            }
+                            return null
                         }
                     }
-                    loadUrl("https://discord.com/login")
+                    loadUrl("$DISCORD_ORIGIN/login")
                 }
             },
+            onRelease = { it.destroy() },
         )
     }
 }
 
-private const val TAG = "DiscordLogin"
+private const val DISCORD_ORIGIN = "https://discord.com"
 
 private const val TOKEN_JS =
     "(function(){try{var i=document.createElement('iframe');document.body.appendChild(i);" +
         "var t=i.contentWindow.localStorage.getItem('token');i.remove();return t;}catch(e){return null;}})()"
 
-private fun tryGrabToken(view: WebView, attemptsLeft: Int, onToken: (String) -> Unit) {
+private fun readToken(view: WebView, onToken: (String) -> Unit) {
     view.evaluateJavascript(TOKEN_JS) { result ->
-        val token = result?.trim()
+        result?.trim()
             ?.takeIf { it.isNotBlank() && it != "null" }
             ?.replace("\\\"", "")?.replace("\"", "")
-        if (!token.isNullOrBlank()) {
-            onToken(token)
-        } else if (attemptsLeft > 0) {
-            view.postDelayed({ tryGrabToken(view, attemptsLeft - 1, onToken) }, 1500)
-        }
+            ?.takeIf { it.isNotBlank() }
+            ?.let(onToken)
     }
 }
