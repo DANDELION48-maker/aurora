@@ -301,12 +301,15 @@ class SpotifyWebBackend(
         mark(cursor("playlist", id, tracks.size), items.size)
         val total = content.int("totalCount").takeIf { it > 0 } ?: tracks.size
         val description = plain(p.string("description"))
+        val capabilities = p.obj("currentUserCapabilities")
+        val editable = if (capabilities.has("canEditMetadata")) capabilities.bool("canEditMetadata")
+            else p.obj("ownerV2").obj("data").string("username") == session.userId
         p.string("revisionId").takeIf { it.isNotBlank() }?.let { playlistCounts[id] = it to total }
         return DetailData(
             DetailInfo(p.string("name").ifBlank { "Playlist" }, p.obj("ownerV2").obj("data").string("name"),
                 image(p.obj("images").list("items").firstOrNull() ?: JsonObject()), accentArgbFor(id), false,
                 total, "Playlist", description = description, followers = p.long("followers"), statsLine = true,
-                editableDescription = description),
+                editableDescription = description, editable = editable),
             tracks,
         )
     }

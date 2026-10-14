@@ -338,12 +338,13 @@ class SpotifyBackend(
             "playlist" -> {
                 val header = runCatching { api.playlist(id) }.getOrNull()
                 val sub = header?.owner?.displayName?.let { "by $it" } ?: ""
+                val owned = header?.owner?.id?.let { it == session.userId } ?: true
                 val apiPage = runCatching { api.playlistItems(id, 0, PAGE) }.getOrNull()
                 val apiTracks = apiPage?.items?.mapNotNull { (it.item ?: it.track)?.toSong() }.orEmpty()
                 if (apiTracks.isNotEmpty()) {
                     DetailData(
                         info = DetailInfo(header?.name ?: "Playlist", sub, img(header?.images), accentArgbFor(id), false, apiPage?.total ?: apiTracks.size, "Playlist",
-                            editableDescription = header?.description.orEmpty()),
+                            editableDescription = header?.description.orEmpty(), editable = owned),
                         tracks = apiTracks,
                     )
                 } else {
@@ -352,7 +353,7 @@ class SpotifyBackend(
                     AppLog.d("SpotifyBE", "playlist $id non-owned → embed tracks=${embed.size}")
                     DetailData(
                         info = DetailInfo(header?.name ?: "Playlist", sub, img(header?.images), accentArgbFor(id), false, embed.size, "Playlist",
-                            editableDescription = header?.description.orEmpty()),
+                            editableDescription = header?.description.orEmpty(), editable = owned),
                         tracks = embed,
                     )
                 }

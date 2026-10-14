@@ -87,6 +87,8 @@ data class DetailInfo(
     val followers: Long = 0,
     // the header adds a tracks, length and saves line instead of the backend spelling counts out in the subtitle
     val statsLine: Boolean = false,
+    // false hides edit and delete on playlists the account follows but doesn't own
+    val editable: Boolean = true,
 )
 
 enum class LibraryFilter { ALL, PLAYLISTS, ALBUMS, ARTISTS, SONGS, DOWNLOADED }

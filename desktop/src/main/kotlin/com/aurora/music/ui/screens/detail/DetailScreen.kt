@@ -277,7 +277,7 @@ fun DetailScreen(
                     onClick = { headerMenu = false; onTogglePin() },
                     leadingIcon = { Icon(if (isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin, null) },
                 )
-                if (isPlaylist) {
+                if (isPlaylist && info.editable) {
                     DropdownMenuItem(text = { Text(appString(R.string.text_edit_playlist_1528d5)) }, onClick = { headerMenu = false; showEdit = true }, leadingIcon = { Icon(Icons.Filled.Edit, null) })
                     DropdownMenuItem(text = { Text(appString(R.string.text_delete_playlist_b55b18)) }, onClick = { headerMenu = false; onDeletePlaylist() }, leadingIcon = { Icon(Icons.Filled.Delete, null, tint = MaterialTheme.colorScheme.error) })
                 }
