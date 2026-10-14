@@ -78,15 +78,14 @@ object SpotifyWebPlayer {
         view.settings.allowContentAccess = false
         view.settings.useWideViewPort = true
         view.settings.loadWithOverviewMode = true
-        // the desktop web player is the one that reliably boots and asks for a token
-        val chrome = Regex("Chrome/([\\d.]+)").find(view.settings.userAgentString)?.groupValues?.get(1) ?: "130.0.0.0"
-        view.settings.userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$chrome Safari/537.36"
+        // the phone's real browser identity; a faked desktop one fails spotify's captcha checks
         CookieManager.getInstance().setAcceptCookie(true)
     }
 
     // must run on the main thread before the first load
     fun installHook(view: WebView, onToken: (WebPlayerToken) -> Unit): Boolean {
         if (!supported) return false
+        WebView.setWebContentsDebuggingEnabled(true) // TEMP-DIAG
         WebViewCompat.addWebMessageListener(view, BRIDGE, setOf(ORIGIN)) { _, message, _, _, _ ->
             parse(message.data)?.let(onToken)
         }

@@ -100,7 +100,8 @@ private fun SpotifyLoginBrowser(onClose: () -> Unit, onCaptured: (String, String
                         val hooked = SpotifyWebPlayer.installHook(this) { token ->
                             if (done || token.anonymous) return@installHook
                             done = true
-                            captured(token.accessToken, SpotifyWebPlayer.sessionCookie())
+                            android.util.Log.d("SpotifyWebDiag", "signed-in token captured, staying open for capture") // TEMP-DIAG
+                            if (false) captured(token.accessToken, SpotifyWebPlayer.sessionCookie()) // TEMP-DIAG
                         }
                         if (!hooked) error = appString(R.string.spotify_web_unsupported)
                         webViewClient = object : WebViewClient() {

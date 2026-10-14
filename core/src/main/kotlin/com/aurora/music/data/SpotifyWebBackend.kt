@@ -1,0 +1,547 @@
+package com.aurora.music.data
+
+import com.aurora.music.data.remote.SpotifyGraphql
+import com.aurora.music.data.remote.array
+import com.aurora.music.data.remote.obj
+import com.aurora.music.data.remote.string
+import com.aurora.music.model.Album
+import com.aurora.music.model.Artist
+import com.aurora.music.model.DetailInfo
+import com.aurora.music.model.Playlist
+import com.aurora.music.model.Song
+import com.aurora.music.util.AppLog
+import com.aurora.music.util.accentArgbFor
+import com.aurora.music.util.parseReleaseDateEpochSec
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonNull
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
+import java.net.URLEncoder
+import java.time.Instant
+import java.util.TimeZone
+import java.util.concurrent.ConcurrentHashMap
+
+data class SpotifyWebProfile(val userId: String, val name: String, val imageUrl: String)
+
+// spotify through the web player's own api, so no developer app or premium; audio resolves through youtube
+class SpotifyWebBackend(
+    override val session: Session,
+    private val gql: SpotifyGraphql,
+    private val localize: (Song) -> Song,
+) : MediaBackend {
+
+    private data class AlbumRef(val id: String, val name: String, val art: String)
+    private class Page(val songs: List<Song>, val consumed: Int, val total: Int)
+
+    @Volatile private var likedCache: List<Song>? = null
+    // album track pages carry no album so the header's name and art fill them in
+    private val albumRefs = ConcurrentHashMap<String, AlbumRef>()
+    // skipped podcast and local items make the app's song offsets drift from the server's item offsets
+    private val cursors = ConcurrentHashMap<String, Int>()
+
+    private suspend fun q(operation: String, vararg variables: Pair<String, Any?>): JsonObject =
+        gql.query(operation, variables(*variables))
+
+    override suspend fun ping(): Boolean = runCatching { profile(gql) != null }.getOrDefault(false)
+
+    override suspend fun home(): HomeData {
+        val home = q("home", "homeEndUserIntegration" to "INTEGRATION_WEB_PLAYER", "timeZone" to TimeZone.getDefault().id,
+            "sp_t" to "", "facet" to "", "sectionItemsLimit" to 12, "includeHomeChapterVideoCards" to false,
+            "includeEpisodeContentRatingsV2" to false).obj("home")
+        val sections = home.obj("sectionContainer").obj("sections").list("items").mapIndexedNotNull { index, section ->
+            val data = section.obj("data")
+            val title = data.obj("title").label()
+                .ifBlank { if (data.string("__typename") == "HomeShortsSectionData") "Recently played" else "" }
+            val items = section.obj("sectionItems").list("items")
+                .mapNotNull { feedItem(it.obj("content").obj("data"), it.string("uri")) }.distinctBy { it.key }
+            if (title.isBlank() || items.isEmpty()) null
+            else HomeFeedSection(section.string("uri").ifBlank { "section-$index" }, title, data.obj("subtitle").label(), items)
+        }
+        return HomeData(sections = sections)
+    }
+
+    private fun feedItem(data: JsonObject, uri: String): HomeFeedItem? = when (data.string("__typename")) {
+        "Album" -> album(data, uri)?.let { HomeFeedItem.Record(it) }
+        "Playlist" -> playlist(data, uri)?.let { HomeFeedItem.Collection(it) }
+        "Artist" -> artist(data, uri)?.let { HomeFeedItem.Performer(it) }
+        else -> null
+    }
+
+    private suspend fun library(filter: String): List<JsonObject> {
+        val out = ArrayList<JsonObject>()
+        while (out.size < LIBRARY_CAP) {
+            val page = q("libraryV3", "filters" to listOf(filter), "order" to null, "textFilter" to "",
+                "features" to listOf("LIKED_SONGS", "YOUR_EPISODES_V2", "PRERELEASES", "EVENTS"),
+                "limit" to LIBRARY_PAGE, "offset" to out.size, "flatten" to (filter == "Playlists"),
+                "expandedFolders" to emptyList<String>(), "folderUri" to null, "includeFoldersWhenFlattening" to false,
+            ).obj("me").obj("libraryV3")
+            val items = page.list("items")
+            out += items.map { it.obj("item") }
+            if (items.isEmpty() || out.size >= page.int("totalCount")) break
+        }
+        return out
+    }
+
+    override suspend fun allAlbums(): List<Album> =
+        runCatching { library("Albums").mapNotNull { album(it.obj("data"), it.string("_uri")) } }.getOrDefault(emptyList())
+
+    override suspend fun allArtists(): List<Artist> =
+        runCatching { library("Artists").mapNotNull { artist(it.obj("data"), it.string("_uri")) } }.getOrDefault(emptyList())
+
+    override suspend fun allPlaylists(): List<Playlist> =
+        runCatching { library("Playlists").mapNotNull { playlist(it.obj("data"), it.string("_uri")) } }.getOrDefault(emptyList())
+
+    override suspend fun playlistsForSong(songId: String): List<Playlist> {
+        val out = ArrayList<Playlist>()
+        var offset = 0
+        while (offset < LIBRARY_CAP) {
+            val page = q("editablePlaylists", "offset" to offset, "limit" to LIBRARY_PAGE, "textFilter" to "",
+                "uris" to listOf(TRACK + songId)).obj("me").obj("editablePlaylists")
+            val items = page.list("items")
+            out += items.mapNotNull { playlist(it.obj("item").obj("data"), it.obj("item").string("_uri")) }
+            offset += items.size
+            if (items.isEmpty() || offset >= page.int("totalCount")) break
+        }
+        return out
+    }
+
+    private suspend fun likedPage(offset: Int, limit: Int): Page {
+        val tracks = q("fetchLibraryTracks", "offset" to offset, "limit" to limit).obj("me").obj("library").obj("tracks")
+        val items = tracks.list("items")
+        val songs = items.mapNotNull { item ->
+            val track = item.obj("track")
+            song(track.obj("data"), track.string("_uri"), addedAt = item.obj("addedAt").string("isoString"))
+        }
+        return Page(songs, items.size, tracks.int("totalCount"))
+    }
+
+    override suspend fun allSongs(): List<Song> = runCatching { likedPage(0, TRACK_PAGE).songs }.getOrDefault(emptyList())
+
+    // liked songs are spotify's closest thing to a song library
+    override suspend fun songsPage(offset: Int, count: Int): List<Song> = runCatching {
+        val out = ArrayList<Song>()
+        var server = offset
+        while (out.size < count) {
+            val page = likedPage(server, minOf(TRACK_PAGE, count - out.size))
+            out += page.songs
+            server += page.consumed
+            if (page.consumed == 0 || server >= page.total) break
+        }
+        out
+    }.getOrDefault(emptyList())
+
+    override suspend fun starredSongs(): List<Song> {
+        likedCache?.let { return it }
+        val all = runCatching { loadAllLiked() }.getOrDefault(emptyList())
+        if (all.isNotEmpty()) likedCache = all
+        return all
+    }
+
+    private suspend fun loadAllLiked(): List<Song> = coroutineScope {
+        val first = likedPage(0, TRACK_PAGE)
+        val gate = Semaphore(PARALLEL)
+        val rest = (TRACK_PAGE until minOf(first.total, LIKED_CAP) step TRACK_PAGE).map { offset ->
+            async { gate.withPermit { runCatching { likedPage(offset, TRACK_PAGE).songs }.getOrDefault(emptyList()) } }
+        }.awaitAll()
+        (first.songs + rest.flatten()).distinctBy { it.id }
+    }
+
+    override suspend fun starredCount(): Int = runCatching {
+        q("fetchLibraryTracks", "offset" to 0, "limit" to 1).obj("me").obj("library").obj("tracks").int("totalCount")
+    }.getOrDefault(0)
+
+    override suspend fun starredIds(): Set<String> = coroutineScope {
+        val tracks = async { runCatching { likedPage(0, TRACK_PAGE).songs.map { it.id } }.getOrDefault(emptyList()) }
+        val albums = async { allAlbums().map { it.id } }
+        val artists = async { allArtists().map { it.id } }
+        (tracks.await() + albums.await() + artists.await()).toSet()
+    }
+
+    override suspend fun songFor(id: String): Song? = runCatching {
+        song(q("getTrack", "uri" to TRACK + id, "includeVideoAssociationItems" to false).obj("trackUnion"))
+    }.getOrNull()
+
+    override suspend fun likedSongIds(ids: List<String>): Set<String> {
+        val out = HashSet<String>()
+        for (chunk in ids.filter { it.isNotBlank() }.distinct().chunked(50)) {
+            val lookup = runCatching { q("areEntitiesInLibrary", "uris" to chunk.map { TRACK + it }).list("lookup") }.getOrNull() ?: continue
+            chunk.forEachIndexed { i, id -> if (lookup.getOrNull(i)?.obj("data")?.bool("saved") == true) out += id }
+        }
+        return out
+    }
+
+    override suspend fun profileImageUrl(): String = runCatching { profile(gql)?.imageUrl }.getOrNull().orEmpty()
+
+    override suspend fun search(query: String): SearchResults {
+        val term = query.trim()
+        if (term.isBlank()) return SearchResults()
+        return runCatching {
+            val s = q("searchDesktop", "searchTerm" to term, "offset" to 0, "limit" to SEARCH_PAGE, "numberOfTopResults" to 5,
+                "includeAudiobooks" to false, "includeArtistHasConcertsField" to false, "includePreReleases" to false,
+                "includeAlbumPreReleases" to false, "includeAuthors" to false, "includeEpisodeContentRatingsV2" to false,
+                "isPrefix" to null, "sectionFilters" to listOf("GENERIC")).obj("searchV2")
+            SearchResults(
+                songs = s.obj("tracksV2").list("items").mapNotNull { song(it.obj("item").obj("data")) },
+                albums = s.obj("albumsV2").list("items").mapNotNull { album(it.obj("data")) },
+                artists = s.obj("artists").list("items").mapNotNull { artist(it.obj("data")) },
+                playlists = s.obj("playlists").list("items").mapNotNull { playlist(it.obj("data")) },
+            )
+        }.getOrElse {
+            AppLog.d(TAG, "search failed: ${it.message}")
+            SearchResults()
+        }
+    }
+
+    override suspend fun scrobble(id: String) {}
+
+    override suspend fun radio(seedId: String): List<Song> = runCatching {
+        q("internalLinkRecommenderTrack", "uri" to TRACK + seedId, "limit" to RADIO_SIZE)
+            .obj("seoRecommendedTrack").list("items").mapNotNull { song(it.obj("data")) }
+    }.getOrDefault(emptyList())
+
+    override suspend fun detail(kind: String, id: String): DetailData? = runCatching {
+        when (kind) {
+            "album" -> albumDetail(id)
+            "artist" -> artistDetail(id)
+            "playlist" -> playlistDetail(id)
+            "liked" -> likedDetail()
+            else -> null
+        }
+    }.onFailure { AppLog.d(TAG, "$kind detail failed: ${it.message}") }.getOrNull()
+
+    private suspend fun albumDetail(id: String): DetailData {
+        val a = q("getAlbum", "uri" to ALBUM + id, "locale" to "", "offset" to 0, "limit" to ALBUM_PAGE).obj("albumUnion")
+        val ref = AlbumRef(id, a.string("name"), image(a.obj("coverArt")))
+        albumRefs[id] = ref
+        val tracksV2 = a.obj("tracksV2")
+        val items = tracksV2.list("items")
+        val tracks = items.mapNotNull { song(it.obj("track"), album = ref) }
+        cursors[cursor("album", id, tracks.size)] = items.size
+        val model = album(a, ALBUM + id)
+        return DetailData(
+            DetailInfo(ref.name, artistNames(a), ref.art, accentArgbFor(id), false,
+                tracksV2.int("totalCount").takeIf { it > 0 } ?: tracks.size, model?.typeLabel ?: "Album"),
+            tracks,
+        )
+    }
+
+    private suspend fun artistDetail(id: String): DetailData = coroutineScope {
+        val releases = async { runCatching { releases(ARTIST + id) }.getOrDefault(emptyList()) }
+        val a = q("queryArtistOverview", "uri" to ARTIST + id, "locale" to "", "preReleaseV2" to false).obj("artistUnion")
+        val name = a.obj("profile").string("name")
+        val top = a.obj("discography").obj("topTracks").list("items").mapNotNull { song(it.obj("track")) }
+        val listeners = a.obj("stats").long("monthlyListeners")
+        DetailData(
+            DetailInfo(name, if (listeners > 0) "${formatCount(listeners)} monthly listeners" else "Artist",
+                image(a.obj("visuals").obj("avatarImage")), accentArgbFor(id), true, top.size, "Artist"),
+            top,
+            releases.await().map { if (it.artist.isBlank()) it.copy(artist = name) else it },
+        )
+    }
+
+    private suspend fun releases(artistUri: String): List<Album> {
+        val out = ArrayList<Album>()
+        var offset = 0
+        while (offset < RELEASES_CAP) {
+            val all = q("queryArtistDiscographyAll", "uri" to artistUri, "offset" to offset, "limit" to RELEASES_PAGE, "order" to "DATE_DESC")
+                .obj("artistUnion").obj("discography").obj("all")
+            val items = all.list("items")
+            out += items.mapNotNull { group -> group.obj("releases").list("items").firstOrNull()?.let { album(it) } }
+            offset += items.size
+            if (items.isEmpty() || offset >= all.int("totalCount")) break
+        }
+        return out
+    }
+
+    private suspend fun playlistDetail(id: String): DetailData {
+        val p = q("fetchPlaylist", "uri" to PLAYLIST + id, "offset" to 0, "limit" to PLAYLIST_PAGE,
+            "enableWatchFeedEntrypoint" to false, "includeEpisodeContentRatingsV2" to false).obj("playlistV2")
+        val content = p.obj("content")
+        val items = content.list("items")
+        val tracks = items.mapNotNull(::playlistSong)
+        cursors[cursor("playlist", id, tracks.size)] = items.size
+        val owner = p.obj("ownerV2").obj("data").string("name")
+        return DetailData(
+            DetailInfo(p.string("name").ifBlank { "Playlist" }, if (owner.isNotBlank()) "by $owner" else "",
+                image(p.obj("images").list("items").firstOrNull() ?: JsonObject()), accentArgbFor(id), false,
+                content.int("totalCount").takeIf { it > 0 } ?: tracks.size, "Playlist"),
+            tracks,
+        )
+    }
+
+    private suspend fun likedDetail(): DetailData {
+        val page = likedPage(0, TRACK_PAGE)
+        cursors[cursor("liked", "", page.songs.size)] = page.consumed
+        return DetailData(
+            DetailInfo("Liked Songs", "${page.total} songs", page.songs.firstOrNull()?.artworkUrl.orEmpty(),
+                accentArgbFor("liked"), false, page.total, "Liked"),
+            page.songs,
+        )
+    }
+
+    private fun playlistSong(item: JsonObject): Song? =
+        item.obj("itemV2").obj("data").takeIf { it.string("__typename") == "Track" }?.let { song(it) }
+
+    private suspend fun page(kind: String, id: String, offset: Int): Page? = when (kind) {
+        "liked" -> likedPage(offset, TRACK_PAGE)
+        "playlist" -> {
+            val content = q("fetchPlaylistContents", "uri" to PLAYLIST + id, "offset" to offset, "limit" to PLAYLIST_PAGE,
+                "includeEpisodeContentRatingsV2" to false).obj("playlistV2").obj("content")
+            val items = content.list("items")
+            Page(items.mapNotNull(::playlistSong), items.size, content.int("totalCount"))
+        }
+        "album" -> {
+            val ref = albumRefs[id] ?: run { albumDetail(id); albumRefs[id] }
+            val tracks = q("queryAlbumTracks", "uri" to ALBUM + id, "offset" to offset, "limit" to ALBUM_PAGE)
+                .obj("albumUnion").obj("tracksV2")
+            val items = tracks.list("items")
+            Page(items.mapNotNull { song(it.obj("track"), album = ref) }, items.size, tracks.int("totalCount"))
+        }
+        else -> null
+    }
+
+    override suspend fun detailPage(kind: String, id: String, offset: Int): List<Song> = runCatching {
+        val key = if (kind == "liked") "" else id
+        var server = cursors[cursor(kind, key, offset)] ?: offset
+        var handed = offset
+        var songs = emptyList<Song>()
+        while (songs.isEmpty()) {
+            val page = page(kind, id, server) ?: break
+            server += page.consumed
+            handed += page.songs.size
+            songs = page.songs
+            cursors[cursor(kind, key, handed)] = server
+            if (page.consumed == 0 || server >= page.total) break
+        }
+        songs
+    }.getOrDefault(emptyList())
+
+    override suspend fun collectionTracks(kind: String, id: String): List<Song> = when (kind) {
+        "artist" -> coroutineScope {
+            val gate = Semaphore(PARALLEL)
+            val albums = releases(ARTIST + id).map { album -> async { gate.withPermit { collectionTracks("album", album.id) } } }
+            val top = detail("artist", id)?.tracks.orEmpty()
+            (albums.awaitAll().flatten() + top).distinctBy { it.id }
+        }
+        "album", "playlist", "liked" -> {
+            val out = ArrayList<Song>()
+            var server = 0
+            while (out.size < LIKED_CAP) {
+                val page = page(kind, id, server) ?: break
+                out += page.songs
+                server += page.consumed
+                if (page.consumed == 0 || server >= page.total) break
+            }
+            out
+        }
+        else -> super.collectionTracks(kind, id)
+    }
+
+    override suspend fun setStarred(id: String, starred: Boolean, kind: String): Boolean = runCatching {
+        when (kind) {
+            // playlists live in the rootlist, everything else in the library
+            "playlist" -> q(if (starred) "addItemsToRootlist" else "removeItemsFromRootlist", "uris" to listOf(PLAYLIST + id))
+            else -> {
+                val uri = when (kind) {
+                    "album" -> ALBUM + id
+                    "artist" -> ARTIST + id
+                    else -> TRACK + id.also { likedCache = null }
+                }
+                if (starred) q("addToLibrary", "libraryItemUris" to listOf(uri), "interactionId" to null)
+                else q("removeFromLibrary", "libraryItemUris" to listOf(uri))
+            }
+        }
+        true
+    }.getOrDefault(false)
+
+    // creating and renaming go through spotify's playlist service, not the web player api
+    override suspend fun createPlaylist(name: String): Boolean = false
+
+    override suspend fun updatePlaylist(id: String, name: String?, comment: String?): Boolean = false
+
+    override suspend fun deletePlaylist(id: String): Boolean = setStarred(id, false, "playlist")
+
+    override suspend fun addToPlaylist(playlistId: String, trackIds: List<String>): Boolean = runCatching {
+        trackIds.chunked(100).forEach { chunk ->
+            q("addToPlaylist", "playlistUri" to PLAYLIST + playlistId, "playlistItemUris" to chunk.map { TRACK + it },
+                "newPosition" to mapOf("moveType" to "BOTTOM_OF_PLAYLIST", "fromUid" to null), "interactionId" to null)
+        }
+        true
+    }.getOrDefault(false)
+
+    // removal goes by each entry's uid, so the playlist is read first
+    override suspend fun removeFromPlaylist(playlistId: String, trackIds: List<String>): Boolean = runCatching {
+        val wanted = trackIds.map { TRACK + it }.toSet()
+        val uids = ArrayList<String>()
+        var offset = 0
+        while (true) {
+            val content = q("fetchPlaylistContents", "uri" to PLAYLIST + playlistId, "offset" to offset, "limit" to PLAYLIST_PAGE,
+                "includeEpisodeContentRatingsV2" to false).obj("playlistV2").obj("content")
+            val items = content.list("items")
+            items.filter { it.obj("itemV2").obj("data").string("uri") in wanted }.mapNotNullTo(uids) { it.string("uid").ifBlank { null } }
+            offset += items.size
+            if (items.isEmpty() || offset >= content.int("totalCount")) break
+        }
+        if (uids.isEmpty()) return@runCatching false
+        uids.chunked(100).forEach { q("removeFromPlaylist", "playlistUri" to PLAYLIST + playlistId, "uids" to it) }
+        true
+    }.getOrDefault(false)
+
+    override suspend fun serverLyrics(song: Song): Lyrics? = null
+
+    override fun streamUrl(songId: String, maxBitrate: Int, lossless: Boolean): String = "aurora-yt://$songId"
+
+    override fun coverArtUrl(id: String, size: Int): String = ""
+
+    private fun song(t: JsonObject, uri: String = t.string("uri"), album: AlbumRef? = null, addedAt: String = ""): Song? {
+        if (!uri.startsWith(TRACK)) return null
+        val id = uri.removePrefix(TRACK)
+        val title = t.string("name").ifBlank { return null }
+        val artists = t.obj("artists").list("items").ifEmpty { t.obj("firstArtist").list("items") + t.obj("otherArtists").list("items") }
+        val artist = artists.map { it.obj("profile").string("name") }.filter { it.isNotBlank() }.joinToString(", ").ifBlank { "Unknown artist" }
+        val ofTrack = t.obj("albumOfTrack")
+        val durationMs = t.obj("duration").long("totalMilliseconds").takeIf { it > 0 } ?: t.obj("trackDuration").long("totalMilliseconds")
+        val durSec = (durationMs / 1000).toInt()
+        return localize(Song(
+            id = id,
+            title = title,
+            artist = artist,
+            album = ofTrack.string("name").ifBlank { album?.name.orEmpty() },
+            artworkUrl = image(ofTrack.obj("coverArt")).ifBlank { album?.art.orEmpty() },
+            durationSec = durSec,
+            explicit = t.obj("contentRating").string("label") == "EXPLICIT",
+            accentArgb = accentArgbFor(id),
+            streamUrl = sentinel(id, title, artist, durSec),
+            albumId = ofTrack.string("uri").removePrefix(ALBUM).ifBlank { album?.id.orEmpty() },
+            artistId = artists.firstOrNull()?.string("uri").orEmpty().removePrefix(ARTIST),
+            dateAddedSec = epochSec(addedAt).takeIf { it > 0 } ?: parseReleaseDateEpochSec(ofTrack.obj("date").string("isoString").take(10)),
+        ))
+    }
+
+    private fun sentinel(id: String, title: String, artist: String, durSec: Int): String =
+        "aurora-yt://$id?q=${URLEncoder.encode("$title $artist".trim(), "UTF-8")}&dur=$durSec"
+
+    companion object {
+        const val WEB_PLAYER = "web-player"
+        const val SERVER = "https://open.spotify.com"
+        private const val TAG = "SpotifyWeb"
+        private const val TRACK = "spotify:track:"
+        private const val ALBUM = "spotify:album:"
+        private const val ARTIST = "spotify:artist:"
+        private const val PLAYLIST = "spotify:playlist:"
+        private const val LIBRARY_PAGE = 200
+        private const val LIBRARY_CAP = 5000
+        private const val TRACK_PAGE = 100
+        private const val PLAYLIST_PAGE = 100
+        private const val ALBUM_PAGE = 300
+        private const val RELEASES_PAGE = 50
+        private const val RELEASES_CAP = 400
+        private const val SEARCH_PAGE = 20
+        private const val RADIO_SIZE = 50
+        private const val LIKED_CAP = 10_000
+        private const val PARALLEL = 4
+
+        suspend fun profile(gql: SpotifyGraphql): SpotifyWebProfile? {
+            val p = gql.query("profileAttributes", JsonObject()).obj("me").obj("profile")
+            val id = p.string("username").ifBlank { return null }
+            return SpotifyWebProfile(id, p.string("name").ifBlank { id }, image(p.obj("avatar")))
+        }
+
+        // the session keeps only an opaque reference to the encrypted web login
+        fun session(profile: SpotifyWebProfile, credential: String) = Session(
+            server = SERVER,
+            username = profile.name,
+            salt = WEB_PLAYER,
+            token = credential,
+            type = ServerType.SPOTIFY,
+            userId = profile.userId,
+            imageUrl = profile.imageUrl,
+        )
+    }
+}
+
+private fun cursor(kind: String, id: String, handed: Int) = "$kind|$id|$handed"
+
+private fun album(a: JsonObject, fallbackUri: String = ""): Album? {
+    val uri = a.string("uri").ifBlank { fallbackUri }
+    if (!uri.startsWith("spotify:album:")) return null
+    val count = a.obj("tracks").int("totalCount").takeIf { it > 0 } ?: a.obj("tracksV2").int("totalCount")
+    val type = a.string("type").ifBlank { a.string("albumType") }.lowercase()
+    val date = a.obj("date")
+    return Album(
+        id = uri.removePrefix("spotify:album:"),
+        title = a.string("name"),
+        artist = artistNames(a),
+        artworkUrl = image(a.obj("coverArt")),
+        year = date.int("year").takeIf { it > 0 } ?: date.string("isoString").take(4).toIntOrNull() ?: 0,
+        songCount = count,
+        // spotify tags eps as singles so the track count tells them apart
+        releaseType = if (type == "single" && count >= 4) "ep" else type,
+    )
+}
+
+private fun artist(a: JsonObject, fallbackUri: String = ""): Artist? {
+    val uri = a.string("uri").ifBlank { fallbackUri }
+    if (!uri.startsWith("spotify:artist:")) return null
+    return Artist(uri.removePrefix("spotify:artist:"), a.obj("profile").string("name"),
+        image(a.obj("visuals").obj("avatarImage")), a.obj("stats").long("monthlyListeners"))
+}
+
+private fun playlist(p: JsonObject, fallbackUri: String = ""): Playlist? {
+    val uri = p.string("uri").ifBlank { fallbackUri }
+    if (!uri.startsWith("spotify:playlist:")) return null
+    val id = uri.removePrefix("spotify:playlist:")
+    val owner = p.obj("ownerV2").obj("data").string("name")
+    return Playlist(id, p.string("name"), if (owner.isNotBlank()) "by $owner" else p.string("description").replace(TAGS, ""),
+        image(p.obj("images").list("items").firstOrNull() ?: JsonObject()), p.obj("content").int("totalCount"), accentArgbFor(id))
+}
+
+private val TAGS = Regex("<[^>]+>")
+
+private fun artistNames(o: JsonObject): String =
+    o.obj("artists").list("items").map { it.obj("profile").string("name") }.filter { it.isNotBlank() }.joinToString(", ")
+
+// the widest source that is still card sized
+private fun image(holder: JsonObject): String {
+    val sources = holder.list("sources")
+    val sized = sources.filter { it.int("width") > 0 }
+    val best = sized.filter { it.int("width") <= 640 }.maxByOrNull { it.int("width") } ?: sized.minByOrNull { it.int("width") } ?: sources.firstOrNull()
+    return best?.string("url").orEmpty()
+}
+
+private fun JsonObject.label(): String = string("transformedLabel").ifBlank { string("translatedBaseText") }
+
+private fun JsonObject.list(key: String): List<JsonObject> = array(key).mapNotNull { it.takeIf { e -> e.isJsonObject }?.asJsonObject }
+
+private fun JsonObject.long(key: String): Long = get(key)?.takeIf { it.isJsonPrimitive }?.let { runCatching { it.asLong }.getOrNull() } ?: 0L
+
+private fun JsonObject.int(key: String): Int = long(key).toInt()
+
+private fun JsonObject.bool(key: String): Boolean = get(key)?.takeIf { it.isJsonPrimitive }?.let { runCatching { it.asBoolean }.getOrNull() } ?: false
+
+private fun epochSec(iso: String): Long = if (iso.isBlank()) 0L else runCatching { Instant.parse(iso).epochSecond }.getOrDefault(0L)
+
+private fun formatCount(n: Long): String = when {
+    n >= 1_000_000 -> "%.1f".format(n / 1_000_000.0).removeSuffix(".0") + "M"
+    n >= 1_000 -> "%.1f".format(n / 1_000.0).removeSuffix(".0") + "K"
+    else -> n.toString()
+}
+
+private fun variables(vararg entries: Pair<String, Any?>) = JsonObject().apply { entries.forEach { (key, value) -> add(key, element(value)) } }
+
+private fun element(value: Any?): JsonElement = when (value) {
+    null -> JsonNull.INSTANCE
+    is JsonElement -> value
+    is String -> JsonPrimitive(value)
+    is Number -> JsonPrimitive(value)
+    is Boolean -> JsonPrimitive(value)
+    is List<*> -> JsonArray().apply { value.forEach { add(element(it)) } }
+    is Map<*, *> -> JsonObject().apply { value.forEach { (key, item) -> add(key.toString(), element(item)) } }
+    else -> JsonPrimitive(value.toString())
+}
