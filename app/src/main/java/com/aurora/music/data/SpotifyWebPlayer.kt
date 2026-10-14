@@ -157,12 +157,20 @@ object SpotifyWebPlayer {
             }).then(function (r) { post({ type: 'result', id: id, status: r.status, body: r.body, hash: r.hash }); },
               function (e) { post({ type: 'result', id: id, status: 0, body: String(e && e.message || e), hash: '' }); });
           };
-          state.playlistService = function (id, path, body) {
-            if (!/^\/playlist\/v2\//.test(path)) { post({ type: 'result', id: id, status: -1, body: '', hash: '' }); return; }
+          state.spclient = function (id, path, body) {
+            if (!/^\/(playlist\/v2\/|color-lyrics\/v2\/track\/)/.test(path) || path.indexOf('..') >= 0) { post({ type: 'result', id: id, status: -1, body: '', hash: '' }); return; }
+            var headers = Object.assign({ accept: 'application/json' }, state.headers);
+            if (!headers['spotify-app-version']) {
+              try { headers['spotify-app-version'] = JSON.parse(atob(document.getElementById('appServerConfig').textContent.trim())).clientVersion || ''; } catch (e) {}
+              if (!headers['spotify-app-version']) delete headers['spotify-app-version'];
+            }
+            // lyrics only answer the desktop platform, which the mobile player itself overrides for them
+            if (path.indexOf('/color-lyrics/') === 0) headers['app-platform'] = 'WebPlayer';
+            if (body) headers['content-type'] = 'application/json;charset=UTF-8';
             nativeFetch('https://spclient.wg.spotify.com' + path, {
-              method: 'POST',
-              headers: Object.assign({ 'content-type': 'application/json;charset=UTF-8', accept: 'application/json' }, state.headers),
-              body: JSON.stringify(body)
+              method: body ? 'POST' : 'GET',
+              headers: headers,
+              body: body ? JSON.stringify(body) : undefined
             }).then(function (r) { return r.text().then(function (t) { post({ type: 'result', id: id, status: r.status, body: t, hash: '' }); }); },
               function (e) { post({ type: 'result', id: id, status: 0, body: String(e && e.message || e), hash: '' }); });
           };
@@ -283,12 +291,12 @@ class SpotifyPage(val view: WebView, private val operations: SpotifyOperations) 
         return data
     }
 
-    override suspend fun playlistService(path: String, body: JsonObject): JsonObject {
-        if (!path.startsWith("/playlist/v2/")) throw SpotifyGraphqlException("not a playlist service path", -1)
+    override suspend fun spclient(path: String, body: JsonObject?): JsonObject {
+        if (!SPCLIENT_PATH.containsMatchIn(path) || ".." in path) throw SpotifyGraphqlException("path not allowed", -1)
         if (!awaitReady(READY_TIMEOUT_MS)) throw SpotifyGraphqlException("web player did not start")
         if (signedIn == false) throw SpotifyGraphqlException("signed out", 401)
-        val reply = call(path) { id -> "window.__aurora && window.__aurora.playlistService($id, ${JSONObject.quote(path)}, $body)" }
-        if (reply.status !in 200..299) throw SpotifyGraphqlException("playlist service failed with ${reply.status}: ${reply.body.take(300)}", reply.status)
+        val reply = call(path) { id -> "window.__aurora && window.__aurora.spclient($id, ${JSONObject.quote(path)}, ${body ?: "null"})" }
+        if (reply.status !in 200..299) throw SpotifyGraphqlException("service call failed with ${reply.status}: ${reply.body.take(300)}", reply.status)
         return runCatching { JsonParser.parseString(reply.body).asJsonObject }.getOrNull() ?: JsonObject()
     }
 
@@ -320,6 +328,7 @@ class SpotifyPage(val view: WebView, private val operations: SpotifyOperations) 
     private companion object {
         const val READY_TIMEOUT_MS = 30_000L
         const val QUERY_TIMEOUT_MS = 30_000L
+        val SPCLIENT_PATH = Regex("^/(playlist/v2/|color-lyrics/v2/track/)")
     }
 }
 
@@ -339,8 +348,8 @@ class SpotifyWebBridge(context: Context) {
         override suspend fun query(operation: String, variables: JsonObject): JsonObject =
             run(cookie()) { it.query(operation, variables) }
 
-        override suspend fun playlistService(path: String, body: JsonObject): JsonObject =
-            run(cookie()) { it.playlistService(path, body) }
+        override suspend fun spclient(path: String, body: JsonObject?): JsonObject =
+            run(cookie()) { it.spclient(path, body) }
     }
 
     private suspend fun run(cookie: String, request: suspend (SpotifyPage) -> JsonObject): JsonObject {

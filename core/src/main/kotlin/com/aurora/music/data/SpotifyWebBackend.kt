@@ -1,6 +1,7 @@
 package com.aurora.music.data
 
 import com.aurora.music.data.remote.SpotifyGraphql
+import com.aurora.music.data.remote.SpotifyGraphqlException
 import com.aurora.music.data.remote.array
 import com.aurora.music.data.remote.obj
 import com.aurora.music.data.remote.string
@@ -406,7 +407,7 @@ class SpotifyWebBackend(
     // a new playlist only shows up in the library once it's added to the rootlist
     override suspend fun createPlaylistWithId(name: String): String? = runCatching {
         val body = element(mapOf("ops" to listOf(listAttributesOp(JsonObject().apply { addProperty("name", name.trim()) }, emptyList())))).asJsonObject
-        val uri = gql.playlistService("/playlist/v2/playlist", body).string("uri").takeIf { it.startsWith(PLAYLIST) } ?: return@runCatching null
+        val uri = gql.spclient("/playlist/v2/playlist", body).string("uri").takeIf { it.startsWith(PLAYLIST) } ?: return@runCatching null
         q("addItemsToRootlist", "uris" to listOf(uri))
         uri.removePrefix(PLAYLIST)
     }.onFailure { AppLog.d(TAG, "create playlist failed: ${it.message}") }.getOrNull()
@@ -418,7 +419,7 @@ class SpotifyWebBackend(
         name?.trim()?.takeIf { it.isNotEmpty() }?.let { values.addProperty("name", it) }
         comment?.let { if (it.isBlank()) cleared += "LIST_DESCRIPTION" else values.addProperty("description", it.trim()) }
         if (values.size() == 0 && cleared.isEmpty()) return@runCatching true
-        gql.playlistService("/playlist/v2/playlist/$id/changes", element(mapOf("deltas" to listOf(mapOf(
+        gql.spclient("/playlist/v2/playlist/$id/changes", element(mapOf("deltas" to listOf(mapOf(
             "ops" to listOf(listAttributesOp(values, cleared)),
             "info" to mapOf("source" to mapOf("client" to "WEBPLAYER")),
         )))).asJsonObject)
@@ -453,7 +454,25 @@ class SpotifyWebBackend(
         true
     }.getOrDefault(false)
 
-    override suspend fun serverLyrics(song: Song): Lyrics? = null
+    // spotify's own lyrics (usually musixmatch), line synced when it has timings; a 404 means it has none
+    override suspend fun serverLyrics(song: Song): Lyrics? {
+        if (!song.id.matches(TRACK_ID)) return null
+        val response = try {
+            gql.spclient("/color-lyrics/v2/track/${song.id}/image/${URLEncoder.encode(song.artworkUrl, "UTF-8")}?format=json&vocalRemoval=false&market=from_token")
+        } catch (e: SpotifyGraphqlException) {
+            if (e.status == 404) return null
+            AppLog.d(TAG, "lyrics failed: ${e.message}")
+            throw e
+        }
+        val lyrics = response.obj("lyrics")
+        val synced = lyrics.string("syncType") in setOf("LINE_SYNCED", "SYLLABLE_SYNCED")
+        val lines = lyrics.list("lines").map { line ->
+            val start = line.long("startTimeMs")
+            if (synced) LyricLine((start / 1000).toInt(), line.string("words"), start) else LyricLine(-1, line.string("words"))
+        }
+        if (lines.none { it.text.isNotBlank() }) return null
+        return Lyrics(lines, synced, listOf("Spotify", lyrics.string("providerDisplayName")).filter { it.isNotBlank() }.joinToString(" · "))
+    }
 
     override fun streamUrl(songId: String, maxBitrate: Int, lossless: Boolean): String = "aurora-yt://$songId"
 
@@ -495,6 +514,7 @@ class SpotifyWebBackend(
         private const val ALBUM = "spotify:album:"
         private const val ARTIST = "spotify:artist:"
         private const val PLAYLIST = "spotify:playlist:"
+        private val TRACK_ID = Regex("[A-Za-z0-9]{22}")
         private const val LIBRARY_PAGE = 200
         private const val LIBRARY_CAP = 5000
         private const val TRACK_PAGE = 100

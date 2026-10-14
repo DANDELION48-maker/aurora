@@ -7,8 +7,8 @@ interface SpotifyGraphql {
     // the response's data object, throws SpotifyGraphqlException on http or query errors
     suspend fun query(operation: String, variables: JsonObject): JsonObject
 
-    // a json post to spotify's playlist service for what the query api lacks, path under /playlist/v2/
-    suspend fun playlistService(path: String, body: JsonObject): JsonObject
+    // spotify's own service host for what the query api lacks (playlist edits, lyrics); posts when a body is given
+    suspend fun spclient(path: String, body: JsonObject? = null): JsonObject
 }
 
 class SpotifyGraphqlException(message: String, val status: Int = 0) : Exception(message)
