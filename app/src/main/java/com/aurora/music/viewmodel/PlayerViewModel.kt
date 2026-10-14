@@ -479,7 +479,22 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         _position.value = (c.currentPosition / 1000f).coerceAtLeast(0f)
         activelyPlaying.value = c.effectivelyPlaying
         maybeEnrichLocal(_state.value.current)
+        maybeFillAlbum(_state.value.current)
         persistQueue()
+    }
+
+    private val albumLookups = java.util.Collections.synchronizedSet(HashSet<String>())
+    private fun maybeFillAlbum(song: Song) {
+        if (song.id.isEmpty() || song.album.isNotBlank() || song.streamUrl.isBlank() || song.isRadio() || song.isPodcast()) return
+        if (song.id.startsWith("aurora-mix:") || !albumLookups.add(song.id)) return
+        viewModelScope.launch(Dispatchers.IO) {
+            val found = runCatching { container.repository.songFor(song.id) }.getOrNull()
+                ?.takeIf { it.album.isNotBlank() } ?: return@launch
+            fun fill(s: Song) = s.copy(album = found.album, albumId = s.albumId.ifBlank { found.albumId })
+            songById = songById.mapValues { (id, s) -> if (id == song.id) fill(s) else s }
+            _state.update { st -> st.copy(current = if (st.current.id == song.id) fill(st.current) else st.current,
+                queue = st.queue.map { if (it.id == song.id) fill(it) else it }) }
+        }
     }
 
     fun requestMusicVideo(canvas: Boolean, onResult: (String) -> Unit) {

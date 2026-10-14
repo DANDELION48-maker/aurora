@@ -153,6 +153,21 @@ class YouTubeMusicBackendTest {
         assertEquals(listOf("search", "next"), calls)
     }
 
+    @Test fun cachedCardSongWithoutAlbumTakesAlbumFromNextOnce() = runBlocking {
+        val calls = mutableListOf<String>()
+        val backend = YouTubeMusicBackend(session, YouTubeMusicTransport { endpoint, _ ->
+            calls += endpoint
+            val byline = if (endpoint == "next") ""","longBylineText":{"runs":[{"text":"Some Artist","navigationEndpoint":{"browseEndpoint":{"browseId":"UCartist"}}},{"text":" • "},{"text":"The Album","navigationEndpoint":{"browseEndpoint":{"browseId":"MPREb_album"}}}]}""" else ""
+            parsed("""{"playlistPanelVideoRenderer":{"videoId":"abcdefghijk","title":{"simpleText":"Exact version"},"lengthText":{"simpleText":"4:15"}$byline}}""")
+        })
+        assertEquals("", backend.search("version").songs.single().album)
+        val song = backend.songFor("abcdefghijk")!!
+        assertEquals("The Album", song.album)
+        assertEquals("MPREb_album", song.albumId)
+        assertEquals("The Album", backend.songFor("abcdefghijk")!!.album)
+        assertEquals(listOf("search", "next"), calls)
+    }
+
     @Test fun playlistWritesUseExpectedActionsAndPrivateCreation() = runBlocking {
         val requests = mutableListOf<Pair<String, JsonObject>>()
         val backend = YouTubeMusicBackend(session, YouTubeMusicTransport { endpoint, body ->

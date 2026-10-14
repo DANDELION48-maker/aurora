@@ -2182,7 +2182,6 @@
     <string name="text_your_tracks_226210" formatted="false">"あなたの曲"</string>
     <string name="text_your_will_show_up_once_the_server_has_some_ced31f">"サーバーに追加されると、%1$s がここに表示されます。"</string>
     <string name="text_your_year_month_by_month_e19b5f" formatted="false">"あなたの 1 年を月ごとに"</string>
-    <string name="text_youtube_music_adds_catalogue_search_and_a_separate_home_feed_matc_b8a69c" formatted="false">"YouTube Music ではカタログ検索と独自のホームフィードが加わります。一致する録音には、優先するローカル、ダウンロード済み、またはサーバーのコピーが使われます。Spotify は独立したままです。"</string>
     <string name="text_youtube_music_uses_google_sign_in_0ba1e7" formatted="false">"YouTube Music は Google でサインインします。"</string>
     <string name="video_quality">音質</string>
     <string name="video_quality_auto">自動</string>

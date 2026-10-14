@@ -534,9 +534,9 @@ fun PlayerScreen(
                     Spacer(Modifier.width(10.dp))
                 }
                 Column(Modifier.weight(1f)) {
-                    Text(song.title, style = MaterialTheme.typography.headlineMedium, fontWeight = if (classic) FontWeight.Bold else MaterialTheme.typography.headlineMedium.fontWeight, color = MaterialTheme.colorScheme.onSurface, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    MarqueeTitle(song.title, MaterialTheme.typography.headlineMedium, fontWeight = if (classic) FontWeight.Bold else MaterialTheme.typography.headlineMedium.fontWeight)
                     Spacer(Modifier.height(2.dp))
-                    Text(song.artist, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    MarqueeTitle(song.artist, MaterialTheme.typography.titleMedium, MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = null)
                     if (state.bpm > 0) {
                         Spacer(Modifier.height(3.dp))
                         Text(
@@ -905,10 +905,8 @@ private fun CompactTransport(
             Artwork(song.artworkUrl, song.accent, Modifier.size(56.dp), corner = 12.dp)
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
-                Text(song.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text(song.artist, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1, overflow = TextOverflow.Ellipsis)
+                MarqueeTitle(song.title, MaterialTheme.typography.titleMedium)
+                MarqueeTitle(song.artist, MaterialTheme.typography.bodyMedium, MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = null)
             }
             if (!state.isMix) IconButton(onClick = onPrevious) {
                 Icon(Icons.Filled.SkipPrevious, appString(R.string.text_previous_50f942), tint = MaterialTheme.colorScheme.onSurface)
@@ -1121,13 +1119,18 @@ private fun FullscreenMusicVideo(
 }
 
 @Composable
-private fun MarqueeTitle(text: String) {
+private fun MarqueeTitle(
+    text: String,
+    style: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.labelLarge,
+    color: Color = MaterialTheme.colorScheme.onSurface,
+    fontWeight: FontWeight? = FontWeight.Bold,
+) {
     var fullWidth by remember(text) { androidx.compose.runtime.mutableIntStateOf(0) }
     var shownWidth by remember { androidx.compose.runtime.mutableIntStateOf(0) }
     val overflowing = fullWidth > shownWidth && shownWidth > 0
     Text(
-        text, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold,
-        maxLines = 1, softWrap = false, color = MaterialTheme.colorScheme.onSurface,
+        text, style = style, fontWeight = fontWeight,
+        maxLines = 1, softWrap = false, color = color,
         onTextLayout = { fullWidth = it.size.width },
         modifier = Modifier
             .onSizeChanged { shownWidth = it.width }
@@ -1136,7 +1139,7 @@ private fun MarqueeTitle(text: String) {
                 drawRect(Brush.horizontalGradient(0f to Color.Transparent, 0.08f to Color.Black, 0.92f to Color.Black, 1f to Color.Transparent),
                     blendMode = BlendMode.DstIn)
             } else Modifier)
-            .basicMarquee(initialDelayMillis = 1500, repeatDelayMillis = 2500),
+            .basicMarquee(iterations = Int.MAX_VALUE, initialDelayMillis = 1500, repeatDelayMillis = 2500),
     )
 }
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="catalogue_section">"Streaming tracks"</string>
+    <string name="catalogue_library_copies">"Play from your library"</string>
+    <string name="catalogue_library_copies_summary">"Play YouTube Music and Spotify tracks from a matching copy you own"</string>
+    <string name="catalogue_match">"Match by"</string>
+    <string name="catalogue_match_strict">"Title and artist"</string>
+    <string name="catalogue_match_relaxed">"Title and length"</string>
+    <string name="catalogue_lossless_only">"Lossless copies only"</string>
+    <string name="catalogue_lossless_only_summary">"Keep streaming unless your copy is FLAC, ALAC, WAV or similar"</string>
+    <string name="catalogue_note">"YouTube Music and Spotify add catalogue search and their own home feeds. Their tracks play from the first matching copy in the order above. Title and length also catches artists spelled differently, as long as the lengths agree within two seconds."</string>
+    <string name="catalogue_note_off">"YouTube Music and Spotify add catalogue search and their own home feeds. Their tracks always play from the streaming service."</string>
+</resources>

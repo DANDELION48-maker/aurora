@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="catalogue_section">"Akış parçaları"</string>
+    <string name="catalogue_library_copies">"Kitaplığınızdan çal"</string>
+    <string name="catalogue_library_copies_summary">"YouTube Music ve Spotify parçalarını size ait eşleşen bir kopyadan çal"</string>
+    <string name="catalogue_match">"Eşleştirme ölçütü"</string>
+    <string name="catalogue_match_strict">"Başlık ve sanatçı"</string>
+    <string name="catalogue_match_relaxed">"Başlık ve süre"</string>
+    <string name="catalogue_lossless_only">"Yalnızca kayıpsız kopyalar"</string>
+    <string name="catalogue_lossless_only_summary">"Kopyanız FLAC, ALAC, WAV veya benzeri değilse akıştan çalmaya devam eder"</string>
+    <string name="catalogue_note">"YouTube Music ve Spotify katalog araması ve kendi ana sayfalarını ekler. Parçaları yukarıdaki sırada ilk eşleşen kopyadan çalınır. Başlık ve süre, süreler en fazla iki saniye farklıysa farklı yazılmış sanatçıları da eşleştirir."</string>
+    <string name="catalogue_note_off">"YouTube Music ve Spotify katalog araması ve kendi ana sayfalarını ekler. Parçaları her zaman akış hizmetinden çalınır."</string>
+</resources>

@@ -81,7 +81,7 @@ class LocalBackend(
 
     override suspend fun matchingSongs(song: Song): List<Song> {
         library.ensureLoaded()
-        return library.songs.filter { recordingMatches(song, it) }
+        return library.songs.filter { recordingTitlesMatch(song, it) }
     }
 
     override suspend fun scrobble(id: String) { /* last.fm handled separately */ }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="catalogue_section">"⁧مقاطع البث⁩"</string>
+    <string name="catalogue_library_copies">"⁧التشغيل من مكتبتك⁩"</string>
+    <string name="catalogue_library_copies_summary">"⁧تشغيل مقاطع YouTube Music وSpotify من نسخة مطابقة تملكها⁩"</string>
+    <string name="catalogue_match">"⁧المطابقة حسب⁩"</string>
+    <string name="catalogue_match_strict">"⁧العنوان والفنان⁩"</string>
+    <string name="catalogue_match_relaxed">"⁧العنوان والمدة⁩"</string>
+    <string name="catalogue_lossless_only">"⁧النسخ غير المضغوطة فقط⁩"</string>
+    <string name="catalogue_lossless_only_summary">"⁧يستمر البث ما لم تكن نسختك بصيغة FLAC أو ALAC أو WAV أو ما يشابهها⁩"</string>
+    <string name="catalogue_note">"⁧يضيف YouTube Music وSpotify البحث في الكتالوج وخلاصات رئيسية خاصة بهما. تُشغَّل مقاطعهما من أول نسخة مطابقة حسب الترتيب أعلاه. تلتقط المطابقة بالعنوان والمدة أيضًا أسماء الفنانين المكتوبة بشكل مختلف، ما دام فرق المدة لا يتجاوز ثانيتين.⁩"</string>
+    <string name="catalogue_note_off">"⁧يضيف YouTube Music وSpotify البحث في الكتالوج وخلاصات رئيسية خاصة بهما. تُشغَّل مقاطعهما دائمًا من خدمة البث.⁩"</string>
+</resources>

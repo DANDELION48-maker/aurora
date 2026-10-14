@@ -2,11 +2,18 @@ package com.aurora.music.data
 
 val DEFAULT_SOURCE_PRIORITY = listOf("local", "downloaded", "stream")
 
+// how youtube music and spotify tracks are swapped for a copy from your own library
+data class CatalogueMatchPrefs(
+    val useLibrary: Boolean = true,
+    val relaxed: Boolean = false,
+    val losslessOnly: Boolean = false,
+)
+
 // keep empty for all eligible servers
 const val MERGE_NONE = "__none__"
 
 enum class ServerType {
-    SUBSONIC, JELLYFIN, SPOTIFY, LOCAL, EXTENSION, YOUTUBE_MUSIC, PLEX;
+    SUBSONIC, JELLYFIN, SPOTIFY, LOCAL, EXTENSION, YOUTUBE_MUSIC, PLEX, SOUNDCLOUD;
 
     val supportsMergedLibrary: Boolean get() = this == SUBSONIC || this == JELLYFIN || this == PLEX || this == LOCAL || this == YOUTUBE_MUSIC || this == SPOTIFY
 
@@ -31,6 +38,7 @@ data class Session(
     val typeLabel: String get() = when (type) {
         ServerType.SPOTIFY -> "Spotify"
         ServerType.YOUTUBE_MUSIC -> "YouTube Music"
+        ServerType.SOUNDCLOUD -> "SoundCloud"
         ServerType.JELLYFIN -> "Jellyfin"
         ServerType.PLEX -> "Plex"
         ServerType.SUBSONIC -> "Navidrome"
@@ -41,7 +49,7 @@ data class Session(
 
 fun Session.accountKey(): String = when (type) {
     // the stable account id, so a changed display name stays the same account
-    ServerType.YOUTUBE_MUSIC, ServerType.SPOTIFY -> "${type.name}|$server|$userId"
+    ServerType.YOUTUBE_MUSIC, ServerType.SPOTIFY, ServerType.SOUNDCLOUD -> "${type.name}|$server|$userId"
     ServerType.PLEX -> {
         // separate users sharing the same plex server
         val credentialId = java.security.MessageDigest.getInstance("SHA-256")

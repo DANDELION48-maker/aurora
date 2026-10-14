@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="catalogue_section">"ストリーミングの曲"</string>
+    <string name="catalogue_library_copies">"ライブラリから再生"</string>
+    <string name="catalogue_library_copies_summary">"YouTube Music と Spotify の曲を、手元の一致するコピーから再生します"</string>
+    <string name="catalogue_match">"一致の基準"</string>
+    <string name="catalogue_match_strict">"タイトルとアーティスト"</string>
+    <string name="catalogue_match_relaxed">"タイトルと長さ"</string>
+    <string name="catalogue_lossless_only">"ロスレスのコピーのみ"</string>
+    <string name="catalogue_lossless_only_summary">"コピーが FLAC、ALAC、WAV などでない限りストリーミングを続けます"</string>
+    <string name="catalogue_note">"YouTube Music と Spotify はカタログ検索と独自のホームを追加します。これらの曲は、上の順序で最初に一致したコピーから再生されます。「タイトルと長さ」は、長さの差が 2 秒以内であれば、表記の異なるアーティストも一致とみなします。"</string>
+    <string name="catalogue_note_off">"YouTube Music と Spotify はカタログ検索と独自のホームを追加します。これらの曲は常にストリーミングサービスから再生されます。"</string>
+</resources>

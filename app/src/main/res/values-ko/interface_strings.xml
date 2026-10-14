@@ -2182,7 +2182,6 @@
     <string name="text_your_tracks_226210" formatted="false">"내 트랙"</string>
     <string name="text_your_will_show_up_once_the_server_has_some_ced31f">"서버에 생기면 %1$s이(가) 표시됩니다."</string>
     <string name="text_your_year_month_by_month_e19b5f" formatted="false">"월별로 보는 나의 한 해"</string>
-    <string name="text_youtube_music_adds_catalogue_search_and_a_separate_home_feed_matc_b8a69c" formatted="false">"YouTube Music은 카탈로그 검색과 별도의 홈 피드를 추가합니다. 일치하는 녹음은 선호하는 로컬, 다운로드 또는 서버 사본을 사용합니다. Spotify는 별도로 유지됩니다."</string>
     <string name="text_youtube_music_uses_google_sign_in_0ba1e7" formatted="false">"YouTube Music은 Google 로그인을 사용합니다."</string>
     <string name="video_quality">음질</string>
     <string name="video_quality_auto">자동</string>

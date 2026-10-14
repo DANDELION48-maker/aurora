@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="catalogue_section">"स्ट्रीमिंग ट्रैक"</string>
+    <string name="catalogue_library_copies">"अपनी लाइब्रेरी से चलाएँ"</string>
+    <string name="catalogue_library_copies_summary">"YouTube Music और Spotify ट्रैक आपकी मेल खाती कॉपी से चलाएँ"</string>
+    <string name="catalogue_match">"मिलान का आधार"</string>
+    <string name="catalogue_match_strict">"शीर्षक और कलाकार"</string>
+    <string name="catalogue_match_relaxed">"शीर्षक और अवधि"</string>
+    <string name="catalogue_lossless_only">"सिर्फ़ लॉसलेस कॉपी"</string>
+    <string name="catalogue_lossless_only_summary">"जब तक आपकी कॉपी FLAC, ALAC, WAV या ऐसी न हो, स्ट्रीमिंग जारी रहेगी"</string>
+    <string name="catalogue_note">"YouTube Music और Spotify कैटलॉग खोज और अपनी होम फ़ीड जोड़ते हैं। उनके ट्रैक ऊपर दिए क्रम में पहली मेल खाती कॉपी से चलते हैं। शीर्षक और अवधि अलग वर्तनी वाले कलाकारों को भी पकड़ लेता है, बशर्ते अवधि में दो सेकंड से ज़्यादा का अंतर न हो।"</string>
+    <string name="catalogue_note_off">"YouTube Music और Spotify कैटलॉग खोज और अपनी होम फ़ीड जोड़ते हैं। उनके ट्रैक हमेशा स्ट्रीमिंग सेवा से चलते हैं।"</string>
+</resources>

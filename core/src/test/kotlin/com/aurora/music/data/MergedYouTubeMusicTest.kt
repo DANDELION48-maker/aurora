@@ -154,4 +154,31 @@ class MergedYouTubeMusicTest {
         merged.setStarred(result.songs.single().id, true, "song")
         assertEquals(listOf(hosted.id), serverCalls.likes)
     }
+
+    @Test fun aLeadingTheAndAccentsDoNotHideOwnedCopies() = runBlocking {
+        val streamed = original.copy(title = "Gone", artist = "The Soft Walls", durationSec = 201)
+        val owned = hosted.copy(title = "Gone", artist = "Soft Walls", durationSec = 201)
+        val merged = MergedBackend(listOf(source(server, listOf(owned)), source(yt, listOf(streamed))), yt)
+        assertEquals(owned.streamUrl, merged.playbackCandidates(merged.search("gone").songs.single()).single().streamUrl)
+        assertTrue(recordingMatches(original.copy(artist = "Beyoncé"), file.copy(artist = "BEYONCE")))
+        assertTrue(recordingMatches(original.copy(artist = "The The"), file.copy(artist = "The The")))
+        assertFalse(recordingMatches(original.copy(artist = "The Soft Walls"), file.copy(artist = "Hard Walls")))
+    }
+
+    @Test fun catalogueRulesDecideWhichLibraryCopiesReplaceTheStream() = runBlocking {
+        val lossy = hosted.copy(id = "lossy", streamUrl = "https://server.invalid/lossy", suffix = "mp3", bitDepth = 0)
+        val renamed = hosted.copy(id = "renamed", streamUrl = "https://server.invalid/renamed", artist = "GLM RST Collective", durationSec = 147)
+        val otherCut = renamed.copy(id = "cut", streamUrl = "https://server.invalid/cut", durationSec = 152)
+        var rules = CatalogueMatchPrefs()
+        val merged = MergedBackend(listOf(source(server, listOf(lossy, renamed, otherCut)), source(yt, listOf(original))), yt,
+            catalogueMatch = { rules })
+        val track = merged.search("title").songs.single()
+        assertEquals(listOf(lossy.streamUrl), merged.playbackCandidates(track).map { it.streamUrl })
+        rules = CatalogueMatchPrefs(relaxed = true)
+        assertEquals(listOf(renamed.streamUrl, lossy.streamUrl), merged.playbackCandidates(track).map { it.streamUrl })
+        rules = CatalogueMatchPrefs(relaxed = true, losslessOnly = true)
+        assertEquals(listOf(renamed.streamUrl), merged.playbackCandidates(track).map { it.streamUrl })
+        rules = CatalogueMatchPrefs(useLibrary = false)
+        assertTrue(merged.playbackCandidates(track).isEmpty())
+    }
 }

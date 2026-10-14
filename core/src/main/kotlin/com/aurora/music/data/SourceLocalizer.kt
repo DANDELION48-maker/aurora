@@ -11,6 +11,7 @@ class SourceLocalizer(
     private val priority: () -> List<String>,
     private val isLocalUrl: (String) -> Boolean,
     private val findLocal: (artist: String, title: String, durationSec: Int) -> Song?,
+    private val catalogueMatch: () -> CatalogueMatchPrefs = { CatalogueMatchPrefs() },
 ) {
     // rewrites only streamUrl/metadata id stays the server's so server features keep working
     fun localize(song: Song): Song {
@@ -78,6 +79,7 @@ class SourceLocalizer(
         }
         return MergedBackend(sources, session,
             priority = { if (preferLocal()) priority() else listOf("stream", "local", "downloaded") },
+            catalogueMatch = catalogueMatch,
             downloads = { downloads.downloads.value.values.filter { File(it.audioPath).isFile }.map { it.toSong(downloads.fileUri) } })
     }
 }

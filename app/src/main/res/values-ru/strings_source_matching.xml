@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="catalogue_section">"Треки из стриминга"</string>
+    <string name="catalogue_library_copies">"Играть из медиатеки"</string>
+    <string name="catalogue_library_copies_summary">"Воспроизводить треки YouTube Music и Spotify из своей совпадающей копии"</string>
+    <string name="catalogue_match">"Сопоставлять по"</string>
+    <string name="catalogue_match_strict">"Название и исполнитель"</string>
+    <string name="catalogue_match_relaxed">"Название и длительность"</string>
+    <string name="catalogue_lossless_only">"Только копии без потерь"</string>
+    <string name="catalogue_lossless_only_summary">"Оставлять стриминг, если ваша копия не в FLAC, ALAC, WAV или похожем формате"</string>
+    <string name="catalogue_note">"YouTube Music и Spotify добавляют поиск по каталогу и собственные главные страницы. Их треки воспроизводятся из первой совпадающей копии в порядке выше. Сопоставление по названию и длительности находит и исполнителей с иным написанием, если длительности отличаются не более чем на две секунды."</string>
+    <string name="catalogue_note_off">"YouTube Music и Spotify добавляют поиск по каталогу и собственные главные страницы. Их треки всегда воспроизводятся из стримингового сервиса."</string>
+</resources>

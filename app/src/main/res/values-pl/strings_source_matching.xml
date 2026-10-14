@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="catalogue_section">"Utwory ze streamingu"</string>
+    <string name="catalogue_library_copies">"Odtwarzaj z biblioteki"</string>
+    <string name="catalogue_library_copies_summary">"Odtwarzaj utwory z YouTube Music i Spotify z pasującej własnej kopii"</string>
+    <string name="catalogue_match">"Dopasuj według"</string>
+    <string name="catalogue_match_strict">"Tytuł i wykonawca"</string>
+    <string name="catalogue_match_relaxed">"Tytuł i długość"</string>
+    <string name="catalogue_lossless_only">"Tylko kopie bezstratne"</string>
+    <string name="catalogue_lossless_only_summary">"Streamuj dalej, chyba że kopia jest w formacie FLAC, ALAC, WAV lub podobnym"</string>
+    <string name="catalogue_note">"YouTube Music i Spotify dodają wyszukiwanie w katalogu i własne strony główne. Ich utwory grają z pierwszej pasującej kopii w kolejności powyżej. Tytuł i długość rozpoznaje też inaczej zapisanych wykonawców, o ile długości różnią się najwyżej o dwie sekundy."</string>
+    <string name="catalogue_note_off">"YouTube Music i Spotify dodają wyszukiwanie w katalogu i własne strony główne. Ich utwory zawsze grają z serwisu streamingowego."</string>
+</resources>

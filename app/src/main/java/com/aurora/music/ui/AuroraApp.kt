@@ -941,6 +941,7 @@ fun AuroraApp() {
                             onConnectSpotify = authVM::connectSpotify,
                             onConnectSpotifyWeb = authVM::connectSpotifyWeb,
                             onConnectYouTubeMusic = authVM::connectYouTubeMusic,
+                            onConnectSoundCloud = authVM::connectSoundCloud,
                             savedSessions = savedSessions,
                             onUseSaved = { s -> authVM.useSaved(s) },   // nav to home handled by the sessionReady effect
                         )

@@ -27,8 +27,9 @@ class WebCredentials(context: Context, name: String, private val alias: String) 
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM).setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE).build())
         }.generateKey()
     }
-    fun save(session: String): String {
-        val id = UUID.randomUUID().toString()
+    fun save(session: String): String = UUID.randomUUID().toString().also { update(it, session) }
+    // rewrites a saved login in place, for sessions whose cookies rotate
+    @Synchronized fun update(id: String, session: String) {
         directory.mkdirs()
         val cipher = Cipher.getInstance("AES/GCM/NoPadding").apply { init(Cipher.ENCRYPT_MODE, key()) }
         val atomic = AtomicFile(file(id))
@@ -37,7 +38,6 @@ class WebCredentials(context: Context, name: String, private val alias: String) 
             output.write(cipher.iv + cipher.doFinal(session.toByteArray(Charsets.UTF_8)))
             atomic.finishWrite(output)
         } catch (e: Exception) { atomic.failWrite(output); throw e }
-        return id
     }
     fun read(id: String): String = runCatching {
         val bytes = AtomicFile(file(id)).readFully()
@@ -52,5 +52,6 @@ class WebCredentials(context: Context, name: String, private val alias: String) 
     companion object {
         fun youtubeMusic(context: Context) = WebCredentials(context, "youtube-music", "aurora.youtube-music.account")
         fun spotify(context: Context) = WebCredentials(context, "spotify-web", "aurora.spotify-web.account")
+        fun soundcloud(context: Context) = WebCredentials(context, "soundcloud-web", "aurora.soundcloud-web.account")
     }
 }

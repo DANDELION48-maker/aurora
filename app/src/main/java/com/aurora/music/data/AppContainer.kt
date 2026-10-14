@@ -109,6 +109,8 @@ class AppContainer(context: Context) {
     @Volatile
     private var sourcePriorityValue: List<String> = DEFAULT_SOURCE_PRIORITY
 
+    @Volatile private var catalogueMatchValue = CatalogueMatchPrefs()
+
     @Volatile private var unifiedLibraryValue: Boolean = false
     @Volatile private var mergeSourceKeys: Set<String> = emptySet()
     @Volatile private var lastSession: Session? = null
@@ -137,7 +139,8 @@ class AppContainer(context: Context) {
 
     private val sourceLocalizer = SourceLocalizer(localMergeSession, downloadManager,
         preferLocal = { preferLocalSources }, priority = { sourcePriorityValue },
-        isLocalUrl = { it.startsWith("content://") || it.startsWith("file://") }, findLocal = ::findLocalMatch)
+        isLocalUrl = { it.startsWith("content://") || it.startsWith("file://") }, findLocal = ::findLocalMatch,
+        catalogueMatch = { catalogueMatchValue })
 
     private fun requestLocalIndex() {
         if (!localLibrary.inUse && localIndexRequested.compareAndSet(false, true)) scope.launch { runCatching { localLibrary.ensureLoaded() } }
@@ -208,6 +211,9 @@ class AppContainer(context: Context) {
                     (unifiedLibraryValue && lastSession?.type?.supportsMergedLibrary == true &&
                         (mergeSourceKeys.isEmpty() || session.accountKey() in mergeSourceKeys))) _sourceErrors.tryEmit(message)
             }
+            ServerType.SOUNDCLOUD -> SoundCloudBackend(session, com.aurora.music.data.remote.SoundCloudClient(
+                session = { com.aurora.music.data.remote.SoundCloudWebSession.decode(soundcloudCredentials.read(session.token)) },
+                onRefreshed = { soundcloudCredentials.update(session.token, it.encode()) }, http = http))
             ServerType.EXTENSION -> extensions.backend(session) { song ->
                 val enabled = extensions.entries.value.any { it.component == session.userId && it.enabled }
                 val downloaded = if (!enabled) downloadManager.getByOriginalId(song.id)
@@ -275,6 +281,7 @@ class AppContainer(context: Context) {
     val youtubeResolver by lazy { com.aurora.music.playback.YoutubeResolver(http) }
     val youtubeMusicCredentials = WebCredentials.youtubeMusic(appContext)
     val spotifyCredentials = WebCredentials.spotify(appContext)
+    val soundcloudCredentials = WebCredentials.soundcloud(appContext)
     val spotifyWeb by lazy { SpotifyWebBridge(appContext) }
     val youTubeDownloader by lazy {
         YouTubeDownloader(appContext, youtubeResolver, { settingsStore.youTubeDownloadPrefs.first() }, http) {
@@ -505,6 +512,9 @@ class AppContainer(context: Context) {
             settingsStore.sourcePriority.collect { sourcePriorityValue = it }
         }
         scope.launch {
+            settingsStore.catalogueMatch.collect { catalogueMatchValue = it }
+        }
+        scope.launch {
             settingsStore.squigBaseUrl.collect { squigBaseValue = it }
         }
         scope.launch {
@@ -567,6 +577,7 @@ class AppContainer(context: Context) {
     suspend fun forgetSavedSession(session: Session) {
         settingsStore.removeSavedSession(session)
         if (session.type == ServerType.YOUTUBE_MUSIC) youtubeMusicCredentials.remove(session.token)
+        if (session.type == ServerType.SOUNDCLOUD) soundcloudCredentials.remove(session.token)
         if (session.type == ServerType.SPOTIFY && session.salt == SpotifyWebBackend.WEB_PLAYER) {
             spotifyCredentials.remove(session.token)
             withContext(Dispatchers.Main) {

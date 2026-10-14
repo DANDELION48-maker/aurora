@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="catalogue_section">"流媒体曲目"</string>
+    <string name="catalogue_library_copies">"从你的音乐库播放"</string>
+    <string name="catalogue_library_copies_summary">"用你拥有的匹配副本播放 YouTube Music 和 Spotify 曲目"</string>
+    <string name="catalogue_match">"匹配依据"</string>
+    <string name="catalogue_match_strict">"标题和艺人"</string>
+    <string name="catalogue_match_relaxed">"标题和时长"</string>
+    <string name="catalogue_lossless_only">"仅无损副本"</string>
+    <string name="catalogue_lossless_only_summary">"除非你的副本是 FLAC、ALAC、WAV 或类似格式，否则继续使用流媒体"</string>
+    <string name="catalogue_note">"YouTube Music 和 Spotify 提供目录搜索和各自的主页。它们的曲目会按上方顺序从第一个匹配的副本播放。“标题和时长”在时长相差不超过两秒时，也能匹配写法不同的艺人。"</string>
+    <string name="catalogue_note_off">"YouTube Music 和 Spotify 提供目录搜索和各自的主页。它们的曲目始终从流媒体服务播放。"</string>
+</resources>

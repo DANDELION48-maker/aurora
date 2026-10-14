@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-enum class AuthStep { TYPE, SERVER, CREDENTIALS, SPOTIFY, YOUTUBE_MUSIC }
+enum class AuthStep { TYPE, SERVER, CREDENTIALS, SPOTIFY, YOUTUBE_MUSIC, SOUNDCLOUD }
 
 data class AuthUiState(
     val step: AuthStep = AuthStep.TYPE,
@@ -76,8 +76,8 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
 
     fun selectType(type: ServerType) {
         _state.update { if (it.type != type) it.copy(password = "") else it }
-        if (type == ServerType.YOUTUBE_MUSIC) {
-            _state.update { it.copy(type = type, step = AuthStep.YOUTUBE_MUSIC, error = null) }
+        if (type == ServerType.YOUTUBE_MUSIC || type == ServerType.SOUNDCLOUD) {
+            _state.update { it.copy(type = type, step = if (type == ServerType.SOUNDCLOUD) AuthStep.SOUNDCLOUD else AuthStep.YOUTUBE_MUSIC, error = null) }
             return
         }
         if (type == ServerType.SPOTIFY) {
@@ -120,6 +120,31 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
             } catch (e: Exception) {
                 reference?.let { container.youtubeMusicCredentials.remove(it) }
                 _state.update { it.copy(loading = false, error = if (e is java.io.IOException) friendlyError(e) else appString(R.string.text_could_not_connect_youtube_music_please_try_again_e327a1)) }
+            }
+        }
+    }
+
+    fun connectSoundCloud(webSession: String) {
+        if (_state.value.loading) return
+        _state.update { it.copy(loading = true, error = null) }
+        viewModelScope.launch {
+            var reference: String? = null
+            try {
+                var auth = com.aurora.music.data.remote.SoundCloudWebSession.decode(webSession)
+                val client = com.aurora.music.data.remote.SoundCloudClient({ auth }, { auth = it }, container.http)
+                val (id, name, avatar) = com.aurora.music.data.SoundCloudBackend.profile(client)
+                reference = withContext(Dispatchers.IO) { container.soundcloudCredentials.save(auth.encode()) }
+                val session = Session(com.aurora.music.data.remote.SoundCloudClient.WEB, name, "", reference,
+                    ServerType.SOUNDCLOUD, userId = id, imageUrl = avatar)
+                val previous = container.settingsStore.savedSessions.first().filter { it.type == ServerType.SOUNDCLOUD && it.userId == id }
+                container.applySession(session)
+                previous.filter { it.token != reference }.forEach { container.soundcloudCredentials.remove(it.token) }
+                _state.update { it.copy(loading = false, error = null) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                reference?.let { container.soundcloudCredentials.remove(it) }
+                _state.update { it.copy(loading = false, error = if (e is java.io.IOException) friendlyError(e) else appString(R.string.soundcloud_connect_failed)) }
             }
         }
     }
@@ -188,7 +213,7 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
             AuthStep.CREDENTIALS -> it.copy(step = AuthStep.SERVER, error = null)
             AuthStep.SERVER -> it.copy(step = AuthStep.TYPE, error = null)
             AuthStep.SPOTIFY -> it.copy(step = AuthStep.TYPE, error = null, pendingAuthUrl = null)
-            AuthStep.YOUTUBE_MUSIC -> it.copy(step = AuthStep.TYPE, error = null)
+            AuthStep.YOUTUBE_MUSIC, AuthStep.SOUNDCLOUD -> it.copy(step = AuthStep.TYPE, error = null)
             AuthStep.TYPE -> it
         }
     }
@@ -222,6 +247,7 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
                         ServerType.PLEX -> PlexClient.authenticate(server, s.password.trim(), appClientInfo)
                         ServerType.SPOTIFY -> throw IllegalStateException(appString(R.string.text_spotify_uses_the_connect_button_not_this_form_17d56a))
                         ServerType.YOUTUBE_MUSIC -> throw IllegalStateException(appString(R.string.text_youtube_music_uses_google_sign_in_0ba1e7))
+                        ServerType.SOUNDCLOUD -> throw IllegalStateException(appString(R.string.soundcloud_connect_failed))
                         ServerType.LOCAL -> throw IllegalStateException(appString(R.string.text_local_mode_doesn_t_use_this_form_78c2dc))
                         ServerType.EXTENSION -> throw IllegalStateException(appString(R.string.text_enable_this_source_in_advanced_audio_extensions_579558))
                     }

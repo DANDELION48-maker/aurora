@@ -2182,7 +2182,6 @@
     <string name="text_your_tracks_226210" formatted="false">"你的曲目"</string>
     <string name="text_your_will_show_up_once_the_server_has_some_ced31f">"服务器上有内容后，你的%1$s就会显示出来。"</string>
     <string name="text_your_year_month_by_month_e19b5f" formatted="false">"你的一年，逐月回顾"</string>
-    <string name="text_youtube_music_adds_catalogue_search_and_a_separate_home_feed_matc_b8a69c" formatted="false">"YouTube Music 增加了曲库搜索和独立的首页内容。匹配的录音会使用你首选的本地、已下载或服务器副本。Spotify 保持独立。"</string>
     <string name="text_youtube_music_uses_google_sign_in_0ba1e7" formatted="false">"YouTube Music 使用 Google 登录。"</string>
     <string name="video_quality">画质</string>
     <string name="video_quality_auto">自动</string>

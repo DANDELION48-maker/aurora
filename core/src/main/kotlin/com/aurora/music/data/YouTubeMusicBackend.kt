@@ -16,6 +16,7 @@ class YouTubeMusicBackend(override val session: Session, private val api: YouTub
     private val songs = ConcurrentHashMap<String, Song>()
     private val pageCache = ConcurrentHashMap<String, Pair<Long, SearchResults>>()
     private val pageLock = Mutex()
+    private val albumLookups = ConcurrentHashMap.newKeySet<String>()
     private val playbackTracker = YouTubeMusicPlaybackTracker(api)
     private fun remember(result: SearchResults): SearchResults = result.also { it.songs.forEach { song -> songs[song.id] = song } }
     private suspend fun browse(id: String) = api.request("browse", json("browseId" to id))
@@ -73,10 +74,16 @@ class YouTubeMusicBackend(override val session: Session, private val api: YouTub
         remember(YouTubeMusicParser.results(api.request("search", json("query" to query.trim()))))
 
     override suspend fun songFor(id: String): Song? {
-        songs[id]?.takeIf { it.durationSec > 0 }?.let { return it }
+        val cached = songs[id]
+        cached?.takeIf { it.durationSec > 0 && (it.album.isNotBlank() || id in albumLookups) }?.let { return it }
         if (!id.matches(Regex("[A-Za-z0-9_-]{11}"))) return null
-        return remember(YouTubeMusicParser.results(api.request("next", json("videoId" to id))))
-            .songs.firstOrNull { it.id == id }
+        albumLookups.add(id)
+        val fetched = remember(YouTubeMusicParser.results(api.request("next", json("videoId" to id))))
+            .songs.firstOrNull { it.id == id } ?: return cached
+        // card/home rows carry no album run; the up-next panel does
+        val merged = cached?.let { it.copy(album = it.album.ifBlank { fetched.album }, albumId = it.albumId.ifBlank { fetched.albumId },
+            durationSec = it.durationSec.takeIf { d -> d > 0 } ?: fetched.durationSec) } ?: fetched
+        return merged.also { songs[id] = it }
     }
 
     override suspend fun radio(seedId: String): List<Song> = remember(YouTubeMusicParser.results(

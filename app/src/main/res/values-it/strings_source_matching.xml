@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="catalogue_section">"Brani in streaming"</string>
+    <string name="catalogue_library_copies">"Riproduci dalla tua libreria"</string>
+    <string name="catalogue_library_copies_summary">"Riproduce i brani di YouTube Music e Spotify da una tua copia corrispondente"</string>
+    <string name="catalogue_match">"Abbina per"</string>
+    <string name="catalogue_match_strict">"Titolo e artista"</string>
+    <string name="catalogue_match_relaxed">"Titolo e durata"</string>
+    <string name="catalogue_lossless_only">"Solo copie lossless"</string>
+    <string name="catalogue_lossless_only_summary">"Resta in streaming a meno che la tua copia sia FLAC, ALAC, WAV o simile"</string>
+    <string name="catalogue_note">"YouTube Music e Spotify aggiungono la ricerca nel catalogo e le loro home. I loro brani vengono riprodotti dalla prima copia corrispondente nell\'ordine qui sopra. Titolo e durata riconosce anche artisti scritti in modo diverso, purché le durate differiscano al massimo di due secondi."</string>
+    <string name="catalogue_note_off">"YouTube Music e Spotify aggiungono la ricerca nel catalogo e le loro home. I loro brani vengono sempre riprodotti dal servizio di streaming."</string>
+</resources>

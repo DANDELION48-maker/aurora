@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="catalogue_section">"Streaming-Titel"</string>
+    <string name="catalogue_library_copies">"Aus deiner Mediathek abspielen"</string>
+    <string name="catalogue_library_copies_summary">"YouTube-Music- und Spotify-Titel von einer passenden eigenen Kopie abspielen"</string>
+    <string name="catalogue_match">"Abgleich nach"</string>
+    <string name="catalogue_match_strict">"Titel und Interpret"</string>
+    <string name="catalogue_match_relaxed">"Titel und Länge"</string>
+    <string name="catalogue_lossless_only">"Nur verlustfreie Kopien"</string>
+    <string name="catalogue_lossless_only_summary">"Weiter streamen, außer deine Kopie ist FLAC, ALAC, WAV oder Ähnliches"</string>
+    <string name="catalogue_note">"YouTube Music und Spotify ergänzen die Katalogsuche und eigene Startseiten. Ihre Titel spielen von der ersten passenden Kopie in der Reihenfolge oben. „Titel und Länge“ erkennt auch anders geschriebene Interpreten, solange die Längen höchstens zwei Sekunden auseinanderliegen."</string>
+    <string name="catalogue_note_off">"YouTube Music und Spotify ergänzen die Katalogsuche und eigene Startseiten. Ihre Titel spielen immer vom Streamingdienst."</string>
+</resources>

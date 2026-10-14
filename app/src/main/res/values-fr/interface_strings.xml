@@ -2182,7 +2182,6 @@
     <string name="text_your_tracks_226210" formatted="false">"VOS PISTES"</string>
     <string name="text_your_will_show_up_once_the_server_has_some_ced31f">"Vos %1$s apparaîtront dès que le serveur en aura."</string>
     <string name="text_your_year_month_by_month_e19b5f" formatted="false">"Votre année, mois par mois"</string>
-    <string name="text_youtube_music_adds_catalogue_search_and_a_separate_home_feed_matc_b8a69c" formatted="false">"YouTube Music ajoute la recherche dans le catalogue et un fil d\'accueil distinct. Les enregistrements correspondants utilisent votre copie locale, téléchargée ou de serveur préférée. Spotify reste indépendant."</string>
     <string name="text_youtube_music_uses_google_sign_in_0ba1e7" formatted="false">"YouTube Music utilise la connexion Google."</string>
     <string name="video_quality">Qualité</string>
     <string name="video_quality_auto">Auto</string>

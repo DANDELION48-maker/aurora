@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="catalogue_section">"Titres en streaming"</string>
+    <string name="catalogue_library_copies">"Lire depuis votre bibliothèque"</string>
+    <string name="catalogue_library_copies_summary">"Lit les titres YouTube Music et Spotify depuis une copie correspondante que vous possédez"</string>
+    <string name="catalogue_match">"Correspondance par"</string>
+    <string name="catalogue_match_strict">"Titre et artiste"</string>
+    <string name="catalogue_match_relaxed">"Titre et durée"</string>
+    <string name="catalogue_lossless_only">"Copies sans perte uniquement"</string>
+    <string name="catalogue_lossless_only_summary">"Reste en streaming sauf si votre copie est en FLAC, ALAC, WAV ou équivalent"</string>
+    <string name="catalogue_note">"YouTube Music et Spotify ajoutent la recherche dans le catalogue et leurs propres accueils. Leurs titres sont lus depuis la première copie correspondante dans l\'ordre ci-dessus. Titre et durée reconnaît aussi les artistes écrits autrement, tant que les durées ne diffèrent pas de plus de deux secondes."</string>
+    <string name="catalogue_note_off">"YouTube Music et Spotify ajoutent la recherche dans le catalogue et leurs propres accueils. Leurs titres sont toujours lus depuis le service de streaming."</string>
+</resources>

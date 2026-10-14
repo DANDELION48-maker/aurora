@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="catalogue_section">"Lagu streaming"</string>
+    <string name="catalogue_library_copies">"Putar dari koleksi Anda"</string>
+    <string name="catalogue_library_copies_summary">"Putar lagu YouTube Music dan Spotify dari salinan milik Anda yang cocok"</string>
+    <string name="catalogue_match">"Cocokkan berdasarkan"</string>
+    <string name="catalogue_match_strict">"Judul dan artis"</string>
+    <string name="catalogue_match_relaxed">"Judul dan durasi"</string>
+    <string name="catalogue_lossless_only">"Hanya salinan lossless"</string>
+    <string name="catalogue_lossless_only_summary">"Tetap streaming kecuali salinan Anda berformat FLAC, ALAC, WAV, atau sejenisnya"</string>
+    <string name="catalogue_note">"YouTube Music dan Spotify menambahkan pencarian katalog dan beranda sendiri. Lagunya diputar dari salinan cocok pertama sesuai urutan di atas. Judul dan durasi juga mengenali nama artis yang ditulis berbeda, selama selisih durasinya tidak lebih dari dua detik."</string>
+    <string name="catalogue_note_off">"YouTube Music dan Spotify menambahkan pencarian katalog dan beranda sendiri. Lagunya selalu diputar dari layanan streaming."</string>
+</resources>

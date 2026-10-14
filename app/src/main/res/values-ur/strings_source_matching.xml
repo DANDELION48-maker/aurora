@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="catalogue_section">"⁧اسٹریمنگ ٹریکس⁩"</string>
+    <string name="catalogue_library_copies">"⁧اپنی لائبریری سے چلائیں⁩"</string>
+    <string name="catalogue_library_copies_summary">"⁧YouTube Music اور Spotify کے ٹریکس اپنی مماثل کاپی سے چلائیں⁩"</string>
+    <string name="catalogue_match">"⁧مماثلت کی بنیاد⁩"</string>
+    <string name="catalogue_match_strict">"⁧عنوان اور فنکار⁩"</string>
+    <string name="catalogue_match_relaxed">"⁧عنوان اور دورانیہ⁩"</string>
+    <string name="catalogue_lossless_only">"⁧صرف لاس لیس کاپیاں⁩"</string>
+    <string name="catalogue_lossless_only_summary">"⁧جب تک آپ کی کاپی FLAC، ALAC، WAV یا اس جیسی نہ ہو، اسٹریمنگ جاری رہے گی⁩"</string>
+    <string name="catalogue_note">"⁧YouTube Music اور Spotify کیٹلاگ تلاش اور اپنی ہوم فیڈ شامل کرتے ہیں۔ ان کے ٹریکس اوپر دی گئی ترتیب میں پہلی مماثل کاپی سے چلتے ہیں۔ عنوان اور دورانیہ مختلف ہجے والے فنکاروں کو بھی پہچان لیتا ہے، بشرطیکہ دورانیے میں دو سیکنڈ سے زیادہ فرق نہ ہو۔⁩"</string>
+    <string name="catalogue_note_off">"⁧YouTube Music اور Spotify کیٹلاگ تلاش اور اپنی ہوم فیڈ شامل کرتے ہیں۔ ان کے ٹریکس ہمیشہ اسٹریمنگ سروس سے چلتے ہیں۔⁩"</string>
+</resources>

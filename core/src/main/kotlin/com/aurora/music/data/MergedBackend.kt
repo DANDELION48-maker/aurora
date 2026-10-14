@@ -21,6 +21,7 @@ class MergedBackend(
     override val session: Session,
     private val priority: () -> List<String> = { DEFAULT_SOURCE_PRIORITY },
     private val downloads: () -> List<Song> = { emptyList() },
+    private val catalogueMatch: () -> CatalogueMatchPrefs = { CatalogueMatchPrefs() },
     // a library view over some of the sources; it offers no further views or catalogue feeds
     private val nested: Boolean = false,
 ) : MediaBackend {
@@ -60,7 +61,7 @@ class MergedBackend(
                     "library" -> sources.filterNot(::isCatalogue)
                     else -> listOfNotNull(sources.getOrNull(catalogueFor(view)))
                 }
-                if (picked.isEmpty()) this else MergedBackend(picked, session, priority, downloads, nested = true)
+                if (picked.isEmpty()) this else MergedBackend(picked, session, priority, downloads, catalogueMatch, nested = true)
             }
         }
     }
@@ -95,6 +96,8 @@ class MergedBackend(
         val index = unwrap(song.id)?.first ?: sources.indexOfFirst { it.session.accountKey() == session.accountKey() }
         if (index !in sources.indices) return emptyList()
         if (!isCatalogue(sources[index])) return emptyList()
+        val rules = catalogueMatch()
+        if (!rules.useLibrary) return emptyList()
         val order = priority()
         val copies = matchMutex.withLock {
             val title = recordingTitle(song.title)
@@ -119,13 +122,20 @@ class MergedBackend(
             copy.streamUrl.startsWith("file:") || copy.streamUrl.startsWith("content:") -> "local"
             else -> "stream"
         }
-        return (copies + downloads()).filter { recordingMatches(song, it) && it.streamUrl.isNotBlank() }
+        return (copies + downloads()).filter { copy ->
+            copy.streamUrl.isNotBlank() && (recordingMatches(song, copy) || rules.relaxed && sameLength(song, copy)) &&
+                (!rules.losslessOnly || copy.suffix.lowercase() in LOSSLESS)
+        }
             .distinctBy { it.streamUrl }
             .sortedWith(compareBy<Song> { order.indexOf(tier(it)).let { rank -> if (rank < 0) Int.MAX_VALUE else rank } }
                 .thenBy { if (song.durationSec > 0 && it.durationSec > 0 && kotlin.math.abs(song.durationSec - it.durationSec) > TrackMatch.DURATION_TOLERANCE_SEC) 1 else 0 }
                 .thenByDescending { qualityScore(it) })
             .map { song.withPlaybackFrom(it) }
     }
+
+    // a differently spelled artist still counts when the title and the length agree closely
+    private fun sameLength(song: Song, copy: Song) = recordingTitlesMatch(song, copy) && song.durationSec > 0 && copy.durationSec > 0 &&
+        kotlin.math.abs(song.durationSec - copy.durationSec) <= RELAXED_DURATION_SEC
 
     private val primary: MediaBackend? = sources.firstOrNull { it.session.accountKey() == session.accountKey() }
         ?: sources.firstOrNull { it.session.type != ServerType.LOCAL } ?: sources.firstOrNull()
@@ -471,6 +481,7 @@ class MergedBackend(
         const val SLOW_EMPTY_MS = 8_000L
         val VIEW_IDS = setOf("library", "youtube", "spotify")
         val LOSSLESS = setOf("flac", "alac", "wav", "aiff", "aif", "ape", "wv", "dsf", "dff")
+        const val RELAXED_DURATION_SEC = 2
     }
 }
 

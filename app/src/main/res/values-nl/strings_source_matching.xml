@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="catalogue_section">"Streamingnummers"</string>
+    <string name="catalogue_library_copies">"Afspelen uit je bibliotheek"</string>
+    <string name="catalogue_library_copies_summary">"Speel nummers van YouTube Music en Spotify af vanaf een overeenkomende eigen kopie"</string>
+    <string name="catalogue_match">"Vergelijken op"</string>
+    <string name="catalogue_match_strict">"Titel en artiest"</string>
+    <string name="catalogue_match_relaxed">"Titel en lengte"</string>
+    <string name="catalogue_lossless_only">"Alleen lossless kopieën"</string>
+    <string name="catalogue_lossless_only_summary">"Blijf streamen tenzij je kopie FLAC, ALAC, WAV of vergelijkbaar is"</string>
+    <string name="catalogue_note">"YouTube Music en Spotify voegen catalogus zoeken en een eigen startpagina toe. Hun nummers spelen af vanaf de eerste overeenkomende kopie in de volgorde hierboven. Titel en lengte herkent ook anders gespelde artiesten, zolang de lengtes hooguit twee seconden verschillen."</string>
+    <string name="catalogue_note_off">"YouTube Music en Spotify voegen catalogus zoeken en een eigen startpagina toe. Hun nummers spelen altijd af via de streamingdienst."</string>
+</resources>

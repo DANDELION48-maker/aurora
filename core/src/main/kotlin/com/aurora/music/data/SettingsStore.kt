@@ -1123,6 +1123,17 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         it[Keys.SOURCE_PRIORITY] = gson.toJson(order.filter { t -> t in DEFAULT_SOURCE_PRIORITY }.distinct())
     }
 
+    val catalogueMatch: Flow<CatalogueMatchPrefs> = dataStore.data.map {
+        CatalogueMatchPrefs(
+            useLibrary = it[Keys.CATALOGUE_LIBRARY_COPIES] ?: true,
+            relaxed = it[Keys.CATALOGUE_MATCH_RELAXED] ?: false,
+            losslessOnly = it[Keys.CATALOGUE_LOSSLESS_ONLY] ?: false,
+        )
+    }.distinctUntilChanged()
+    suspend fun setCatalogueLibraryCopies(v: Boolean) = dataStore.edit { it[Keys.CATALOGUE_LIBRARY_COPIES] = v }
+    suspend fun setCatalogueMatchRelaxed(v: Boolean) = dataStore.edit { it[Keys.CATALOGUE_MATCH_RELAXED] = v }
+    suspend fun setCatalogueLosslessOnly(v: Boolean) = dataStore.edit { it[Keys.CATALOGUE_LOSSLESS_ONLY] = v }
+
     val unifiedLibrary: Flow<Boolean> = dataStore.data.map { it[Keys.UNIFIED_LIBRARY] ?: false }.distinctUntilChanged()
     suspend fun setUnifiedLibrary(v: Boolean) = dataStore.edit { it[Keys.UNIFIED_LIBRARY] = v }
 

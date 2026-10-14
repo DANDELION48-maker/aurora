@@ -1,0 +1,198 @@
+package com.aurora.music.data
+
+import com.aurora.music.data.remote.*
+import com.aurora.music.model.*
+import com.aurora.music.util.accentArgbFor
+import com.google.gson.JsonObject
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import java.io.IOException
+import java.net.URLEncoder
+import java.util.concurrent.ConcurrentHashMap
+
+class SoundCloudBackend(override val session: Session, private val api: SoundCloudTransport) : MediaBackend {
+    private val songs = ConcurrentHashMap<String, Song>()
+    private val pageCache = ConcurrentHashMap<String, Pair<Long, List<JsonObject>>>()
+    private val pageLock = Mutex()
+    private val user get() = session.userId
+
+    private fun remember(list: List<Song>) = list.onEach { songs[it.id] = it }
+
+    // every page of a listing, cached for a minute like the youtube music library
+    private suspend fun pages(path: String, max: Int = 5000): List<JsonObject> = pageLock.withLock {
+        pageCache[path]?.takeIf { System.nanoTime() - it.first < 60_000_000_000L }?.let { return@withLock it.second }
+        val items = mutableListOf<JsonObject>()
+        val seen = hashSetOf<String>()
+        var next: String? = path
+        while (next != null && items.size < max) {
+            val page = api.get(next).asJsonObject
+            items += page.items("collection")
+            next = page.string("next_href").takeIf { it.isNotBlank() }
+            if (next != null && (!seen.add(next) || seen.size > 200)) throw IOException("SoundCloud returned an incomplete list. Please retry.")
+        }
+        items.also { pageCache[path] = System.nanoTime() to it }
+    }
+    private suspend fun list(path: String) = api.get(path).asJsonObject.items("collection")
+
+    override suspend fun ping(): Boolean = api.get("/me").asJsonObject.string("id").isNotBlank()
+    override suspend fun profileImageUrl(): String = session.imageUrl
+
+    override suspend fun home(): HomeData = coroutineScope {
+        val history = async { runCatching { remember(list("/me/play-history/tracks?limit=30").mapNotNull { song(it.obj("track")) }) }.getOrNull() }
+        val stream = async { runCatching { remember(list("/stream?limit=40").mapNotNull { song(it.obj("track")) }) }.getOrNull() }
+        val discover = async { runCatching { list("/mixed-selections?limit=10") }.getOrNull() }
+        val sections = buildList {
+            history.await()?.distinctBy { it.id }?.takeIf { it.isNotEmpty() }?.let { add(HomeFeedSection("history", "Recently played", items = it.map(HomeFeedItem::Track))) }
+            stream.await()?.distinctBy { it.id }?.takeIf { it.isNotEmpty() }?.let { add(HomeFeedSection("stream", "From people you follow", items = it.map(HomeFeedItem::Track))) }
+            discover.await()?.forEach { selection ->
+                val items = selection.obj("items").items("collection").mapNotNull { collection(it) }
+                if (items.isNotEmpty()) add(HomeFeedSection(selection.string("id"), selection.string("title"), selection.string("description"), items))
+            }
+        }
+        if (sections.isEmpty() && history.await() == null && discover.await() == null) throw IOException("Could not load SoundCloud. Please retry.")
+        HomeData(sections = sections)
+    }
+
+    private suspend fun library() = pages("/me/library/all?limit=200")
+    override suspend fun allAlbums() = library().mapNotNull { it.obj("playlist").takeIf { p -> p.bool("is_album") }?.let(::album) }.distinctBy { it.id }
+    override suspend fun allPlaylists() = library().mapNotNull { entry ->
+        entry.obj("playlist").takeIf { it.string("id").isNotBlank() && !it.bool("is_album") }?.let(::playlist)
+            ?: entry.obj("system_playlist").takeIf { it.string("urn").isNotBlank() }?.let(::playlist)
+    }.distinctBy { it.id }
+    override suspend fun allArtists() = pages("/users/$user/followings?limit=200").map(::artist)
+    override suspend fun allSongs() = remember(pages("/users/$user/track_likes?limit=200").mapNotNull { song(it.obj("track")) }).distinctBy { it.id }
+    override suspend fun librarySongs(limit: Int) = allSongs().take(limit)
+    override suspend fun songsPage(offset: Int, count: Int) = allSongs().drop(offset).take(count)
+    override suspend fun starredSongs() = allSongs().map { it.copy(liked = true) }
+    override suspend fun starredCount() = api.get("/me").asJsonObject.int("likes_count")
+    override suspend fun starredIds(): Set<String> = coroutineScope {
+        val tracks = async { allSongs().map { it.id } }
+        val artists = async { allArtists().map { it.id } }
+        val collections = async { library().filter { it.string("type").endsWith("-like") }.map { it.obj("playlist").string("id").ifBlank { it.obj("system_playlist").string("urn") } } }
+        (tracks.await() + artists.await() + collections.await()).filter { it.isNotBlank() }.toSet()
+    }
+    override suspend fun likedSongIds(ids: List<String>) = allSongs().map { it.id }.toSet().intersect(ids.toSet())
+
+    override suspend fun search(query: String): SearchResults = if (query.isBlank()) SearchResults() else coroutineScope {
+        val q = URLEncoder.encode(query.trim(), "UTF-8")
+        val tracks = async { list("/search/tracks?q=$q&limit=30").mapNotNull(::song) }
+        val albums = async { list("/search/albums?q=$q&limit=10").map(::album) }
+        val users = async { list("/search/users?q=$q&limit=10").map(::artist) }
+        val sets = async { list("/search/playlists_without_albums?q=$q&limit=10").map(::playlist) }
+        SearchResults(remember(tracks.await()), albums.await(), users.await(), sets.await())
+    }
+
+    override suspend fun songFor(id: String): Song? {
+        songs[id]?.let { return it }
+        if (!id.matches(Regex("[0-9]+"))) return null
+        return song(api.get("/tracks/$id").asJsonObject)?.also { songs[id] = it }
+    }
+
+    override suspend fun radio(seedId: String): List<Song> =
+        remember(list("/tracks/$seedId/related?limit=50").mapNotNull(::song)).filter { it.id != seedId }
+
+    // playlists list only their first few tracks in full, the rest are bare ids
+    private suspend fun hydrate(entries: List<JsonObject>): List<Song> = coroutineScope {
+        val ids = entries.map { it.string("id") }.filter { it.isNotBlank() }
+        val known = entries.mapNotNull(::song).associateBy { it.id }
+        val loaded = ids.filter { it !in known }.chunked(50).map { chunk ->
+            async { api.get("/tracks?ids=${chunk.joinToString(",")}").asJsonArray.mapNotNull { e -> e.takeIf { it.isJsonObject }?.let { song(it.asJsonObject) } } }
+        }.awaitAll().flatten().associateBy { it.id }
+        remember(ids.mapNotNull { known[it] ?: loaded[it] })
+    }
+
+    override suspend fun detail(kind: String, id: String): DetailData? = when (kind) {
+        "liked" -> starredSongs().let { DetailData(DetailInfo("Liked Songs", "SoundCloud", it.firstOrNull()?.artworkUrl.orEmpty(), accentArgbFor("liked"), false, it.size, "Liked"), it) }
+        "album", "playlist" -> {
+            val set = api.get(if (id.startsWith(SYSTEM_PLAYLIST)) "/system-playlists/$id" else "/playlists/$id").asJsonObject
+            val tracks = hydrate(set.items("tracks")).let { list ->
+                if (!set.bool("is_album")) list else list.map { it.copy(album = set.string("title"), albumId = id).also { s -> songs[s.id] = s } }
+            }
+            val owner = set.obj("user").string("username").ifBlank { "SoundCloud" }
+            DetailData(DetailInfo(set.string("title"), owner, art(set).ifBlank { tracks.firstOrNull()?.artworkUrl.orEmpty() }, accentArgbFor(id), false,
+                tracks.size, if (set.bool("is_album")) "Album" else "Playlist", description = set.string("description"),
+                editable = set.obj("user").string("id") == user && !id.startsWith(SYSTEM_PLAYLIST)), tracks)
+        }
+        "artist" -> coroutineScope {
+            val profile = async { api.get("/users/$id").asJsonObject }
+            val top = async { list("/users/$id/toptracks?limit=50").mapNotNull(::song) }
+            val albums = async { list("/users/$id/albums?limit=50").map(::album) }
+            val uploads = async { list("/users/$id/tracks?limit=50").mapNotNull(::song) }
+            val person = profile.await()
+            val tracks = remember((top.await() + uploads.await()).distinctBy { it.id })
+            DetailData(DetailInfo(person.string("username"), person.string("full_name"), art(person.string("avatar_url")), accentArgbFor(id), true,
+                tracks.size, "Artist", description = person.string("description"), followers = person.int("followers_count").toLong()), tracks, albums.await())
+        }
+        else -> null
+    }
+
+    // shortcut: read-only for now, likes and playlist edits arrive with playback
+    override suspend fun setStarred(id: String, starred: Boolean, kind: String) = false
+    override suspend fun createPlaylist(name: String) = false
+    override suspend fun updatePlaylist(id: String, name: String?, comment: String?) = false
+    override suspend fun deletePlaylist(id: String) = false
+
+    override suspend fun scrobble(id: String) {}
+    override suspend fun serverLyrics(song: Song): Lyrics? = null
+    override fun streamUrl(songId: String, maxBitrate: Int, lossless: Boolean) = sentinel(songId)
+    override fun coverArtUrl(id: String, size: Int) = songs[id]?.artworkUrl.orEmpty()
+
+    companion object {
+        private const val SYSTEM_PLAYLIST = "soundcloud:system-playlists:"
+
+        fun sentinel(id: String) = "aurora-sc://track/$id"
+
+        // the api links 100px art, the same file comes in 500px
+        fun art(url: String) = url.replace("-large.", "-t500x500.")
+        private fun art(item: JsonObject) = art(item.string("artwork_url").ifBlank { item.string("calculated_artwork_url") })
+
+        // bare id stubs carry no title and are skipped
+        fun song(t: JsonObject): Song? {
+            val id = t.string("id")
+            val title = t.string("title")
+            if (id.isBlank() || title.isBlank()) return null
+            val user = t.obj("user")
+            val meta = t.obj("publisher_metadata")
+            return Song(id, title, meta.string("artist").ifBlank { user.string("username") }, meta.string("album_title"),
+                art(t.string("artwork_url").ifBlank { user.string("avatar_url") }),
+                (t.int("full_duration").takeIf { it > 0 } ?: t.int("duration")) / 1000,
+                explicit = meta.bool("explicit"), accentArgb = accentArgbFor(id), streamUrl = sentinel(id),
+                artistId = user.string("id"), genre = t.string("genre"))
+        }
+
+        fun album(p: JsonObject) = Album(p.string("id"), p.string("title"), p.obj("user").string("username"), art(p),
+            (p.string("release_date").ifBlank { p.string("published_at") }.ifBlank { p.string("created_at") }).take(4).toIntOrNull() ?: 0,
+            p.int("track_count"), p.int("duration") / 1000, p.string("set_type"))
+
+        fun playlist(p: JsonObject): Playlist {
+            val id = p.string("urn").takeIf { it.startsWith(SYSTEM_PLAYLIST) } ?: p.string("id")
+            return Playlist(id, p.string("title"), p.obj("user").string("username").ifBlank { p.string("short_description") }, art(p),
+                p.int("track_count").takeIf { it > 0 } ?: p.array("tracks").size(), accentArgbFor(id))
+        }
+
+        fun artist(u: JsonObject) = Artist(u.string("id"), u.string("username"), art(u.string("avatar_url")), 0)
+
+        private fun collection(item: JsonObject): HomeFeedItem? = when (item.string("kind")) {
+            "track" -> song(item)?.let(HomeFeedItem::Track)
+            "user" -> HomeFeedItem.Performer(artist(item))
+            "playlist" -> if (item.bool("is_album")) HomeFeedItem.Record(album(item)) else HomeFeedItem.Collection(playlist(item))
+            "system-playlist" -> HomeFeedItem.Collection(playlist(item))
+            else -> null
+        }
+
+        private fun JsonObject.items(key: String) = array(key).filter { it.isJsonObject }.map { it.asJsonObject }
+        private fun JsonObject.int(key: String) = get(key)?.takeIf { it.isJsonPrimitive }?.asJsonPrimitive?.takeIf { it.isNumber }?.asInt ?: 0
+        private fun JsonObject.bool(key: String) = get(key)?.takeIf { it.isJsonPrimitive }?.asJsonPrimitive?.takeIf { it.isBoolean }?.asBoolean ?: false
+
+        /** the signed-in account behind an oauth token: id, display name, avatar */
+        suspend fun profile(api: SoundCloudTransport): Triple<String, String, String> {
+            val me = api.get("/me").asJsonObject
+            val id = me.string("id")
+            if (id.isBlank()) throw IOException("Sign in to SoundCloud, then try connecting again.")
+            return Triple(id, me.string("username").ifBlank { me.string("permalink") }, art(me.string("avatar_url")))
+        }
+    }
+}
