@@ -1,5 +1,6 @@
 package com.aurora.music.ui.screens.player
-
+
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -522,7 +523,13 @@ fun PlayerScreen(
                 )
             }
 
-            val badge = formatBadge(song)
+            // youtube music and spotify carry no file facts, so the decoder's view of the stream fills in
+            val streamFormat by (androidx.compose.ui.platform.LocalContext.current.applicationContext as com.aurora.music.AuroraApplication)
+                .container.streamFormat.collectAsStateWithLifecycle()
+            val badge = formatBadge(song).ifEmpty {
+                streamFormat?.takeIf { it.mediaId == song.id }?.let { formatBadge(song.copy(suffix = codecLabel(it.codec),
+                    sampleRateHz = it.sampleRateHz, bitDepth = it.bitDepth, bitrateKbps = it.bitrateKbps)) }.orEmpty()
+            }
             val source = sourceLabel(song)
             Spacer(Modifier.height(10.dp))
             FlowRow(
@@ -1101,6 +1108,13 @@ private fun formatBadge(song: com.aurora.music.model.Song): String {
     if (song.bitDepth > 0) parts.add(appString(R.string.text_bit_fd7850, (song.bitDepth)))
     if (song.bitrateKbps > 0) parts.add(appString(R.string.text_kbps_f89f2e, (song.bitrateKbps)))
     return parts.joinToString(" · ")
+}
+
+private fun codecLabel(codec: String): String = when (codec) {
+    "MP4A-LATM", "MP4A" -> "AAC"
+    "MPEG" -> "MP3"
+    "RAW" -> "PCM"
+    else -> codec
 }
 
 private fun isLossless(suffix: String): Boolean =

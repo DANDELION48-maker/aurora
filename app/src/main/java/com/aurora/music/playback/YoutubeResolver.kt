@@ -32,6 +32,8 @@ class YoutubeResolver(private val http: OkHttpClient = OkHttpClient()) {
     data class MusicVideo(val videoId: String, val streamUrl: String)
     private data class CachedPlayback(val stream: PlaybackStream, val expiresAt: Long)
     private val playbackCache = ConcurrentHashMap<String, CachedPlayback>()
+    // stream key to the chosen audio stream's kbps, which webm and m4a containers rarely carry
+    private val bitrates = ConcurrentHashMap<String, Int>()
     @Volatile private var initialized = false
 
     private fun ensureInit() {
@@ -58,10 +60,11 @@ class YoutubeResolver(private val http: OkHttpClient = OkHttpClient()) {
             val pick = best ?: items.first()
             val info = StreamInfo.getInfo(yt, pick.url)
             // fall back to progressive muxed stream when audio-only withheld po_token
-            val url = info.audioStreams
+            val audio = info.audioStreams
                 .filter { !it.content.isNullOrBlank() }
                 .maxByOrNull { it.averageBitrate }
-                ?.content
+            rememberBitrate("spotify:$spotifyId", audio?.averageBitrate ?: 0)
+            val url = audio?.content
                 ?: info.videoStreams
                     .filter { !it.content.isNullOrBlank() }
                     .minByOrNull { it.resolution?.removeSuffix("p")?.toIntOrNull() ?: 9999 }
@@ -227,13 +230,14 @@ class YoutubeResolver(private val http: OkHttpClient = OkHttpClient()) {
                 live && info.hlsUrl.isNotBlank() -> PlaybackStream(info.hlsUrl, "application/x-mpegURL")
                 live && info.dashMpdUrl.isNotBlank() -> PlaybackStream(info.dashMpdUrl, "application/dash+xml")
                 live -> null
-                audio != null -> PlaybackStream(audio.content, videoUrl = video?.content)
+                audio != null -> PlaybackStream(audio.content, videoUrl = video?.content).also { rememberBitrate("video:$videoId", audio.averageBitrate) }
                 muxed != null -> PlaybackStream(muxed.content)
                 info.hlsUrl.isNotBlank() -> PlaybackStream(info.hlsUrl, "application/x-mpegURL")
                 info.dashMpdUrl.isNotBlank() -> PlaybackStream(info.dashMpdUrl, "application/dash+xml")
                 else -> null
             }
             stream?.also {
+                if (audio == null) rememberBitrate("video:$videoId", 0)
                 remember("video:$videoId", it.url)
                 val now = System.currentTimeMillis()
                 playbackCache.entries.removeAll { entry -> entry.value.expiresAt <= now }
@@ -263,6 +267,15 @@ class YoutubeResolver(private val http: OkHttpClient = OkHttpClient()) {
             uri.getQueryParameter("quality")?.toIntOrNull(),
         )
         else resolve(uri.host.orEmpty(), uri.getQueryParameter("q").orEmpty(), uri.getQueryParameter("dur")?.toIntOrNull() ?: 0)
+    }
+
+    fun streamBitrateKbps(uri: android.net.Uri): Int? =
+        bitrates[if (uri.host == "video") "video:${uri.lastPathSegment}" else "spotify:${uri.host}"]
+
+    private fun rememberBitrate(key: String, kbps: Int) {
+        if (kbps <= 0) { bitrates.remove(key); return }
+        if (bitrates.size >= 256) bitrates.clear()
+        bitrates[key] = kbps
     }
 
     private fun cached(key: String): String? = cache[key]?.let {

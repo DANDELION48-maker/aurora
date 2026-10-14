@@ -38,6 +38,7 @@ import com.aurora.music.playback.dsd.DsdSourceInfo
 import com.aurora.music.data.SignalPath
 import com.aurora.music.data.SignalFormat
 import com.aurora.music.data.SignalPathFacts
+import com.aurora.music.data.StreamFormat
 import com.aurora.music.data.PlaybackPathKind
 import com.aurora.music.data.buildSignalPath
 import com.aurora.music.data.usesFloatPcmPath
@@ -647,6 +648,10 @@ class PlaybackService : MediaLibraryService() {
         }
     }
 
+    // youtube's webm and m4a streams rarely state a bitrate, so take the one the resolver picked
+    private fun resolvedBitrate(item: MediaItem): Int? = item.localConfiguration?.uri
+        ?.takeIf { it.scheme == "aurora-yt" }?.let { container.youtubeResolver.streamBitrateKbps(it) }?.times(1000)
+
     private fun trackPlayback() {
         val active = mediaSession?.player
         playbackReporting.observe(active)
@@ -1122,10 +1127,13 @@ class PlaybackService : MediaLibraryService() {
         }
         val desiredFloat = exclusiveUsbPref || preferHighResPref
         val measuredAfter = precise || (processors && state?.afterMeterProcessor?.isActive == true)
+        val sourceBitrate = source?.averageBitrate?.takeIf { it > 0 } ?: resolvedBitrate(item)
+        container.streamFormat.value = StreamFormat(item.mediaId, codec, sourceFormat?.rateHz ?: 0, sourceFormat?.bitDepth ?: 0,
+            (sourceBitrate ?: 0) / 1000)
         container.signalPath.value = buildSignalPath(SignalPathFacts(
             kind = when { processedUsb -> PlaybackPathKind.PROCESSED_USB; nativeFlac -> PlaybackPathKind.NATIVE_USB; usb -> PlaybackPathKind.DECODED_USB; else -> PlaybackPathKind.ANDROID },
             sourceCopy = sourceCopy, codec = codec, sourceFormat = sourceFormat,
-            sourceBitrate = source?.averageBitrate?.takeIf { it > 0 },
+            sourceBitrate = sourceBitrate,
             decoderName = if (dsd != null) "Aurora DSD decimator" else if (nativeFlac) "Native libFLAC" else state?.decoder,
             decodedFormat = decoded,
             processorPath = when {

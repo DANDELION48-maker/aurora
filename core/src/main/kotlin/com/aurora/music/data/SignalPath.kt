@@ -3,6 +3,9 @@ package com.aurora.music.data
 /** Runtime evidence only. This is deliberately not persisted with preferences. */
 enum class Preservation { PRESERVED, MODIFIED, UNKNOWN }
 
+// the playing item's source format, published apart from the signal path so watching it stays cheap
+data class StreamFormat(val mediaId: String, val codec: String, val sampleRateHz: Int, val bitDepth: Int, val bitrateKbps: Int)
+
 data class SignalFormat(
     val rateHz: Int? = null,
     val bitDepth: Int? = null,

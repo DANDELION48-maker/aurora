@@ -319,6 +319,7 @@ class AppContainer(context: Context) {
     val preferredAudioDeviceId = MutableStateFlow(0)
 
     val signalPath = MutableStateFlow(SignalPath())
+    val streamFormat = MutableStateFlow<StreamFormat?>(null)
 
     @Volatile
     private var offlineFlag: Boolean = false
