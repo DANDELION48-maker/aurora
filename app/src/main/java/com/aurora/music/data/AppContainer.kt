@@ -311,7 +311,9 @@ class AppContainer(context: Context) {
     @Volatile
     private var dataSaver: Boolean = false
 
-    val vocalAnalysis = VocalAnalysis(appContext) { !offlineToggle && networkUp && onWifi && !dataSaver }
+    val vocalAnalysis = VocalAnalysis(appContext, { !offlineToggle && networkUp && onWifi && !dataSaver }) { uri ->
+        youtubeResolver.resolveSentinel(android.net.Uri.parse(uri))
+    }
 
     val lyricsTranslator = LyricsTranslator { !offlineToggle && networkUp && onWifi && !dataSaver }
 

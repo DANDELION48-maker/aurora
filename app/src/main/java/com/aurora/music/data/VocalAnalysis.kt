@@ -12,7 +12,11 @@ import java.security.MessageDigest
 import java.util.concurrent.Executors
 
 // one song at a time on a background-priority thread; results are tiny and cached on disk
-class VocalAnalysis(private val context: Context, private val canStream: () -> Boolean) {
+class VocalAnalysis(
+    private val context: Context,
+    private val canStream: () -> Boolean,
+    private val resolveSentinel: (String) -> String? = { null },
+) {
     private val dir = File(context.cacheDir, "vocal-activity")
     private val worker = Executors.newSingleThreadExecutor { task ->
         Thread({ Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND); task.run() }, "aurora-vocals")
@@ -56,6 +60,8 @@ class VocalAnalysis(private val context: Context, private val canStream: () -> B
         return when {
             url.startsWith("content://") || url.startsWith("file:") || url.startsWith("/") -> url
             url.startsWith("http://") || url.startsWith("https://") -> url.takeIf { canStream() }
+            // spotify and youtube music play a resolved youtube stream, already cached by playback
+            url.startsWith("aurora-yt://") -> if (canStream()) resolveSentinel(url) else null
             else -> null
         }
     }

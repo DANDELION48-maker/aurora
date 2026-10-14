@@ -466,9 +466,13 @@ class SpotifyWebBackend(
         }
         val lyrics = response.obj("lyrics")
         val synced = lyrics.string("syncType") in setOf("LINE_SYNCED", "SYLLABLE_SYNCED")
-        val lines = lyrics.list("lines").map { line ->
+        val raw = lyrics.list("lines")
+        val lines = raw.mapIndexed { i, line ->
             val start = line.long("startTimeMs")
-            if (synced) LyricLine((start / 1000).toInt(), line.string("words"), start) else LyricLine(-1, line.string("words"))
+            val text = line.string("words")
+            if (!synced) return@mapIndexed LyricLine(-1, text)
+            val end = line.long("endTimeMs").takeIf { it > start } ?: raw.getOrNull(i + 1)?.long("startTimeMs") ?: -1L
+            LyricLine((start / 1000).toInt(), text, start, syllableWords(line.list("syllables"), text, end))
         }
         if (lines.none { it.text.isNotBlank() }) return null
         return Lyrics(lines, synced, listOf("Spotify", lyrics.string("providerDisplayName")).filter { it.isNotBlank() }.joinToString(" · "))
@@ -550,6 +554,19 @@ class SpotifyWebBackend(
 }
 
 private fun cursor(kind: String, id: String, handed: Int) = "$kind|$id|$handed"
+
+// syllable-synced lines time runs of characters; slices are joined back into the exact line text
+private fun syllableWords(syllables: List<JsonObject>, text: String, lineEndMs: Long): List<LyricWord> {
+    val counts = syllables.map { it.int("numChars") }
+    if (syllables.isEmpty() || counts.any { it <= 0 } || counts.sum() > text.length) return emptyList()
+    var offset = 0
+    return syllables.mapIndexed { i, syllable ->
+        var stop = if (i == syllables.lastIndex) text.length else minOf(text.length, offset + counts[i])
+        while (i < syllables.lastIndex && stop < text.length && text[stop].isWhitespace()) stop++
+        val next = syllables.getOrNull(i + 1)?.long("startTimeMs") ?: lineEndMs
+        LyricWord(syllable.long("startTimeMs"), next, text.substring(offset, stop)).also { offset = stop }
+    }
+}
 
 // one list-attributes op as the web player's playlist service expects it; creating takes bare ops, changes wrap them with info
 private fun listAttributesOp(values: JsonObject, cleared: List<String>): Map<String, Any> = mapOf(
