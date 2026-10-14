@@ -15,6 +15,7 @@ add_library(aurora_alsa SHARED
     src/alsa_devices.cpp
     src/alsa_stream.cpp
     src/alsa_jni.cpp
+    src/alsa_volume.cpp
 )
 set_target_properties(aurora_alsa PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF CXX_VISIBILITY_PRESET hidden)
 target_include_directories(aurora_alsa PRIVATE src ${JNI_INCLUDE_DIRS})

@@ -149,6 +149,22 @@ Java_com_aurora_music_desktop_natives_AlsaNative_errorText(JNIEnv* env, jobject,
     return env->NewStringUTF(snd_strerror(error));
 }
 
+// min, max and current centi-dB, muted, canMute; null when the card has no dB playback volume
+JNIEXPORT jlongArray JNICALL
+Java_com_aurora_music_desktop_natives_AlsaNative_hardwareVolume(JNIEnv* env, jobject, jstring device) {
+    HardwareLevel level;
+    if (readHardwareVolume(text(env, device), level) < 0) return nullptr;
+    const jlong values[] = {level.minCentiDb, level.maxCentiDb, level.centiDb, level.muted ? 1 : 0, level.canMute ? 1 : 0};
+    const jlongArray result = env->NewLongArray(5);
+    if (result) env->SetLongArrayRegion(result, 0, 5, values);
+    return result;
+}
+
+JNIEXPORT jint JNICALL
+Java_com_aurora_music_desktop_natives_AlsaNative_setHardwareVolume(JNIEnv* env, jobject, jstring device, jlong centiDb, jboolean mute) {
+    return writeHardwareVolume(text(env, device), static_cast<long>(centiDb), mute == JNI_TRUE);
+}
+
 JNIEXPORT void JNICALL
 Java_com_aurora_music_desktop_natives_AlsaNative_close(JNIEnv*, jobject, jlong handle) {
     std::shared_ptr<Stream> stream;

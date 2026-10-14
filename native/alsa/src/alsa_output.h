@@ -29,6 +29,17 @@ bool chooseFormat(snd_pcm_t* pcm, const snd_pcm_hw_params_t* space, int encoding
 void repack24In32(uint8_t* data, size_t bytes);
 int capabilities(const std::string& device, const std::vector<int>& rates, int channels, std::vector<int>& masks);
 
+struct HardwareLevel {
+    long minCentiDb = 0;
+    long maxCentiDb = 0;
+    long centiDb = 0;
+    bool muted = false;
+    bool canMute = false;
+};
+
+int readHardwareVolume(const std::string& device, HardwareLevel& level);
+int writeHardwareVolume(const std::string& device, long centiDb, bool mute);
+
 class ByteRing {
 public:
     explicit ByteRing(size_t capacity) : data_(new uint8_t[capacity]), capacity_(capacity) {}

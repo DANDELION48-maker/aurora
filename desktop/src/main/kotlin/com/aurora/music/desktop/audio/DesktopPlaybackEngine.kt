@@ -84,6 +84,21 @@ class DesktopPlaybackEngine(
     private val bytesView = ByteBuffer.wrap(bytes)
     private val vizChunk = FloatArray(512)
     private val master = MasterGain()
+    @Volatile private var requestedVolume = 1.0
+    @Volatile private var hardwareDb: Double? = null
+    private val hardwareVolume = HardwareVolumeDriver(
+        softwareGain = { master.volume = it },
+        onLevel = { db ->
+            hardwareDb = db
+            post { publish() }
+        },
+        onDacChange = { gain ->
+            requestedVolume = gain
+            chains.forEach { it.engine.relativeVolume = gain }
+            emit(EngineEvent.HardwareVolumeChanged(gain.toFloat()))
+            post { publish() }
+        },
+    )
     @Volatile private var closed = false
     @Volatile private var audioThread: Thread? = null
     @Volatile private var reportChain: DspChain? = null
@@ -262,8 +277,9 @@ class DesktopPlaybackEngine(
 
     override fun setVolume(volume: Float) {
         val value = volume.coerceIn(0f, 1f).toDouble()
-        master.volume = value
+        requestedVolume = value
         chains.forEach { it.engine.relativeVolume = value }
+        hardwareVolume.setGain(value)
         post { publish() }
     }
 
@@ -284,6 +300,13 @@ class DesktopPlaybackEngine(
     override fun configure(config: EngineConfig) {
         val previous = this.config
         this.config = config
+        if (previous.hardwareVolume != config.hardwareVolume) post {
+            // samples already buffered carry the old gain, so the stream restarts instead of riding the switch
+            val reopen = output?.exclusive == true
+            if (reopen) closeOutput()
+            if (!config.hardwareVolume) hardwareVolume.release()
+            if (reopen) restartAtHeard()
+        }
         if (previous.outputRatePolicy == config.outputRatePolicy && previous.bufferMs == config.bufferMs) return
         post {
             val deck = primary
@@ -304,7 +327,9 @@ class DesktopPlaybackEngine(
         deviceFallback = null
         exclusiveBlocked = null
         negotiator.clear()
-        reopenAtHeard()
+        closeOutput()
+        if (!exclusive) hardwareVolume.release()
+        restartAtHeard()
     }
 
     override fun applyDsp(settings: DspChainSettings) {
@@ -334,6 +359,7 @@ class DesktopPlaybackEngine(
         }
         runCatching { listener.close() }
         loader.shutdownNow()
+        hardwareVolume.close()
         control.execute { runCatching { backend.keepAwake(false) } }
         control.shutdown()
         control.awaitTermination(1, TimeUnit.SECONDS)
@@ -687,7 +713,20 @@ class DesktopPlaybackEngine(
         afterMeter.configure(opened.encoding.meterEncoding, 2, opened.sampleRate)
         running = false
         lastStatus = null
+        linkHardwareVolume()
         return true
+    }
+
+    // exclusive streams skip the system mixer, so the dac's own control stands in for software volume
+    private fun linkHardwareVolume() {
+        val current = output ?: return
+        val deviceId = current.deviceId
+        if (current.exclusive && config.hardwareVolume && deviceId != null) {
+            // the dac settles before the first block renders, so the stream never starts with both gains applied
+            hardwareVolume.attach(deviceId) { backend.hardwareVolume(deviceId) }?.let { runCatching { it.get(HARDWARE_VOLUME_WAIT_MS, TimeUnit.MILLISECONDS) } }
+        } else {
+            hardwareVolume.release()
+        }
     }
 
     private fun closeOutput() {
@@ -1205,13 +1244,14 @@ class DesktopPlaybackEngine(
             shuffleRestoreIds = queue.restoreIds,
             repeat = queue.repeat,
             speed = speed.toFloat(),
-            volume = master.volume.toFloat(),
+            volume = requestedVolume.toFloat(),
             crossfading = crossfade != null,
             source = marker?.info,
             decoderName = marker?.decoderName,
             output = if (format == null || current == null) null else OutputInfo(current.deviceId,
                 mutableOutputs.value.firstOrNull { it.id == current.deviceId }?.name, current.exclusive, current.sampleRate,
-                current.encoding, activeDeviceId() == null, deviceFallback ?: format.fallbackReason),
+                current.encoding, activeDeviceId() == null, deviceFallback ?: format.fallbackReason,
+                hardwareVolumeDb = hardwareDb?.takeIf { current.exclusive }),
             processing = ProcessingFacts(
                 dspActive = report?.processingChangesSamples == true,
                 dspDescription = report?.description.orEmpty(),
@@ -1261,6 +1301,7 @@ class DesktopPlaybackEngine(
     private companion object {
         const val TAG = "AuroraEngine"
         const val WRITE_TIMEOUT_MS = 10
+        const val HARDWARE_VOLUME_WAIT_MS = 1_000L
         const val STATUS_NANOS = 20_000_000L
         const val PUBLISH_NANOS = 100_000_000L
         const val ACTIVE_PARK_NANOS = 2_000_000L

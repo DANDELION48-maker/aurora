@@ -2,6 +2,7 @@
 <resources>
     <string name="text_add_music_folder_a083d8" formatted="false">"संगीत फ़ोल्डर जोड़ें"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"ऑडियो डिकोडिंग। कॉपीराइट © FFmpeg डेवलपर। LGPL-3.0-or-later, JavaCPP Presets के ज़रिए डायनेमिक रूप से लिंक किया गया। पूरा लाइसेंस: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
+    <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"DAC में अपना वॉल्यूम होने पर Aurora का वॉल्यूम उसी को बदलता है। ऑडियो bit-perfect रहता है।"</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"Aurora डिवाइस का पूरा कंट्रोल ले लेता है और सैंपल को ट्रैक की अपनी रेट और बिट डेप्थ पर भेजता है। Aurora के चलते समय दूसरे ऐप ख़ामोश रहते हैं। जब प्रोसेसिंग, वॉल्यूम और ReplayGain सैंपल को नहीं बदलते तो आउटपुट bit-perfect रहता है; अगर डिवाइस कोई फ़ॉर्मैट अस्वीकार करता है तो Aurora शेयर्ड मोड पर लौट आता है और सिग्नल पाथ कारण बताता है।"</string>
     <string name="text_bit_float_012895">"%1$d-बिट फ़्लोट"</string>
     <string name="text_bit_integer_72520f">"%1$d-बिट इंटीजर"</string>

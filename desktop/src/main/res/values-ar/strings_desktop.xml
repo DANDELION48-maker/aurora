@@ -2,6 +2,7 @@
 <resources>
     <string name="text_add_music_folder_a083d8" formatted="false">"\u2067إضافة مجلد موسيقى\u2069"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"\u2067فك ترميز الصوت. حقوق النشر © مطورو FFmpeg. LGPL-3.0-or-later، مرتبط ديناميكيًا عبر JavaCPP Presets. الترخيص الكامل: https://www.gnu.org/licenses/lgpl-3.0.html\u2069"</string>
+    <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"\u2067يضبط مستوى صوت Aurora مستوى صوت DAC نفسه عندما يتوفر. يبقى الصوت bit-perfect.\u2069"</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"\u2067يتولى Aurora التحكم الكامل في الجهاز ويرسل العينات بمعدل المقطع وعمق البت الخاصين به. تصمت التطبيقات الأخرى أثناء تشغيل Aurora. يبقى الإخراج مطابقًا بت ببت عندما لا تغيّر المعالجة ومستوى الصوت وReplayGain العينات؛ وإذا رفض الجهاز صيغة ما، يعود Aurora إلى الوضع المشترك ويوضح مسار الإشارة السبب.\u2069"</string>
     <string name="text_bit_float_012895">"\u2067عدد عشري %1$d بت\u2069"</string>
     <string name="text_bit_integer_72520f">"\u2067عدد صحيح %1$d بت\u2069"</string>

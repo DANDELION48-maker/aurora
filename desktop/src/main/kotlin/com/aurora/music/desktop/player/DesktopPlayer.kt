@@ -292,6 +292,7 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
             EngineEvent.Ended -> if (_state.value.sleepEndOfTrack) sleepNow() else maybeAutoplay()
             is EngineEvent.Failed -> _messages.tryEmit(event.failure.message)
             is EngineEvent.OutputFallback -> _messages.tryEmit(event.reason)
+            is EngineEvent.HardwareVolumeChanged -> showVolume(volumePosition(event.gain))
         }
     }
 
@@ -451,10 +452,15 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
 
     override fun setVolume(value: Float) {
         val level = value.coerceIn(0f, 1f)
+        showVolume(level)
+        engine.setVolume(volumeGain(level))
+    }
+
+    // the dac's own knob already moved the sound, so this only follows it
+    private fun showVolume(level: Float) {
         if (level > DesktopSettings.MIN_AUDIBLE_VOLUME) unmuteVolume = level
         val unmute = unmuteVolume
         _volume.value = level
-        engine.setVolume(volumeGain(level))
         volumeSave?.cancel()
         volumeSave = scope.launch {
             delay(300)

@@ -14,4 +14,6 @@ object AlsaNative {
     external fun status(handle: Long): LongArray?
     external fun errorText(error: Int): String?
     external fun close(handle: Long)
+    external fun hardwareVolume(device: String): LongArray?
+    external fun setHardwareVolume(device: String, centiDb: Long, mute: Boolean): Int
 }

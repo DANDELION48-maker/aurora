@@ -28,6 +28,15 @@ struct DeviceInfo {
 
 using DeviceCallback = std::function<void(int kind, std::wstring id, int64_t value)>;
 
+struct HardwareLevel {
+    float minDb = 0;
+    float maxDb = 0;
+    float stepDb = 0;
+    float db = 0;
+    bool muted = false;
+    bool canMute = false;
+};
+
 bool makeFormat(int rate, int channels, int encoding, WAVEFORMATEXTENSIBLE& format);
 HRESULT findDevice(const std::wstring& id, IMMDevice** device);
 HRESULT listDevices(std::vector<DeviceInfo>& devices);
@@ -36,6 +45,8 @@ HRESULT mixFormat(const std::wstring& id, WAVEFORMATEXTENSIBLE& format);
 HRESULT probeFormat(const std::wstring& id, bool exclusive, int rate, int channels, int encoding);
 bool isRenderEndpoint(IMMDeviceEnumerator* enumerator, const std::wstring& id);
 HRESULT watchDevices(DeviceCallback callback, ComPtr<IMMDeviceEnumerator>& enumerator, ComPtr<IMMNotificationClient>& client);
+HRESULT readHardwareVolume(const std::wstring& id, HardwareLevel& level);
+HRESULT writeHardwareVolume(const std::wstring& id, float db, bool mute);
 
 class ByteRing {
 public:

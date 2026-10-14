@@ -28,6 +28,7 @@ fun PlaybackEngine.bindSettings(store: SettingsStore, scope: CoroutineScope): Jo
                 crossfadeHeadroom = playback.crossfadeHeadroom,
                 replayGain = settings.audio.replayGain,
                 outputRatePolicy = policy,
+                hardwareVolume = playback.usbHardwareVolume != false,
             ))
         }
     }

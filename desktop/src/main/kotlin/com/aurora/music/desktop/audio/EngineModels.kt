@@ -28,6 +28,7 @@ data class OutputInfo(
     val encoding: OutputEncoding,
     val followsDefault: Boolean,
     val fallbackReason: String? = null,
+    val hardwareVolumeDb: Double? = null,
 )
 
 data class ProcessingFacts(
@@ -72,6 +73,7 @@ sealed interface EngineEvent {
     data object Ended : EngineEvent
     data class Failed(val entry: QueueEntry?, val failure: PlaybackFailure) : EngineEvent
     data class OutputFallback(val reason: String) : EngineEvent
+    data class HardwareVolumeChanged(val gain: Float) : EngineEvent
 }
 
 data class EngineConfig(
@@ -82,4 +84,5 @@ data class EngineConfig(
     val outputRatePolicy: OutputRatePolicy = OutputRatePolicy(),
     val bufferMs: Int = 250,
     val maxConsecutiveFailures: Int = 5,
+    val hardwareVolume: Boolean = true,
 )

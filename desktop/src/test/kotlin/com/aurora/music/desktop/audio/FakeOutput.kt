@@ -22,6 +22,7 @@ internal class FakeBackend(
     private val refuseExclusive: Boolean = false,
 ) : OutputBackend {
     val opened = CopyOnWriteArrayList<FakeOutput>()
+    @Volatile var hardware: HardwareVolume? = null
     val awake = CopyOnWriteArrayList<Boolean>()
     val probes = AtomicInteger()
     val listings = AtomicInteger()
@@ -49,6 +50,8 @@ internal class FakeBackend(
     override fun keepAwake(enabled: Boolean) {
         awake += enabled
     }
+
+    override fun hardwareVolume(deviceId: String) = hardware
 
     fun fire(event: DeviceEvent) = listeners.forEach { it(event) }
 }

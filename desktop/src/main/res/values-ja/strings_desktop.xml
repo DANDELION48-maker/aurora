@@ -2,6 +2,7 @@
 <resources>
     <string name="text_add_music_folder_a083d8" formatted="false">"音楽フォルダを追加"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"音声デコード。Copyright © FFmpeg developers。LGPL-3.0-or-later、JavaCPP Presets を通じて動的リンク。ライセンス全文：https://www.gnu.org/licenses/lgpl-3.0.html"</string>
+    <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"DAC に本体の音量調整がある場合、Aurora の音量でそれを調整します。音声は bit-perfect のままです。"</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"Aurora はデバイスを占有し、曲本来のサンプルレートとビット深度でサンプルを送信します。Aurora の再生中、他のアプリは無音になります。処理、音量、ReplayGain がサンプルを変更しない場合、出力はビットパーフェクトのままです。デバイスが形式を拒否した場合、Aurora は共有モードに戻り、信号経路に理由が表示されます。"</string>
     <string name="text_bit_float_012895">"%1$d ビット浮動小数点"</string>
     <string name="text_bit_integer_72520f">"%1$d ビット整数"</string>

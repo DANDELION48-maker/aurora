@@ -25,5 +25,7 @@ object WasapiNative {
     external fun status(handle: Long): LongArray?
     external fun streamDevice(handle: Long): String?
     external fun close(handle: Long)
+    external fun hardwareVolume(deviceId: String): FloatArray?
+    external fun setHardwareVolume(deviceId: String, db: Float, mute: Boolean): Int
     external fun setListener(listener: WasapiListener?): Int
 }

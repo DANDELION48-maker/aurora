@@ -21,6 +21,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import java.io.File
 import kotlin.math.abs
+import kotlin.math.log10
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -75,6 +76,47 @@ class DesktopPlaybackEngineTest {
         assertTrue(state.processing.bitPerfect)
         assertNull(state.processing.ditherLabel)
         assertFalse(state.processing.dspActive)
+    }
+
+    @Test fun exclusiveVolumeMovesTheDacAndKeepsTheSamplesBitPerfect() {
+        val (file, samples) = hiResTone()
+        val dac = FakeDac(db = 0.0)
+        val backend = FakeBackend(exclusive = hiRes).apply { hardware = dac }
+        val engine = engine(backend)
+        engine.setVolume(0.125f)
+        engine.setOutput(null, exclusive = true)
+        EventLog(engine).use { log ->
+            engine.setQueue(listOf(tracks.song(file)))
+            log.await { EngineEvent.Ended in it }
+        }
+        assertArrayEquals(samples.map { it shl 8 }.toIntArray(), backend.last.heardInts())
+        assertEquals(20 * log10(0.125), dac.db, 1e-6)
+        val state = engine.await { it.phase == EnginePhase.ENDED && it.output?.hardwareVolumeDb != null }
+        assertTrue(state.processing.bitPerfect)
+        assertEquals(0.125f, state.volume, 0f)
+        assertEquals(dac.db, state.output!!.hardwareVolumeDb!!, 1e-6)
+        assertTrue(state.signalPath(null, null, null, emptyList()).device.detail.contains("DAC hardware volume -18.1 dB"))
+    }
+
+    @Test fun theDacKnobFollowsIntoTheVolumeAndSharedModeHandsTheDacBack() {
+        val (file, _) = tone("knob", 44_100, 16, 441_000) { frame, channel -> (frame + channel) % 2_000 - 1_000 }
+        val dac = FakeDac(db = -6.0)
+        val backend = FakeBackend(exclusive = hiRes, speed = 1.0).apply { hardware = dac }
+        val engine = engine(backend)
+        engine.setOutput(null, exclusive = true)
+        EventLog(engine).use { log ->
+            engine.setQueue(listOf(tracks.song(file)))
+            engine.await { it.output?.hardwareVolumeDb != null }
+            assertEquals(10.0.pow(-6.0 / 20), log.all<EngineEvent.HardwareVolumeChanged>().single().gain.toDouble(), 1e-6)
+            dac.db = -20.0
+            log.await { events -> events.filterIsInstance<EngineEvent.HardwareVolumeChanged>().size == 2 }
+            assertEquals(0.1f, engine.await { abs(it.volume - 0.1f) < 1e-6f }.volume, 1e-6f)
+            engine.setOutput(null, exclusive = false)
+            val shared = engine.await { it.output?.exclusive == false }
+            assertNull(shared.output!!.hardwareVolumeDb)
+            eventually { dac.db == -6.0 }
+            assertFalse(shared.processing.bitPerfect)
+        }
     }
 
     @Test fun activeDspChangesSamplesAndDithersTheIntegerOutput() {

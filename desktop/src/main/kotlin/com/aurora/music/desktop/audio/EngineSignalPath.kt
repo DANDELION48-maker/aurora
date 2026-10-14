@@ -11,6 +11,7 @@ import com.aurora.music.desktop.natives.OutputEncoding
 import com.aurora.music.desktop.platform.HostPlatform
 import com.aurora.music.playback.chain.DspChainReport
 import com.aurora.music.playback.engine.RackNodeMeter
+import java.util.Locale
 
 fun PlaybackEngine.signalPath(): SignalPath =
     state.value.signalPath(dspReport(), beforeMeter.snapshot(), afterMeter.snapshot(), rackMeters())
@@ -71,7 +72,8 @@ fun EngineState.signalPath(report: DspChainReport?, before: PcmLevels?, after: P
             "Configured chain rates"),
         outputStage = SignalStage("Output", "${if (out.exclusive) "Exclusive" else "Shared"} ${outputApi(out.exclusive)} stream · ${out.encoding.label}",
             "Open ${outputApi(out.exclusive)} stream format", SignalFormat(out.sampleRate, out.encoding.validBits, 2, if (out.encoding.isFloat) "float PCM" else "integer PCM")),
-        device = SignalStage("Device", if (out.followsDefault) "System default output" else "Selected output",
+        device = SignalStage("Device", listOfNotNull(if (out.followsDefault) "System default output" else "Selected output",
+            out.hardwareVolumeDb?.let { "DAC hardware volume " + String.format(Locale.US, "%.1f dB", it) }).joinToString(" · "),
             "Active ${outputApi(out.exclusive)} endpoint; hardware format and downstream processing unknown"),
         latency = if (report == null) SignalStage("Latency", "Processor delay unavailable") else SignalStage("Latency",
             "Rack: ${report.latencyFrames} frames · SRC: ${report.resamplerLookaheadFrames} frames · Tail: ${report.tailFrames} frames",

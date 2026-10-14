@@ -2,6 +2,7 @@
 <resources>
     <string name="text_add_music_folder_a083d8" formatted="false">"Tambah folder musik"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Dekode audio. Hak cipta © para developer FFmpeg. LGPL-3.0-or-later, ditautkan secara dinamis melalui JavaCPP Presets. Lisensi lengkap: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
+    <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"Volume Aurora mengatur volume DAC itu sendiri jika tersedia. Audio tetap bit-perfect."</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"Aurora mengambil kendali penuh atas perangkat dan mengirim sampel dengan laju dan kedalaman bit asli lagu. Aplikasi lain senyap selama Aurora memutar. Output tetap bit-perfect jika pemrosesan, volume, dan ReplayGain tidak mengubah sampel; jika perangkat menolak suatu format, Aurora beralih ke mode bersama dan Jalur Sinyal menunjukkan alasannya."</string>
     <string name="text_bit_float_012895">"Float %1$d-bit"</string>
     <string name="text_bit_integer_72520f">"Integer %1$d-bit"</string>

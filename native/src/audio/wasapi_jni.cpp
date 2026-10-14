@@ -171,6 +171,24 @@ Java_com_aurora_music_desktop_natives_WasapiNative_streamDevice(JNIEnv* env, job
     return stream ? aurora::javaString(env, stream->deviceId()) : nullptr;
 }
 
+// minDb, maxDb, stepDb, db, muted, canMute; null when the endpoint has no hardware volume
+JNIEXPORT jfloatArray JNICALL
+Java_com_aurora_music_desktop_natives_WasapiNative_hardwareVolume(JNIEnv* env, jobject, jstring deviceId) {
+    const std::wstring id = aurora::wide(env, deviceId);
+    HardwareLevel level;
+    if (FAILED(Worker::call([&](JNIEnv*) { return readHardwareVolume(id, level); }))) return nullptr;
+    const jfloat values[] = {level.minDb, level.maxDb, level.stepDb, level.db, level.muted ? 1.f : 0.f, level.canMute ? 1.f : 0.f};
+    const jfloatArray result = env->NewFloatArray(6);
+    if (result) env->SetFloatArrayRegion(result, 0, 6, values);
+    return result;
+}
+
+JNIEXPORT jint JNICALL
+Java_com_aurora_music_desktop_natives_WasapiNative_setHardwareVolume(JNIEnv* env, jobject, jstring deviceId, jfloat db, jboolean mute) {
+    const std::wstring id = aurora::wide(env, deviceId);
+    return Worker::call([&](JNIEnv*) { return writeHardwareVolume(id, db, mute == JNI_TRUE); });
+}
+
 JNIEXPORT void JNICALL
 Java_com_aurora_music_desktop_natives_WasapiNative_close(JNIEnv*, jobject, jlong handle) {
     std::shared_ptr<Stream> stream;

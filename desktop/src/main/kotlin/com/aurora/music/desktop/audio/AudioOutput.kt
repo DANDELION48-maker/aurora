@@ -6,6 +6,7 @@ import com.aurora.music.desktop.natives.DeviceEvent
 import com.aurora.music.desktop.natives.OutputEncoding
 import com.aurora.music.desktop.natives.OutputStatus
 import com.aurora.music.desktop.natives.SystemNative
+import com.aurora.music.desktop.natives.WasapiNative
 import com.aurora.music.desktop.natives.WasapiOutput
 import com.aurora.music.desktop.platform.HostPlatform
 
@@ -31,6 +32,7 @@ interface OutputBackend {
     fun open(deviceId: String?, exclusive: Boolean, sampleRate: Int, encoding: OutputEncoding, bufferMs: Int): AudioOutput
     fun listen(listener: (DeviceEvent) -> Unit): AutoCloseable
     fun keepAwake(enabled: Boolean)
+    fun hardwareVolume(deviceId: String): HardwareVolume? = null
 }
 
 class WasapiAudioOutput(private val output: WasapiOutput) : AudioOutput {
@@ -74,4 +76,13 @@ object WasapiBackend : OutputBackend {
         WasapiAudioOutput(WasapiOutput.open(deviceId, exclusive, sampleRate = sampleRate, encoding = encoding, bufferMs = bufferMs))
     override fun listen(listener: (DeviceEvent) -> Unit) = AudioDevices.addListener(listener)
     override fun keepAwake(enabled: Boolean) { SystemNative.keepAwake(enabled) }
+    override fun hardwareVolume(deviceId: String): HardwareVolume = WasapiHardwareVolume(deviceId)
+}
+
+class WasapiHardwareVolume(private val deviceId: String) : HardwareVolume {
+    override fun read(): HardwareLevel? = WasapiNative.hardwareVolume(deviceId)?.takeIf { it.size >= 5 }?.let {
+        HardwareLevel(it[0].toDouble(), it[1].toDouble(), it[3].toDouble(), it[4] != 0f)
+    }
+
+    override fun write(db: Double, mute: Boolean) = WasapiNative.setHardwareVolume(deviceId, db.toFloat(), mute) >= 0
 }

@@ -17,6 +17,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Cable
 import androidx.compose.material.icons.filled.DesktopWindows
 import androidx.compose.material.icons.filled.Headphones
@@ -79,6 +80,7 @@ fun AudioOutputSettingsScreen(
     val exclusive by player.exclusiveOutput.collectAsStateWithLifecycle()
     val bufferMs by container.desktopSettings.outputBufferMs.collectAsStateWithLifecycle(initialValue = DesktopSettings.DEFAULT_BUFFER_MS)
     val ratePolicy by store.outputRatePolicy.collectAsStateWithLifecycle(initialValue = OutputRatePolicy())
+    val playbackPrefs by store.playbackPrefs.collectAsStateWithLifecycle(initialValue = null)
     val scope = rememberCoroutineScope()
     val systemDefault = devices.firstOrNull { it.isDefault }
     val activeId = preferred?.takeIf { id -> devices.any { it.id == id } } ?: systemDefault?.id
@@ -128,6 +130,12 @@ fun AudioOutputSettingsScreen(
                         appString(if (windows) R.string.text_bit_perfect_output_that_bypasses_the_windows_mixer_eff21d
                         else R.string.text_bit_perfect_output_that_bypasses_the_sound_server_d2dcd9), exclusive) {
                         player.setExclusiveOutput(it)
+                    }
+                    if (exclusive) {
+                        SettingsRowDivider()
+                        SettingsSwitchRow(Icons.AutoMirrored.Filled.VolumeUp, appString(R.string.text_dac_hardware_volume_752c71),
+                            appString(R.string.text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5),
+                            playbackPrefs?.usbHardwareVolume != false) { scope.launch { store.setUsbHardwareVolume(it) } }
                     }
                 }
             }

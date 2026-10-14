@@ -22,6 +22,7 @@ interface ExclusiveHardware {
     fun devices(): List<HardwareDevice>
     fun capabilities(deviceId: String, rates: IntArray): HardwareProbe
     fun open(deviceId: String, sampleRate: Int, encoding: OutputEncoding, bufferMs: Int, rates: IntArray): HardwareOutput
+    fun hardwareVolume(deviceId: String): HardwareVolume? = null
 }
 
 interface HardwareOutput : AudioOutput {
@@ -107,6 +108,9 @@ class LinuxOutputBackend(
     override fun listen(listener: (DeviceEvent) -> Unit): AutoCloseable = watcher.listen(listener)
 
     override fun keepAwake(enabled: Boolean) = shared.keepAwake(enabled)
+
+    override fun hardwareVolume(deviceId: String): HardwareVolume? =
+        if (isHardware(deviceId)) hardware?.hardwareVolume(deviceId) else null
 
     fun formats(deviceId: String?): ExclusiveFormats {
         if (deviceId == null || !isHardware(deviceId)) return ExclusiveFormats.NoDevice
@@ -198,6 +202,17 @@ object AlsaHardware : ExclusiveHardware {
 
     override fun open(deviceId: String, sampleRate: Int, encoding: OutputEncoding, bufferMs: Int, rates: IntArray): HardwareOutput =
         AlsaAudioOutput(AlsaOutput.open(deviceId, sampleRate, encoding, bufferMs, rates))
+
+    override fun hardwareVolume(deviceId: String): HardwareVolume = AlsaHardwareVolume(deviceId)
+}
+
+// alsa mixer levels are in hundredths of a dB
+class AlsaHardwareVolume(private val deviceId: String) : HardwareVolume {
+    override fun read(): HardwareLevel? = AlsaNative.hardwareVolume(deviceId)?.takeIf { it.size >= 4 }?.let {
+        HardwareLevel(it[0] / 100.0, it[1] / 100.0, it[2] / 100.0, it[3] != 0L)
+    }
+
+    override fun write(db: Double, mute: Boolean) = AlsaNative.setHardwareVolume(deviceId, Math.round(db * 100), mute) >= 0
 }
 
 class AlsaAudioOutput(private val output: AlsaOutput) : HardwareOutput {

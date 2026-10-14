@@ -20,6 +20,7 @@ add_library(aurora_native SHARED
     src/audio/wasapi_devices.cpp
     src/audio/wasapi_stream.cpp
     src/audio/wasapi_jni.cpp
+    src/audio/wasapi_volume.cpp
     src/media/smtc_jni.cpp
     src/system/system_jni.cpp
 )

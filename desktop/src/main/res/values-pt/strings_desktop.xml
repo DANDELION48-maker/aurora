@@ -2,6 +2,7 @@
 <resources>
     <string name="text_add_music_folder_a083d8" formatted="false">"Adicionar pasta de músicas"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Decodificação de áudio. Copyright © os desenvolvedores do FFmpeg. LGPL-3.0-or-later, vinculado dinamicamente por meio do JavaCPP Presets. Licença completa: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
+    <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"O volume do Aurora ajusta o volume do próprio DAC quando ele tem um. O áudio continua bit-perfect."</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"O Aurora assume o controle exclusivo do dispositivo e envia as amostras na taxa e na profundidade de bits da própria faixa. Os outros apps ficam em silêncio enquanto o Aurora toca. A saída continua bit-perfect quando o processamento, o volume e o ReplayGain deixam as amostras inalteradas; se o dispositivo recusar um formato, o Aurora volta ao modo compartilhado e o Caminho do sinal mostra o motivo."</string>
     <string name="text_bit_float_012895">"Ponto flutuante de %1$d bits"</string>
     <string name="text_bit_integer_72520f">"Inteiro de %1$d bits"</string>

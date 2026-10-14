@@ -2,6 +2,7 @@
 <resources>
     <string name="text_add_music_folder_a083d8" formatted="false">"Muziekmap toevoegen"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Audiodecodering. Copyright © de FFmpeg-ontwikkelaars. LGPL-3.0-or-later, dynamisch gekoppeld via JavaCPP Presets. Volledige licentie: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
+    <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"Het volume van Aurora regelt het volume van de DAC zelf, als die er een heeft. Het geluid blijft bit-perfect."</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"Aurora neemt de volledige controle over het apparaat en verstuurt samples op de eigen frequentie en bitdiepte van het nummer. Andere apps zijn stil zolang Aurora speelt. De uitvoer blijft bit-perfect wanneer verwerking, volume en ReplayGain de samples ongewijzigd laten; als het apparaat een formaat weigert, valt Aurora terug op gedeelde modus en toont Signaalpad waarom."</string>
     <string name="text_bit_float_012895">"%1$d-bit float"</string>
     <string name="text_bit_integer_72520f">"%1$d-bit integer"</string>

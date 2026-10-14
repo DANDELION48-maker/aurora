@@ -2,6 +2,7 @@
 <resources>
     <string name="text_add_music_folder_a083d8" formatted="false">"Add music folder"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Audio decoding. Copyright © the FFmpeg developers. LGPL-3.0-or-later, dynamically linked through JavaCPP Presets. Full licence: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
+    <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"Aurora\'s volume sets the DAC\'s own volume when it has one. The audio stays bit-perfect."</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"Aurora takes sole control of the device and sends samples at the track\'s own rate and bit depth. Other apps are silent while Aurora plays. Output stays bit-perfect when processing, volume and ReplayGain leave the samples unchanged; if the device refuses a format Aurora falls back to shared mode and Signal Path shows why."</string>
     <string name="text_bit_float_012895">"%1$d-bit float"</string>
     <string name="text_bit_integer_72520f">"%1$d-bit integer"</string>
