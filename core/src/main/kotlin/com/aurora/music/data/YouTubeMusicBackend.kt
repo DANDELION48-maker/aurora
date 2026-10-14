@@ -116,8 +116,10 @@ class YouTubeMusicBackend(override val session: Session, private val api: YouTub
                 artistId = song.artistId.ifBlank { header?.obj("straplineTextOne")?.objects("browseEndpoint")?.firstOrNull()?.string("browseId").orEmpty() },
                 artworkUrl = song.artworkUrl.ifBlank { art }).also { songs[it.id] = it }
         }
+        val description = if (kind != "playlist") null
+            else header?.objects("musicDescriptionShelfRenderer")?.firstOrNull()?.obj("description")?.label().orEmpty()
         return DetailData(DetailInfo(title, header?.obj("subtitle")?.label().orEmpty(), art, accentArgbFor(id), kind == "artist", enriched.size,
-            kind.replaceFirstChar { it.uppercase() }), enriched, initial.albums)
+            kind.replaceFirstChar { it.uppercase() }, editableDescription = description), enriched, initial.albums)
     }
 
     private suspend fun mutation(endpoint: String, body: JsonObject): Boolean {

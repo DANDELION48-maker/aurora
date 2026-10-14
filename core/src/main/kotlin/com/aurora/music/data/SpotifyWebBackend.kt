@@ -298,11 +298,13 @@ class SpotifyWebBackend(
         val tracks = items.mapNotNull(::playlistSong)
         mark(cursor("playlist", id, tracks.size), items.size)
         val total = content.int("totalCount").takeIf { it > 0 } ?: tracks.size
+        val description = plain(p.string("description"))
         p.string("revisionId").takeIf { it.isNotBlank() }?.let { playlistCounts[id] = it to total }
         return DetailData(
             DetailInfo(p.string("name").ifBlank { "Playlist" }, p.obj("ownerV2").obj("data").string("name"),
                 image(p.obj("images").list("items").firstOrNull() ?: JsonObject()), accentArgbFor(id), false,
-                total, "Playlist", description = plain(p.string("description")), followers = p.long("followers"), statsLine = true),
+                total, "Playlist", description = description, followers = p.long("followers"), statsLine = true,
+                editableDescription = description),
             tracks,
         )
     }

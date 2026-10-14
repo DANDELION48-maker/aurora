@@ -122,7 +122,8 @@ class LocalBackend(
                 val pl = store.playlist(id) ?: return null
                 val tracks = pl.trackIds.orEmpty().mapNotNull { library.song(it) }
                 DetailData(
-                    info = DetailInfo(pl.title ?: "", pl.subtitle ?: "", tracks.firstOrNull { it.artworkUrl.isNotBlank() }?.artworkUrl ?: "", accentArgbFor(id), false, tracks.size, "Playlist"),
+                    info = DetailInfo(pl.title ?: "", pl.subtitle ?: "", tracks.firstOrNull { it.artworkUrl.isNotBlank() }?.artworkUrl ?: "", accentArgbFor(id), false, tracks.size, "Playlist",
+                        editableDescription = pl.subtitle.orEmpty()),
                     tracks = tracks,
                 )
             }

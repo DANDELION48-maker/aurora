@@ -300,7 +300,8 @@ class SubsonicBackend(
             "playlist" -> {
                 val p = c.api.getPlaylist(id).response.playlist ?: return null
                 DetailData(
-                    DetailInfo(p.name, p.comment?.takeIf { it.isNotBlank() } ?: "${p.songCount} songs", p.toModel().coverUrl, accentArgbFor(p.id), false, p.songCount, "Playlist"),
+                    DetailInfo(p.name, p.comment?.takeIf { it.isNotBlank() } ?: "${p.songCount} songs", p.toModel().coverUrl, accentArgbFor(p.id), false, p.songCount, "Playlist",
+                        editableDescription = p.comment.orEmpty()),
                     p.entry.map { it.toModel() },
                 )
             }

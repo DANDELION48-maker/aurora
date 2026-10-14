@@ -505,7 +505,7 @@ fun DetailScreen(
     if (showEdit) {
         EditPlaylistDialog(
             initialName = info.title,
-            initialDesc = info.editableDescription ?: info.subtitle,
+            initialDesc = info.editableDescription.orEmpty(),
             onSave = onEditPlaylist,
             onDismiss = { showEdit = false },
         )

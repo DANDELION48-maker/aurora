@@ -342,7 +342,8 @@ class SpotifyBackend(
                 val apiTracks = apiPage?.items?.mapNotNull { (it.item ?: it.track)?.toSong() }.orEmpty()
                 if (apiTracks.isNotEmpty()) {
                     DetailData(
-                        info = DetailInfo(header?.name ?: "Playlist", sub, img(header?.images), accentArgbFor(id), false, apiPage?.total ?: apiTracks.size, "Playlist"),
+                        info = DetailInfo(header?.name ?: "Playlist", sub, img(header?.images), accentArgbFor(id), false, apiPage?.total ?: apiTracks.size, "Playlist",
+                            editableDescription = header?.description.orEmpty()),
                         tracks = apiTracks,
                     )
                 } else {
@@ -350,7 +351,8 @@ class SpotifyBackend(
                     val embed = fetchEmbedTracks(id)
                     AppLog.d("SpotifyBE", "playlist $id non-owned → embed tracks=${embed.size}")
                     DetailData(
-                        info = DetailInfo(header?.name ?: "Playlist", sub, img(header?.images), accentArgbFor(id), false, embed.size, "Playlist"),
+                        info = DetailInfo(header?.name ?: "Playlist", sub, img(header?.images), accentArgbFor(id), false, embed.size, "Playlist",
+                            editableDescription = header?.description.orEmpty()),
                         tracks = embed,
                     )
                 }
