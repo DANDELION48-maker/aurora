@@ -69,8 +69,8 @@ class SoundCloudClient(
         val auth = auth()
         if (auth.token != stale) return@withLock true
         if (!auth.canRefresh) return@withLock false
-        val request = Request.Builder().url("$WEB/n/api/refresh-token").post(ByteArray(0).toRequestBody())
-            .header("Cookie", auth.cookie).header("Origin", WEB).header("Referer", "$WEB/")
+        val request = Request.Builder().url(auth.refreshUrl).post(ByteArray(0).toRequestBody())
+            .header("Cookie", auth.cookie).header("Origin", auth.origin).header("Referer", "${auth.origin}/")
             .apply { auth.userAgent.takeIf { it.isNotBlank() }?.let { header("User-Agent", it) } }.build()
         val refreshed = runCatching { http.newCall(request).execute() }.getOrNull()?.use {
             if (it.isSuccessful) auth.refreshed(it.headers("Set-Cookie")) else null

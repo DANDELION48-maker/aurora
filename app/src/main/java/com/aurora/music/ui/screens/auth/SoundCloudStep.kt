@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.aurora.music.data.remote.SoundCloudClient
 import com.aurora.music.data.remote.SoundCloudWebSession
 import com.aurora.music.viewmodel.AuthUiState
 import kotlinx.coroutines.delay
@@ -72,14 +71,18 @@ private fun SoundCloudBrowser(state: AuthUiState, onClose: () -> Unit, onConnect
     LaunchedEffect(browser, cleared) {
         val view = browser ?: return@LaunchedEffect
         if (!cleared) return@LaunchedEffect
+        // the mobile site keeps its login in its own host cookies, so read whichever site signed in
+        fun signedIn() = SoundCloudWebSession.ORIGINS.map { SoundCloudWebSession(CookieManager.getInstance().getCookie(it).orEmpty(), view.settings.userAgentString, it) }
+            .firstOrNull { it.token.isNotBlank() }
         while (true) {
             delay(750)
-            val token = SoundCloudWebSession(CookieManager.getInstance().getCookie(SoundCloudClient.WEB).orEmpty()).token
-            if (token.isBlank() || token == sentToken || connecting) continue
+            val token = signedIn()?.token
+            if (token == null || token == sentToken || connecting) continue
             // the refresh cookie lands with the token; give it a moment before reading the jar
             delay(1_000)
-            sentToken = token
-            connect(SoundCloudWebSession(CookieManager.getInstance().getCookie(SoundCloudClient.WEB).orEmpty(), view.settings.userAgentString).encode())
+            val session = signedIn() ?: continue
+            sentToken = session.token
+            connect(session.encode())
         }
     }
     DisposableEffect(Unit) {

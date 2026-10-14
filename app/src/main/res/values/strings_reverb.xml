@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"Reverb"</string>
+    <string name="reverb_summary">"Add space to any song, from a small room to a cathedral"</string>
+    <string name="reverb_amount">"Amount"</string>
+    <string name="reverb_custom">"Custom"</string>
+    <string name="reverb_more">"Reverb settings"</string>
+    <string name="reverb_preset_room">"Room"</string>
+    <string name="reverb_preset_hall">"Hall"</string>
+    <string name="reverb_preset_plate">"Plate"</string>
+    <string name="reverb_preset_cathedral">"Cathedral"</string>
+    <string name="reverb_preset_ambience">"Ambience"</string>
+    <string name="reverb_preset_lush">"Lush"</string>
+    <string name="reverb_section_style">"Style"</string>
+    <string name="reverb_section_space">"Space"</string>
+    <string name="reverb_section_tone">"Tone"</string>
+    <string name="reverb_section_character">"Character"</string>
+    <string name="reverb_decay">"Decay"</string>
+    <string name="reverb_size">"Room size"</string>
+    <string name="reverb_predelay">"Pre-delay"</string>
+    <string name="reverb_early">"Early reflections"</string>
+    <string name="reverb_damping">"Damping"</string>
+    <string name="reverb_low_cut">"Low cut"</string>
+    <string name="reverb_high_cut">"High cut"</string>
+    <string name="reverb_width">"Stereo width"</string>
+    <string name="reverb_modulation">"Modulation"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"Reverb runs inside Aurora\'s audio engine, so it works with every equalizer mode and with speed and pitch changes. It is skipped for bit-perfect USB output and direct casting."</string>
+</resources>

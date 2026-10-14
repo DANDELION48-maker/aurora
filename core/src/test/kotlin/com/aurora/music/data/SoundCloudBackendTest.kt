@@ -68,5 +68,13 @@ class SoundCloudBackendTest {
         assertEquals("fresh", next.token)
         assertEquals("oauth_token=fresh; oauth_refresh_token=new", next.cookie)
         assertEquals(next.cookie, SoundCloudWebSession.decode(next.encode()).cookie)
+        assertEquals("https://soundcloud.com/n/api/refresh-token", web.refreshUrl)
+    }
+
+    @Test fun mobileLoginsKeepTheirSiteThroughRefreshAndStorage() {
+        val mobile = SoundCloudWebSession("oauth_token=a.b.c", "UA", SoundCloudWebSession.MOBILE)
+        assertEquals("https://m.soundcloud.com/-/refresh-token", mobile.refreshUrl)
+        assertEquals(SoundCloudWebSession.MOBILE, SoundCloudWebSession.decode(mobile.refreshed(listOf("oauth_token=d.e.f")).encode()).origin)
+        assertThrows(java.io.IOException::class.java) { SoundCloudWebSession.decode(SoundCloudWebSession("oauth_token=x", "", "https://evil.example").encode()) }
     }
 }

@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GraphicEq
@@ -45,6 +48,7 @@ fun SpeedPitchSheet(
     onPitch: (Float) -> Unit,
     onMatchPitch: (Boolean) -> Unit,
     onReset: () -> Unit,
+    onOpenReverbSettings: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -53,7 +57,7 @@ fun SpeedPitchSheet(
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
     ) {
-        Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(bottom = 32.dp)) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(bottom = 32.dp)) {
             Text(appString(R.string.text_playback_controls_5ee1ab), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(20.dp))
 
@@ -115,6 +119,9 @@ fun SpeedPitchSheet(
             ) {
                 Text(appString(R.string.text_reset_to_default_39c90e), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
             }
+
+            HorizontalDivider(Modifier.padding(vertical = 20.dp), color = MaterialTheme.colorScheme.outlineVariant)
+            ReverbQuickControls(onOpenReverbSettings)
         }
     }
 }
