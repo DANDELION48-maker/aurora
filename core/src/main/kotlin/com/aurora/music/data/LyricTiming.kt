@@ -84,7 +84,8 @@ private class VoiceAligner(private val vocals: VocalActivity) {
         pace: Double): List<List<LyricWord>?> {
         val units = syllables.map { it.sum() + HOLD }
         val sung = lines.indices.map { i ->
-            val words = estimates[i] ?: return@map null
+            // symbol-only lines like "♪" have no syllables and so no words to fit
+            val words = estimates[i]?.takeIf { it.isNotEmpty() } ?: return@map null
             val estimated = (words.last().endMs - lines[i].startMs).coerceAtLeast(frame)
             window(lines[i].startMs, next[i] ?: (lines[i].startMs + estimated + 2000), estimated)
         }

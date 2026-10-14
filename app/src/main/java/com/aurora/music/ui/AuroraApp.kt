@@ -1515,6 +1515,7 @@ fun AuroraApp() {
                     onSaveAsPlaylist = { name -> playerVM.saveQueueAsPlaylist(name) { confirm(it) } },
                     onClose = { showQueue = false },
                     onOpenMix = { playerVM.setExpanded(false); mixQueue = playerState.queue.filterNot { it.id.startsWith("aurora-mix:") }; showQueue = false; showMix = true },
+                    shown = showQueue,
                 )
             }
             }

@@ -418,7 +418,10 @@ private fun ImmersiveLyrics(source: Lyrics, song: Song, playing: Boolean, durati
     // the vocal fit runs off the main thread; the estimate shows meanwhile
     val heard by produceState<Triple<Lyrics, VocalActivity, Lyrics>?>(null, source, vocals, mode) {
         value = null
-        if (mode != LyricsSync.LINE && vocals != null) value = Triple(source, vocals, withContext(Dispatchers.Default) { source.withWordTiming(vocals) })
+        // a failed fit falls back to the paced estimate instead of taking the app down
+        if (mode != LyricsSync.LINE && vocals != null) value = withContext(Dispatchers.Default) {
+            runCatching { source.withWordTiming(vocals) }.getOrNull()
+        }?.let { Triple(source, vocals, it) }
     }
     val lyrics = heard?.takeIf { it.first === source && it.second === vocals }?.third ?: estimate
     val lines = lyrics.lines

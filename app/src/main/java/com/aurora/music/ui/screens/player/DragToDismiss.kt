@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -38,6 +39,7 @@ import kotlin.math.abs
 internal fun DragToDismiss(
     onDismiss: () -> Unit,
     enabled: Boolean = true,
+    shown: Boolean = true,
     offsetState: MutableFloatState? = null,
     content: @Composable () -> Unit,
 ) {
@@ -56,6 +58,13 @@ internal fun DragToDismiss(
     var completed by remember { mutableStateOf(false) }
     var settling by remember { mutableStateOf<Job?>(null) }
     val corners = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+    // reopened while its exit was still running: the surface is parked off screen so bring it back
+    LaunchedEffect(shown) {
+        if (!shown || !completed) return@LaunchedEffect
+        settling?.cancel()
+        completed = false
+        Animatable(offset).animateTo(0f, spring(dampingRatio = 1f, stiffness = 400f)) { offset = value }
+    }
 
     fun settle(velocity: Float, allowDismiss: Boolean) {
         val close = allowDismiss && height > 0 && (

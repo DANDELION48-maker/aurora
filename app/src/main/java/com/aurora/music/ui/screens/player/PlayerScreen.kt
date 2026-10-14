@@ -266,7 +266,7 @@ fun PlayerScreen(
 
     // player is outside the scaffold so LocalContentColor defaults to black provide it explicitly
     CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
-    DragToDismiss(onDismiss = onCollapse, enabled = gestures.swipeDownDismiss && !showLyrics, offsetState = surfaceOffset) {
+    DragToDismiss(onDismiss = onCollapse, enabled = gestures.swipeDownDismiss && !showLyrics, shown = state.expanded, offsetState = surfaceOffset) {
     Box(
         Modifier
             .fillMaxSize()
@@ -804,7 +804,7 @@ private fun LyricsOverlay(
         exit = if (wide) fadeOut(tween(240)) + androidx.compose.animation.scaleOut(tween(260), targetScale = .97f)
             else fadeOut(tween(220)) + androidx.compose.animation.slideOutVertically(tween(280)) { it / 12 },
     ) {
-        DragToDismiss(onDismiss = onClose, enabled = !wide) {
+        DragToDismiss(onDismiss = onClose, enabled = !wide, shown = visible) {
             LyricsScreen(state, onClose = onClose, onTogglePlay, onPrevious, onNext, onSeek)
         }
     }

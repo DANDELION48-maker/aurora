@@ -85,12 +85,13 @@ fun QueueScreen(
     onClose: () -> Unit,
     onOpenMix: () -> Unit = {},
     editable: Boolean = true,
+    shown: Boolean = true,
 ) {
     val accent = MaterialTheme.colorScheme.primary
     var locked by remember { mutableStateOf(false) }
 
     CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
-        DragToDismiss(onDismiss = onClose, enabled = !locked) {
+        DragToDismiss(onDismiss = onClose, enabled = !locked, shown = shown) {
         Box(
             Modifier
                 .fillMaxSize()

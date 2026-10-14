@@ -39,6 +39,31 @@ class VocalSyncTest {
         assertTrue("p90 ${result.starts.sorted()[result.starts.size * 9 / 10]}", result.starts.sorted()[result.starts.size * 9 / 10] < 60)
     }
 
+    // a symbol-only line like an instrumental break has no syllables to align and must not take the screen down
+    @Test
+    fun linesWithoutSyllablesAreSkipped() {
+        val song = SyntheticSong(30.0, tempo = 140.0)
+        val melody = doubleArrayOf(220.0, 247.0, 262.0, 294.0, 262.0, 247.0, 220.0, 196.0)
+        var t = 2.0
+        listOf("I keep on missing you every day and night", "baby I am calling but you never pick it up",
+            "running round the city with your picture in my hand", "tell me what to do now cause I cannot let it go",
+        ).forEachIndexed { i, text ->
+            t = song.line(t) {
+                text.split(" ").forEachIndexed { k, w ->
+                    val count = syllables(w, true)
+                    word(w, count * (.17 + .03 * ((k + i) % 3)), *DoubleArray(count) { melody[(k + i + it * 3) % 8] })
+                }
+            }.end + .08
+        }
+        val activity = song.analyze()
+        assertTrue(activity.reliable)
+        val lyrics = song.lyrics()
+        val counted = lyrics.copy(lines = listOf(LyricsRepository.timedLine(500, "♪ ♪")) + lyrics.lines)
+        val timed = counted.withWordTiming(activity).lines
+        assertTrue(timed.first().words.isEmpty())
+        assertTrue(timed.drop(1).all { it.words.isNotEmpty() })
+    }
+
     // held notes, a melisma, a breath inside a line, instrumental leads between lines and a note held over the next timestamp
     @Test
     fun slowSingingKeepsHeldNotesAndGapsApart() {
