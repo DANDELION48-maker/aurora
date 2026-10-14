@@ -83,6 +83,10 @@ data class DetailInfo(
     val songCount: Int,
     val typeLabel: String,
     val editableDescription: String? = null,
+    val description: String = "",
+    val followers: Long = 0,
+    // the header adds a tracks, length and saves line instead of the backend spelling counts out in the subtitle
+    val statsLine: Boolean = false,
 )
 
 enum class LibraryFilter { ALL, PLAYLISTS, ALBUMS, ARTISTS, SONGS, DOWNLOADED }

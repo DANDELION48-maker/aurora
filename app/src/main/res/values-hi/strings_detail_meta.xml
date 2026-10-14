@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="detail_duration_hours">"%1$d घं %2$d मि"</string>
+    <string name="detail_duration_minutes">"%1$d मि"</string>
+    <string name="detail_duration_about">"लगभग %1$s"</string>
+    <plurals name="save_count">
+        <item quantity="one">%1$s सेव</item>
+        <item quantity="other">%1$s सेव</item>
+    </plurals>
+</resources>

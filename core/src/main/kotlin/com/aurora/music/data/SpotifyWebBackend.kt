@@ -44,6 +44,8 @@ class SpotifyWebBackend(
     private val albumRefs = ConcurrentHashMap<String, AlbumRef>()
     // skipped podcast and local items make the app's song offsets drift from the server's item offsets
     private val cursors = ConcurrentHashMap<String, Int>()
+    // playlist id to (revision, track count); a playlist's revision changes whenever its tracks do
+    private val playlistCounts = ConcurrentHashMap<String, Pair<String, Int>>()
 
     private suspend fun q(operation: String, vararg variables: Pair<String, Any?>): JsonObject =
         gql.query(operation, variables(*variables))
@@ -94,8 +96,28 @@ class SpotifyWebBackend(
     override suspend fun allArtists(): List<Artist> =
         runCatching { library("Artists").mapNotNull { artist(it.obj("data"), it.string("_uri")) } }.getOrDefault(emptyList())
 
-    override suspend fun allPlaylists(): List<Playlist> =
-        runCatching { library("Playlists").mapNotNull { playlist(it.obj("data"), it.string("_uri")) } }.getOrDefault(emptyList())
+    override suspend fun allPlaylists(): List<Playlist> = runCatching {
+        withCounts(library("Playlists").mapNotNull { item ->
+            playlist(item.obj("data"), item.string("_uri"))?.let { it to item.obj("data").string("revisionId") }
+        })
+    }.getOrDefault(emptyList())
+
+    // the library listing carries no track counts, so each playlist's header is read once per revision
+    private suspend fun withCounts(entries: List<Pair<Playlist, String>>): List<Playlist> = coroutineScope {
+        val gate = Semaphore(COUNT_PARALLEL)
+        entries.map { (playlist, revision) ->
+            async {
+                val known = playlistCounts[playlist.id]?.takeIf { revision.isNotBlank() && it.first == revision }?.second
+                val count = known ?: gate.withPermit {
+                    runCatching {
+                        q("fetchPlaylistMetadata", "uri" to PLAYLIST + playlist.id, "offset" to 0, "limit" to 0,
+                            "enableWatchFeedEntrypoint" to false).obj("playlistV2").obj("content").int("totalCount")
+                    }.getOrNull()
+                }?.also { playlistCounts[playlist.id] = revision to it }
+                if (count != null) playlist.copy(songCount = count) else playlist
+            }
+        }.awaitAll()
+    }
 
     override suspend fun playlistsForSong(songId: String): List<Playlist> {
         val out = ArrayList<Playlist>()
@@ -167,13 +189,17 @@ class SpotifyWebBackend(
         song(q("getTrack", "uri" to TRACK + id, "includeVideoAssociationItems" to false).obj("trackUnion"))
     }.getOrNull()
 
-    override suspend fun likedSongIds(ids: List<String>): Set<String> {
-        val out = HashSet<String>()
-        for (chunk in ids.filter { it.isNotBlank() }.distinct().chunked(50)) {
-            val lookup = runCatching { q("areEntitiesInLibrary", "uris" to chunk.map { TRACK + it }).list("lookup") }.getOrNull() ?: continue
-            chunk.forEachIndexed { i, id -> if (lookup.getOrNull(i)?.obj("data")?.bool("saved") == true) out += id }
-        }
-        return out
+    // throws instead of guessing so a failed check is retried rather than remembered as unliked
+    override suspend fun likedSongIds(ids: List<String>): Set<String> = coroutineScope {
+        val gate = Semaphore(PARALLEL)
+        ids.filter { it.isNotBlank() && !it.contains(':') }.distinct().chunked(LOOKUP_PAGE).map { chunk ->
+            async {
+                gate.withPermit {
+                    val lookup = q("areEntitiesInLibrary", "uris" to chunk.map { TRACK + it }).list("lookup")
+                    chunk.filterIndexed { i, _ -> lookup.getOrNull(i)?.obj("data")?.bool("saved") == true }
+                }
+            }
+        }.awaitAll().flatten().toSet()
     }
 
     override suspend fun profileImageUrl(): String = runCatching { profile(gql)?.imageUrl }.getOrNull().orEmpty()
@@ -271,11 +297,12 @@ class SpotifyWebBackend(
         val items = content.list("items")
         val tracks = items.mapNotNull(::playlistSong)
         mark(cursor("playlist", id, tracks.size), items.size)
-        val owner = p.obj("ownerV2").obj("data").string("name")
+        val total = content.int("totalCount").takeIf { it > 0 } ?: tracks.size
+        p.string("revisionId").takeIf { it.isNotBlank() }?.let { playlistCounts[id] = it to total }
         return DetailData(
-            DetailInfo(p.string("name").ifBlank { "Playlist" }, if (owner.isNotBlank()) "by $owner" else "",
+            DetailInfo(p.string("name").ifBlank { "Playlist" }, p.obj("ownerV2").obj("data").string("name"),
                 image(p.obj("images").list("items").firstOrNull() ?: JsonObject()), accentArgbFor(id), false,
-                content.int("totalCount").takeIf { it > 0 } ?: tracks.size, "Playlist"),
+                total, "Playlist", description = plain(p.string("description")), followers = p.long("followers"), statsLine = true),
             tracks,
         )
     }
@@ -284,8 +311,8 @@ class SpotifyWebBackend(
         val page = likedPage(0, TRACK_PAGE)
         mark(cursor("liked", "", page.songs.size), page.consumed)
         return DetailData(
-            DetailInfo("Liked Songs", "${page.total} songs", page.songs.firstOrNull()?.artworkUrl.orEmpty(),
-                accentArgbFor("liked"), false, page.total, "Liked"),
+            DetailInfo("Liked Songs", session.username, page.songs.firstOrNull()?.artworkUrl.orEmpty(),
+                accentArgbFor("liked"), false, page.total, "Liked", statsLine = true),
             page.songs,
         )
     }
@@ -453,6 +480,8 @@ class SpotifyWebBackend(
         private const val RADIO_SIZE = 50
         private const val LIKED_CAP = 10_000
         private const val PARALLEL = 4
+        private const val COUNT_PARALLEL = 8
+        private const val LOOKUP_PAGE = 100
         private const val CURSOR_CAP = 2000
 
         suspend fun profile(gql: SpotifyGraphql): SpotifyWebProfile? {
@@ -506,11 +535,29 @@ private fun playlist(p: JsonObject, fallbackUri: String = ""): Playlist? {
     if (!uri.startsWith("spotify:playlist:")) return null
     val id = uri.removePrefix("spotify:playlist:")
     val owner = p.obj("ownerV2").obj("data").string("name")
-    return Playlist(id, p.string("name"), if (owner.isNotBlank()) "by $owner" else p.string("description").replace(TAGS, ""),
+    return Playlist(id, p.string("name"), if (owner.isNotBlank()) "by $owner" else plain(p.string("description")),
         image(p.obj("images").list("items").firstOrNull() ?: JsonObject()), p.obj("content").int("totalCount"), accentArgbFor(id))
 }
 
 private val TAGS = Regex("<[^>]+>")
+private val ENTITY = Regex("&(#[xX][0-9a-fA-F]+|#[0-9]+|amp|lt|gt|quot|apos|nbsp);")
+
+// playlist descriptions arrive as html with links and escaped characters
+private fun plain(html: String): String = ENTITY.replace(html.replace(TAGS, "")) { match ->
+    val entity = match.groupValues[1]
+    when {
+        entity.startsWith("#x") || entity.startsWith("#X") -> codePoint(entity.substring(2).toIntOrNull(16)) ?: match.value
+        entity.startsWith("#") -> codePoint(entity.substring(1).toIntOrNull()) ?: match.value
+        entity == "amp" -> "&"
+        entity == "lt" -> "<"
+        entity == "gt" -> ">"
+        entity == "quot" -> "\""
+        entity == "apos" -> "'"
+        else -> " "
+    }
+}.trim()
+
+private fun codePoint(value: Int?): String? = value?.let { runCatching { String(Character.toChars(it)) }.getOrNull() }
 
 private fun artistNames(o: JsonObject): String =
     o.obj("artists").list("items").map { it.obj("profile").string("name") }.filter { it.isNotBlank() }.joinToString(", ")

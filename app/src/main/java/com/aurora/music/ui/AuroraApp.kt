@@ -1011,6 +1011,9 @@ fun AuroraApp() {
                         // activity scoped so switching tabs doesn't refetch and rebuild the whole library
                         val libraryVM: LibraryViewModel = viewModel(viewModelStoreOwner = activityOwner)
                         val libraryState by libraryVM.state.collectAsStateWithLifecycle()
+                        androidx.compose.runtime.LaunchedEffect(libraryState.songs.size) {
+                            playerVM.checkLiked(libraryState.songs.map { it.id })
+                        }
                         // m3u export staged here written once the user picks a file
                         var pendingM3u by remember { mutableStateOf<String?>(null) }
                         val exportM3uLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("audio/x-mpegurl")) { uri ->

@@ -160,6 +160,9 @@ fun DetailScreen(
     }
     val allDownloaded = remember(tracks, downloadedIds) { tracks.isNotEmpty() && tracks.all { downloadedIds.contains(it.id) } }
     val albumShelves = remember(data.albums) { data.albums.partition { it.typeLabel == "EP" || it.typeLabel == "Single" } }
+    val collectionMeta = remember(tracks, info.songCount, info.followers, info.statsLine) {
+        if (info.statsLine) collectionMeta(tracks, info.songCount, info.followers) else ""
+    }
 
     val listState = androidx.compose.foundation.lazy.rememberLazyListState()
     androidx.compose.runtime.LaunchedEffect(listState, state.canLoadMore) {
@@ -274,9 +277,16 @@ fun DetailScreen(
                         Spacer(Modifier.height(6.dp))
                         Text(info.title, style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Black,
                             color = MaterialTheme.colorScheme.onSurface, maxLines = 2, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                        if (info.description.isNotBlank()) {
+                            Spacer(Modifier.height(4.dp))
+                            Text(info.description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 3, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                        }
                         Spacer(Modifier.height(4.dp))
                         Text(info.subtitle, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 2, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                        if (collectionMeta.isNotBlank()) Text(collectionMeta, style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(Modifier.height(16.dp))
                         actionsRow(Modifier.fillMaxWidth(), true)
                     }
@@ -328,8 +338,15 @@ fun DetailScreen(
                     Eyebrow(info.typeLabel.localizedMediaType().uppercase(java.util.Locale.getDefault()), accent)
                     Spacer(Modifier.height(6.dp))
                     Text(info.title, style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Black, color = headerForeground)
+                    if (info.description.isNotBlank()) {
+                        Spacer(Modifier.height(4.dp))
+                        Text(info.description, style = MaterialTheme.typography.bodyMedium, color = headerForeground.copy(alpha = 0.75f),
+                            maxLines = 2, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                    }
                     Spacer(Modifier.height(4.dp))
                     Text(info.subtitle, style = MaterialTheme.typography.bodyMedium, color = headerForeground.copy(alpha = 0.85f))
+                    if (collectionMeta.isNotBlank()) Text(collectionMeta, style = MaterialTheme.typography.bodySmall,
+                        color = headerForeground.copy(alpha = 0.75f))
                 }
             }
             }
@@ -493,6 +510,31 @@ fun DetailScreen(
             onDismiss = { showEdit = false },
         )
     }
+}
+
+// tracks, total length and saves; the length is estimated from the loaded tracks until all of them are in
+private fun collectionMeta(tracks: List<Song>, total: Int, followers: Long): String {
+    val count = maxOf(total, tracks.size)
+    val parts = ArrayList<String>()
+    if (count > 0) parts += com.aurora.music.localization.appPlural(R.plurals.track_count, count)
+    val loaded = tracks.sumOf { it.durationSec.toLong() }
+    if (loaded > 0) {
+        val exact = tracks.size >= count
+        val length = longDuration(if (exact) loaded else loaded * count / tracks.size)
+        parts += if (exact) length else appString(R.string.detail_duration_about, length)
+    }
+    if (followers > 0) {
+        val resources = com.aurora.music.localization.AppStrings.context.resources
+        val number = java.text.NumberFormat.getIntegerInstance(resources.configuration.locales[0]).format(followers)
+        parts += resources.getQuantityString(R.plurals.save_count, followers.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(), number)
+    }
+    return parts.joinToString(" · ")
+}
+
+private fun longDuration(seconds: Long): String {
+    val minutes = maxOf(1L, (seconds + 30) / 60)
+    return if (minutes >= 60) appString(R.string.detail_duration_hours, (minutes / 60).toInt(), (minutes % 60).toInt())
+    else appString(R.string.detail_duration_minutes, minutes.toInt())
 }
 
 @OptIn(ExperimentalLayoutApi::class)

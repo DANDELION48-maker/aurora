@@ -979,8 +979,18 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
 
     fun refreshLikes() {
         viewModelScope.launch {
-            serverLikedIds = runCatching { container.repository.starredIds() }.getOrDefault(serverLikedIds)
+            val fresh = runCatching { container.repository.starredIds() }.getOrNull() ?: return@launch
+            // starred sets can be partial (spotify's newest likes only), so likes confirmed one by one are rechecked, not dropped
+            val recheck = (serverLikedIds - fresh).filter { it in likeChecked }
+            serverLikedIds = fresh + recheck
             recomputeLikes()
+            if (recheck.isEmpty()) return@launch
+            val still = runCatching { container.repository.likedSongIds(recheck) }.getOrNull() ?: return@launch
+            val gone = recheck.toSet() - still
+            if (gone.isNotEmpty()) {
+                serverLikedIds = serverLikedIds - gone
+                recomputeLikes()
+            }
         }
     }
 

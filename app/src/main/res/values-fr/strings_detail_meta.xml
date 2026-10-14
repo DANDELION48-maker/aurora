@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="detail_duration_hours">"%1$d h %2$d min"</string>
+    <string name="detail_duration_minutes">"%1$d min"</string>
+    <string name="detail_duration_about">"environ %1$s"</string>
+    <plurals name="save_count">
+        <item quantity="one">%1$s sauvegarde</item>
+        <item quantity="many">%1$s sauvegardes</item>
+        <item quantity="other">%1$s sauvegardes</item>
+    </plurals>
+</resources>
