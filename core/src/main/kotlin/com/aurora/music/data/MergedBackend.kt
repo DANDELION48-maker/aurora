@@ -47,7 +47,7 @@ class MergedBackend(
 
     override val homeFeeds: List<HomeFeedChoice> get() = choices(::HomeFeedChoice, "library", "Library", "discovery")
     override val searchSources: List<SearchSourceChoice> get() = choices(::SearchSourceChoice, "library", "Local & servers", "discovery")
-    override val libraryViews: List<LibraryViewChoice> get() = choices(::LibraryViewChoice, "library", "Library", "youtube")
+    override val libraryViews: List<LibraryViewChoice> get() = choices(::LibraryViewChoice, "library", "Local & servers", "youtube")
 
     private val views = HashMap<String, MediaBackend>()
 

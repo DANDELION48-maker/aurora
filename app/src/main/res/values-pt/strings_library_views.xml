@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="library_switch_view">"Mudar para a biblioteca de %1$s"</string>
+    <string name="library_switch_view">"Mudar biblioteca para %1$s"</string>
     <string name="liked_all_sources">"Músicas curtidas de todas as fontes"</string>
 </resources>

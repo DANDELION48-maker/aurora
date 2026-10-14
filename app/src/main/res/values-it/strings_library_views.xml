@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="library_switch_view">"Passa alla libreria di %1$s"</string>
+    <string name="library_switch_view">"Passa la libreria a %1$s"</string>
     <string name="liked_all_sources">"Brani preferiti da tutte le fonti"</string>
 </resources>
