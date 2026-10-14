@@ -114,6 +114,21 @@ class MergedSpotifyTest {
         assertEquals(setOf(ytSong.id), merged.collectionTracks("liked", "youtube").map { stripMergeNamespace(it.id) }.toSet())
     }
 
+    @Test fun anUnreachableServerIsAskedOnceThenSkipped() = runBlocking {
+        var attempts = 0
+        val offline = Proxy.newProxyInstance(MediaBackend::class.java.classLoader, arrayOf(MediaBackend::class.java)) { _, method, _ ->
+            when (method.name) {
+                "getSession" -> server
+                "allSongs" -> { attempts++; throw java.io.IOException("no route") }
+                else -> error("Unexpected ${method.name}")
+            }
+        } as MediaBackend
+        val merged = MergedBackend(listOf(source(local, listOf(localSong)), offline), server)
+        assertEquals(listOf(localSong.id), merged.allSongs().map { stripMergeNamespace(it.id) })
+        assertEquals(listOf(localSong.id), merged.allSongs().map { stripMergeNamespace(it.id) })
+        assertEquals(1, attempts)
+    }
+
     @Test fun spotifySongsPlayFromAServerCopyAndCanvasStaysOnSpotify() = runBlocking {
         val spotifyCalls = Calls()
         val merged = MergedBackend(listOf(source(server, listOf(serverSong)), source(spotify, listOf(spotifySong), spotifyCalls)), spotify)

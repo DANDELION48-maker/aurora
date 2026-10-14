@@ -145,12 +145,18 @@ class LibraryViewModel(app: Application) : AndroidViewModel(app) {
         val view = _state.value.view.takeIf { id -> views.any { it.id == id } } ?: views.firstOrNull()?.id ?: "library"
         _state.update { it.copy(views = views, view = view, loading = if (showLoading) true else it.loading) }
         val scope = scope()
-        val playlists = container.repository.allPlaylists(scope)
-        val albums = container.repository.allAlbums(scope)
-        val artists = container.repository.allArtists(scope)
-        val songs = container.repository.songsPage(0, SONG_PAGE, scope)
+        // together, so one slow or unreachable server costs a single timeout rather than one per section
+        val repo = container.repository
+        val (lists, songs, likedCount) = kotlinx.coroutines.coroutineScope {
+            val playlists = async { repo.allPlaylists(scope) }
+            val albums = async { repo.allAlbums(scope) }
+            val artists = async { repo.allArtists(scope) }
+            val songs = async { repo.songsPage(0, SONG_PAGE, scope) }
+            val liked = async { repo.starredCount(scope) }
+            Triple(Triple(playlists.await(), albums.await(), artists.await()), songs.await(), liked.await())
+        }
+        val (playlists, albums, artists) = lists
         songsOffset = SONG_PAGE
-        val likedCount = container.repository.starredCount(scope)
         // a view switch while this was loading belongs to the newer load
         if (scope() != scope) return
         _state.update {

@@ -163,9 +163,28 @@ class MergedBackend(
         return sources[index].playbackCollectionIdentity(kind, original, name)
     }
 
-    private suspend fun <T> fanOut(timeoutMs: Long = SOURCE_TIMEOUT_MS, block: suspend (MediaBackend) -> List<T>): List<List<T>> = coroutineScope {
-        sources.map { src -> async { runCatching { withTimeoutOrNull(timeoutMs) { block(src) } ?: emptyList() }.getOrDefault(emptyList()) } }
+    private suspend fun <T> fanOut(timeoutMs: (MediaBackend) -> Long = { SOURCE_TIMEOUT_MS }, block: suspend (MediaBackend) -> List<T>): List<List<T>> = coroutineScope {
+        sources.mapIndexed { i, src -> async { reach(i) { withTimeoutOrNull(timeoutMs(src)) { block(src) } } ?: emptyList() } }
             .awaitAll()
+    }
+
+    // a source that just failed, timed out or answered empty only after a connect timeout is skipped for a while
+    // instead of stalling every call; servers swallow connection errors into empty lists, hence the slow-empty rule
+    private val downUntil = java.util.concurrent.ConcurrentHashMap<Int, Long>()
+
+    private suspend fun <R> reach(index: Int, call: suspend () -> R?): R? {
+        if ((downUntil[index] ?: 0L) > System.currentTimeMillis()) return null
+        val started = System.currentTimeMillis()
+        val result = try {
+            call()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            null
+        }
+        val slowEmpty = (result as? Collection<*>)?.isEmpty() == true && System.currentTimeMillis() - started >= SLOW_EMPTY_MS
+        if (result == null || slowEmpty) downUntil[index] = System.currentTimeMillis() + DOWN_MS else downUntil.remove(index)
+        return result
     }
 
     private fun dedupAlbums(all: List<Album>): List<Album> =
@@ -202,7 +221,7 @@ class MergedBackend(
     override suspend fun home(): HomeData {
         val homes = coroutineScope {
             sources.mapIndexed { idx, src -> async { idx to if (isCatalogue(src)) null
-                else runCatching { withTimeoutOrNull(SOURCE_TIMEOUT_MS) { src.home() } }.getOrNull() } }.awaitAll()
+                else reach(idx) { withTimeoutOrNull(SOURCE_TIMEOUT_MS) { src.home() } } } }.awaitAll()
         }
         val albums = ArrayList<Album>(); val recent = ArrayList<Album>(); val most = ArrayList<Album>(); val random = ArrayList<Album>()
         val playlists = ArrayList<Playlist>(); val artists = ArrayList<Artist>(); val starred = ArrayList<Song>()
@@ -238,8 +257,10 @@ class MergedBackend(
     // each source pages independently so a page is only locally deduped; cross-page dupes are rare and harmless
     override suspend fun songsPage(offset: Int, count: Int): List<Song> =
         dedupSongs(wrapAll(fanOut { it.songsPage(offset, count) }) { s, i -> s.wrap(i) }).sortedBy { it.title.lowercase() }
-    // a whole streaming library of likes takes a while to page in
-    override suspend fun starredSongs(): List<Song> = dedupSongs(wrapAll(fanOut(LIKED_TIMEOUT_MS) { it.starredSongs() }) { s, i -> s.wrap(i) })
+    // a whole streaming library of likes takes a while to page in; servers keep the usual limit
+    override suspend fun starredSongs(): List<Song> =
+        dedupSongs(wrapAll(fanOut({ if (isCatalogue(it)) LIKED_TIMEOUT_MS else SOURCE_TIMEOUT_MS }) { it.starredSongs() }) { s, i -> s.wrap(i) })
+    // the count matches the deduped liked list; a single-source view asks its source directly
     override suspend fun starredCount(): Int = sources.singleOrNull()?.starredCount() ?: starredSongs().size
     override suspend fun starredIds(): Set<String> =
         sources.indices.zip(fanOut { it.starredIds().toList() }).flatMap { (i, ids) -> ids.map { wrapId(i, it) } }.toSet()
@@ -261,7 +282,7 @@ class MergedBackend(
         }
         val results = coroutineScope {
             sources.mapIndexed { idx, src -> async { idx to if (isCatalogue(src)) null
-                else runCatching { withTimeoutOrNull(SOURCE_TIMEOUT_MS) { src.search(query) } }.getOrNull() } }.awaitAll()
+                else reach(idx) { withTimeoutOrNull(SOURCE_TIMEOUT_MS) { src.search(query) } } } }.awaitAll()
         }
         val songs = ArrayList<Song>(); val albums = ArrayList<Album>(); val artists = ArrayList<Artist>(); val playlists = ArrayList<Playlist>()
         for ((idx, r) in results) {
@@ -446,6 +467,8 @@ class MergedBackend(
         const val SEP = '\u0001'   // control char that never appears in a real backend id
         const val SOURCE_TIMEOUT_MS = 20_000L
         const val LIKED_TIMEOUT_MS = 90_000L
+        const val DOWN_MS = 60_000L
+        const val SLOW_EMPTY_MS = 8_000L
         val VIEW_IDS = setOf("library", "youtube", "spotify")
         val LOSSLESS = setOf("flac", "alac", "wav", "aiff", "aif", "ape", "wv", "dsf", "dff")
     }
