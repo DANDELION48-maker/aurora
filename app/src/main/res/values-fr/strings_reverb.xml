@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"Réverbération"</string>
+    <string name="reverb_summary">"Ajoutez de l\'espace à n\'importe quel morceau, de la petite pièce à la cathédrale"</string>
+    <string name="reverb_amount">"Quantité"</string>
+    <string name="reverb_custom">"Personnalisé"</string>
+    <string name="reverb_more">"Réglages de réverbération"</string>
+    <string name="reverb_preset_room">"Pièce"</string>
+    <string name="reverb_preset_hall">"Salle"</string>
+    <string name="reverb_preset_plate">"Plaque"</string>
+    <string name="reverb_preset_cathedral">"Cathédrale"</string>
+    <string name="reverb_preset_ambience">"Ambiance"</string>
+    <string name="reverb_preset_lush">"Luxuriant"</string>
+    <string name="reverb_section_style">"Style"</string>
+    <string name="reverb_section_space">"Espace"</string>
+    <string name="reverb_section_tone">"Tonalité"</string>
+    <string name="reverb_section_character">"Caractère"</string>
+    <string name="reverb_decay">"Déclin"</string>
+    <string name="reverb_size">"Taille de la pièce"</string>
+    <string name="reverb_predelay">"Pré-délai"</string>
+    <string name="reverb_early">"Premières réflexions"</string>
+    <string name="reverb_damping">"Amortissement"</string>
+    <string name="reverb_low_cut">"Coupe-bas"</string>
+    <string name="reverb_high_cut">"Coupe-haut"</string>
+    <string name="reverb_width">"Largeur stéréo"</string>
+    <string name="reverb_modulation">"Modulation"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"La réverbération s\'exécute dans le moteur audio d\'Aurora ; elle fonctionne donc avec tous les modes d\'égaliseur et avec les changements de vitesse et de hauteur. Elle est ignorée pour la sortie USB bit-perfect et la diffusion directe."</string>
+</resources>

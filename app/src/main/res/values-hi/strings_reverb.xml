@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"रीवर्ब"</string>
+    <string name="reverb_summary">"किसी भी गाने में छोटे कमरे से लेकर गिरजाघर तक जैसी जगह और गूंज जोड़ें"</string>
+    <string name="reverb_amount">"मात्रा"</string>
+    <string name="reverb_custom">"कस्टम"</string>
+    <string name="reverb_more">"रीवर्ब सेटिंग्स"</string>
+    <string name="reverb_preset_room">"रूम"</string>
+    <string name="reverb_preset_hall">"हॉल"</string>
+    <string name="reverb_preset_plate">"प्लेट"</string>
+    <string name="reverb_preset_cathedral">"कैथेड्रल"</string>
+    <string name="reverb_preset_ambience">"एम्बिएंस"</string>
+    <string name="reverb_preset_lush">"लश"</string>
+    <string name="reverb_section_style">"स्टाइल"</string>
+    <string name="reverb_section_space">"स्पेस"</string>
+    <string name="reverb_section_tone">"टोन"</string>
+    <string name="reverb_section_character">"कैरेक्टर"</string>
+    <string name="reverb_decay">"डिके"</string>
+    <string name="reverb_size">"रूम साइज़"</string>
+    <string name="reverb_predelay">"प्री-डिले"</string>
+    <string name="reverb_early">"अर्ली रिफ्लेक्शन"</string>
+    <string name="reverb_damping">"डैम्पिंग"</string>
+    <string name="reverb_low_cut">"लो कट"</string>
+    <string name="reverb_high_cut">"हाई कट"</string>
+    <string name="reverb_width">"स्टीरियो विड्थ"</string>
+    <string name="reverb_modulation">"मॉड्यूलेशन"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"रीवर्ब Aurora के ऑडियो इंजन के अंदर चलता है, इसलिए यह हर इक्वलाइज़र मोड और स्पीड व पिच बदलाव के साथ काम करता है। बिट-परफ़ेक्ट USB आउटपुट और सीधी कास्टिंग में इसे छोड़ दिया जाता है।"</string>
+</resources>

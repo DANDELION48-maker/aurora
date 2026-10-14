@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"⁧الصدى⁩"</string>
+    <string name="reverb_summary">"⁧أضف إحساس المكان إلى أي أغنية، من غرفة صغيرة إلى كاتدرائية⁩"</string>
+    <string name="reverb_amount">"⁧المقدار⁩"</string>
+    <string name="reverb_custom">"⁧مخصص⁩"</string>
+    <string name="reverb_more">"⁧إعدادات الصدى⁩"</string>
+    <string name="reverb_preset_room">"⁧غرفة⁩"</string>
+    <string name="reverb_preset_hall">"⁧قاعة⁩"</string>
+    <string name="reverb_preset_plate">"⁧لوحة⁩"</string>
+    <string name="reverb_preset_cathedral">"⁧كاتدرائية⁩"</string>
+    <string name="reverb_preset_ambience">"⁧أجواء⁩"</string>
+    <string name="reverb_preset_lush">"⁧غنيّ⁩"</string>
+    <string name="reverb_section_style">"⁧النمط⁩"</string>
+    <string name="reverb_section_space">"⁧المساحة⁩"</string>
+    <string name="reverb_section_tone">"⁧النغمة⁩"</string>
+    <string name="reverb_section_character">"⁧الطابع⁩"</string>
+    <string name="reverb_decay">"⁧الاضمحلال⁩"</string>
+    <string name="reverb_size">"⁧حجم الغرفة⁩"</string>
+    <string name="reverb_predelay">"⁧التأخير المسبق⁩"</string>
+    <string name="reverb_early">"⁧الانعكاسات المبكرة⁩"</string>
+    <string name="reverb_damping">"⁧التخميد⁩"</string>
+    <string name="reverb_low_cut">"⁧قطع الترددات المنخفضة⁩"</string>
+    <string name="reverb_high_cut">"⁧قطع الترددات العالية⁩"</string>
+    <string name="reverb_width">"⁧عرض الستيريو⁩"</string>
+    <string name="reverb_modulation">"⁧التضمين⁩"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"⁧يعمل الصدى داخل محرك الصوت في Aurora، لذا يتوافق مع جميع أوضاع المعادل ومع تغيير السرعة والنغمة. يتم تخطيه في خرج USB بدقة بت مثالية (Bit-perfect) وفي البث المباشر.⁩"</string>
+</resources>

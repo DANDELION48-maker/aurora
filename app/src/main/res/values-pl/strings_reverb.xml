@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"Pogłos"</string>
+    <string name="reverb_summary">"Dodaj przestrzeni każdemu utworowi, od małego pokoju po katedrę"</string>
+    <string name="reverb_amount">"Ilość"</string>
+    <string name="reverb_custom">"Własny"</string>
+    <string name="reverb_more">"Ustawienia pogłosu"</string>
+    <string name="reverb_preset_room">"Pokój"</string>
+    <string name="reverb_preset_hall">"Sala"</string>
+    <string name="reverb_preset_plate">"Płyta"</string>
+    <string name="reverb_preset_cathedral">"Katedra"</string>
+    <string name="reverb_preset_ambience">"Atmosfera"</string>
+    <string name="reverb_preset_lush">"Bujny"</string>
+    <string name="reverb_section_style">"Styl"</string>
+    <string name="reverb_section_space">"Przestrzeń"</string>
+    <string name="reverb_section_tone">"Barwa"</string>
+    <string name="reverb_section_character">"Charakter"</string>
+    <string name="reverb_decay">"Zanik"</string>
+    <string name="reverb_size">"Wielkość pomieszczenia"</string>
+    <string name="reverb_predelay">"Pre-delay"</string>
+    <string name="reverb_early">"Wczesne odbicia"</string>
+    <string name="reverb_damping">"Tłumienie"</string>
+    <string name="reverb_low_cut">"Odcięcie niskich"</string>
+    <string name="reverb_high_cut">"Odcięcie wysokich"</string>
+    <string name="reverb_width">"Szerokość stereo"</string>
+    <string name="reverb_modulation">"Modulacja"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"Pogłos działa w silniku audio Aurora, więc współpracuje ze wszystkimi trybami equalizera oraz ze zmianą tempa i wysokości dźwięku. Jest pomijany przy wyjściu USB bit-perfect i bezpośrednim przesyłaniu."</string>
+</resources>

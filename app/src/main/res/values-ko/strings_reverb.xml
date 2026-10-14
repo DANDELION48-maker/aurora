@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"리버브"</string>
+    <string name="reverb_summary">"작은 방부터 대성당까지, 어떤 곡에도 공간감을 더해 보세요"</string>
+    <string name="reverb_amount">"양"</string>
+    <string name="reverb_custom">"사용자 지정"</string>
+    <string name="reverb_more">"리버브 설정"</string>
+    <string name="reverb_preset_room">"룸"</string>
+    <string name="reverb_preset_hall">"홀"</string>
+    <string name="reverb_preset_plate">"플레이트"</string>
+    <string name="reverb_preset_cathedral">"카테드럴"</string>
+    <string name="reverb_preset_ambience">"앰비언스"</string>
+    <string name="reverb_preset_lush">"러시"</string>
+    <string name="reverb_section_style">"스타일"</string>
+    <string name="reverb_section_space">"공간"</string>
+    <string name="reverb_section_tone">"톤"</string>
+    <string name="reverb_section_character">"캐릭터"</string>
+    <string name="reverb_decay">"디케이"</string>
+    <string name="reverb_size">"룸 크기"</string>
+    <string name="reverb_predelay">"프리 딜레이"</string>
+    <string name="reverb_early">"초기 반사음"</string>
+    <string name="reverb_damping">"댐핑"</string>
+    <string name="reverb_low_cut">"로우 컷"</string>
+    <string name="reverb_high_cut">"하이 컷"</string>
+    <string name="reverb_width">"스테레오 폭"</string>
+    <string name="reverb_modulation">"모듈레이션"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"리버브는 Aurora의 오디오 엔진 안에서 동작하므로 모든 이퀄라이저 모드와 속도·피치 변경에서 사용할 수 있습니다. 비트 퍼펙트 USB 출력과 직접 캐스팅에서는 건너뜁니다."</string>
+</resources>

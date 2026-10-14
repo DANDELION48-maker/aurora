@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"Реверберация"</string>
+    <string name="reverb_summary">"Добавьте пространства любой песне — от маленькой комнаты до собора"</string>
+    <string name="reverb_amount">"Уровень"</string>
+    <string name="reverb_custom">"Свой вариант"</string>
+    <string name="reverb_more">"Настройки реверберации"</string>
+    <string name="reverb_preset_room">"Комната"</string>
+    <string name="reverb_preset_hall">"Зал"</string>
+    <string name="reverb_preset_plate">"Пластина"</string>
+    <string name="reverb_preset_cathedral">"Собор"</string>
+    <string name="reverb_preset_ambience">"Атмосфера"</string>
+    <string name="reverb_preset_lush">"Насыщенный"</string>
+    <string name="reverb_section_style">"Стиль"</string>
+    <string name="reverb_section_space">"Пространство"</string>
+    <string name="reverb_section_tone">"Тембр"</string>
+    <string name="reverb_section_character">"Характер"</string>
+    <string name="reverb_decay">"Затухание"</string>
+    <string name="reverb_size">"Размер комнаты"</string>
+    <string name="reverb_predelay">"Предзадержка"</string>
+    <string name="reverb_early">"Ранние отражения"</string>
+    <string name="reverb_damping">"Демпфирование"</string>
+    <string name="reverb_low_cut">"Срез НЧ"</string>
+    <string name="reverb_high_cut">"Срез ВЧ"</string>
+    <string name="reverb_width">"Стереобаза"</string>
+    <string name="reverb_modulation">"Модуляция"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"Реверберация работает внутри аудиодвижка Aurora, поэтому совместима со всеми режимами эквалайзера и изменением скорости и тональности. При битперфектном выводе по USB и прямой трансляции она пропускается."</string>
+</resources>

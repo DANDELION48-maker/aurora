@@ -7,6 +7,10 @@ import com.google.gson.JsonObject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.IOException
@@ -17,6 +21,7 @@ class SoundCloudBackend(override val session: Session, private val api: SoundClo
     private val songs = ConcurrentHashMap<String, Song>()
     private val pageCache = ConcurrentHashMap<String, Pair<Long, List<JsonObject>>>()
     private val pageLock = Mutex()
+    private val covers = ConcurrentHashMap<String, String>()
     private val user get() = session.userId
 
     private fun remember(list: List<Song>) = list.onEach { songs[it.id] = it }
@@ -58,10 +63,25 @@ class SoundCloudBackend(override val session: Session, private val api: SoundClo
 
     private suspend fun library() = pages("/me/library/all?limit=200")
     override suspend fun allAlbums() = library().mapNotNull { it.obj("playlist").takeIf { p -> p.bool("is_album") }?.let(::album) }.distinctBy { it.id }
-    override suspend fun allPlaylists() = library().mapNotNull { entry ->
+    override suspend fun allPlaylists() = withCovers(library().mapNotNull { entry ->
         entry.obj("playlist").takeIf { it.string("id").isNotBlank() && !it.bool("is_album") }?.let(::playlist)
             ?: entry.obj("system_playlist").takeIf { it.string("urn").isNotBlank() }?.let(::playlist)
-    }.distinctBy { it.id }
+    }.distinctBy { it.id })
+
+    // the library lists coverless playlists without tracks, so borrow the first track's art like soundcloud does
+    // shortcut: covers are kept for the session, a reordered playlist keeps its old cover until the app restarts
+    private suspend fun withCovers(list: List<Playlist>): List<Playlist> {
+        val missing = list.filter { it.coverUrl.isBlank() && !it.id.startsWith(SYSTEM_PLAYLIST) && it.id !in covers }
+        val gate = Semaphore(8)
+        withTimeoutOrNull(8_000) {
+            coroutineScope {
+                missing.forEach { playlist -> launch { gate.withPermit { runCatching {
+                    covers[playlist.id] = cover(api.get("/playlists/${playlist.id}?representation=mini").asJsonObject)
+                } } } }
+            }
+        }
+        return list.map { p -> covers[p.id]?.takeIf { p.coverUrl.isBlank() && it.isNotBlank() }?.let { p.copy(coverUrl = it) } ?: p }
+    }
     override suspend fun allArtists() = pages("/users/$user/followings?limit=200").map(::artist)
     override suspend fun allSongs() = remember(pages("/users/$user/track_likes?limit=200").mapNotNull { song(it.obj("track")) }).distinctBy { it.id }
     override suspend fun librarySongs(limit: Int) = allSongs().take(limit)
@@ -112,7 +132,7 @@ class SoundCloudBackend(override val session: Session, private val api: SoundClo
                 if (!set.bool("is_album")) list else list.map { it.copy(album = set.string("title"), albumId = id).also { s -> songs[s.id] = s } }
             }
             val owner = set.obj("user").string("username").ifBlank { "SoundCloud" }
-            DetailData(DetailInfo(set.string("title"), owner, art(set).ifBlank { tracks.firstOrNull()?.artworkUrl.orEmpty() }, accentArgbFor(id), false,
+            DetailData(DetailInfo(set.string("title"), owner, cover(set).ifBlank { tracks.firstOrNull()?.artworkUrl.orEmpty() }, accentArgbFor(id), false,
                 tracks.size, if (set.bool("is_album")) "Album" else "Playlist", description = set.string("description"),
                 editable = set.obj("user").string("id") == user && !id.startsWith(SYSTEM_PLAYLIST)), tracks)
         }
@@ -148,6 +168,8 @@ class SoundCloudBackend(override val session: Session, private val api: SoundClo
         // the api links 100px art, the same file comes in 500px
         fun art(url: String) = url.replace("-large.", "-t500x500.")
         private fun art(item: JsonObject) = art(item.string("artwork_url").ifBlank { item.string("calculated_artwork_url") })
+        // sets without their own art show their first track's, as on soundcloud
+        private fun cover(set: JsonObject) = art(set).ifBlank { set.items("tracks").firstNotNullOfOrNull(::song)?.artworkUrl.orEmpty() }
 
         // bare id stubs carry no title and are skipped
         fun song(t: JsonObject): Song? {
@@ -163,13 +185,13 @@ class SoundCloudBackend(override val session: Session, private val api: SoundClo
                 artistId = user.string("id"), genre = t.string("genre"))
         }
 
-        fun album(p: JsonObject) = Album(p.string("id"), p.string("title"), p.obj("user").string("username"), art(p),
+        fun album(p: JsonObject) = Album(p.string("id"), p.string("title"), p.obj("user").string("username"), cover(p),
             (p.string("release_date").ifBlank { p.string("published_at") }.ifBlank { p.string("created_at") }).take(4).toIntOrNull() ?: 0,
             p.int("track_count"), p.int("duration") / 1000, p.string("set_type"))
 
         fun playlist(p: JsonObject): Playlist {
             val id = p.string("urn").takeIf { it.startsWith(SYSTEM_PLAYLIST) } ?: p.string("id")
-            return Playlist(id, p.string("title"), p.obj("user").string("username").ifBlank { p.string("short_description") }, art(p),
+            return Playlist(id, p.string("title"), p.obj("user").string("username").ifBlank { p.string("short_description") }, cover(p),
                 p.int("track_count").takeIf { it > 0 } ?: p.array("tracks").size(), accentArgbFor(id))
         }
 

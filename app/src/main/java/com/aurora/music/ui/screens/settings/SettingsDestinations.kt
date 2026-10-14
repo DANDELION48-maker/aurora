@@ -29,6 +29,7 @@ object SettingsDestinations {
     val impulses = SettingsDestination(Routes.SETTINGS_IMPULSES, R.string.text_impulse_responses_b2ac6e, R.string.text_saved_wavs_trimming_and_normalization_732c0c)
     val comparison = SettingsDestination(Routes.SETTINGS_COMPARISON, R.string.text_compare_presets_b7d8ea, R.string.text_level_matched_a_b_and_blind_abx_611108)
     val presetRules = SettingsDestination(Routes.SETTINGS_PRESET_RULES, R.string.text_preset_rules_c9d4d1, R.string.text_switch_presets_by_track_and_output_546392)
+    val reverb = SettingsDestination(Routes.SETTINGS_REVERB, R.string.reverb_title, R.string.reverb_summary)
     val loudness = SettingsDestination(Routes.SETTINGS_LOUDNESS, R.string.text_volume_loudness_0e8ee1, R.string.text_replaygain_and_volume_leveling_39af19)
     val listening = SettingsDestination(Routes.SETTINGS_LISTENING, R.string.text_listening_levels_c1db13, R.string.text_headphone_calibration_and_local_level_history_3c0581)
     val extensions = SettingsDestination(Routes.SETTINGS_EXTENSIONS, R.string.text_extensions_656bcf, R.string.text_audio_presets_library_sources_and_metadata_4155ea)
@@ -43,7 +44,7 @@ object SettingsDestinations {
     val backup = SettingsDestination(Routes.SETTINGS_BACKUP, R.string.text_backup_restore_a16162, R.string.text_export_or_import_settings_and_playlists_4ce918)
     val about = SettingsDestination(Routes.SETTINGS_ABOUT, R.string.text_about_aurora_b4ed8c, R.string.text_version_and_app_information_9c9a82)
 
-    val all = listOf(accounts, sources, storage, analysis, playback, output, network, equalizer, advancedAudio, processingRack, tuning, impulses, comparison, presetRules, processingPresets, loudness,
+    val all = listOf(accounts, sources, storage, analysis, playback, output, network, equalizer, advancedAudio, processingRack, reverb, tuning, impulses, comparison, presetRules, processingPresets, loudness,
         listening, extensions, signalPath, alarm, appearance, visualizer, gestures, integrations, permissions, insights, backup, about)
 }
 

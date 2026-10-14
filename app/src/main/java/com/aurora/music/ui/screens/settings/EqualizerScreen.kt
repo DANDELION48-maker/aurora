@@ -39,6 +39,7 @@ import androidx.compose.material.icons.filled.Headset
 import androidx.compose.material.icons.filled.SurroundSound
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.Waves
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.runtime.mutableStateMapOf
@@ -103,7 +104,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun EqualizerScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenLoudness: () -> Unit,
-    onOpenProcessingPresets: () -> Unit, onOpenProcessingRack: () -> Unit, onOpenImpulses: () -> Unit) {
+    onOpenProcessingPresets: () -> Unit, onOpenProcessingRack: () -> Unit, onOpenImpulses: () -> Unit, onOpenReverb: () -> Unit) {
     val context = LocalContext.current
     val container = (context.applicationContext as AuroraApplication).container
     val store = container.settingsStore
@@ -111,6 +112,7 @@ fun EqualizerScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenLou
     val prefs by store.audioPrefs.collectAsStateWithLifecycle(initialValue = AudioPrefs())
     val playbackPrefs by store.playbackPrefs.collectAsStateWithLifecycle(initialValue = PlaybackPrefs())
     val rack by store.processingRack.collectAsStateWithLifecycle(initialValue = ProcessingRack())
+    val reverb by store.reverbPrefs.collectAsStateWithLifecycle(initialValue = com.aurora.music.data.ReverbPrefs())
     val scope = rememberCoroutineScope()
     val draft = remember { EqDraft(store) }
     LaunchedEffect(draft) { draft.run() }
@@ -149,6 +151,10 @@ fun EqualizerScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenLou
                     }
                     SettingsDestinationRow(Icons.Filled.Tune, SettingsDestinations.processingPresets,
                         appString(R.string.text_your_complete_processing_settings_ready_to_recall_a6fd9f), onClick = onOpenProcessingPresets)
+                    SettingsRowDivider()
+                    SettingsDestinationRow(Icons.Filled.Waves, SettingsDestinations.reverb,
+                        if (reverb.enabled) "${com.aurora.music.ui.screens.player.reverbPresetName(reverb.preset)} · ${java.text.NumberFormat.getPercentInstance().format(reverb.mix)}"
+                        else appString(R.string.text_off_e3de5a), onClick = onOpenReverb)
                 }
             }
 

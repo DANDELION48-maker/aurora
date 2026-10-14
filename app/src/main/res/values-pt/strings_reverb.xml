@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"Reverberação"</string>
+    <string name="reverb_summary">"Adicione espaço a qualquer música, de uma sala pequena a uma catedral"</string>
+    <string name="reverb_amount">"Quantidade"</string>
+    <string name="reverb_custom">"Personalizado"</string>
+    <string name="reverb_more">"Configurações de reverberação"</string>
+    <string name="reverb_preset_room">"Sala"</string>
+    <string name="reverb_preset_hall">"Salão"</string>
+    <string name="reverb_preset_plate">"Plate"</string>
+    <string name="reverb_preset_cathedral">"Catedral"</string>
+    <string name="reverb_preset_ambience">"Ambiente"</string>
+    <string name="reverb_preset_lush">"Exuberante"</string>
+    <string name="reverb_section_style">"Estilo"</string>
+    <string name="reverb_section_space">"Espaço"</string>
+    <string name="reverb_section_tone">"Tom"</string>
+    <string name="reverb_section_character">"Caráter"</string>
+    <string name="reverb_decay">"Decaimento"</string>
+    <string name="reverb_size">"Tamanho da sala"</string>
+    <string name="reverb_predelay">"Pré-atraso"</string>
+    <string name="reverb_early">"Primeiras reflexões"</string>
+    <string name="reverb_damping">"Amortecimento"</string>
+    <string name="reverb_low_cut">"Corte de graves"</string>
+    <string name="reverb_high_cut">"Corte de agudos"</string>
+    <string name="reverb_width">"Largura estéreo"</string>
+    <string name="reverb_modulation">"Modulação"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"A reverberação roda dentro do mecanismo de áudio do Aurora, então funciona com todos os modos do equalizador e com mudanças de velocidade e tom. Ela é ignorada na saída USB bit-perfect e na transmissão direta."</string>
+</resources>

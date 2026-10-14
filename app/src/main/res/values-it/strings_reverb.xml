@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"Riverbero"</string>
+    <string name="reverb_summary">"Aggiungi spazio a qualsiasi brano, da una piccola stanza a una cattedrale"</string>
+    <string name="reverb_amount">"Quantità"</string>
+    <string name="reverb_custom">"Personalizzato"</string>
+    <string name="reverb_more">"Impostazioni riverbero"</string>
+    <string name="reverb_preset_room">"Stanza"</string>
+    <string name="reverb_preset_hall">"Sala"</string>
+    <string name="reverb_preset_plate">"Plate"</string>
+    <string name="reverb_preset_cathedral">"Cattedrale"</string>
+    <string name="reverb_preset_ambience">"Ambiente"</string>
+    <string name="reverb_preset_lush">"Ricco"</string>
+    <string name="reverb_section_style">"Stile"</string>
+    <string name="reverb_section_space">"Spazio"</string>
+    <string name="reverb_section_tone">"Tono"</string>
+    <string name="reverb_section_character">"Carattere"</string>
+    <string name="reverb_decay">"Decadimento"</string>
+    <string name="reverb_size">"Dimensione stanza"</string>
+    <string name="reverb_predelay">"Pre-delay"</string>
+    <string name="reverb_early">"Prime riflessioni"</string>
+    <string name="reverb_damping">"Smorzamento"</string>
+    <string name="reverb_low_cut">"Taglio bassi"</string>
+    <string name="reverb_high_cut">"Taglio alti"</string>
+    <string name="reverb_width">"Ampiezza stereo"</string>
+    <string name="reverb_modulation">"Modulazione"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"Il riverbero funziona all\'interno del motore audio di Aurora, quindi è compatibile con tutte le modalità dell\'equalizzatore e con le variazioni di velocità e intonazione. Viene saltato con l\'uscita USB bit-perfect e il casting diretto."</string>
+</resources>

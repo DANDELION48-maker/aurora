@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"リバーブ"</string>
+    <string name="reverb_summary">"どんな曲にも、小さな部屋から大聖堂までの空間の広がりを加えます"</string>
+    <string name="reverb_amount">"かかり具合"</string>
+    <string name="reverb_custom">"カスタム"</string>
+    <string name="reverb_more">"リバーブ設定"</string>
+    <string name="reverb_preset_room">"ルーム"</string>
+    <string name="reverb_preset_hall">"ホール"</string>
+    <string name="reverb_preset_plate">"プレート"</string>
+    <string name="reverb_preset_cathedral">"カテドラル"</string>
+    <string name="reverb_preset_ambience">"アンビエンス"</string>
+    <string name="reverb_preset_lush">"ラッシュ"</string>
+    <string name="reverb_section_style">"スタイル"</string>
+    <string name="reverb_section_space">"空間"</string>
+    <string name="reverb_section_tone">"トーン"</string>
+    <string name="reverb_section_character">"キャラクター"</string>
+    <string name="reverb_decay">"ディケイ"</string>
+    <string name="reverb_size">"ルームサイズ"</string>
+    <string name="reverb_predelay">"プリディレイ"</string>
+    <string name="reverb_early">"アーリーリフレクション"</string>
+    <string name="reverb_damping">"ダンピング"</string>
+    <string name="reverb_low_cut">"ローカット"</string>
+    <string name="reverb_high_cut">"ハイカット"</string>
+    <string name="reverb_width">"ステレオ幅"</string>
+    <string name="reverb_modulation">"モジュレーション"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"リバーブはAuroraのオーディオエンジン内で動作するため、すべてのイコライザーモードや速度・ピッチ変更と併用できます。ビットパーフェクトUSB出力とダイレクトキャスト時はスキップされます。"</string>
+</resources>

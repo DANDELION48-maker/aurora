@@ -1,6 +1,7 @@
 package com.aurora.music.ui.screens.player
 
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.flow.map
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -672,6 +673,9 @@ fun PlayerScreen(
             Spacer(Modifier.height(12.dp))
 
             if (ui.playerShowUtilities) {
+                val appContext = androidx.compose.ui.platform.LocalContext.current.applicationContext
+                val reverbStore = remember { (appContext as com.aurora.music.AuroraApplication).container.settingsStore }
+                val reverbOn by remember(reverbStore) { reverbStore.reverbPrefs.map { it.enabled } }.collectAsStateWithLifecycle(initialValue = false)
                 Row(
                     Modifier.fillMaxWidth().padding(bottom = 12.dp),
                     horizontalArrangement = if (tablet) Arrangement.spacedBy(8.dp) else Arrangement.SpaceBetween,
@@ -679,7 +683,7 @@ fun PlayerScreen(
                 ) {
                     BottomUtil(
                         Icons.Filled.Speed, appString(R.string.text_speed_x_72da98, ("%.1f".format(state.speed))), onOpenSpeedPitch,
-                        active = kotlin.math.abs(state.speed - 1f) > 0.001f ||
+                        active = kotlin.math.abs(state.speed - 1f) > 0.001f || reverbOn ||
                             (!state.matchPitch && kotlin.math.abs(state.pitch) > 0.001f),
                     )
                     if (tablet) {

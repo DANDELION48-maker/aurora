@@ -35,6 +35,7 @@ object Routes {
     const val SETTINGS_EQ = "settings_eq"
     const val SETTINGS_PROCESSING_PRESETS = "settings_processing_presets"
     const val SETTINGS_PROCESSING_RACK = "settings_processing_rack"
+    const val SETTINGS_REVERB = "settings_reverb"
     const val SETTINGS_TUNING = "settings_tuning"
     const val SETTINGS_IMPULSES = "settings_impulses"
     const val SETTINGS_COMPARISON = "settings_comparison"

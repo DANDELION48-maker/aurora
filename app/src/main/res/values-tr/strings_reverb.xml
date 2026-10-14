@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"Yankı"</string>
+    <string name="reverb_summary">"Her şarkıya mekân hissi katın, küçük bir odadan katedrale kadar"</string>
+    <string name="reverb_amount">"Miktar"</string>
+    <string name="reverb_custom">"Özel"</string>
+    <string name="reverb_more">"Yankı ayarları"</string>
+    <string name="reverb_preset_room">"Oda"</string>
+    <string name="reverb_preset_hall">"Salon"</string>
+    <string name="reverb_preset_plate">"Plate"</string>
+    <string name="reverb_preset_cathedral">"Katedral"</string>
+    <string name="reverb_preset_ambience">"Ortam"</string>
+    <string name="reverb_preset_lush">"Zengin"</string>
+    <string name="reverb_section_style">"Stil"</string>
+    <string name="reverb_section_space">"Mekân"</string>
+    <string name="reverb_section_tone">"Ton"</string>
+    <string name="reverb_section_character">"Karakter"</string>
+    <string name="reverb_decay">"Çınlama süresi"</string>
+    <string name="reverb_size">"Oda boyutu"</string>
+    <string name="reverb_predelay">"Ön gecikme"</string>
+    <string name="reverb_early">"Erken yansımalar"</string>
+    <string name="reverb_damping">"Sönümleme"</string>
+    <string name="reverb_low_cut">"Alçak kesme"</string>
+    <string name="reverb_high_cut">"Yüksek kesme"</string>
+    <string name="reverb_width">"Stereo genişliği"</string>
+    <string name="reverb_modulation">"Modülasyon"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"Yankı, Aurora\'nın ses motoru içinde çalışır; bu yüzden tüm ekolayzer modlarıyla ve hız ile perde değişiklikleriyle birlikte çalışır. Bit-perfect USB çıkışında ve doğrudan yayında atlanır."</string>
+</resources>

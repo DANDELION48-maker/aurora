@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"Reverberación"</string>
+    <string name="reverb_summary">"Añade espacio a cualquier canción, desde una sala pequeña hasta una catedral"</string>
+    <string name="reverb_amount">"Cantidad"</string>
+    <string name="reverb_custom">"Personalizado"</string>
+    <string name="reverb_more">"Ajustes de reverberación"</string>
+    <string name="reverb_preset_room">"Sala"</string>
+    <string name="reverb_preset_hall">"Auditorio"</string>
+    <string name="reverb_preset_plate">"Placa"</string>
+    <string name="reverb_preset_cathedral">"Catedral"</string>
+    <string name="reverb_preset_ambience">"Ambiente"</string>
+    <string name="reverb_preset_lush">"Exuberante"</string>
+    <string name="reverb_section_style">"Estilo"</string>
+    <string name="reverb_section_space">"Espacio"</string>
+    <string name="reverb_section_tone">"Tono"</string>
+    <string name="reverb_section_character">"Carácter"</string>
+    <string name="reverb_decay">"Decaimiento"</string>
+    <string name="reverb_size">"Tamaño de la sala"</string>
+    <string name="reverb_predelay">"Pre-delay"</string>
+    <string name="reverb_early">"Reflexiones tempranas"</string>
+    <string name="reverb_damping">"Amortiguación"</string>
+    <string name="reverb_low_cut">"Corte de graves"</string>
+    <string name="reverb_high_cut">"Corte de agudos"</string>
+    <string name="reverb_width">"Ancho estéreo"</string>
+    <string name="reverb_modulation">"Modulación"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"La reverberación se ejecuta dentro del motor de audio de Aurora, por lo que funciona con todos los modos del ecualizador y con los cambios de velocidad y tono. Se omite en la salida USB bit-perfect y en la transmisión directa."</string>
+</resources>

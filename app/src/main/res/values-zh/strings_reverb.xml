@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"混响"</string>
+    <string name="reverb_summary">"为任何歌曲增添空间感，从小房间到大教堂"</string>
+    <string name="reverb_amount">"混响量"</string>
+    <string name="reverb_custom">"自定义"</string>
+    <string name="reverb_more">"混响设置"</string>
+    <string name="reverb_preset_room">"房间"</string>
+    <string name="reverb_preset_hall">"大厅"</string>
+    <string name="reverb_preset_plate">"板式"</string>
+    <string name="reverb_preset_cathedral">"大教堂"</string>
+    <string name="reverb_preset_ambience">"氛围"</string>
+    <string name="reverb_preset_lush">"丰润"</string>
+    <string name="reverb_section_style">"风格"</string>
+    <string name="reverb_section_space">"空间"</string>
+    <string name="reverb_section_tone">"音色"</string>
+    <string name="reverb_section_character">"特性"</string>
+    <string name="reverb_decay">"衰减"</string>
+    <string name="reverb_size">"房间大小"</string>
+    <string name="reverb_predelay">"预延迟"</string>
+    <string name="reverb_early">"早期反射"</string>
+    <string name="reverb_damping">"阻尼"</string>
+    <string name="reverb_low_cut">"低切"</string>
+    <string name="reverb_high_cut">"高切"</string>
+    <string name="reverb_width">"立体声宽度"</string>
+    <string name="reverb_modulation">"调制"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"混响在 Aurora 的音频引擎内运行，因此可与所有均衡器模式以及速度和音调调整配合使用。在比特完美 USB 输出和直接投放时会被跳过。"</string>
+</resources>

@@ -53,6 +53,23 @@ class SoundCloudBackendTest {
         assertEquals(listOf(2001), backend.allAlbums().map { it.year })
     }
 
+    @Test fun coverlessPlaylistsBorrowTheirFirstTrackArtOnce() = runBlocking {
+        val asked = mutableListOf<String>()
+        val backend = SoundCloudBackend(session, SoundCloudTransport { path ->
+            asked += path
+            JsonParser.parseString(when (path) {
+                "/me/library/all?limit=200" -> """{"collection":[{"type":"playlist","playlist":{"id":1,"title":"Bare","artwork_url":null}},{"type":"playlist","playlist":{"id":2,"title":"Drawn","artwork_url":"https://i1.sndcdn.com/artworks-own-large.jpg"}}]}"""
+                "/playlists/1?representation=mini" -> """{"id":1,"tracks":[${stub(8)},${track(5)}]}"""
+                else -> error(path)
+            })
+        })
+        val first = backend.allPlaylists().associate { it.id to it.coverUrl }
+        assertEquals("https://i1.sndcdn.com/artworks-a-t500x500.jpg", first["1"])
+        assertEquals("https://i1.sndcdn.com/artworks-own-t500x500.jpg", first["2"])
+        backend.allPlaylists()
+        assertEquals(1, asked.count { it.startsWith("/playlists/") })
+    }
+
     @Test fun nextLinksStayOnTheApiHost() {
         assertEquals("api-v2.soundcloud.com", SoundCloudClient.url("/me").host)
         assertThrows(IllegalArgumentException::class.java) { SoundCloudClient.url("https://evil.example/me") }

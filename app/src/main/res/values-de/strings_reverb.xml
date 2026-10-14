@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"Hall"</string>
+    <string name="reverb_summary">"Gib jedem Song Raum, vom kleinen Zimmer bis zur Kathedrale"</string>
+    <string name="reverb_amount">"Anteil"</string>
+    <string name="reverb_custom">"Benutzerdefiniert"</string>
+    <string name="reverb_more">"Hall-Einstellungen"</string>
+    <string name="reverb_preset_room">"Raum"</string>
+    <string name="reverb_preset_hall">"Saal"</string>
+    <string name="reverb_preset_plate">"Platte"</string>
+    <string name="reverb_preset_cathedral">"Kathedrale"</string>
+    <string name="reverb_preset_ambience">"Ambiente"</string>
+    <string name="reverb_preset_lush">"Üppig"</string>
+    <string name="reverb_section_style">"Stil"</string>
+    <string name="reverb_section_space">"Räumlichkeit"</string>
+    <string name="reverb_section_tone">"Klang"</string>
+    <string name="reverb_section_character">"Charakter"</string>
+    <string name="reverb_decay">"Abklingzeit"</string>
+    <string name="reverb_size">"Raumgröße"</string>
+    <string name="reverb_predelay">"Pre-Delay"</string>
+    <string name="reverb_early">"Frühe Reflexionen"</string>
+    <string name="reverb_damping">"Dämpfung"</string>
+    <string name="reverb_low_cut">"Low-Cut"</string>
+    <string name="reverb_high_cut">"High-Cut"</string>
+    <string name="reverb_width">"Stereobreite"</string>
+    <string name="reverb_modulation">"Modulation"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"Der Hall läuft in Auroras Audio-Engine und funktioniert daher mit jedem Equalizer-Modus sowie bei Tempo- und Tonhöhenänderungen. Bei Bit-Perfect-USB-Ausgabe und direktem Casting wird er übersprungen."</string>
+</resources>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"⁧ریورب⁩"</string>
+    <string name="reverb_summary">"⁧کسی بھی گانے میں جگہ کا احساس شامل کریں، چھوٹے کمرے سے لے کر گرجا گھر تک⁩"</string>
+    <string name="reverb_amount">"⁧مقدار⁩"</string>
+    <string name="reverb_custom">"⁧حسبِ ضرورت⁩"</string>
+    <string name="reverb_more">"⁧ریورب کی ترتیبات⁩"</string>
+    <string name="reverb_preset_room">"⁧کمرہ⁩"</string>
+    <string name="reverb_preset_hall">"⁧ہال⁩"</string>
+    <string name="reverb_preset_plate">"⁧پلیٹ⁩"</string>
+    <string name="reverb_preset_cathedral">"⁧کیتھیڈرل⁩"</string>
+    <string name="reverb_preset_ambience">"⁧ایمبیئنس⁩"</string>
+    <string name="reverb_preset_lush">"⁧بھرپور⁩"</string>
+    <string name="reverb_section_style">"⁧انداز⁩"</string>
+    <string name="reverb_section_space">"⁧جگہ⁩"</string>
+    <string name="reverb_section_tone">"⁧ٹون⁩"</string>
+    <string name="reverb_section_character">"⁧کردار⁩"</string>
+    <string name="reverb_decay">"⁧زوال⁩"</string>
+    <string name="reverb_size">"⁧کمرے کا سائز⁩"</string>
+    <string name="reverb_predelay">"⁧پری ڈیلے⁩"</string>
+    <string name="reverb_early">"⁧ابتدائی انعکاس⁩"</string>
+    <string name="reverb_damping">"⁧ڈیمپنگ⁩"</string>
+    <string name="reverb_low_cut">"⁧لو کٹ⁩"</string>
+    <string name="reverb_high_cut">"⁧ہائی کٹ⁩"</string>
+    <string name="reverb_width">"⁧اسٹیریو چوڑائی⁩"</string>
+    <string name="reverb_modulation">"⁧ماڈیولیشن⁩"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"⁧ریورب Aurora کے آڈیو انجن کے اندر چلتا ہے، اس لیے یہ ہر ایکوئلائزر موڈ اور رفتار و پچ کی تبدیلی کے ساتھ کام کرتا ہے۔ بِٹ پرفیکٹ USB آؤٹ پٹ اور براہِ راست کاسٹنگ میں اسے چھوڑ دیا جاتا ہے۔⁩"</string>
+</resources>

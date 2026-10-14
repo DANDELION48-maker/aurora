@@ -732,7 +732,11 @@ fun AuroraApp() {
                         onOpenProcessingPresets = { nav.navigate(Routes.SETTINGS_PROCESSING_PRESETS) },
                         onOpenProcessingRack = { nav.navigate(Routes.SETTINGS_PROCESSING_RACK) },
                         onOpenImpulses = { nav.navigate(Routes.SETTINGS_IMPULSES) },
+                        onOpenReverb = { nav.navigate(Routes.SETTINGS_REVERB) },
                     )
+                }
+                composable(Routes.SETTINGS_REVERB) {
+                    com.aurora.music.ui.screens.settings.ReverbSettingsScreen(contentPadding = padding, onBack = { nav.popBackStack() })
                 }
                 composable(Routes.SETTINGS_PROCESSING_PRESETS) {
                     com.aurora.music.ui.screens.settings.ProcessingPresetsScreen(
@@ -1568,6 +1572,11 @@ fun AuroraApp() {
             onPitch = { playerVM.setPitch(it) },
             onMatchPitch = { playerVM.setMatchPitch(it) },
             onReset = { playerVM.resetSpeedPitch() },
+            onOpenReverbSettings = {
+                showSpeedSheet = false
+                playerVM.setExpanded(false)
+                navController.navigate(Routes.SETTINGS_REVERB) { launchSingleTop = true }
+            },
             onDismiss = { showSpeedSheet = false },
         )
     }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_title">"Galm"</string>
+    <string name="reverb_summary">"Geef elk nummer ruimte, van een kleine kamer tot een kathedraal"</string>
+    <string name="reverb_amount">"Hoeveelheid"</string>
+    <string name="reverb_custom">"Aangepast"</string>
+    <string name="reverb_more">"Galminstellingen"</string>
+    <string name="reverb_preset_room">"Kamer"</string>
+    <string name="reverb_preset_hall">"Zaal"</string>
+    <string name="reverb_preset_plate">"Plaat"</string>
+    <string name="reverb_preset_cathedral">"Kathedraal"</string>
+    <string name="reverb_preset_ambience">"Ambiance"</string>
+    <string name="reverb_preset_lush">"Weelderig"</string>
+    <string name="reverb_section_style">"Stijl"</string>
+    <string name="reverb_section_space">"Ruimte"</string>
+    <string name="reverb_section_tone">"Toon"</string>
+    <string name="reverb_section_character">"Karakter"</string>
+    <string name="reverb_decay">"Uitsterftijd"</string>
+    <string name="reverb_size">"Kamergrootte"</string>
+    <string name="reverb_predelay">"Pre-delay"</string>
+    <string name="reverb_early">"Vroege reflecties"</string>
+    <string name="reverb_damping">"Demping"</string>
+    <string name="reverb_low_cut">"Low-cut"</string>
+    <string name="reverb_high_cut">"High-cut"</string>
+    <string name="reverb_width">"Stereobreedte"</string>
+    <string name="reverb_modulation">"Modulatie"</string>
+    <string name="reverb_value_seconds">"%1$s s"</string>
+    <string name="reverb_value_ms">"%1$s ms"</string>
+    <string name="reverb_value_hz">"%1$s Hz"</string>
+    <string name="reverb_value_khz">"%1$s kHz"</string>
+    <string name="reverb_note">"Galm draait in de audio-engine van Aurora en werkt dus met elke equalizermodus en met snelheids- en toonhoogtewijzigingen. Bij bit-perfect USB-uitvoer en direct casten wordt galm overgeslagen."</string>
+</resources>
