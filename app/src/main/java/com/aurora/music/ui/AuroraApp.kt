@@ -1063,6 +1063,7 @@ fun AuroraApp() {
                                 contentPadding = inner,
                                 state = libraryState,
                                 onRefresh = libraryVM::refresh,
+                                onCycleView = libraryVM::cycleView,
                                 username = profileAppearance.name,
                                 likedIds = playerState.likedIds,
                                 currentSongId = playerState.current.id,
@@ -1082,7 +1083,7 @@ fun AuroraApp() {
                                 onOpenSearch = { navigateTopLevel(Routes.SEARCH) },
                                 onOpenMix = { playerVM.setExpanded(false); mixQueue = playerState.queue.filterNot { it.id.startsWith("aurora-mix:") }; showMix = true },
                                 onCreatePlaylist = { name ->
-                                    playlistMutation { container.repository.createPlaylist(name) }.also { created ->
+                                    playlistMutation { container.repository.createPlaylist(name, libraryVM.scope()) }.also { created ->
                                         if (created) libraryVM.load()
                                     }
                                 },

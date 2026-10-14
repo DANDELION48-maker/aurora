@@ -121,8 +121,12 @@ interface MediaBackend {
     suspend fun serverLyrics(song: Song): Lyrics?
 
     // a short looping video the service pairs with the track (spotify canvas), shown instead of a music video
-    val supportsCanvas: Boolean get() = false
+    fun supportsCanvas(song: Song): Boolean = false
     suspend fun canvasUrl(song: Song): String? = null
+
+    // a composite backend can show one library at a time; others are a single library
+    val libraryViews: List<LibraryViewChoice> get() = emptyList()
+    fun libraryView(view: String): MediaBackend = this
 
     // lossless serves the original untouched file
     fun streamUrl(songId: String, maxBitrate: Int, lossless: Boolean): String
@@ -138,3 +142,4 @@ interface MediaBackend {
 
 data class HomeFeedChoice(val id: String, val label: String)
 data class SearchSourceChoice(val id: String, val label: String)
+data class LibraryViewChoice(val id: String, val label: String)

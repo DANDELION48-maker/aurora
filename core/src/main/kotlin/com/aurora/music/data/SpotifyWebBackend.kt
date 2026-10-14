@@ -478,7 +478,7 @@ class SpotifyWebBackend(
         return Lyrics(lines, synced, listOf("Spotify", lyrics.string("providerDisplayName")).filter { it.isNotBlank() }.joinToString(" · "))
     }
 
-    override val supportsCanvas: Boolean get() = true
+    override fun supportsCanvas(song: Song): Boolean = song.id.matches(TRACK_ID)
 
     // image canvases are skipped; only the looping videos replace a music video
     override suspend fun canvasUrl(song: Song): String? {

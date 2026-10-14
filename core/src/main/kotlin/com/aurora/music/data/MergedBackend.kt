@@ -21,21 +21,59 @@ class MergedBackend(
     override val session: Session,
     private val priority: () -> List<String> = { DEFAULT_SOURCE_PRIORITY },
     private val downloads: () -> List<Song> = { emptyList() },
+    // a library view over some of the sources; it offers no further views or catalogue feeds
+    private val nested: Boolean = false,
 ) : MediaBackend {
 
-    private val catalogueIndex = sources.indexOfFirst { it.session.type == ServerType.YOUTUBE_MUSIC && it.session.accountKey() == session.accountKey() }
-        .takeIf { it >= 0 } ?: sources.indexOfFirst { it.session.type == ServerType.YOUTUBE_MUSIC }
-    override val homeFeeds: List<HomeFeedChoice> get() = if (catalogueIndex < 0) emptyList() else
-        listOf(HomeFeedChoice("library", "Library"), HomeFeedChoice("discovery", "YouTube Music"))
-    override val searchSources: List<SearchSourceChoice> get() = if (catalogueIndex < 0) emptyList() else
-        listOf(SearchSourceChoice("library", "Local & servers"), SearchSourceChoice("discovery", "YouTube Music"))
+    private fun catalogueOf(type: ServerType) = sources.indexOfFirst { it.session.type == type && it.session.accountKey() == session.accountKey() }
+        .takeIf { it >= 0 } ?: sources.indexOfFirst { it.session.type == type }
+    private val youtubeIndex = catalogueOf(ServerType.YOUTUBE_MUSIC)
+    private val spotifyIndex = catalogueOf(ServerType.SPOTIFY)
+    private fun isCatalogue(source: MediaBackend) = source.session.type.isCatalogue
 
-    override suspend fun home(feed: String): HomeData = if (feed == "discovery" && catalogueIndex >= 0)
-        sources[catalogueIndex].home().wrapHome(catalogueIndex) else home()
+    private fun catalogueFor(id: String): Int = when (id) {
+        "discovery", "youtube" -> youtubeIndex
+        "spotify" -> spotifyIndex
+        else -> -1
+    }
 
-    override suspend fun homePage(feed: String, continuation: String): HomeData =
-        if (feed == "discovery" && catalogueIndex >= 0)
-            sources[catalogueIndex].homePage(continuation).wrapHome(catalogueIndex) else HomeData()
+    // library first, then each streaming catalogue on its own; a lone choice is no choice
+    private fun <T> choices(make: (String, String) -> T, libraryId: String, libraryLabel: String, youtubeId: String): List<T> =
+        if (nested) emptyList() else buildList {
+            add(make(libraryId, libraryLabel))
+            if (youtubeIndex >= 0) add(make(youtubeId, "YouTube Music"))
+            if (spotifyIndex >= 0) add(make("spotify", "Spotify"))
+        }.takeIf { it.size > 1 }.orEmpty()
+
+    override val homeFeeds: List<HomeFeedChoice> get() = choices(::HomeFeedChoice, "library", "Library", "discovery")
+    override val searchSources: List<SearchSourceChoice> get() = choices(::SearchSourceChoice, "library", "Local & servers", "discovery")
+    override val libraryViews: List<LibraryViewChoice> get() = choices(::LibraryViewChoice, "library", "Library", "youtube")
+
+    private val views = HashMap<String, MediaBackend>()
+
+    // views reuse the same namespaced ids, so anything they hand out still routes through this backend
+    override fun libraryView(view: String): MediaBackend {
+        if (nested) return this
+        return synchronized(views) {
+            views.getOrPut(view) {
+                val picked = when (view) {
+                    "library" -> sources.filterNot(::isCatalogue)
+                    else -> listOfNotNull(sources.getOrNull(catalogueFor(view)))
+                }
+                if (picked.isEmpty()) this else MergedBackend(picked, session, priority, downloads, nested = true)
+            }
+        }
+    }
+
+    override suspend fun home(feed: String): HomeData {
+        val index = catalogueFor(feed)
+        return if (index >= 0) sources[index].home().wrapHome(index) else home()
+    }
+
+    override suspend fun homePage(feed: String, continuation: String): HomeData {
+        val index = catalogueFor(feed)
+        return if (index >= 0) sources[index].homePage(continuation).wrapHome(index) else HomeData()
+    }
 
     private fun HomeData.wrapHome(i: Int) = copy(
         newReleases = newReleases.map { it.wrap(i) }, recentlyPlayed = recentlyPlayed.map { it.wrap(i) },
@@ -56,7 +94,7 @@ class MergedBackend(
         if (SEP in song.id && unwrap(song.id) == null) return emptyList()
         val index = unwrap(song.id)?.first ?: sources.indexOfFirst { it.session.accountKey() == session.accountKey() }
         if (index !in sources.indices) return emptyList()
-        if (sources[index].session.type != ServerType.YOUTUBE_MUSIC) return emptyList()
+        if (!isCatalogue(sources[index])) return emptyList()
         val order = priority()
         val copies = matchMutex.withLock {
             val title = recordingTitle(song.title)
@@ -64,7 +102,7 @@ class MergedBackend(
             val cached = matchCache[key]?.takeIf { System.nanoTime() - it.first < 60_000_000_000L }
             cached?.second ?: coroutineScope {
                 sources.mapIndexedNotNull { i, source ->
-                    if (source.session.type == ServerType.YOUTUBE_MUSIC) null else async<List<Song>> {
+                    if (isCatalogue(source)) null else async<List<Song>> {
                         try {
                             withTimeoutOrNull(3_000) { source.matchingSongs(song).map { it.wrap(i) } }.orEmpty()
                         } catch (e: CancellationException) { throw e }
@@ -125,8 +163,8 @@ class MergedBackend(
         return sources[index].playbackCollectionIdentity(kind, original, name)
     }
 
-    private suspend fun <T> fanOut(block: suspend (MediaBackend) -> List<T>): List<List<T>> = coroutineScope {
-        sources.map { src -> async { runCatching { withTimeoutOrNull(SOURCE_TIMEOUT_MS) { block(src) } ?: emptyList() }.getOrDefault(emptyList()) } }
+    private suspend fun <T> fanOut(timeoutMs: Long = SOURCE_TIMEOUT_MS, block: suspend (MediaBackend) -> List<T>): List<List<T>> = coroutineScope {
+        sources.map { src -> async { runCatching { withTimeoutOrNull(timeoutMs) { block(src) } ?: emptyList() }.getOrDefault(emptyList()) } }
             .awaitAll()
     }
 
@@ -163,7 +201,7 @@ class MergedBackend(
 
     override suspend fun home(): HomeData {
         val homes = coroutineScope {
-            sources.mapIndexed { idx, src -> async { idx to if (src.session.type == ServerType.YOUTUBE_MUSIC) null
+            sources.mapIndexed { idx, src -> async { idx to if (isCatalogue(src)) null
                 else runCatching { withTimeoutOrNull(SOURCE_TIMEOUT_MS) { src.home() } }.getOrNull() } }.awaitAll()
         }
         val albums = ArrayList<Album>(); val recent = ArrayList<Album>(); val most = ArrayList<Album>(); val random = ArrayList<Album>()
@@ -200,22 +238,29 @@ class MergedBackend(
     // each source pages independently so a page is only locally deduped; cross-page dupes are rare and harmless
     override suspend fun songsPage(offset: Int, count: Int): List<Song> =
         dedupSongs(wrapAll(fanOut { it.songsPage(offset, count) }) { s, i -> s.wrap(i) }).sortedBy { it.title.lowercase() }
-    override suspend fun starredSongs(): List<Song> = dedupSongs(wrapAll(fanOut { it.starredSongs() }) { s, i -> s.wrap(i) })
-    override suspend fun starredCount(): Int = starredSongs().size
+    // a whole streaming library of likes takes a while to page in
+    override suspend fun starredSongs(): List<Song> = dedupSongs(wrapAll(fanOut(LIKED_TIMEOUT_MS) { it.starredSongs() }) { s, i -> s.wrap(i) })
+    override suspend fun starredCount(): Int = sources.singleOrNull()?.starredCount() ?: starredSongs().size
     override suspend fun starredIds(): Set<String> =
         sources.indices.zip(fanOut { it.starredIds().toList() }).flatMap { (i, ids) -> ids.map { wrapId(i, it) } }.toSet()
 
     override suspend fun search(query: String): SearchResults = search(query, "discovery")
 
     override suspend fun search(query: String, source: String): SearchResults {
-        if (catalogueIndex >= 0 && source != "library") {
-            val result = sources[catalogueIndex].search(query)
-            return result.copy(songs = result.songs.map { it.wrap(catalogueIndex) },
-                albums = result.albums.map { it.wrap(catalogueIndex) }, artists = result.artists.map { it.wrap(catalogueIndex) },
-                playlists = result.playlists.map { it.wrap(catalogueIndex) })
+        // a missing catalogue falls back to the other one before the merged library
+        val index = when (source) {
+            "library" -> -1
+            "spotify" -> spotifyIndex.takeIf { it >= 0 } ?: youtubeIndex
+            else -> youtubeIndex.takeIf { it >= 0 } ?: spotifyIndex
+        }
+        if (index >= 0) {
+            val result = sources[index].search(query)
+            return result.copy(songs = result.songs.map { it.wrap(index) },
+                albums = result.albums.map { it.wrap(index) }, artists = result.artists.map { it.wrap(index) },
+                playlists = result.playlists.map { it.wrap(index) })
         }
         val results = coroutineScope {
-            sources.mapIndexed { idx, src -> async { idx to if (src.session.type == ServerType.YOUTUBE_MUSIC) null
+            sources.mapIndexed { idx, src -> async { idx to if (isCatalogue(src)) null
                 else runCatching { withTimeoutOrNull(SOURCE_TIMEOUT_MS) { src.search(query) } }.getOrNull() } }.awaitAll()
         }
         val songs = ArrayList<Song>(); val albums = ArrayList<Album>(); val artists = ArrayList<Artist>(); val playlists = ArrayList<Playlist>()
@@ -293,12 +338,15 @@ class MergedBackend(
     override suspend fun setStarred(id: String, starred: Boolean, kind: String): Boolean =
         route(id) { src, _, oid -> src.setStarred(oid, starred, kind) } ?: false
 
+    // liked songs follow the library view they were opened from; any other id is every source together
+    private fun likedScope(id: String): MediaBackend = if (!nested && id in VIEW_IDS) libraryView(id) else this
+
     override suspend fun detail(kind: String, id: String): DetailData? {
-        // liked songs is universal here union of every source not just primary
         if (kind == "liked") {
-            val songs = starredSongs()
+            val songs = likedScope(id).starredSongs()
+            val subtitle = if (id == ALL_LIKED_ID) "${songs.size} songs from every source" else "${songs.size} songs you love"
             return DetailData(
-                DetailInfo("Liked Songs", "${songs.size} songs you love", songs.firstOrNull()?.artworkUrl ?: "", accentArgbFor("liked"), false, songs.size, "Liked"),
+                DetailInfo("Liked Songs", subtitle, songs.firstOrNull()?.artworkUrl ?: "", accentArgbFor("liked"), false, songs.size, "Liked"),
                 songs,
             )
         }
@@ -310,9 +358,20 @@ class MergedBackend(
         route(id) { src, i, oid -> src.detailPage(kind, oid, offset).map { it.wrap(i) } } ?: emptyList()
 
     override suspend fun collectionTracks(kind: String, id: String): List<Song> =
-        if (kind == "liked") starredSongs()
+        if (kind == "liked") likedScope(id).starredSongs()
         else route(id) { src, i, oid -> src.collectionTracks(kind, oid).map { it.wrap(i) } }
             ?: error("This collection's source is unavailable.")
+
+    override fun supportsCanvas(song: Song): Boolean {
+        val (i, oid) = unwrap(song.id) ?: return false
+        return sources[i].supportsCanvas(song.copy(id = oid))
+    }
+
+    override suspend fun canvasUrl(song: Song): String? {
+        val (i, oid) = unwrap(song.id) ?: return null
+        val original = song.copy(id = oid)
+        return if (sources[i].supportsCanvas(original)) sources[i].canvasUrl(original) else null
+    }
 
     override suspend fun serverLyrics(song: Song): Lyrics? {
         val (i, oid) = unwrap(song.id) ?: return primary?.serverLyrics(song)
@@ -386,11 +445,16 @@ class MergedBackend(
     private companion object {
         const val SEP = '\u0001'   // control char that never appears in a real backend id
         const val SOURCE_TIMEOUT_MS = 20_000L
+        const val LIKED_TIMEOUT_MS = 90_000L
+        val VIEW_IDS = setOf("library", "youtube", "spotify")
         val LOSSLESS = setOf("flac", "alac", "wav", "aiff", "aif", "ape", "wv", "dsf", "dff")
     }
 }
 
 const val MERGE_NAMESPACE_SEP = '\u0001'   // same control char as MergedBackend.SEP
+
+// liked songs id for every source's likes together, beside the per-view ids
+const val ALL_LIKED_ID = "all"
 
 private val MERGE_NAMESPACE_PATTERN = Regex("s[0-9a-f]{64}")
 

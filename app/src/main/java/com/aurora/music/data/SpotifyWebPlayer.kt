@@ -18,6 +18,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -352,7 +353,20 @@ class SpotifyWebBridge(context: Context) {
             run(cookie()) { it.spclient(path, body) }
     }
 
+    // spotify rate limits bursts such as a whole liked library; a short back-off keeps pages from going missing
     private suspend fun run(cookie: String, request: suspend (SpotifyPage) -> JsonObject): JsonObject {
+        var attempt = 0
+        while (true) {
+            try {
+                return runOnce(cookie, request)
+            } catch (e: SpotifyGraphqlException) {
+                if (e.status != 429 || ++attempt > RATE_RETRIES) throw e
+                delay(RATE_BACKOFF_MS * attempt)
+            }
+        }
+    }
+
+    private suspend fun runOnce(cookie: String, request: suspend (SpotifyPage) -> JsonObject): JsonObject {
         if (cookie.isBlank()) throw SpotifyGraphqlException("signed out", 401)
         inFlight.incrementAndGet()
         try {
@@ -444,5 +458,7 @@ class SpotifyWebBridge(context: Context) {
         const val BOOT_TIMEOUT_MS = 30_000L
         const val RETRY_MS = 30_000L
         const val IDLE_MS = 3 * 60_000L
+        const val RATE_RETRIES = 3
+        const val RATE_BACKOFF_MS = 2_000L
     }
 }

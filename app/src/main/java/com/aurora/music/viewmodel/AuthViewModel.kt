@@ -149,7 +149,11 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(loading = true, error = null) }
         viewModelScope.launch {
             val reference = withContext(Dispatchers.IO) { container.spotifyCredentials.save(sessionCookie) }
+            // signing the same account in again replaces its saved login instead of leaving the old one behind
+            val previous = container.settingsStore.savedSessions.first()
+                .filter { it.type == ServerType.SPOTIFY && it.salt == SpotifyWebBackend.WEB_PLAYER && it.userId == profile.userId }
             container.applySession(SpotifyWebBackend.session(profile, reference))
+            previous.filter { it.token != reference }.forEach { container.spotifyCredentials.remove(it.token) }
             _state.update { it.copy(loading = false, error = null) }
         }
     }

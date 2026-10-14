@@ -182,9 +182,9 @@ class YouTubeMusicBackendTest {
         try { backend.allSongs(); fail("Cancellation swallowed") } catch (_: CancellationException) { }
     }
 
-    @Test fun youtubeCanMergeWhileSpotifyStaysStandalone() {
+    @Test fun youtubeAndSpotifyCanMerge() {
         assertTrue(ServerType.YOUTUBE_MUSIC.supportsMergedLibrary)
-        assertFalse(ServerType.SPOTIFY.supportsMergedLibrary)
+        assertTrue(ServerType.SPOTIFY.supportsMergedLibrary)
         assertTrue(ServerType.LOCAL.supportsMergedLibrary)
         assertTrue(ServerType.SUBSONIC.supportsMergedLibrary)
         assertTrue(ServerType.JELLYFIN.supportsMergedLibrary)

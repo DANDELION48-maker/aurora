@@ -50,7 +50,9 @@ class SearchViewModel(app: Application) : AndroidViewModel(app) {
 
     private fun refreshSources() {
         val sources = container.repository.searchSources
-        _state.update { it.copy(sources = sources, selectedSource = it.selectedSource.takeIf { id -> sources.any { s -> s.id == id } } ?: "discovery") }
+        // a missing catalogue falls back to the next one, so a spotify-only merge searches spotify
+        _state.update { it.copy(sources = sources, selectedSource = it.selectedSource.takeIf { id -> sources.any { s -> s.id == id } }
+            ?: sources.firstOrNull { s -> s.id != "library" }?.id ?: "discovery") }
         onQuery(_state.value.query)
     }
 

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="library_switch_view">"Passer à la bibliothèque %1$s"</string>
+    <string name="liked_all_sources">"Titres likés de toutes les sources"</string>
+</resources>

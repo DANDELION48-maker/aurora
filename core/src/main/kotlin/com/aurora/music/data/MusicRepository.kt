@@ -116,10 +116,15 @@ class MusicRepository(
         return artwork(song.copy(playbackSource = identity))
     }
 
-    private suspend fun sourceSongs(block: suspend (MediaBackend) -> List<Song>): List<Song> {
-        val source = backend ?: return emptyList()
+    private suspend fun sourceSongs(view: String? = null, block: suspend (MediaBackend) -> List<Song>): List<Song> {
+        val source = viewOf(view) ?: return emptyList()
         return block(source).map { tag(it, source) }
     }
+
+    val libraryViews: List<LibraryViewChoice> get() = if (offline) emptyList() else backend?.libraryViews.orEmpty()
+
+    // null is the whole backend; a view narrows a composite one to the library the user picked
+    private fun viewOf(view: String?): MediaBackend? = backend?.let { b -> if (view == null) b else b.libraryView(view) }
 
     @Synchronized private fun rememberCollection(source: MediaBackend, kind: String, id: String, identity: PlaybackCollectionIdentity?) {
         if (identity == null) return
@@ -260,14 +265,14 @@ class MusicRepository(
         }) },
     )
 
-    suspend fun allAlbums(): List<Album> =
-        if (offline) offlineAlbums() else backend?.allAlbums().orEmpty().map { artwork(it) }
+    suspend fun allAlbums(view: String? = null): List<Album> =
+        if (offline) offlineAlbums() else viewOf(view)?.allAlbums().orEmpty().map { artwork(it) }
 
-    suspend fun allArtists(): List<Artist> =
-        if (offline) emptyList() else backend?.allArtists().orEmpty()
+    suspend fun allArtists(view: String? = null): List<Artist> =
+        if (offline) emptyList() else viewOf(view)?.allArtists().orEmpty()
 
-    suspend fun allPlaylists(): List<Playlist> =
-        if (offline) emptyList() else backend?.allPlaylists().orEmpty()
+    suspend fun allPlaylists(view: String? = null): List<Playlist> =
+        if (offline) emptyList() else viewOf(view)?.allPlaylists().orEmpty()
 
     suspend fun allSongs(): List<Song> =
         if (offline) offlineSongs() else sourceSongs { it.allSongs() }
@@ -275,14 +280,14 @@ class MusicRepository(
     suspend fun librarySongs(limit: Int = 2000): List<Song> =
         if (offline) offlineSongs() else sourceSongs { it.librarySongs(limit) }
 
-    suspend fun songsPage(offset: Int, count: Int = 100): List<Song> =
-        if (offline) offlineSongs().drop(offset).take(count) else sourceSongs { it.songsPage(offset, count) }
+    suspend fun songsPage(offset: Int, count: Int = 100, view: String? = null): List<Song> =
+        if (offline) offlineSongs().drop(offset).take(count) else sourceSongs(view) { it.songsPage(offset, count) }
 
     // walks the whole library via the paging path (guaranteed to traverse every source, unlike a
     // one-shot request which some servers cap). deduped, capped so a pathological library can't run away.
-    suspend fun allLibrarySongs(cap: Int = 10000, pageSize: Int = 200): List<Song> {
+    suspend fun allLibrarySongs(cap: Int = 10000, pageSize: Int = 200, view: String? = null): List<Song> {
         if (offline) return offlineSongs()
-        val b = backend ?: return emptyList()
+        val b = viewOf(view) ?: return emptyList()
         val out = LinkedHashMap<String, Song>()
         var offset = 0
         while (out.size < cap) {
@@ -298,11 +303,11 @@ class MusicRepository(
 
     suspend fun starredSongs(): List<Song> = sourceSongs { it.starredSongs() }
 
-    suspend fun starredCount(): Int = if (offline) starredSongs().size else (backend?.starredCount() ?: 0)
+    suspend fun starredCount(view: String? = null): Int = if (offline) starredSongs().size else (viewOf(view)?.starredCount() ?: 0)
 
     suspend fun starredIds(): Set<String> = backend?.starredIds() ?: emptySet()
 
-    val supportsCanvas: Boolean get() = !offline && backend?.supportsCanvas == true
+    fun supportsCanvas(song: Song): Boolean = !offline && backend?.supportsCanvas(song) == true
     suspend fun canvasUrl(song: Song): String? = if (offline) null else backend?.canvasUrl(song)
 
     suspend fun likedSongIds(ids: List<String>): Set<String> =
@@ -394,8 +399,9 @@ class MusicRepository(
         return backend?.prefersServerRadio(id) == true
     }
 
-    suspend fun createPlaylist(name: String): Boolean {
-        val id = backend?.createPlaylistWithId(name) ?: return false
+    // a library view creates in that library's own account
+    suspend fun createPlaylist(name: String, view: String? = null): Boolean {
+        val id = viewOf(view)?.createPlaylistWithId(name) ?: return false
         playlistChangeEvents.tryEmit(id)
         return true
     }

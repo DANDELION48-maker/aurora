@@ -1,5 +1,6 @@
 package com.aurora.music.ui.screens.library
 
+import androidx.compose.foundation.combinedClickable
 import com.aurora.music.localization.localizedMediaType
 
 import com.aurora.music.localization.appPlural
@@ -129,6 +130,7 @@ private data class LibRow(
 )
 
 private class LibActions(
+    val onOpenAllLiked: (() -> Unit)?,
     val isLiked: (String) -> Boolean,
     val onPlay: (LibRow) -> Unit,
     val onShuffle: (LibRow) -> Unit,
@@ -188,6 +190,7 @@ fun LibraryScreen(
     onPlaySong: (Song) -> Unit = {},
     selectedItem: String? = null,
     onRefresh: () -> Unit = {},
+    onCycleView: () -> Unit = {},
 ) {
     androidx.compose.runtime.CompositionLocalProvider(LocalLibrarySelection provides selectedItem) {
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
@@ -196,9 +199,17 @@ fun LibraryScreen(
     val sort = state.sort
     val layout = state.layout
     val libColumns = com.aurora.music.ui.theme.LocalUiPrefs.current.libraryColumns.coerceIn(2, 4)
+    val haptics = androidx.compose.ui.platform.LocalHapticFeedback.current
+    val multiLibrary = state.views.isNotEmpty()
+    // holding liked songs opens every source's likes together; a tap stays on the library on screen
+    val openAllLiked: (() -> Unit)? = if (!multiLibrary) null else ({
+        haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+        onOpenDetail("liked", com.aurora.music.data.ALL_LIKED_ID)
+    })
     val actions = remember(likedIds, onPlayCollection, onShuffleCollection, onQueueCollection, onToggleLikeKind,
-        onDeletePlaylist, onEditSmart, onDeleteSmart, onExportPlaylist) {
+        onDeletePlaylist, onEditSmart, onDeleteSmart, onExportPlaylist, multiLibrary) {
         LibActions(
+            onOpenAllLiked = openAllLiked,
             isLiked = { id -> likedIds.contains(id) },
             onPlay = { r -> onPlayCollection(r.id, r.kind) },
             onShuffle = { r -> onShuffleCollection(r.id, r.kind) },
@@ -224,6 +235,7 @@ fun LibraryScreen(
             Column(Modifier.weight(1f)) {
                 Text(appString(R.string.text_library_b8100f), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black)
                 val stats = buildList {
+                    state.views.firstOrNull { it.id == state.view }?.let { add(it.label) }
                     if (state.playlists.isNotEmpty() || state.smartPlaylists.isNotEmpty()) add(appPlural(R.plurals.playlist_count, (state.playlists.size + state.smartPlaylists.size)))
                     if (state.albums.isNotEmpty()) add(appPlural(R.plurals.album_count, (state.albums.size)))
                     if (state.artists.isNotEmpty()) add(appPlural(R.plurals.artist_count, (state.artists.size)))
@@ -231,6 +243,11 @@ fun LibraryScreen(
                 if (stats.isNotBlank()) {
                     Text(stats, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
+            }
+            if (state.views.size > 1) {
+                val next = state.views[(state.views.indexOfFirst { it.id == state.view } + 1).mod(state.views.size)]
+                Icon(com.aurora.music.ui.components.sourceViewIcon(state.view), appString(R.string.library_switch_view, next.label),
+                    modifier = Modifier.size(40.dp).clip(CircleShape).clickable(onClick = onCycleView).padding(8.dp))
             }
             Icon(Icons.Filled.Search, appString(R.string.text_search_bce064), modifier = Modifier.size(40.dp).clip(CircleShape).clickable(onClick = onOpenSearch).padding(8.dp))
             Icon(Icons.Filled.Add, appString(R.string.text_create_playlist_62c988), modifier = Modifier.size(40.dp).clip(CircleShape).clickable { showCreate = true }.padding(8.dp))
@@ -316,7 +333,7 @@ fun LibraryScreen(
                 state = state, pins = pins, canDownload = canDownload, bottom = bottom,
                 onFilter = onFilter, onOpenDetail = onOpenDetail,
                 onOpenFolders = onOpenFolders, onOpenRadio = onOpenRadio, onOpenPodcasts = onOpenPodcasts,
-                onOpenYouTubeDownload = onOpenYouTubeDownload,
+                onOpenYouTubeDownload = onOpenYouTubeDownload, onOpenAllLiked = openAllLiked,
             )
             LibraryFilter.SONGS -> SongsTab(
                 state = state, sort = sort, likedIds = likedIds, currentSongId = currentSongId, isPlaying = isPlaying,
@@ -415,12 +432,14 @@ private fun AllOverview(
     onOpenRadio: () -> Unit,
     onOpenPodcasts: () -> Unit,
     onOpenYouTubeDownload: () -> Unit,
+    onOpenAllLiked: (() -> Unit)?,
 ) {
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = bottom)) {
         // quick access tiles
         item {
             val tiles = buildList {
-                add(QuickTile(appString(R.string.text_liked_songs_58c3a9), appPlural(R.plurals.track_count, (state.likedSongCount)), Icons.Filled.Favorite, state.likedCover) { onOpenDetail("liked", "liked") })
+                add(QuickTile(appString(R.string.text_liked_songs_58c3a9), appPlural(R.plurals.track_count, (state.likedSongCount)), Icons.Filled.Favorite, state.likedCover,
+                    onLongClick = onOpenAllLiked) { onOpenDetail("liked", state.likedId) })
                 if (canDownload) add(QuickTile(appString(R.string.text_downloads_a862c2), appPlural(R.plurals.item_count, (state.downloadedRows.size)), Icons.Filled.Download, "") { onFilter(LibraryFilter.DOWNLOADED) })
                 if (state.supportsFolders) add(QuickTile(appString(R.string.text_folders_19adc4), appString(R.string.text_browse_files_524932), Icons.Filled.Folder, "") { onOpenFolders() })
                 add(QuickTile(appString(R.string.text_radio_b11bf1), appString(R.string.text_live_stations_f40694), Icons.Filled.Radio, "") { onOpenRadio() })
@@ -508,6 +527,7 @@ private data class QuickTile(
     val subtitle: String,
     val icon: ImageVector,
     val art: String,
+    val onLongClick: (() -> Unit)? = null,
     val onClick: () -> Unit,
 )
 
@@ -517,7 +537,8 @@ private fun QuickTileCard(tile: QuickTile, modifier: Modifier = Modifier) {
         modifier
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f))
-            .clickable(onClick = tile.onClick)
+            .combinedClickable(onClick = tile.onClick, onLongClick = tile.onLongClick,
+                onLongClickLabel = if (tile.onLongClick != null) appString(R.string.liked_all_sources) else null)
             .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -885,7 +906,7 @@ private fun buildRows(state: LibraryUiState, filter: LibraryFilter, sort: Librar
     // playlists tab keeps liked songs on top pinned entries stay deduped
     val pinned = pins.map { it.kind to it.id }.toSet()
     val deduped = sorted.filterNot { (it.kind to it.id) in pinned }
-    val liked = LibRow(appString(R.string.text_liked_songs_58c3a9), appString(R.string.playlist_track_count, appPlural(R.plurals.track_count, (state.likedSongCount))), state.likedCover, accentFor("liked"), "liked", "liked")
+    val liked = LibRow(appString(R.string.text_liked_songs_58c3a9), appString(R.string.playlist_track_count, appPlural(R.plurals.track_count, (state.likedSongCount))), state.likedCover, accentFor("liked"), state.likedId, "liked")
     return (listOf(liked) + deduped).distinctBy { "${it.kind}:${it.id}" }
 }
 
@@ -947,7 +968,7 @@ private fun LibListItem(row: LibRow, actions: LibActions, onClick: () -> Unit) {
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.45f))
             .background(selectionTint("${row.kind}:${row.id}"))
-            .clickable(onClick = onClick)
+            .likedLongPress(row, actions, onClick)
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -987,7 +1008,7 @@ private fun LibListItem(row: LibRow, actions: LibActions, onClick: () -> Unit) {
 
 @Composable
 private fun LibGridItem(row: LibRow, actions: LibActions, onClick: () -> Unit) {
-    Column(Modifier.clip(RoundedCornerShape(14.dp)).background(selectionTint("${row.kind}:${row.id}")).clickable(onClick = onClick).padding(6.dp)) {
+    Column(Modifier.clip(RoundedCornerShape(14.dp)).background(selectionTint("${row.kind}:${row.id}")).likedLongPress(row, actions, onClick).padding(6.dp)) {
         Box {
             Artwork(row.art, row.accent, Modifier.fillMaxWidth().aspectRatio(1f), corner = if (row.circle) 200.dp else 12.dp)
             if (row.badge.isNotBlank()) {
@@ -1021,6 +1042,13 @@ private fun LibGridItem(row: LibRow, actions: LibActions, onClick: () -> Unit) {
             }
         }
     }
+}
+
+@Composable
+private fun Modifier.likedLongPress(row: LibRow, actions: LibActions, onClick: () -> Unit): Modifier {
+    val longPress = actions.onOpenAllLiked?.takeIf { row.kind == "liked" }
+    return combinedClickable(onClick = onClick, onLongClick = longPress,
+        onLongClickLabel = if (longPress != null) appString(R.string.liked_all_sources) else null)
 }
 
 @Composable

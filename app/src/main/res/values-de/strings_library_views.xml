@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="library_switch_view">"Zur Mediathek von %1$s wechseln"</string>
+    <string name="liked_all_sources">"Lieblingssongs aus allen Quellen"</string>
+</resources>

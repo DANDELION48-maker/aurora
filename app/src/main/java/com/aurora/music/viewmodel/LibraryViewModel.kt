@@ -43,7 +43,13 @@ data class LibraryUiState(
     val smartPlaylists: List<com.aurora.music.data.SmartPlaylist> = emptyList(),
     // aurora's own local play tracking used to fill in "most played" where the server reports no playCount
     val localPlayCounts: Map<String, Int> = emptyMap(),
-)
+    // merged libraries, youtube music and spotify are browsed one at a time
+    val views: List<com.aurora.music.data.LibraryViewChoice> = emptyList(),
+    val view: String = "library",
+) {
+    // liked songs of the library on screen; "liked" is the whole backend's
+    val likedId: String get() = if (views.isEmpty()) "liked" else view
+}
 
 // single source of truth for library song order so the on-screen list and the queue built on Play match
 fun sortLibrarySongs(songs: List<Song>, sort: LibrarySort, localPlayCounts: Map<String, Int>): List<Song> = when (sort) {
@@ -61,7 +67,7 @@ class LibraryViewModel(app: Application) : AndroidViewModel(app) {
 
     init {
         viewModelScope.launch { container.repository.playlistChanges.collect {
-            val playlists = container.repository.allPlaylists()
+            val playlists = container.repository.allPlaylists(scope())
             _state.update { it.copy(playlists = playlists) }
         } }
         viewModelScope.launch { container.offline.collect { load() } }
@@ -101,8 +107,23 @@ class LibraryViewModel(app: Application) : AndroidViewModel(app) {
     // (the on-screen list only holds what's been scrolled). invalidated whenever the library reloads.
     @Volatile private var fullSongsJob: Deferred<List<Song>>? = null
 
+    private var reloadJob: kotlinx.coroutines.Job? = null
+
     fun load() {
-        viewModelScope.launch { reload(showLoading = true) }
+        reloadJob?.cancel()
+        reloadJob = viewModelScope.launch { reload(showLoading = true) }
+    }
+
+    // the library view to ask for, null when the backend has only one library
+    fun scope(): String? = _state.value.let { s -> s.view.takeIf { s.views.isNotEmpty() } }
+
+    fun cycleView() {
+        val s = _state.value
+        if (s.views.size < 2) return
+        val next = s.views[(s.views.indexOfFirst { it.id == s.view } + 1).mod(s.views.size)].id
+        _state.update { it.copy(view = next, playlists = emptyList(), albums = emptyList(), artists = emptyList(), songs = emptyList(),
+            likedSongCount = 0, likedCover = "", canLoadMoreSongs = false) }
+        load()
     }
 
     fun refresh() {
@@ -120,13 +141,18 @@ class LibraryViewModel(app: Application) : AndroidViewModel(app) {
 
     private suspend fun reload(showLoading: Boolean) {
         fullSongsJob = null
-        if (showLoading) _state.update { it.copy(loading = true) }
-        val playlists = container.repository.allPlaylists()
-        val albums = container.repository.allAlbums()
-        val artists = container.repository.allArtists()
-        val songs = container.repository.songsPage(0, SONG_PAGE)
+        val views = container.repository.libraryViews
+        val view = _state.value.view.takeIf { id -> views.any { it.id == id } } ?: views.firstOrNull()?.id ?: "library"
+        _state.update { it.copy(views = views, view = view, loading = if (showLoading) true else it.loading) }
+        val scope = scope()
+        val playlists = container.repository.allPlaylists(scope)
+        val albums = container.repository.allAlbums(scope)
+        val artists = container.repository.allArtists(scope)
+        val songs = container.repository.songsPage(0, SONG_PAGE, scope)
         songsOffset = SONG_PAGE
-        val likedCount = container.repository.starredCount()
+        val likedCount = container.repository.starredCount(scope)
+        // a view switch while this was loading belongs to the newer load
+        if (scope() != scope) return
         _state.update {
             it.copy(loading = false, playlists = playlists, albums = albums, artists = artists, songs = songs, songsLoadingMore = false, canLoadMoreSongs = songs.size >= SONG_PAGE, downloadedRows = container.repository.downloadedLibrary(), likedSongCount = likedCount, likedCover = songs.firstOrNull()?.artworkUrl ?: "", supportsFolders = container.repository.supportsFolders)
         }
@@ -140,7 +166,12 @@ class LibraryViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(songsLoadingMore = true) }
         viewModelScope.launch {
             val off = songsOffset
-            val more = container.repository.songsPage(off, SONG_PAGE)
+            val scope = scope()
+            val more = container.repository.songsPage(off, SONG_PAGE, scope)
+            if (scope() != scope) {
+                _state.update { it.copy(songsLoadingMore = false) }
+                return@launch
+            }
             songsOffset = off + SONG_PAGE
             _state.update { cur ->
                 // servers can return dupes at page seams keep the list id-unique
@@ -153,8 +184,10 @@ class LibraryViewModel(app: Application) : AndroidViewModel(app) {
     private fun fullSongsAsync(): Deferred<List<Song>> {
         // reuse an in-flight or successful load; retry only if a previous attempt came back empty
         fullSongsJob?.let { if (!it.isCompleted || it.getCompleted().isNotEmpty()) return it }
+        val scope = scope()
         return viewModelScope.async {
-            val all = container.repository.allLibrarySongs()
+            val all = container.repository.allLibrarySongs(view = scope)
+            if (scope() != scope) return@async emptyList()
             // once the whole library is in, show it all so the on-screen order matches what Play queues
             if (all.isNotEmpty()) _state.update { it.copy(songs = all, canLoadMoreSongs = false, songsLoadingMore = false) }
             all

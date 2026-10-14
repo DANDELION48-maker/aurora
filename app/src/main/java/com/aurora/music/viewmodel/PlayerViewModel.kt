@@ -460,7 +460,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
                 videoQualityHeight = if (companionVideo.isReady) companionVideo.qualityHeight.takeIf { !companionVideo.isCanvas }
                     else videoUri?.getQueryParameter("quality")?.toIntOrNull(),
                 videoIsCanvas = companionVideo.isCanvas,
-                supportsCanvas = container.repository.supportsCanvas,
+                supportsCanvas = container.repository.supportsCanvas(cur),
                 isMix = container.mixController.activeProject != null,
                 isPlaying = c.effectivelyPlaying,
                 shuffle = c.shuffleModeEnabled,

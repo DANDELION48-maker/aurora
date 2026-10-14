@@ -66,6 +66,12 @@ class SourceLocalizer(
             .filter { eligible(it) && it.type.supportsMergedLibrary && it.type != ServerType.LOCAL }
             .filter { mergeKeys.isEmpty() || it.accountKey() in mergeKeys }
             .distinctBy { it.accountKey() }
+            .let { all ->
+                // spotify accounts share one web player page, so only one of them takes part
+                val spotify = all.filter { it.type == ServerType.SPOTIFY }
+                val kept = spotify.firstOrNull { it.accountKey() == session.accountKey() } ?: spotify.firstOrNull()
+                all.filter { it.type != ServerType.SPOTIFY || it == kept }
+            }
         val sources = buildList {
             add(local)
             serverSessions.forEach { build(it)?.let(::add) }

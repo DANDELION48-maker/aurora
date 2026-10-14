@@ -8,7 +8,10 @@ const val MERGE_NONE = "__none__"
 enum class ServerType {
     SUBSONIC, JELLYFIN, SPOTIFY, LOCAL, EXTENSION, YOUTUBE_MUSIC, PLEX;
 
-    val supportsMergedLibrary: Boolean get() = this == SUBSONIC || this == JELLYFIN || this == PLEX || this == LOCAL || this == YOUTUBE_MUSIC
+    val supportsMergedLibrary: Boolean get() = this == SUBSONIC || this == JELLYFIN || this == PLEX || this == LOCAL || this == YOUTUBE_MUSIC || this == SPOTIFY
+
+    // streaming catalogues get their own home, search and library views instead of mixing into the merged one
+    val isCatalogue: Boolean get() = this == YOUTUBE_MUSIC || this == SPOTIFY
 }
 
 // sessions store tokens without raw passwords
@@ -37,7 +40,8 @@ data class Session(
 }
 
 fun Session.accountKey(): String = when (type) {
-    ServerType.YOUTUBE_MUSIC -> "${type.name}|$server|$userId"
+    // the stable account id, so a changed display name stays the same account
+    ServerType.YOUTUBE_MUSIC, ServerType.SPOTIFY -> "${type.name}|$server|$userId"
     ServerType.PLEX -> {
         // separate users sharing the same plex server
         val credentialId = java.security.MessageDigest.getInstance("SHA-256")

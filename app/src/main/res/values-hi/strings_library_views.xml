@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="library_switch_view">"%1$s लाइब्रेरी पर जाएँ"</string>
+    <string name="liked_all_sources">"हर स्रोत के पसंदीदा गाने"</string>
+</resources>

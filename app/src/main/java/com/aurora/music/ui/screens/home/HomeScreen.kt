@@ -122,8 +122,9 @@ fun HomeScreen(
                     Text(username.ifBlank { appString(R.string.text_listener_37ea46) }, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black)
                 }
                 if (state.feeds.size > 1) {
-                    val next = state.feeds.first { it.id != state.selectedFeed }
-                    IconPill(if (state.selectedFeed == state.feeds.first().id) Icons.Outlined.LibraryMusic else Icons.Outlined.PlayCircle,
+                    // cycles library, youtube music and spotify in turn
+                    val next = state.feeds[(state.feeds.indexOfFirst { it.id == state.selectedFeed } + 1).mod(state.feeds.size)]
+                    IconPill(com.aurora.music.ui.components.sourceViewIcon(state.selectedFeed),
                         appString(R.string.text_switch_to_home_42c520, (next.label))) { onSelectFeed(next.id) }
                     Spacer(Modifier.width(8.dp))
                 }
