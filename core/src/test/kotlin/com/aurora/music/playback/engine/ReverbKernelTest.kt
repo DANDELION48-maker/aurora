@@ -111,4 +111,15 @@ class ReverbKernelTest {
         println("largest sample step while sweeping controls ${"%.4f".format(worst)}")
         assertTrue("step $worst", worst < 0.2)
     }
+
+    @Test fun costsFarLessThanRealtime() {
+        val kernel = kernel(ReverbPrefs(enabled = true))
+        val source = noise(6)
+        run(kernel, rate * 5, source)
+        val started = System.nanoTime()
+        run(kernel, rate * 30, source)
+        val realtime = (System.nanoTime() - started) / 1e9 / 30
+        println("cpu per second of audio ${"%.2f".format(realtime * 100)}%")
+        assertTrue(realtime < 0.25)
+    }
 }

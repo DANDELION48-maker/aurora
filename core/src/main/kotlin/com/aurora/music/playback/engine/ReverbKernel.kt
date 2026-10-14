@@ -69,8 +69,6 @@ class ReverbKernel {
             lineMask = lineSize - 1
             smoothing = 1.0 - kotlin.math.exp(-1.0 / (0.03 * rate))
             for (i in 0 until LINES) {
-                val phase = i * 0.77
-                oscCos[i] = cos(phase); oscSin[i] = sin(phase)
                 stepCos[i] = cos(2 * PI * MOD_HZ[i] / rate); stepSin[i] = sin(2 * PI * MOD_HZ[i] / rate)
             }
         }
@@ -81,8 +79,21 @@ class ReverbKernel {
         pre.forEach { it.fill(0.0) }; diffusion.forEach { it.fill(0.0) }; lines.forEach { it.fill(0.0) }
         prePos = 0; diffusionPos = 0; linePos = 0
         absorbed.fill(0.0); filterState.fill(0.0)
+        for (i in 0 until LINES) { oscCos[i] = cos(i * 0.77); oscSin[i] = sin(i * 0.77) }
         send = 0.0; dry = 1.0; silentFrames = 0
         applied = null; idle = true
+    }
+
+    fun copyStateFrom(previous: ReverbKernel) {
+        if (previous.rate != rate || previous.idle) return
+        for (i in pre.indices) previous.pre[i].copyInto(pre[i])
+        for (i in diffusion.indices) previous.diffusion[i].copyInto(diffusion[i])
+        for (i in lines.indices) previous.lines[i].copyInto(lines[i])
+        prePos = previous.prePos; diffusionPos = previous.diffusionPos; linePos = previous.linePos
+        previous.absorbed.copyInto(absorbed); previous.filterState.copyInto(filterState)
+        previous.oscCos.copyInto(oscCos); previous.oscSin.copyInto(oscSin)
+        send = previous.send; dry = previous.dry; wet = previous.wet; early = previous.early; width = previous.width
+        scale = previous.scale; predelay = previous.predelay; silentFrames = previous.silentFrames; idle = false
     }
 
     fun process(block: AudioBlock) {
@@ -151,16 +162,16 @@ class ReverbKernel {
             sum *= 2.0 / LINES
             for (i in 0 until LINES) lines[i][linePos] = absorbed[i] - sum + channels[i]
             linePos = (linePos + 1) and lineMask
+            if (linePos and 4095 == 0) for (i in 0 until LINES) {
+                val norm = (3.0 - oscCos[i] * oscCos[i] - oscSin[i] * oscSin[i]) * 0.5
+                oscCos[i] *= norm; oscSin[i] *= norm
+            }
 
             val wl = outL * wetNorm + erL * early
             val wr = outR * wetNorm + erR * early
             val mid = (wl + wr) * 0.5; val side = (wl - wr) * 0.5 * width
             samples[frame * 2] = inL * dry + (mid + side) * wet
             samples[frame * 2 + 1] = inR * dry + (mid - side) * wet
-        }
-        for (i in 0 until LINES) {
-            val norm = (3.0 - oscCos[i] * oscCos[i] - oscSin[i] * oscSin[i]) * 0.5
-            oscCos[i] *= norm; oscSin[i] *= norm
         }
         if (!current.enabled) {
             silentFrames += frames
@@ -250,13 +261,16 @@ class ReverbKernel {
         for (i in 0 until LINES) x[i] *= HADAMARD_NORM
     }
 
-    private fun pow2(frames: Double): Int {
-        var size = 1
-        while (size < frames) size = size shl 1
-        return size
-    }
-
     companion object {
+        fun storageSamples(rate: Int): Long =
+            2L * pow2((MAX_PREDELAY_SEC + ER_RIGHT.last() * MAX_SCALE) * rate + 8) +
+                STEPS * LINES * pow2(DIFFUSION_SEC * STEP_RANGE.max() * MAX_SCALE * rate + 8).toLong() +
+                LINES * pow2((LINE_SEC.max() * MAX_SCALE + MAX_DEPTH_SEC) * rate + 8).toLong()
+        private fun pow2(frames: Double): Int {
+            var size = 1
+            while (size < frames) size = size shl 1
+            return size
+        }
         private const val LINES = 8
         private const val STEPS = 4
         private const val ER_TAPS = 8
@@ -265,7 +279,7 @@ class ReverbKernel {
         private const val MAX_DEPTH_SEC = 0.0008
         private const val DIFFUSION_SEC = 0.045
         private const val GLIDE_SEC = 0.08
-        private const val OUTPUT_GAIN = 1.6
+        private const val OUTPUT_GAIN = 2.1
         private const val ER_NORM = 0.55
         private val HADAMARD_NORM = 1.0 / sqrt(LINES.toDouble())
         private val LINE_SEC = doubleArrayOf(0.0371, 0.0419, 0.0473, 0.0533, 0.0593, 0.0661, 0.0739, 0.0827)

@@ -185,7 +185,8 @@ class ProductionSerialRack private constructor(
                     (it.tone ?: RackTone()).let { tone -> tone.mode != RackToneMode.BASS && tone.amount > 0 && tone.driveDb > 0 } } * 2L * sampleRate
             require(oversamplingLoad <= 16L * 96000) { "Oversampling exceeds the processing budget at this sample rate." }
             val delayStorage = rack.nodes.sumOf { node -> when (node.kind) {
-                RackNodeKind.SPACE -> ((node.space ?: RackSpace()).timeMs / 1000 * sampleRate * 2 + sampleRate * .35).toLong()
+                RackNodeKind.SPACE -> ((node.space ?: RackSpace()).timeMs / 1000 * sampleRate * 2 + sampleRate * .35).toLong() +
+                    if ((node.space ?: RackSpace()).mode == RackSpaceMode.REVERB) ReverbKernel.storageSamples(sampleRate) else 0L
                 RackNodeKind.MODULATION -> (sampleRate * .12).toLong()
                 else -> 0L
             } }

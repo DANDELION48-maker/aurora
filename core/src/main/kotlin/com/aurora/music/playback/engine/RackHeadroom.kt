@@ -125,7 +125,7 @@ object RackHeadroomAnalyzer {
                         }
                     }
                     RackNodeKind.SPACE -> (node.space ?: RackSpace()).let { s ->
-                        20 * log10(if (s.mode == RackSpaceMode.REVERB) 9 / (1 - .001.pow(.0297 / s.decaySeconds)) else 1 / (1 - s.feedback))
+                        if (s.mode == RackSpaceMode.REVERB) REVERB_HEADROOM_DB else 20 * log10(1 / (1 - s.feedback))
                     }
                     RackNodeKind.MODULATION -> (node.modulation ?: RackModulation()).let { m ->
                         if (m.depth == 0.0 || m.mode in listOf(RackModulationMode.TREMOLO, RackModulationMode.VIBRATO)) 0.0
@@ -173,3 +173,6 @@ object RackHeadroomAnalyzer {
         return hypot(1 - wet + wet * re, wet * im)
     }
 }
+
+// the fdn reverb is loudness-normalized, so allow for its crest factor rather than a comb worst case
+private const val REVERB_HEADROOM_DB = 6.0

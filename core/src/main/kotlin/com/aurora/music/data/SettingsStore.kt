@@ -1002,6 +1002,18 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         )
     }.distinctUntilChanged()
 
+    val reverbPrefs: Flow<ReverbPrefs> = dataStore.data.map { p ->
+        val d = ReverbPrefs()
+        ReverbPrefs(
+            enabled = p[Keys.REVERB_ENABLED] ?: d.enabled, preset = p[Keys.REVERB_PRESET] ?: d.preset,
+            mix = p[Keys.REVERB_MIX] ?: d.mix, decaySec = p[Keys.REVERB_DECAY] ?: d.decaySec,
+            size = p[Keys.REVERB_SIZE] ?: d.size, predelayMs = p[Keys.REVERB_PREDELAY] ?: d.predelayMs,
+            damping = p[Keys.REVERB_DAMPING] ?: d.damping, lowCutHz = p[Keys.REVERB_LOW_CUT] ?: d.lowCutHz,
+            highCutHz = p[Keys.REVERB_HIGH_CUT] ?: d.highCutHz, width = p[Keys.REVERB_WIDTH] ?: d.width,
+            early = p[Keys.REVERB_EARLY] ?: d.early, modulation = p[Keys.REVERB_MODULATION] ?: d.modulation,
+        ).clamped()
+    }.distinctUntilChanged()
+
     val alarmPrefs: Flow<AlarmPrefs> = dataStore.data.map { p ->
         AlarmPrefs(
             enabled = p[Keys.ALARM_ENABLED] ?: false,
@@ -1311,6 +1323,13 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     suspend fun setMusicHapticsDetail(v: Int) = dataStore.edit { it[Keys.MUSIC_HAPTICS_DETAIL] = v.coerceIn(0, 2) }
     suspend fun setMusicHapticsTexture(v: Boolean) = dataStore.edit { it[Keys.MUSIC_HAPTICS_TEXTURE] = v }
     suspend fun setMusicHapticsOffset(ms: Int) = dataStore.edit { it[Keys.MUSIC_HAPTICS_OFFSET_MS] = ms.coerceIn(-150, 150) }
+    suspend fun setReverb(v: ReverbPrefs) = dataStore.edit { p ->
+        val r = v.clamped()
+        p[Keys.REVERB_ENABLED] = r.enabled; p[Keys.REVERB_PRESET] = r.preset; p[Keys.REVERB_MIX] = r.mix
+        p[Keys.REVERB_DECAY] = r.decaySec; p[Keys.REVERB_SIZE] = r.size; p[Keys.REVERB_PREDELAY] = r.predelayMs
+        p[Keys.REVERB_DAMPING] = r.damping; p[Keys.REVERB_LOW_CUT] = r.lowCutHz; p[Keys.REVERB_HIGH_CUT] = r.highCutHz
+        p[Keys.REVERB_WIDTH] = r.width; p[Keys.REVERB_EARLY] = r.early; p[Keys.REVERB_MODULATION] = r.modulation
+    }
     suspend fun setAlarm(enabled: Boolean, hour: Int, minute: Int) = dataStore.edit {
         it[Keys.ALARM_ENABLED] = enabled; it[Keys.ALARM_HOUR] = hour; it[Keys.ALARM_MINUTE] = minute
     }

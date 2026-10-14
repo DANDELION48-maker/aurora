@@ -151,7 +151,13 @@ internal class SpaceKernel(private val settings: RackSpace, private val rate: In
         delayFrames + ceil((settings.decaySeconds * 2 + .1) * rate).toInt()
     else if (settings.feedback == 0.0) delayFrames
     else (delayFrames + ceil(14 / -ln(damp)).toInt()) * (ceil(ln(1e-6) / ln(settings.feedback)).toInt() + 1)
+    private val hall = if (settings.mode != RackSpaceMode.REVERB) null else ReverbKernel().also {
+        it.configure(rate)
+        it.settings = ReverbPrefs(enabled = true, mix = 1f, decaySec = settings.decaySeconds.toFloat(), predelayMs = settings.timeMs.toFloat(),
+            highCutHz = settings.dampingHz.toFloat(), early = 0.2f)
+    }
     override fun process(block: AudioBlock, volume: Double) {
+        hall?.let { it.process(block); return }
         for (i in 0 until block.sampleCount step 2) {
             val left = delay[0][position]; val right = delay[1][position]
             if (settings.mode == RackSpaceMode.REVERB) {
@@ -183,10 +189,11 @@ internal class SpaceKernel(private val settings: RackSpace, private val rate: In
     }
     override fun reset() {
         delay.forEach { it.fill(0.0) }; comb.forEach { it.fill(0.0) }; diffuse.forEach { it.fill(0.0) }
-        position = 0; damped.fill(0.0); combPosition.fill(0); diffusePosition.fill(0)
+        position = 0; damped.fill(0.0); combPosition.fill(0); diffusePosition.fill(0); hall?.reset()
     }
     override fun copyStateFrom(previous: AdvancedRackKernel) {
         if (previous is SpaceKernel && previous.settings == settings && previous.rate == rate) {
+            previous.hall?.let { hall?.copyStateFrom(it) }
             for (i in delay.indices) previous.delay[i].copyInto(delay[i])
             for (i in comb.indices) previous.comb[i].copyInto(comb[i])
             for (i in diffuse.indices) previous.diffuse[i].copyInto(diffuse[i])

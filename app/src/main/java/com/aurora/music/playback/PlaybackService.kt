@@ -190,6 +190,7 @@ class PlaybackService : MediaLibraryService() {
     private var currentImpulse: ImpulseResponse? = null
     private var impulseLoadFailure: String? = null
     private var currentDspParams = DspParams()
+    @Volatile private var reverbPrefs = com.aurora.music.data.ReverbPrefs()
     private var xfadeExpectedId: String? = null
     private var xfadeInGain = 1f
     private var xfadeOutGain = 1f
@@ -602,6 +603,13 @@ class PlaybackService : MediaLibraryService() {
             container.settingsStore.musicHapticsPrefs.collect { musicHaptics.setPrefs(it) }
         }
         scope.launch {
+            container.settingsStore.reverbPrefs.collect { prefs ->
+                reverbPrefs = prefs
+                (precisionChains + compatibilityChains).forEach { it.reverbSettings = prefs }
+                updateSignalPath()
+            }
+        }
+        scope.launch {
             container.settingsStore.privateSession.collect { privateSession ->
                 listeningHistory.allowed = !privateSession
                 listeningDetails.privateSession = privateSession
@@ -727,6 +735,7 @@ class PlaybackService : MediaLibraryService() {
             // OFF/System mono still runs in binary64 before the output boundary.
             chain.applyDsp(params, mode, monoAudioPref, ap.dspConvEnabled, ap.dspConvMakeupDb)
             chain.updateRack(lastRack.activeFor(mode))
+            chain.reverbSettings = reverbPrefs
         }
         mixPlayer?.applyAudioConfig(mixAudioConfig())
         updateSignalPath()
@@ -1021,6 +1030,7 @@ class PlaybackService : MediaLibraryService() {
         } else if (lastRack?.enabled == true && ap?.dspMode == DspMode.CUSTOM) {
             unknown += "Processing rack requested; waiting for a supported stereo stream and prepared schedule"
         }
+        node(reverbPrefs.enabled, engine?.reverbActive == true, "Reverb (binary64 feedback delay network, ${(reverbPrefs.mix * 100).toInt()}% mix)")
         if ((processors || precise) && (ap?.dspConvEnabled == true || rackActive)) {
             when (engine?.preparationState) {
                 ConvolutionPreparationState.PREPARING -> unknown += "Processing configuration is preparing; the previous ready configuration continues when available"
@@ -1045,7 +1055,7 @@ class PlaybackService : MediaLibraryService() {
             if (decoded?.encoding != "float PCM" && (decoded?.bitDepth ?: 0) > 24)
                 unknown += "Float32 output has 24 significant bits; it cannot preserve every PCM32 integer value"
         }
-        if (processors && engine?.processingActive == true)
+        if (processors && (engine?.processingActive == true || engine?.reverbActive == true))
             nodes += "Single PCM16 output conversion after binary64 global processing"
         if (processors && outputRatePolicy.tpdfDither && engine?.processingChangesSamples == true)
             nodes += "${outputRatePolicy.ditherLabel(raw?.sampleRate ?: 0)} at the final PCM16 conversion"

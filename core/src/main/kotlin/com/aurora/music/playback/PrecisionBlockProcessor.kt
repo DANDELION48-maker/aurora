@@ -31,6 +31,11 @@ class PrecisionBlockProcessor {
     @Volatile private var rackEverRequested = false
     @Volatile private var rackManaged = false
     private val rackProcessor = ProductionRackProcessor()
+    private val reverb = com.aurora.music.playback.engine.ReverbKernel()
+    var reverbSettings: com.aurora.music.data.ReverbPrefs
+        get() = reverb.settings
+        set(value) { reverb.settings = value }
+    val reverbActive: Boolean get() = reverb.active
     @Volatile private var rackImpulses: Map<String, ImpulseResponse> = emptyMap()
     var relativeVolume: Double
         get() = rackProcessor.relativeVolume
@@ -43,7 +48,7 @@ class PrecisionBlockProcessor {
         notifyRack()
     }
     val rackActive: Boolean get() = rackManaged && processingActive && rackProcessor.rackActive
-    val processingChangesSamples: Boolean get() = if (rackManaged) rackProcessor.processingChangesSamples
+    val processingChangesSamples: Boolean get() = reverb.active || if (rackManaged) rackProcessor.processingChangesSamples
         else processingActive || convolutionProcessingActive
     val rackDescription: String get() = if (rackManaged) rackProcessor.description else "Legacy processing"
     val convolutionUnavailableReason: String? get() = if (rackManaged) rackProcessor.convolutionUnavailableReason else null
@@ -156,6 +161,7 @@ class PrecisionBlockProcessor {
         val nextFormat = AudioStreamFormat(sampleRate, ChannelLayout.STEREO)
         format = nextFormat
         effects = PrecisionEffectsKernel(nextFormat)
+        reverb.configure(sampleRate)
         stage = AudioBlock(nextFormat, INPUT_FRAMES)
         output = AudioBlock(nextFormat, OUTPUT_FRAMES)
         while (true) {
@@ -213,7 +219,9 @@ class PrecisionBlockProcessor {
         return true
     }
 
-    fun getOutput(): AudioBlock? {
+    fun getOutput(): AudioBlock? = takeOutput()?.also { reverb.process(it) }
+
+    private fun takeOutput(): AudioBlock? {
         if (rackManaged) return rackProcessor.getOutput()
         if (rackEverRequested) endOfStream = true
         if (!outputReady) {
@@ -293,6 +301,7 @@ class PrecisionBlockProcessor {
         processingActive = false; convolutionProcessingActive = false
         convolutionTimeUs = AUDIO_TIME_UNSET; convolutionFramePosition = AUDIO_TIME_UNSET
         rackProcessor.flush()
+        reverb.reset()
     }
 
     fun reset() {
