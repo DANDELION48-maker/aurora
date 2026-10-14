@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -40,6 +41,8 @@ fun PlaybackVideo(
     accent: Color,
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 28.dp,
+    // crops to cover the whole area instead of letterboxing, for full-screen canvases
+    fill: Boolean = false,
 ) {
     val context = LocalContext.current
     val owner = LocalLifecycleOwner.current
@@ -88,11 +91,11 @@ fun PlaybackVideo(
         }
         Box(Modifier.fillMaxSize().background(
             Brush.verticalGradient(listOf(Color.Black.copy(alpha = .12f), Color.Transparent, Color.Black.copy(alpha = .28f)))))
-        val videoWidth = minOf(maxWidth, maxHeight * ratio)
-        val videoHeight = minOf(maxHeight, maxWidth / ratio)
+        val videoWidth = if (fill) maxOf(maxWidth, maxHeight * ratio) else minOf(maxWidth, maxHeight * ratio)
+        val videoHeight = if (fill) maxOf(maxHeight, maxWidth / ratio) else minOf(maxHeight, maxWidth / ratio)
         AndroidView(
             factory = { texture },
-            modifier = Modifier.align(Alignment.Center).size(videoWidth, videoHeight),
+            modifier = Modifier.align(Alignment.Center).then(if (fill) Modifier.requiredSize(videoWidth, videoHeight) else Modifier.size(videoWidth, videoHeight)),
         )
     }
 }

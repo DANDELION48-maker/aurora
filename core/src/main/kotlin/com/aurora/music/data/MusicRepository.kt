@@ -302,6 +302,9 @@ class MusicRepository(
 
     suspend fun starredIds(): Set<String> = backend?.starredIds() ?: emptySet()
 
+    val supportsCanvas: Boolean get() = !offline && backend?.supportsCanvas == true
+    suspend fun canvasUrl(song: Song): String? = if (offline) null else backend?.canvasUrl(song)
+
     suspend fun likedSongIds(ids: List<String>): Set<String> =
         if (offline) emptySet() else backend?.likedSongIds(ids).orEmpty()
 

@@ -1462,7 +1462,7 @@ fun AuroraApp() {
                     surfaceOffset = playerSurfaceOffset,
                     videoPlayer = playerVM.videoPlayer,
                     onVideoQualityChange = playerVM::setVideoQuality,
-                    onRequestVideo = { playerVM.requestMusicVideo { confirm(it) } },
+                    onRequestVideo = { canvas -> playerVM.requestMusicVideo(canvas) { confirm(it) } },
                     onVideoVisibleChange = playerVM::setMusicVideoVisible,
                     onCollapse = { playerVM.setExpanded(false) },
                     onTogglePlay = { playerVM.togglePlay() },

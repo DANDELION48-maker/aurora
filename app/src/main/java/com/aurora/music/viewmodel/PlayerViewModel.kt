@@ -77,6 +77,8 @@ data class PlayerUiState(
     val videoLoading: Boolean = false,
     val videoQualityHeight: Int? = null,
     val canSelectVideoQuality: Boolean = false,
+    val videoIsCanvas: Boolean = false,
+    val supportsCanvas: Boolean = false,
 ) {
     val durationSec: Int get() = if (isLive) 0 else timelineDurationSec.takeIf { it > 0 } ?: current.durationSec
     fun progressAt(positionSec: Float): Float = if (durationSec == 0) 0f else (positionSec / durationSec).coerceIn(0f, 1f)
@@ -104,12 +106,14 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         resolver = container.youtubeResolver,
         audioPlayer = { controller },
         currentSong = { _state.value.current },
+        canvasFor = { container.repository.canvasUrl(it) },
         onStateChanged = { video ->
             _state.update { it.copy(
                 hasVideo = video.ready,
                 videoLoading = video.loading,
-                canSelectVideoQuality = video.ready,
+                canSelectVideoQuality = video.ready && !video.canvas,
                 videoQualityHeight = video.qualityHeight,
+                videoIsCanvas = video.canvas,
             ) }
         },
     )
@@ -451,8 +455,12 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
                 isLive = c.isCurrentMediaItemLive || cur.isRadio(),
                 hasVideo = (c.currentTracks.isTypeSupported(C.TRACK_TYPE_VIDEO) &&
                     c.isCommandAvailable(Player.COMMAND_SET_VIDEO_SURFACE)) || companionVideo.isReady,
-                canSelectVideoQuality = companionVideo.isReady || videoUri?.scheme == "aurora-yt" && videoUri.host == "video",
-                videoQualityHeight = if (companionVideo.isReady) companionVideo.qualityHeight else videoUri?.getQueryParameter("quality")?.toIntOrNull(),
+                canSelectVideoQuality = if (companionVideo.isReady) !companionVideo.isCanvas
+                    else videoUri?.scheme == "aurora-yt" && videoUri.host == "video",
+                videoQualityHeight = if (companionVideo.isReady) companionVideo.qualityHeight.takeIf { !companionVideo.isCanvas }
+                    else videoUri?.getQueryParameter("quality")?.toIntOrNull(),
+                videoIsCanvas = companionVideo.isCanvas,
+                supportsCanvas = container.repository.supportsCanvas,
                 isMix = container.mixController.activeProject != null,
                 isPlaying = c.effectivelyPlaying,
                 shuffle = c.shuffleModeEnabled,
@@ -474,8 +482,10 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         persistQueue()
     }
 
-    fun requestMusicVideo(onResult: (String) -> Unit) {
-        companionVideo.request(_state.value.current) { onResult(appString(R.string.video_match_not_found)) }
+    fun requestMusicVideo(canvas: Boolean, onResult: (String) -> Unit) {
+        companionVideo.request(_state.value.current, canvas) {
+            onResult(appString(if (canvas) R.string.canvas_not_found else R.string.video_match_not_found))
+        }
     }
 
     fun setMusicVideoVisible(visible: Boolean) {

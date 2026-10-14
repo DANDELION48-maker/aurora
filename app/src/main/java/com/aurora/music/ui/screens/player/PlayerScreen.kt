@@ -1,5 +1,5 @@
 package com.aurora.music.ui.screens.player
-
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import android.app.Activity
 import android.content.Context
@@ -120,6 +120,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -175,7 +176,7 @@ fun PlayerScreen(
     onOpenMix: () -> Unit = {},
     videoPlayer: androidx.media3.common.Player? = null,
     onVideoQualityChange: (Int?) -> Unit = {},
-    onRequestVideo: () -> Unit = {},
+    onRequestVideo: (canvas: Boolean) -> Unit = {},
     onVideoVisibleChange: (Boolean) -> Unit = {},
     gestures: com.aurora.music.data.GesturePrefs = com.aurora.music.data.GesturePrefs(),
     requestedPane: PlayerPane? = null,
@@ -216,7 +217,8 @@ fun PlayerScreen(
     val onPlayerAccent = MaterialTheme.colorScheme.onPrimary
     val view = LocalView.current
     val activity = remember(view) { view.context.findActivity() }
-    val fullscreenActive = fullscreenVideo && showVideo && state.hasVideo && videoPlayer != null
+    val fullscreenActive = fullscreenVideo && showVideo && state.hasVideo && videoPlayer != null && !state.videoIsCanvas
+    val canvasShown = showVideo && state.hasVideo && state.videoIsCanvas && videoPlayer != null
     LaunchedEffect(state.hasVideo, requestedVideo) {
         if (requestedVideo && state.hasVideo) {
             showLyrics = false
@@ -283,6 +285,17 @@ fun PlayerScreen(
             ) {},
     ) {
         if (glassBackdrop != null) GlassArtBackdrop(song, Modifier.matchParentSize().layerBackdrop(playerBackdrop))
+        androidx.compose.animation.AnimatedVisibility(canvasShown, Modifier.matchParentSize(), fadeIn(tween(400)), fadeOut(tween(250))) {
+            videoPlayer?.let { canvasPlayer ->
+                Box(Modifier.fillMaxSize()) {
+                    PlaybackVideo(canvasPlayer, song.artworkUrl, playerAccent, Modifier.fillMaxSize(), cornerRadius = 0.dp, fill = true)
+                    Box(Modifier.fillMaxSize().background(Brush.verticalGradient(
+                        0f to Color.Black.copy(alpha = .45f), .3f to Color.Transparent,
+                        .55f to Color.Black.copy(alpha = .3f), 1f to Color.Black.copy(alpha = .88f))))
+                }
+            }
+        }
+        CanvasTint(canvasShown) {
         val header: @Composable () -> Unit = {
             Column(
                 Modifier
@@ -300,26 +313,43 @@ fun PlayerScreen(
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     val showVideoModeControl = (state.hasTrack && !state.isMix && !song.isRadio() && !song.isPodcast()) || state.hasVideo
                     val headerTint = LocalContentColor.current
+                    val haptics = androidx.compose.ui.platform.LocalHapticFeedback.current
                     val videoToggle: @Composable () -> Unit = {
-                        IconButton(
-                            onClick = {
-                                if (showVideo) {
-                                    fullscreenVideo = false
-                                    showVideo = false
-                                } else if (state.hasVideo && videoPlayer != null) {
-                                    showLyrics = false
-                                    showVideo = true
-                                    inlineVideoControlsVisible = false
-                                } else if (!state.videoLoading) {
-                                    requestedVideo = true
-                                    onRequestVideo()
-                                }
-                            },
-                            modifier = Modifier.size(40.dp).semantics {
+                        // tap is the youtube music video, long press the service's canvas
+                        Box(
+                            modifier = Modifier.size(40.dp).clip(CircleShape).combinedClickable(
+                                role = Role.Button,
+                                onClickLabel = appString(if (showVideo) R.string.text_audio_acdac2 else R.string.text_video_bc17c1),
+                                onLongClickLabel = if (state.supportsCanvas) appString(R.string.canvas_open) else null,
+                                onLongClick = if (!state.supportsCanvas) null else ({
+                                    if (!state.videoLoading) {
+                                        haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+                                        fullscreenVideo = false
+                                        showVideo = false
+                                        showLyrics = false
+                                        requestedVideo = true
+                                        onRequestVideo(true)
+                                    }
+                                }),
+                                onClick = {
+                                    if (showVideo) {
+                                        fullscreenVideo = false
+                                        showVideo = false
+                                    } else if (state.hasVideo && videoPlayer != null && !state.videoIsCanvas) {
+                                        showLyrics = false
+                                        showVideo = true
+                                        inlineVideoControlsVisible = false
+                                    } else if (!state.videoLoading) {
+                                        requestedVideo = true
+                                        onRequestVideo(false)
+                                    }
+                                },
+                            ).semantics {
                                 contentDescription = appString(
                                     if (showVideo) R.string.text_audio_acdac2 else R.string.text_video_bc17c1,
                                 )
                             },
+                            contentAlignment = Alignment.Center,
                         ) {
                             if (state.videoLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp),
                                 color = headerTint, strokeWidth = 2.dp)
@@ -434,7 +464,10 @@ fun PlayerScreen(
                     transitionSpec = { fadeIn() togetherWith fadeOut() },
                     label = "artVsVideo",
                 ) { video ->
-                    if (video && state.hasVideo && videoPlayer != null) {
+                    if (video && state.hasVideo && videoPlayer != null && state.videoIsCanvas) {
+                        // the canvas fills the whole player behind this slot
+                        Spacer(Modifier.size(artSide))
+                    } else if (video && state.hasVideo && videoPlayer != null) {
                         Box(Modifier.width(videoWidth).aspectRatio(16f / 9f)) {
                             PlaybackVideo(videoPlayer, song.artworkUrl, playerAccent, Modifier.fillMaxSize())
                             Box(
@@ -788,8 +821,20 @@ fun PlayerScreen(
             }
             LyricsOverlay(showLyrics, false, state, onClose = { showLyrics = false }, onTogglePlay, onPrevious, onNext, onSeek)
         }
+        }
     }
     }
+    }
+}
+
+// over a canvas the player reads white like spotify's, whatever the app theme
+@Composable
+private fun CanvasTint(active: Boolean, content: @Composable () -> Unit) {
+    val base = MaterialTheme.colorScheme
+    val scheme = if (!active) base else base.copy(onSurface = Color.White, onBackground = Color.White,
+        onSurfaceVariant = Color.White.copy(alpha = .78f))
+    MaterialTheme(colorScheme = scheme) {
+        CompositionLocalProvider(LocalContentColor provides if (active) Color.White else LocalContentColor.current, content = content)
     }
 }
 

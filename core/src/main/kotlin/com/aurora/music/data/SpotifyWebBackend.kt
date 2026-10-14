@@ -478,6 +478,16 @@ class SpotifyWebBackend(
         return Lyrics(lines, synced, listOf("Spotify", lyrics.string("providerDisplayName")).filter { it.isNotBlank() }.joinToString(" · "))
     }
 
+    override val supportsCanvas: Boolean get() = true
+
+    // image canvases are skipped; only the looping videos replace a music video
+    override suspend fun canvasUrl(song: Song): String? {
+        if (!song.id.matches(TRACK_ID)) return null
+        val canvas = runCatching { q("canvas", "trackUri" to TRACK + song.id).obj("trackUnion").obj("canvas") }
+            .onFailure { AppLog.d(TAG, "canvas failed: ${it.message}") }.getOrNull() ?: return null
+        return canvas.string("url").takeIf { it.startsWith("https://") && canvas.string("type").startsWith("VIDEO") }
+    }
+
     override fun streamUrl(songId: String, maxBitrate: Int, lossless: Boolean): String = "aurora-yt://$songId"
 
     override fun coverArtUrl(id: String, size: Int): String = ""

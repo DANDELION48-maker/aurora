@@ -120,6 +120,10 @@ interface MediaBackend {
 
     suspend fun serverLyrics(song: Song): Lyrics?
 
+    // a short looping video the service pairs with the track (spotify canvas), shown instead of a music video
+    val supportsCanvas: Boolean get() = false
+    suspend fun canvasUrl(song: Song): String? = null
+
     // lossless serves the original untouched file
     fun streamUrl(songId: String, maxBitrate: Int, lossless: Boolean): String
 

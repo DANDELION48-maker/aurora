@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="canvas_not_found">"⁧لا يحتوي هذا المقطع على Canvas من Spotify.⁩"</string>
+    <string name="canvas_open">"Canvas"</string>
+</resources>
