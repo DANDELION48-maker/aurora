@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"⁧اهتزازات الموسيقى⁩"</string>
+    <string name="music_haptics_summary">"⁧اشعر بالإيقاع: ينقر الهاتف مع الطبول والجهير أثناء الاستماع⁩"</string>
+    <string name="music_haptics_detail">"⁧التفاصيل⁩"</string>
+    <string name="music_haptics_detail_beat">"⁧النبض⁩"</string>
+    <string name="music_haptics_detail_rhythm">"⁧الإيقاع⁩"</string>
+    <string name="music_haptics_detail_full">"⁧مفصّل⁩"</string>
+    <string name="music_haptics_intensity">"⁧الشدة⁩"</string>
+    <string name="music_haptics_texture">"⁧ملمس الجهير⁩"</string>
+    <string name="music_haptics_texture_summary">"⁧اهتزاز ناعم تحت نغمات الجهير الممتدة⁩"</string>
+    <string name="music_haptics_timing">"⁧التوقيت⁩"</string>
+    <string name="music_haptics_timing_value">"%1$s مللي ثانية"</string>
+    <string name="music_haptics_note">"⁧يعمل مع الموسيقى المشغّلة على هذا الهاتف ويتبع قوة اهتزاز الوسائط في هاتفك. غيّر التوقيت إذا بدت النقرات مبكرة أو متأخرة، مثلًا عبر البلوتوث.⁩"</string>
+</resources>

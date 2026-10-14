@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"Haptyka muzyki"</string>
+    <string name="music_haptics_summary">"Poczuj rytm: telefon stuka w rytm perkusji i basu podczas słuchania"</string>
+    <string name="music_haptics_detail">"Szczegółowość"</string>
+    <string name="music_haptics_detail_beat">"Puls"</string>
+    <string name="music_haptics_detail_rhythm">"Rytm"</string>
+    <string name="music_haptics_detail_full">"Szczegółowo"</string>
+    <string name="music_haptics_intensity">"Intensywność"</string>
+    <string name="music_haptics_texture">"Tekstura basu"</string>
+    <string name="music_haptics_texture_summary">"Delikatne dudnienie pod wybrzmiewającymi dźwiękami basu"</string>
+    <string name="music_haptics_timing">"Synchronizacja"</string>
+    <string name="music_haptics_timing_value">"%1$s ms"</string>
+    <string name="music_haptics_note">"Działa z muzyką odtwarzaną na tym telefonie i używa siły wibracji multimediów ustawionej w telefonie. Przesuń synchronizację, jeśli stuknięcia są za wcześnie lub za późno, np. przez Bluetooth."</string>
+</resources>

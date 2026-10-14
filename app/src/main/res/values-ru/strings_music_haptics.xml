@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"Музыкальная вибрация"</string>
+    <string name="music_haptics_summary">"Почувствуйте ритм: телефон вибрирует в такт барабанам и басу, пока вы слушаете"</string>
+    <string name="music_haptics_detail">"Детализация"</string>
+    <string name="music_haptics_detail_beat">"Бит"</string>
+    <string name="music_haptics_detail_rhythm">"Ритм"</string>
+    <string name="music_haptics_detail_full">"Подробно"</string>
+    <string name="music_haptics_intensity">"Интенсивность"</string>
+    <string name="music_haptics_texture">"Текстура баса"</string>
+    <string name="music_haptics_texture_summary">"Мягкий гул под протяжными нотами баса"</string>
+    <string name="music_haptics_timing">"Синхронизация"</string>
+    <string name="music_haptics_timing_value">"%1$s мс"</string>
+    <string name="music_haptics_note">"Работает для музыки на этом телефоне и учитывает силу вибрации для медиа в настройках телефона. Сдвиньте синхронизацию, если вибрация ощущается раньше или позже, например через Bluetooth."</string>
+</resources>

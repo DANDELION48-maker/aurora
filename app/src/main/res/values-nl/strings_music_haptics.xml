@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"Muziekhaptiek"</string>
+    <string name="music_haptics_summary">"Voel de beat: je telefoon tikt mee met drums en bas terwijl je luistert"</string>
+    <string name="music_haptics_detail">"Detail"</string>
+    <string name="music_haptics_detail_beat">"Beat"</string>
+    <string name="music_haptics_detail_rhythm">"Ritme"</string>
+    <string name="music_haptics_detail_full">"Gedetailleerd"</string>
+    <string name="music_haptics_intensity">"Intensiteit"</string>
+    <string name="music_haptics_texture">"Bastextuur"</string>
+    <string name="music_haptics_texture_summary">"Een zacht gerommel onder aangehouden basnoten"</string>
+    <string name="music_haptics_timing">"Timing"</string>
+    <string name="music_haptics_timing_value">"%1$s ms"</string>
+    <string name="music_haptics_note">"Werkt voor muziek die op deze telefoon speelt en volgt de mediatrillingssterkte van je telefoon. Verschuif de timing als de tikken te vroeg of te laat voelen, bijvoorbeeld via bluetooth."</string>
+</resources>

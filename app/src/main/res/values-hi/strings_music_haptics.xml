@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"म्यूज़िक हैप्टिक्स"</string>
+    <string name="music_haptics_summary">"बीट महसूस करें: सुनते समय फ़ोन ड्रम और बेस के साथ थपथपाता है"</string>
+    <string name="music_haptics_detail">"विस्तार"</string>
+    <string name="music_haptics_detail_beat">"बीट"</string>
+    <string name="music_haptics_detail_rhythm">"रिदम"</string>
+    <string name="music_haptics_detail_full">"विस्तृत"</string>
+    <string name="music_haptics_intensity">"तीव्रता"</string>
+    <string name="music_haptics_texture">"बेस टेक्सचर"</string>
+    <string name="music_haptics_texture_summary">"लंबे बेस नोट्स के नीचे हल्की गड़गड़ाहट"</string>
+    <string name="music_haptics_timing">"टाइमिंग"</string>
+    <string name="music_haptics_timing_value">"%1$s ms"</string>
+    <string name="music_haptics_note">"इस फ़ोन पर चल रहे संगीत के लिए काम करता है और फ़ोन की मीडिया वाइब्रेशन तीव्रता का पालन करता है। अगर टैप जल्दी या देर से लगें, जैसे ब्लूटूथ पर, तो टाइमिंग बदलें।"</string>
+</resources>

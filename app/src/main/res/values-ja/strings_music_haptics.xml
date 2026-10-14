@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"ミュージックハプティクス"</string>
+    <string name="music_haptics_summary">"ビートを感じる：聴いている間、ドラムとベースに合わせてスマホが振動します"</string>
+    <string name="music_haptics_detail">"詳細度"</string>
+    <string name="music_haptics_detail_beat">"ビート"</string>
+    <string name="music_haptics_detail_rhythm">"リズム"</string>
+    <string name="music_haptics_detail_full">"詳細"</string>
+    <string name="music_haptics_intensity">"強さ"</string>
+    <string name="music_haptics_texture">"ベースの質感"</string>
+    <string name="music_haptics_texture_summary">"伸びるベース音に合わせたやわらかな振動"</string>
+    <string name="music_haptics_timing">"タイミング"</string>
+    <string name="music_haptics_timing_value">"%1$s ms"</string>
+    <string name="music_haptics_note">"このスマホで再生中の音楽で動作し、スマホのメディアのバイブレーションの強さに従います。Bluetooth などで振動が早い、または遅いと感じたらタイミングを調整してください。"</string>
+</resources>

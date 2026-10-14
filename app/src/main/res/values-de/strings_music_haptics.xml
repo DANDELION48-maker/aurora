@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"Musik-Haptik"</string>
+    <string name="music_haptics_summary">"Spür den Beat: Dein Handy tippt beim Hören im Takt von Drums und Bass"</string>
+    <string name="music_haptics_detail">"Detail"</string>
+    <string name="music_haptics_detail_beat">"Beat"</string>
+    <string name="music_haptics_detail_rhythm">"Rhythmus"</string>
+    <string name="music_haptics_detail_full">"Detailliert"</string>
+    <string name="music_haptics_intensity">"Intensität"</string>
+    <string name="music_haptics_texture">"Bass-Textur"</string>
+    <string name="music_haptics_texture_summary">"Ein sanftes Grollen unter gehaltenen Basstönen"</string>
+    <string name="music_haptics_timing">"Timing"</string>
+    <string name="music_haptics_timing_value">"%1$s ms"</string>
+    <string name="music_haptics_note">"Funktioniert bei Musik, die auf diesem Handy läuft, und folgt der Medien-Vibrationsstärke deines Handys. Verschiebe das Timing, wenn sich die Impulse zu früh oder zu spät anfühlen, etwa über Bluetooth."</string>
+</resources>

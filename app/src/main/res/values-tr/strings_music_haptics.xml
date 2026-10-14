@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"Müzik titreşimleri"</string>
+    <string name="music_haptics_summary">"Ritmi hissedin: dinlerken telefon davul ve basla birlikte titreşir"</string>
+    <string name="music_haptics_detail">"Ayrıntı"</string>
+    <string name="music_haptics_detail_beat">"Vuruş"</string>
+    <string name="music_haptics_detail_rhythm">"Ritim"</string>
+    <string name="music_haptics_detail_full">"Ayrıntılı"</string>
+    <string name="music_haptics_intensity">"Yoğunluk"</string>
+    <string name="music_haptics_texture">"Bas dokusu"</string>
+    <string name="music_haptics_texture_summary">"Uzun bas notalarının altında yumuşak bir gürleme"</string>
+    <string name="music_haptics_timing">"Zamanlama"</string>
+    <string name="music_haptics_timing_value">"%1$s ms"</string>
+    <string name="music_haptics_note">"Bu telefonda çalan müzikte çalışır ve telefonun medya titreşimi gücünü izler. Titreşimler erken ya da geç geliyorsa, örneğin Bluetooth\'ta, zamanlamayı kaydırın."</string>
+</resources>

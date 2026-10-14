@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"Music Haptics"</string>
+    <string name="music_haptics_summary">"Feel the beat: your phone taps along with the drums and bass as you listen"</string>
+    <string name="music_haptics_detail">"Detail"</string>
+    <string name="music_haptics_detail_beat">"Beat"</string>
+    <string name="music_haptics_detail_rhythm">"Rhythm"</string>
+    <string name="music_haptics_detail_full">"Detailed"</string>
+    <string name="music_haptics_intensity">"Intensity"</string>
+    <string name="music_haptics_texture">"Bass Texture"</string>
+    <string name="music_haptics_texture_summary">"A soft rumble under held bass notes"</string>
+    <string name="music_haptics_timing">"Timing"</string>
+    <string name="music_haptics_timing_value">"%1$s ms"</string>
+    <string name="music_haptics_note">"Works for music playing on this phone and follows your phone\'s media vibration strength. Shift the timing if taps feel early or late, for example over Bluetooth."</string>
+</resources>

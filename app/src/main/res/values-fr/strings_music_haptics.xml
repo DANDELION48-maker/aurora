@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"Haptique musicale"</string>
+    <string name="music_haptics_summary">"Ressentez le rythme : le téléphone vibre au son de la batterie et de la basse pendant l\'écoute"</string>
+    <string name="music_haptics_detail">"Détail"</string>
+    <string name="music_haptics_detail_beat">"Pulsation"</string>
+    <string name="music_haptics_detail_rhythm">"Rythme"</string>
+    <string name="music_haptics_detail_full">"Détaillé"</string>
+    <string name="music_haptics_intensity">"Intensité"</string>
+    <string name="music_haptics_texture">"Texture des basses"</string>
+    <string name="music_haptics_texture_summary">"Un léger grondement sous les notes de basse tenues"</string>
+    <string name="music_haptics_timing">"Synchronisation"</string>
+    <string name="music_haptics_timing_value">"%1$s ms"</string>
+    <string name="music_haptics_note">"Fonctionne avec la musique lue sur ce téléphone et suit l\'intensité des vibrations multimédia du téléphone. Ajustez la synchronisation si les vibrations arrivent trop tôt ou trop tard, par exemple en Bluetooth."</string>
+</resources>

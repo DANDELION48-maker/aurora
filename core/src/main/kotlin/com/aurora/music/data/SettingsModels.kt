@@ -294,6 +294,14 @@ data class AlarmPrefs(
     val minute: Int = 0,
 )
 
+data class MusicHapticsPrefs(
+    val enabled: Boolean = false,
+    val intensity: Float = 0.8f,
+    val detail: Int = 1,
+    val texture: Boolean = true,
+    val offsetMs: Int = 0,
+)
+
 data class GesturePrefs(
     val swipeArtwork: Boolean = true,
     val swipeDownDismiss: Boolean = true,

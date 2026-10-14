@@ -10,12 +10,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Radio
 import androidx.compose.material.icons.filled.Swipe
 import androidx.compose.material.icons.filled.SwipeDown
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.Vibration
+import androidx.compose.material.icons.filled.Waves
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +33,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aurora.music.AuroraApplication
 import com.aurora.music.data.GesturePrefs
+import com.aurora.music.data.MusicHapticsPrefs
+import com.aurora.music.playback.MusicHaptics
+import java.text.NumberFormat
+import kotlin.math.roundToInt
 import com.aurora.music.data.PlaybackPrefs
 import kotlinx.coroutines.launch
 
@@ -37,6 +46,9 @@ fun GesturesSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
     val store = container.settingsStore
     val gestures by store.gesturePrefs.collectAsStateWithLifecycle(initialValue = GesturePrefs())
     val haptics by store.haptics.collectAsStateWithLifecycle(initialValue = false)
+    val music by store.musicHapticsPrefs.collectAsStateWithLifecycle(initialValue = MusicHapticsPrefs())
+    val context = LocalContext.current
+    val support = remember { MusicHaptics.support(context) }
     val privateSession by store.privateSession.collectAsStateWithLifecycle(initialValue = false)
     val playback by store.playbackPrefs.collectAsStateWithLifecycle(initialValue = PlaybackPrefs())
     var notifications by remember { mutableStateOf(true) }
@@ -60,7 +72,38 @@ fun GesturesSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
             item {
                 SettingsGroup {
                     SettingsSwitchRow(Icons.Filled.Vibration, appString(R.string.text_haptic_feedback_b0baa9), appString(R.string.text_subtle_vibration_on_play_skip_navigation_d6940c), haptics) { v -> scope.launch { store.setHaptics(v) } }
+                    if (support.available) {
+                        SettingsRowDivider()
+                        SettingsSwitchRow(Icons.Filled.MusicNote, appString(R.string.music_haptics_title), appString(R.string.music_haptics_summary), music.enabled) { v ->
+                            scope.launch { store.setMusicHaptics(v) }
+                        }
+                        if (music.enabled) {
+                            SettingsRowDivider()
+                            SegmentedRow(appString(R.string.music_haptics_detail), listOf(appString(R.string.music_haptics_detail_beat),
+                                appString(R.string.music_haptics_detail_rhythm), appString(R.string.music_haptics_detail_full)), music.detail) { i ->
+                                scope.launch { store.setMusicHapticsDetail(i) }
+                            }
+                            SettingsSliderRow(appString(R.string.music_haptics_intensity), NumberFormat.getPercentInstance().format(music.intensity),
+                                music.intensity, 0.2f..1f) { v -> scope.launch { store.setMusicHapticsIntensity(v) } }
+                            if (support.texture) {
+                                SettingsRowDivider()
+                                SettingsSwitchRow(Icons.Filled.Waves, appString(R.string.music_haptics_texture), appString(R.string.music_haptics_texture_summary), music.texture) { v ->
+                                    scope.launch { store.setMusicHapticsTexture(v) }
+                                }
+                            }
+                            SettingsRowDivider()
+                            SettingsSliderRow(appString(R.string.music_haptics_timing),
+                                appString(R.string.music_haptics_timing_value, if (music.offsetMs > 0) "+${music.offsetMs}" else music.offsetMs.toString()),
+                                music.offsetMs.toFloat(), -150f..150f, steps = 29) { v ->
+                                scope.launch { store.setMusicHapticsOffset((v / 10).roundToInt() * 10) }
+                            }
+                        }
+                    }
                 }
+            }
+            if (support.available && music.enabled) item {
+                Text(appString(R.string.music_haptics_note), Modifier.padding(horizontal = 20.dp, vertical = 6.dp),
+                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             item { SettingsSectionTitle(appString(R.string.text_behaviour_171ca0)) }

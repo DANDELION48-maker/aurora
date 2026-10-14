@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"Haptik musik"</string>
+    <string name="music_haptics_summary">"Rasakan ketukannya: ponsel bergetar mengikuti drum dan bass saat Anda mendengarkan"</string>
+    <string name="music_haptics_detail">"Detail"</string>
+    <string name="music_haptics_detail_beat">"Ketukan"</string>
+    <string name="music_haptics_detail_rhythm">"Ritme"</string>
+    <string name="music_haptics_detail_full">"Mendetail"</string>
+    <string name="music_haptics_intensity">"Intensitas"</string>
+    <string name="music_haptics_texture">"Tekstur bass"</string>
+    <string name="music_haptics_texture_summary">"Gemuruh lembut di bawah nada bass yang panjang"</string>
+    <string name="music_haptics_timing">"Waktu"</string>
+    <string name="music_haptics_timing_value">"%1$s ms"</string>
+    <string name="music_haptics_note">"Berfungsi untuk musik yang diputar di ponsel ini dan mengikuti kekuatan getaran media ponsel. Geser waktu jika getaran terasa terlalu cepat atau terlambat, misalnya lewat Bluetooth."</string>
+</resources>

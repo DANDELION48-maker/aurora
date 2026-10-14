@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"⁧میوزک ہیپٹکس⁩"</string>
+    <string name="music_haptics_summary">"⁧بیٹ محسوس کریں: سنتے وقت فون ڈرم اور بیس کے ساتھ تھپتھپاتا ہے⁩"</string>
+    <string name="music_haptics_detail">"⁧تفصیل⁩"</string>
+    <string name="music_haptics_detail_beat">"⁧بیٹ⁩"</string>
+    <string name="music_haptics_detail_rhythm">"⁧ردھم⁩"</string>
+    <string name="music_haptics_detail_full">"⁧تفصیلی⁩"</string>
+    <string name="music_haptics_intensity">"⁧شدت⁩"</string>
+    <string name="music_haptics_texture">"⁧بیس ٹیکسچر⁩"</string>
+    <string name="music_haptics_texture_summary">"⁧لمبے بیس نوٹس کے نیچے ہلکی گڑگڑاہٹ⁩"</string>
+    <string name="music_haptics_timing">"⁧ٹائمنگ⁩"</string>
+    <string name="music_haptics_timing_value">"%1$s ms"</string>
+    <string name="music_haptics_note">"⁧اس فون پر چلنے والی موسیقی کے لیے کام کرتا ہے اور فون کی میڈیا وائبریشن کی شدت کی پیروی کرتا ہے۔ اگر ٹیپس جلدی یا دیر سے محسوس ہوں، مثلاً بلوٹوتھ پر، تو ٹائمنگ بدلیں۔⁩"</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"音乐触感"</string>
+    <string name="music_haptics_summary">"感受节拍：聆听时手机会随鼓点和贝斯振动"</string>
+    <string name="music_haptics_detail">"细节"</string>
+    <string name="music_haptics_detail_beat">"节拍"</string>
+    <string name="music_haptics_detail_rhythm">"节奏"</string>
+    <string name="music_haptics_detail_full">"详细"</string>
+    <string name="music_haptics_intensity">"强度"</string>
+    <string name="music_haptics_texture">"低音质感"</string>
+    <string name="music_haptics_texture_summary">"在持续的低音下带来轻柔的震动"</string>
+    <string name="music_haptics_timing">"时机"</string>
+    <string name="music_haptics_timing_value">"%1$s 毫秒"</string>
+    <string name="music_haptics_note">"适用于在此手机上播放的音乐，并遵循手机的媒体振动强度。如果振动感觉提前或滞后（例如使用蓝牙时），请调整时机。"</string>
+</resources>

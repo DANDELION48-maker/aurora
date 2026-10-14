@@ -404,6 +404,7 @@ fun PlayerScreen(
                                 onClick = { showMenu = false; onOpenVisualizer() },
                                 leadingIcon = { Icon(Icons.Filled.GraphicEq, null) },
                             )
+                            MusicHapticsMenuItem()
                             DropdownMenuItem(
                                 text = { Text(appString(R.string.text_sleep_timer_e90613)) },
                                 onClick = { showMenu = false; onOpenSleep() },

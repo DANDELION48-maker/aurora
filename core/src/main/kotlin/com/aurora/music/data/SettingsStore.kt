@@ -992,6 +992,15 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         )
     }.distinctUntilChanged()
     val haptics: Flow<Boolean> = dataStore.data.map { it[Keys.HAPTICS] ?: false }.distinctUntilChanged()
+    val musicHapticsPrefs: Flow<MusicHapticsPrefs> = dataStore.data.map { p ->
+        MusicHapticsPrefs(
+            enabled = p[Keys.MUSIC_HAPTICS] ?: false,
+            intensity = (p[Keys.MUSIC_HAPTICS_INTENSITY] ?: 0.8f).coerceIn(0.2f, 1f),
+            detail = (p[Keys.MUSIC_HAPTICS_DETAIL] ?: 1).coerceIn(0, 2),
+            texture = p[Keys.MUSIC_HAPTICS_TEXTURE] ?: true,
+            offsetMs = (p[Keys.MUSIC_HAPTICS_OFFSET_MS] ?: 0).coerceIn(-150, 150),
+        )
+    }.distinctUntilChanged()
 
     val alarmPrefs: Flow<AlarmPrefs> = dataStore.data.map { p ->
         AlarmPrefs(
@@ -1286,6 +1295,11 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     suspend fun setGestureSwipeDismiss(v: Boolean) = dataStore.edit { it[Keys.GESTURE_SWIPE_DISMISS] = v }
     suspend fun setGestureDoubleTap(v: Boolean) = dataStore.edit { it[Keys.GESTURE_DOUBLE_TAP] = v }
     suspend fun setHaptics(v: Boolean) = dataStore.edit { it[Keys.HAPTICS] = v }
+    suspend fun setMusicHaptics(v: Boolean) = dataStore.edit { it[Keys.MUSIC_HAPTICS] = v }
+    suspend fun setMusicHapticsIntensity(v: Float) = dataStore.edit { it[Keys.MUSIC_HAPTICS_INTENSITY] = v.coerceIn(0.2f, 1f) }
+    suspend fun setMusicHapticsDetail(v: Int) = dataStore.edit { it[Keys.MUSIC_HAPTICS_DETAIL] = v.coerceIn(0, 2) }
+    suspend fun setMusicHapticsTexture(v: Boolean) = dataStore.edit { it[Keys.MUSIC_HAPTICS_TEXTURE] = v }
+    suspend fun setMusicHapticsOffset(ms: Int) = dataStore.edit { it[Keys.MUSIC_HAPTICS_OFFSET_MS] = ms.coerceIn(-150, 150) }
     suspend fun setAlarm(enabled: Boolean, hour: Int, minute: Int) = dataStore.edit {
         it[Keys.ALARM_ENABLED] = enabled; it[Keys.ALARM_HOUR] = hour; it[Keys.ALARM_MINUTE] = minute
     }

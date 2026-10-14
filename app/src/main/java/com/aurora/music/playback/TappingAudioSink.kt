@@ -14,6 +14,7 @@ class TappingAudioSink(
     delegate: AudioSink,
     private val controller: VisualizerController,
     private val meter: PcmLevelMeter = PcmLevelMeter(),
+    private val haptics: MusicHaptics? = null,
     private val onVolume: (Float) -> Unit = {},
     private val onConfigured: (Format?) -> Unit = {},
 ) : ForwardingAudioSink(delegate) {
@@ -43,6 +44,8 @@ class TappingAudioSink(
         super.reset()
         meter.reset()
         pendingBuffer = null
+        haptics?.flush()
+        haptics?.playing(false)
         onConfigured(null)
     }
 
@@ -50,6 +53,23 @@ class TappingAudioSink(
         super.flush()
         meter.reset()
         pendingBuffer = null
+        haptics?.flush()
+    }
+
+    override fun play() {
+        super.play()
+        haptics?.playing(true)
+    }
+
+    override fun pause() {
+        super.pause()
+        haptics?.playing(false)
+    }
+
+    override fun getCurrentPositionUs(sourceEnded: Boolean): Long {
+        val position = super.getCurrentPositionUs(sourceEnded)
+        if (haptics != null && position != AudioSink.CURRENT_POSITION_NOT_SET) haptics.position(position, playbackParameters.speed)
+        return position
     }
 
     override fun handleBuffer(
@@ -70,8 +90,10 @@ class TappingAudioSink(
         }
         val offsetUs = if (bytesPerSample > 0 && channelCount > 0 && sampleRate > 0)
             (start - pendingStart) / (bytesPerSample * channelCount) * 1_000_000L / sampleRate else 0L
-        meter.observe(buffer, start, end, if (presentationTimeUs == C.TIME_UNSET) C.TIME_UNSET else presentationTimeUs + offsetUs)
+        val startUs = if (presentationTimeUs == C.TIME_UNSET) C.TIME_UNSET else presentationTimeUs + offsetUs
+        meter.observe(buffer, start, end, startUs)
         if (end > start && controller.active) controller.pushPcm(buffer, encoding, channelCount, sampleRate, start, end)
+        if (end > start) haptics?.pcm(buffer, encoding, channelCount, sampleRate, start, end, startUs)
         if (consumed) pendingBuffer = null
         return consumed
     }

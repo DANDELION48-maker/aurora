@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"Háptica musical"</string>
+    <string name="music_haptics_summary">"Sinta a batida: o telefone vibra junto com a bateria e o baixo enquanto você ouve"</string>
+    <string name="music_haptics_detail">"Detalhe"</string>
+    <string name="music_haptics_detail_beat">"Batida"</string>
+    <string name="music_haptics_detail_rhythm">"Ritmo"</string>
+    <string name="music_haptics_detail_full">"Detalhado"</string>
+    <string name="music_haptics_intensity">"Intensidade"</string>
+    <string name="music_haptics_texture">"Textura de graves"</string>
+    <string name="music_haptics_texture_summary">"Um leve ronco sob notas graves sustentadas"</string>
+    <string name="music_haptics_timing">"Sincronia"</string>
+    <string name="music_haptics_timing_value">"%1$s ms"</string>
+    <string name="music_haptics_note">"Funciona com músicas tocando neste telefone e segue a intensidade de vibração de mídia do telefone. Ajuste a sincronia se as vibrações parecerem adiantadas ou atrasadas, por exemplo no Bluetooth."</string>
+</resources>

@@ -93,6 +93,7 @@ class PlaybackService : MediaLibraryService() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     // periodic work only runs while something is audible or fading
     private val engaged = MutableStateFlow(false)
+    private val musicHaptics by lazy { MusicHaptics(this) }
     private var lastNowPlaying: NowPlaying? = null
     private val wakeModes = java.util.IdentityHashMap<ExoPlayer, Int>()
     private val volumeReceiver = object : android.content.BroadcastReceiver() {
@@ -310,7 +311,7 @@ class PlaybackService : MediaLibraryService() {
                         super.configure(inputFormat, specifiedBufferSize, outputChannels)
                     }
                 }
-                return TappingAudioSink(exclusiveSink, container.visualizer, initialEvidence.beforeMeter,
+                return TappingAudioSink(exclusiveSink, container.visualizer, initialEvidence.beforeMeter, musicHaptics,
                     onVolume = { initialEvidence.downstreamGain = it }) { initialEvidence.decoded = it }
             }
         }
@@ -598,6 +599,9 @@ class PlaybackService : MediaLibraryService() {
             container.preferredAudioDeviceId.collect { id -> applyPreferredDevice(id) }
         }
         scope.launch {
+            container.settingsStore.musicHapticsPrefs.collect { musicHaptics.setPrefs(it) }
+        }
+        scope.launch {
             container.settingsStore.privateSession.collect { privateSession ->
                 listeningHistory.allowed = !privateSession
                 listeningDetails.privateSession = privateSession
@@ -660,7 +664,10 @@ class PlaybackService : MediaLibraryService() {
         listeningDetails.track(active, nativeUsb)
     }
 
-    private fun refreshEngaged(): Boolean = playbackEngaged().also { engaged.value = it }
+    private fun refreshEngaged(): Boolean = playbackEngaged().also {
+        engaged.value = it
+        musicHaptics.setEngaged(it && ::player.isInitialized && mediaSession?.player === player && player.playWhenReady)
+    }
 
     private fun playbackEngaged(): Boolean {
         if (!::player.isInitialized) return false
@@ -1963,6 +1970,7 @@ class PlaybackService : MediaLibraryService() {
     }
 
     override fun onDestroy() {
+        musicHaptics.close()
         playbackReporting.close()
         listeningHistory.finish()
         listeningDetails.finish()

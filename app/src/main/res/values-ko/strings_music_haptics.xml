@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_haptics_title">"음악 햅틱"</string>
+    <string name="music_haptics_summary">"비트를 느껴 보세요. 듣는 동안 드럼과 베이스에 맞춰 휴대전화가 진동합니다"</string>
+    <string name="music_haptics_detail">"세부 수준"</string>
+    <string name="music_haptics_detail_beat">"비트"</string>
+    <string name="music_haptics_detail_rhythm">"리듬"</string>
+    <string name="music_haptics_detail_full">"세부"</string>
+    <string name="music_haptics_intensity">"강도"</string>
+    <string name="music_haptics_texture">"베이스 질감"</string>
+    <string name="music_haptics_texture_summary">"길게 이어지는 베이스 음에 부드러운 울림"</string>
+    <string name="music_haptics_timing">"타이밍"</string>
+    <string name="music_haptics_timing_value">"%1$s ms"</string>
+    <string name="music_haptics_note">"이 휴대전화에서 재생하는 음악에 작동하며 휴대전화의 미디어 진동 세기를 따릅니다. 블루투스 등에서 진동이 이르거나 늦게 느껴지면 타이밍을 조절하세요."</string>
+</resources>
