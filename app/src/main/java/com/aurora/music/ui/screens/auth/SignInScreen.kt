@@ -102,6 +102,7 @@ fun SignInScreen(
     onAuthUrlOpened: () -> Unit = {},
     onLocal: () -> Unit = {},
     onConnectSpotify: (String) -> Unit = {},
+    onConnectSpotifyWeb: (String, String) -> Unit = { _, _ -> },
     onConnectYouTubeMusic: (String) -> Unit = {},
     savedSessions: List<com.aurora.music.data.Session> = emptyList(),
     onUseSaved: (com.aurora.music.data.Session) -> Unit = {},
@@ -175,7 +176,7 @@ fun SignInScreen(
                     AuthStep.TYPE -> TypeStep(onSelectType, requestLocal, permDenied, savedSessions, onUseSaved, !state.loading)
                     AuthStep.SERVER -> ServerStep(state, onScheme, onHost, canContinueServer, onContinueServer)
                     AuthStep.CREDENTIALS -> CredentialsStep(state, onUsername, onPassword, onBack, canSubmit, onSignIn)
-                    AuthStep.SPOTIFY -> SpotifyStep(state, onConnectSpotify)
+                    AuthStep.SPOTIFY -> SpotifyWebStep(state, onConnectSpotifyWeb) { SpotifyStep(state, onConnectSpotify) }
                     AuthStep.YOUTUBE_MUSIC -> YouTubeMusicStep(state, onConnectYouTubeMusic)
                 }
                 if (state.loading) Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {

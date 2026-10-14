@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="spotify_web_intro">Log in met je Spotify-account. Aurora leest je bibliotheek via de webplayer van Spotify en speelt je muziek af via YouTube, dus je hebt geen ontwikkelaarsapp nodig.</string>
+    <string name="spotify_web_login">Inloggen met Spotify</string>
+    <string name="spotify_web_login_note">Inloggen met Google, Apple of Facebook werkt hier mogelijk niet. Gebruik in plaats daarvan je e-mailadres en wachtwoord of een inlogcode.</string>
+    <string name="spotify_web_browser_hint">Log in bij Spotify. Aurora maakt verbinding zodra de webplayer opent.</string>
+    <string name="spotify_web_failed">Je Spotify-account kon niet worden verbonden. Probeer opnieuw in te loggen.</string>
+    <string name="spotify_web_unsupported">Inloggen bij Spotify vereist een nieuwere Android System WebView. Werk deze bij via de Play Store en probeer het opnieuw.</string>
+</resources>

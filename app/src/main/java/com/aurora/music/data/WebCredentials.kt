@@ -13,17 +13,17 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 /** Saved accounts contain only an opaque reference; browser sessions stay encrypted outside backups. */
-class YouTubeMusicCredentials(context: Context) {
-    private val directory = File(context.noBackupFilesDir, "youtube-music")
+class WebCredentials(context: Context, name: String, private val alias: String) {
+    private val directory = File(context.noBackupFilesDir, name)
     private fun file(id: String): File {
         require(id.matches(Regex("[0-9a-f-]{36}")))
         return File(directory, id)
     }
     @Synchronized private fun key(): SecretKey {
         val store = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
-        (store.getKey(ALIAS, null) as? SecretKey)?.let { return it }
+        (store.getKey(alias, null) as? SecretKey)?.let { return it }
         return KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore").apply {
-            init(KeyGenParameterSpec.Builder(ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+            init(KeyGenParameterSpec.Builder(alias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM).setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE).build())
         }.generateKey()
     }
@@ -48,5 +48,9 @@ class YouTubeMusicCredentials(context: Context) {
         String(cipher.doFinal(bytes.copyOfRange(12, bytes.size)), Charsets.UTF_8)
     }.getOrDefault("")
     fun remove(id: String) { runCatching { AtomicFile(file(id)).delete() } }
-    private companion object { const val ALIAS = "aurora.youtube-music.account" }
+
+    companion object {
+        fun youtubeMusic(context: Context) = WebCredentials(context, "youtube-music", "aurora.youtube-music.account")
+        fun spotify(context: Context) = WebCredentials(context, "spotify-web", "aurora.spotify-web.account")
+    }
 }

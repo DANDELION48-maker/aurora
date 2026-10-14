@@ -5,7 +5,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.test.platform.app.InstrumentationRegistry
 import com.aurora.music.AuroraApplication
-import com.aurora.music.data.YouTubeMusicCredentials
+import com.aurora.music.data.WebCredentials
 import com.aurora.music.data.remote.YouTubeMusicParser
 import org.junit.After
 import org.junit.Assert.*
@@ -29,12 +29,12 @@ class YouTubeMusicPlaybackDeviceTest {
     @After fun cleanup() = helper.removeFixturesAndFinishActivity()
 
     @Test fun googleSessionIsEncryptedSurvivesReopenAndCanBeForgotten() {
-        val store = YouTubeMusicCredentials(context)
+        val store = WebCredentials.youtubeMusic(context)
         val account = com.aurora.music.data.remote.YouTubeMusicWebSession(
             "SAPISID=aurora-fixture-secret", "fixture-visitor", "fixture-channel", "1").encode()
         val reference = store.save(account)
         try {
-            assertEquals(account, YouTubeMusicCredentials(context).read(reference))
+            assertEquals(account, WebCredentials.youtubeMusic(context).read(reference))
             val disk = File(context.noBackupFilesDir, "youtube-music/$reference").readBytes().toString(Charsets.ISO_8859_1)
             assertFalse(disk.contains(account))
             store.remove(reference)

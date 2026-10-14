@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="spotify_web_intro">Spotify アカウントでログインします。Aurora は Spotify のウェブプレーヤー経由でライブラリを読み込み、音楽は YouTube 経由で再生するため、開発者アプリは不要です。</string>
+    <string name="spotify_web_login">Spotify でログイン</string>
+    <string name="spotify_web_login_note">Google、Apple、Facebook でのログインはここでは使えない場合があります。メールアドレスとパスワード、またはログインコードを使ってください。</string>
+    <string name="spotify_web_browser_hint">Spotify にログインしてください。ウェブプレーヤーが開くとすぐに Aurora が接続します。</string>
+    <string name="spotify_web_failed">Spotify アカウントに接続できませんでした。もう一度ログインしてください。</string>
+    <string name="spotify_web_unsupported">Spotify のログインには新しい Android System WebView が必要です。Play ストアで更新してからもう一度お試しください。</string>
+</resources>

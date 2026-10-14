@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="spotify_web_intro">\u2067سجّل الدخول بحساب Spotify. يقرأ Aurora مكتبتك عبر مشغّل الويب في Spotify ويشغّل موسيقاك عبر YouTube، لذا لا تحتاج إلى تطبيق مطوّر.\u2069</string>
+    <string name="spotify_web_login">\u2067تسجيل الدخول باستخدام Spotify\u2069</string>
+    <string name="spotify_web_login_note">\u2067قد لا يعمل تسجيل الدخول باستخدام Google أو Apple أو Facebook هنا. استخدم بريدك الإلكتروني وكلمة المرور أو رمز تسجيل الدخول بدلًا من ذلك.\u2069</string>
+    <string name="spotify_web_browser_hint">\u2067سجّل الدخول إلى Spotify. يتصل Aurora فور فتح مشغّل الويب.\u2069</string>
+    <string name="spotify_web_failed">\u2067تعذّر ربط حساب Spotify. حاول تسجيل الدخول مرة أخرى.\u2069</string>
+    <string name="spotify_web_unsupported">\u2067يتطلب تسجيل الدخول إلى Spotify إصدارًا أحدث من Android System WebView. حدّثه من متجر Play ثم حاول مرة أخرى.\u2069</string>
+</resources>

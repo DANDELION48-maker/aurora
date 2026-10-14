@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="spotify_web_intro">Melde dich mit deinem Spotify-Konto an. Aurora liest deine Mediathek über den Spotify-Webplayer und spielt deine Musik über YouTube ab, du brauchst also keine Entwickler-App.</string>
+    <string name="spotify_web_login">Mit Spotify anmelden</string>
+    <string name="spotify_web_login_note">Die Anmeldung mit Google, Apple oder Facebook funktioniert hier eventuell nicht. Nutze stattdessen E-Mail und Passwort oder einen Anmeldecode.</string>
+    <string name="spotify_web_browser_hint">Melde dich bei Spotify an. Aurora verbindet sich, sobald der Webplayer geöffnet ist.</string>
+    <string name="spotify_web_failed">Dein Spotify-Konto konnte nicht verbunden werden. Melde dich erneut an.</string>
+    <string name="spotify_web_unsupported">Für die Spotify-Anmeldung wird ein neueres Android System WebView benötigt. Aktualisiere es im Play Store und versuche es erneut.</string>
+</resources>

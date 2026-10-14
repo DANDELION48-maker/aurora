@@ -27,6 +27,7 @@ import com.aurora.music.data.remote.SubsonicClient
 import com.aurora.music.model.Song
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -194,7 +195,9 @@ class AppContainer(context: Context) {
             }
             ServerType.SUBSONIC -> SubsonicBackend(SubsonicClient(session), { maxBitrate }, localize)
             ServerType.SPOTIFY -> SpotifyBackend(
-                SpotifyClient(session, spotifyClientIdValue, onTokenRefreshed = { tok -> scope.launch { settingsStore.updateToken(tok) } }),
+                SpotifyClient(session, spotifyClientIdValue, onTokenRefreshed = { tok -> scope.launch { settingsStore.updateToken(tok) } },
+                    tokenSource = if (session.salt != SpotifyClient.WEB_PLAYER) null
+                        else SpotifyWebTokenSource(appContext, session.token) { spotifyCredentials.read(session.clientToken) }),
                 { maxBitrate }, localize,
             )
             ServerType.LOCAL -> LocalBackend(localLibrary, localStore, session)
@@ -270,7 +273,8 @@ class AppContainer(context: Context) {
     val discord = DiscordRpc(appContext, settingsStore, scope)
 
     val youtubeResolver by lazy { com.aurora.music.playback.YoutubeResolver(http) }
-    val youtubeMusicCredentials = YouTubeMusicCredentials(appContext)
+    val youtubeMusicCredentials = WebCredentials.youtubeMusic(appContext)
+    val spotifyCredentials = WebCredentials.spotify(appContext)
     val youTubeDownloader by lazy {
         YouTubeDownloader(appContext, youtubeResolver, { settingsStore.youTubeDownloadPrefs.first() }, http) {
             settingsStore.savedSessions.first().firstOrNull { it.type == ServerType.YOUTUBE_MUSIC }?.let { session ->
@@ -559,6 +563,10 @@ class AppContainer(context: Context) {
     suspend fun forgetSavedSession(session: Session) {
         settingsStore.removeSavedSession(session)
         if (session.type == ServerType.YOUTUBE_MUSIC) youtubeMusicCredentials.remove(session.token)
+        if (session.type == ServerType.SPOTIFY && session.salt == SpotifyClient.WEB_PLAYER) {
+            spotifyCredentials.remove(session.clientToken)
+            withContext(Dispatchers.Main) { SpotifyWebPlayer.clearCookies() }
+        }
         if (backend?.session?.let { accountKey(it) } == accountKey(session)) signOut()
     }
 

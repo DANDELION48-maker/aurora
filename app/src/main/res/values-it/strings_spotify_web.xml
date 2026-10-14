@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="spotify_web_intro">Accedi con il tuo account Spotify. Aurora legge la tua libreria tramite il web player di Spotify e riproduce la tua musica tramite YouTube, quindi non ti serve un\'app sviluppatore.</string>
+    <string name="spotify_web_login">Accedi con Spotify</string>
+    <string name="spotify_web_login_note">L\'accesso con Google, Apple o Facebook potrebbe non funzionare qui. Usa invece email e password o un codice di accesso.</string>
+    <string name="spotify_web_browser_hint">Accedi a Spotify. Aurora si collega non appena si apre il web player.</string>
+    <string name="spotify_web_failed">Impossibile collegare il tuo account Spotify. Prova ad accedere di nuovo.</string>
+    <string name="spotify_web_unsupported">L\'accesso a Spotify richiede una versione più recente di Android System WebView. Aggiornala dal Play Store e riprova.</string>
+</resources>

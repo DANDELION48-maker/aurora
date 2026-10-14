@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="spotify_web_intro">Masuk dengan akun Spotify Anda. Aurora membaca koleksi Anda melalui pemutar web Spotify dan memutar musik melalui YouTube, jadi Anda tidak memerlukan aplikasi developer.</string>
+    <string name="spotify_web_login">Masuk dengan Spotify</string>
+    <string name="spotify_web_login_note">Masuk dengan Google, Apple, atau Facebook mungkin tidak berfungsi di sini. Gunakan email dan sandi atau kode masuk.</string>
+    <string name="spotify_web_browser_hint">Masuk ke Spotify. Aurora langsung terhubung begitu pemutar web terbuka.</string>
+    <string name="spotify_web_failed">Tidak dapat menghubungkan akun Spotify Anda. Coba masuk lagi.</string>
+    <string name="spotify_web_unsupported">Masuk ke Spotify memerlukan Android System WebView yang lebih baru. Perbarui dari Play Store, lalu coba lagi.</string>
+</resources>

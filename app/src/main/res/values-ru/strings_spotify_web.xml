@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="spotify_web_intro">Войдите в свой аккаунт Spotify. Aurora читает вашу медиатеку через веб-плеер Spotify и воспроизводит музыку через YouTube, поэтому приложение разработчика не нужно.</string>
+    <string name="spotify_web_login">Войти через Spotify</string>
+    <string name="spotify_web_login_note">Вход через Google, Apple или Facebook здесь может не работать. Используйте электронную почту и пароль или код входа.</string>
+    <string name="spotify_web_browser_hint">Войдите в Spotify. Aurora подключится, как только откроется веб-плеер.</string>
+    <string name="spotify_web_failed">Не удалось подключить аккаунт Spotify. Попробуйте войти ещё раз.</string>
+    <string name="spotify_web_unsupported">Для входа в Spotify нужна более новая версия Android System WebView. Обновите её в Play Маркете и попробуйте снова.</string>
+</resources>
