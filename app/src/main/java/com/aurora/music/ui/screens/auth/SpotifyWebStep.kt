@@ -1,6 +1,5 @@
 package com.aurora.music.ui.screens.auth
 
-import android.annotation.SuppressLint
 import android.view.ViewGroup
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -29,23 +28,30 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.aurora.music.AuroraApplication
 import com.aurora.music.R
+import com.aurora.music.data.SpotifyPage
+import com.aurora.music.data.SpotifyWebBackend
 import com.aurora.music.data.SpotifyWebPlayer
+import com.aurora.music.data.SpotifyWebProfile
 import com.aurora.music.localization.appString
 import com.aurora.music.viewmodel.AuthUiState
+import kotlinx.coroutines.launch
 
 // flip to bring back the bring-your-own developer app oauth sign-in
 internal const val SPOTIFY_OAUTH_VISIBLE = false
 
 @Composable
-internal fun SpotifyWebStep(state: AuthUiState, onConnect: (token: String, cookie: String) -> Unit, oauth: @Composable () -> Unit) {
+internal fun SpotifyWebStep(state: AuthUiState, onConnect: (cookie: String, profile: SpotifyWebProfile?) -> Unit, oauth: @Composable () -> Unit) {
     var browserOpen by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(appString(R.string.spotify_web_intro), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -56,23 +62,25 @@ internal fun SpotifyWebStep(state: AuthUiState, onConnect: (token: String, cooki
         Text(appString(R.string.spotify_web_login_note), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         if (SPOTIFY_OAUTH_VISIBLE) oauth()
     }
-    if (browserOpen) SpotifyLoginBrowser(onClose = { browserOpen = false }) { token, cookie ->
+    if (browserOpen) SpotifyLoginBrowser(onClose = { browserOpen = false }) { cookie, profile ->
         browserOpen = false
-        onConnect(token, cookie)
+        onConnect(cookie, profile)
     }
 }
 
-@SuppressLint("SetJavaScriptEnabled")
 @Composable
-private fun SpotifyLoginBrowser(onClose: () -> Unit, onCaptured: (String, String) -> Unit) {
-    var browser by remember { mutableStateOf<WebView?>(null) }
+private fun SpotifyLoginBrowser(onClose: () -> Unit, onCaptured: (String, SpotifyWebProfile?) -> Unit) {
+    val operations = (LocalContext.current.applicationContext as AuroraApplication).container.spotifyWeb.operations
+    val scope = rememberCoroutineScope()
+    var page by remember { mutableStateOf<SpotifyPage?>(null) }
     var pageLoading by remember { mutableStateOf(true) }
+    var reading by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     val captured by rememberUpdatedState(onCaptured)
     DisposableEffect(Unit) {
         onDispose {
-            browser?.apply { stopLoading(); destroy() }
-            browser = null
+            page?.close()
+            page = null
         }
     }
     Dialog(onDismissRequest = onClose, properties = DialogProperties(usePlatformDefaultWidth = false,
@@ -81,11 +89,11 @@ private fun SpotifyLoginBrowser(onClose: () -> Unit, onCaptured: (String, String
             Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars).imePadding()) {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
                     TextButton(onClick = onClose) { Text(appString(R.string.text_close_bbfa77)) }
-                    TextButton(onClick = { error = null; browser?.reload() }) { Text(appString(R.string.text_reload_cce715)) }
+                    TextButton(onClick = { error = null; page?.view?.reload() }) { Text(appString(R.string.text_reload_cce715)) }
                 }
                 Text(appString(R.string.spotify_web_browser_hint), style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(horizontal = 16.dp))
-                if (pageLoading) LinearProgressIndicator(Modifier.fillMaxWidth().padding(top = 8.dp))
+                if (pageLoading || reading) LinearProgressIndicator(Modifier.fillMaxWidth().padding(top = 8.dp))
                 error?.let {
                     Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
@@ -94,15 +102,22 @@ private fun SpotifyLoginBrowser(onClose: () -> Unit, onCaptured: (String, String
                     WebView(context).apply {
                         // wrap_content would make the page resolve 100vh to 0 and render nothing
                         layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-                        browser = this
                         SpotifyWebPlayer.configure(this)
+                        val created = SpotifyPage(this, operations)
+                        page = created
                         var done = false
-                        val hooked = SpotifyWebPlayer.installHook(this) { token ->
-                            if (done || token.anonymous) return@installHook
-                            done = true
-                            android.util.Log.d("SpotifyWebDiag", "signed-in token captured, staying open for capture") // TEMP-DIAG
-                            if (false) captured(token.accessToken, SpotifyWebPlayer.sessionCookie()) // TEMP-DIAG
+                        // the profile comes from the signed-in page itself since the public api refuses web player tokens
+                        created.onSignedIn = {
+                            if (!done) {
+                                done = true
+                                reading = true
+                                scope.launch {
+                                    val profile = runCatching { SpotifyWebBackend.profile(created) }.getOrNull()
+                                    captured(SpotifyWebPlayer.sessionCookie(), profile)
+                                }
+                            }
                         }
+                        val hooked = created.install()
                         if (!hooked) error = appString(R.string.spotify_web_unsupported)
                         webViewClient = object : WebViewClient() {
                             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean =

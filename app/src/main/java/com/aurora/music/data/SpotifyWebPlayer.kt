@@ -6,63 +6,156 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.webkit.CookieManager
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
-import com.aurora.music.data.remote.SpotifyTokenSource
+import com.aurora.music.data.remote.SpotifyGraphql
+import com.aurora.music.data.remote.SpotifyGraphqlException
 import com.aurora.music.util.AppLog
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import org.json.JSONObject
-import kotlin.coroutines.resume
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 
-data class WebPlayerToken(val accessToken: String, val expiresAtMs: Long, val anonymous: Boolean)
-
-// spotify's own web player mints the token so its rotating request signing never has to be copied here
+// spotify only answers its private api from inside its own page, so aurora's queries run there
 object SpotifyWebPlayer {
     const val ORIGIN = "https://open.spotify.com"
     const val LOGIN_URL = "https://accounts.spotify.com/login?continue=https%3A%2F%2Fopen.spotify.com%2F"
-    private const val BRIDGE = "AuroraSpotify"
+    internal const val BRIDGE = "AuroraSpotify"
 
-    // only reads the web player's own token response, nothing else on the page
-    private val HOOK = """
+    // copies the headers the page sends with its own queries and runs aurora's with them; never reports tokens back
+    internal val SCRIPT = """
         (function () {
-          if (window.__auroraSpotify) return;
-          window.__auroraSpotify = true;
-          function report(body) {
+          if (window.__aurora) return;
+          var nativeFetch = window.fetch.bind(window);
+          var state = { headers: null, token: null, clientToken: null, ops: null, announced: false };
+          window.__aurora = state;
+          function post(message) { try { window.$BRIDGE.postMessage(JSON.stringify(message)); } catch (e) {} }
+          function urlOf(input) { return String(typeof input === 'string' ? input : (input && (input.url || input.href)) || input || ''); }
+          function isToken(url) { return url.indexOf('/api/token') >= 0 || url.indexOf('/get_access_token') >= 0; }
+          function lower(headers) {
+            var out = {};
+            if (!headers) return out;
+            if (Array.isArray(headers)) headers.forEach(function (p) { out[String(p[0]).toLowerCase()] = p[1]; });
+            else if (typeof headers.forEach === 'function') headers.forEach(function (v, k) { out[String(k).toLowerCase()] = v; });
+            else Object.keys(headers).forEach(function (k) { out[k.toLowerCase()] = headers[k]; });
+            return out;
+          }
+          function announce() {
+            if (state.announced) return;
+            state.announced = true;
+            post({ type: 'ready' });
+          }
+          function sawQuery(headers) {
+            if (!headers.authorization) return;
+            var picked = {};
+            ['authorization', 'client-token', 'app-platform', 'spotify-app-version'].forEach(function (k) { if (headers[k]) picked[k] = headers[k]; });
+            state.headers = picked;
+            announce();
+          }
+          // only used when the page never queries on its own, e.g. while it sits in the background
+          function fallback() {
+            if (state.headers || !state.token || !state.clientToken) return;
+            setTimeout(function () {
+              if (state.headers) return;
+              state.headers = { authorization: 'Bearer ' + state.token, 'client-token': state.clientToken, 'app-platform': 'WebPlayer' };
+              announce();
+            }, 4000);
+          }
+          function sawToken(body) {
             try {
-              var j = typeof body === 'string' ? JSON.parse(body) : body;
-              if (j && j.accessToken) $BRIDGE.postMessage(JSON.stringify({
-                accessToken: j.accessToken,
-                expiresAt: j.accessTokenExpirationTimestampMs || 0,
-                anonymous: !!j.isAnonymous
-              }));
+              var j = JSON.parse(body);
+              if (!j || !j.accessToken) return;
+              state.token = j.accessToken;
+              if (state.headers) state.headers.authorization = 'Bearer ' + j.accessToken;
+              post({ type: 'token', anonymous: !!j.isAnonymous });
+              fallback();
             } catch (e) {}
           }
-          function watched(url) {
-            url = String(url || '');
-            return url.indexOf('/api/token') >= 0 || url.indexOf('/get_access_token') >= 0;
-          }
-          var originalFetch = window.fetch;
-          if (originalFetch) window.fetch = function (input) {
-            var result = originalFetch.apply(this, arguments);
+          function sawClientToken(body) {
             try {
-              if (watched(typeof input === 'string' ? input : input && (input.url || input.href) || input)) {
-                result.then(function (r) { return r.clone().text(); }).then(report).catch(function () {});
+              var j = JSON.parse(body);
+              var token = j && j.granted_token && j.granted_token.token;
+              if (!token) return;
+              state.clientToken = token;
+              if (state.headers) state.headers['client-token'] = token;
+              fallback();
+            } catch (e) {}
+          }
+          window.fetch = function (input, init) {
+            var result = nativeFetch.apply(null, arguments);
+            try {
+              var url = urlOf(input);
+              if (url.indexOf('/pathfinder/') >= 0) {
+                var headers = lower(init && init.headers);
+                if (!headers.authorization && input && typeof input === 'object' && input.headers) headers = lower(input.headers);
+                sawQuery(headers);
+              } else if (isToken(url)) {
+                result.then(function (r) { return r.clone().text(); }).then(sawToken).catch(function () {});
+              } else if (url.indexOf('clienttoken.spotify.com') >= 0) {
+                result.then(function (r) { return r.clone().text(); }).then(sawClientToken).catch(function () {});
               }
             } catch (e) {}
             return result;
           };
           var open = XMLHttpRequest.prototype.open;
-          XMLHttpRequest.prototype.open = function (method, url) { this.__auroraUrl = url; return open.apply(this, arguments); };
+          var setHeader = XMLHttpRequest.prototype.setRequestHeader;
           var send = XMLHttpRequest.prototype.send;
+          XMLHttpRequest.prototype.open = function (method, url) { this.__auroraUrl = String(url); this.__auroraHeaders = {}; return open.apply(this, arguments); };
+          XMLHttpRequest.prototype.setRequestHeader = function (name, value) {
+            if (this.__auroraHeaders) this.__auroraHeaders[String(name).toLowerCase()] = value;
+            return setHeader.apply(this, arguments);
+          };
           XMLHttpRequest.prototype.send = function () {
-            if (watched(this.__auroraUrl)) this.addEventListener('load', function () { report(this.responseText); });
+            var url = this.__auroraUrl || '';
+            if (url.indexOf('/pathfinder/') >= 0) sawQuery(this.__auroraHeaders || {});
+            else if (isToken(url)) this.addEventListener('load', function () { sawToken(this.responseText); });
+            else if (url.indexOf('clienttoken.spotify.com') >= 0) this.addEventListener('load', function () { sawClientToken(this.responseText); });
             return send.apply(this, arguments);
+          };
+          // operation hashes live in the page's scripts, including ones the cut-down player never loads
+          function scan() {
+            var urls = [];
+            try {
+              var manifest = JSON.parse(atob(document.getElementById('__CDN_FILE_URLS__').textContent.trim()));
+              Object.keys(manifest).forEach(function (k) { if (/\.js$/.test(k)) urls.push(manifest[k]); });
+            } catch (e) {}
+            document.querySelectorAll('script[src]').forEach(function (s) { urls.push(s.src); });
+            urls = urls.filter(function (u, i) { return u && urls.indexOf(u) === i; });
+            var ops = {};
+            return Promise.all(urls.map(function (u) {
+              return nativeFetch(u).then(function (r) { return r.text(); }).then(function (text) {
+                for (var m of text.matchAll(/"([A-Za-z0-9_]+)","(?:query|mutation)","([0-9a-f]{64})"/g)) ops[m[1]] = m[2];
+              }).catch(function () {});
+            })).then(function () {
+              if (Object.keys(ops).length) post({ type: 'ops', ops: ops });
+              return ops;
+            });
+          }
+          function hashFor(operation, hash, rescan) {
+            if (hash) return Promise.resolve(hash);
+            if (rescan || !state.ops) state.ops = scan();
+            return state.ops.then(function (ops) { return ops[operation] || ''; });
+          }
+          state.query = function (id, operation, variables, hash, rescan) {
+            hashFor(operation, hash, rescan).then(function (h) {
+              if (!h) return { status: -1, body: '', hash: '' };
+              return nativeFetch('https://api-partner.spotify.com/pathfinder/v2/query', {
+                method: 'POST',
+                headers: Object.assign({ 'content-type': 'application/json;charset=UTF-8', accept: 'application/json' }, state.headers),
+                body: JSON.stringify({ variables: variables, operationName: operation, extensions: { persistedQuery: { version: 1, sha256Hash: h } } })
+              }).then(function (r) { return r.text().then(function (t) { return { status: r.status, body: t, hash: h }; }); });
+            }).then(function (r) { post({ type: 'result', id: id, status: r.status, body: r.body, hash: r.hash }); },
+              function (e) { post({ type: 'result', id: id, status: 0, body: String(e && e.message || e), hash: '' }); });
           };
         })();
     """.trimIndent()
@@ -70,6 +163,7 @@ object SpotifyWebPlayer {
     val supported: Boolean get() = WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER) &&
         WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)
 
+    // the phone's real browser identity; a faked desktop one fails spotify's captcha checks
     @SuppressLint("SetJavaScriptEnabled")
     fun configure(view: WebView) {
         view.settings.javaScriptEnabled = true
@@ -78,19 +172,7 @@ object SpotifyWebPlayer {
         view.settings.allowContentAccess = false
         view.settings.useWideViewPort = true
         view.settings.loadWithOverviewMode = true
-        // the phone's real browser identity; a faked desktop one fails spotify's captcha checks
         CookieManager.getInstance().setAcceptCookie(true)
-    }
-
-    // must run on the main thread before the first load
-    fun installHook(view: WebView, onToken: (WebPlayerToken) -> Unit): Boolean {
-        if (!supported) return false
-        WebView.setWebContentsDebuggingEnabled(true) // TEMP-DIAG
-        WebViewCompat.addWebMessageListener(view, BRIDGE, setOf(ORIGIN)) { _, message, _, _, _ ->
-            parse(message.data)?.let(onToken)
-        }
-        WebViewCompat.addDocumentStartJavaScript(view, HOOK, setOf(ORIGIN))
-        return true
     }
 
     fun sessionCookie(): String = CookieManager.getInstance().getCookie(ORIGIN).orEmpty()
@@ -107,71 +189,225 @@ object SpotifyWebPlayer {
         }
         cookies.flush()
     }
-
-    private fun parse(data: String?): WebPlayerToken? = runCatching {
-        val json = JSONObject(data ?: return null)
-        val token = json.optString("accessToken").takeIf { it.isNotBlank() } ?: return null
-        WebPlayerToken(token, json.optLong("expiresAt"), json.optBoolean("anonymous"))
-    }.getOrNull()
 }
 
-// loads the web player off screen with this account's cookie whenever the token runs out
-class SpotifyWebTokenSource(
-    private val context: Context,
-    initialToken: String,
-    private val sessionCookie: () -> String,
-) : SpotifyTokenSource {
-    @Volatile private var token = initialToken
-    @Volatile private var expiresAtMs = 0L
-    @Volatile private var refreshedAt = 0L
-    @Volatile private var failedAt = 0L
-    private val lock = Mutex()
-
-    override fun current(): String? = token.takeIf {
-        it.isNotBlank() && (expiresAtMs == 0L || System.currentTimeMillis() < expiresAtMs - EARLY_MS)
+// operation hashes change only with a new web player build, so a page start rarely has to rescan
+class SpotifyOperations(context: Context) {
+    private val prefs = context.getSharedPreferences("spotify-web-operations", Context.MODE_PRIVATE)
+    private val hashes = ConcurrentHashMap<String, String>().apply {
+        prefs.all.forEach { (name, hash) -> if (hash is String) put(name, hash) }
     }
 
-    override suspend fun refresh(): String? = lock.withLock {
-        val now = SystemClock.elapsedRealtime()
-        // a refresh that just finished on another request serves this one too
-        if (now - refreshedAt < REUSE_MS) return@withLock token
-        if (now - failedAt < RETRY_MS) return@withLock null
-        val fresh = withTimeoutOrNull(TIMEOUT_MS) { withContext(Dispatchers.Main) { load() } }
-        if (fresh == null) {
-            failedAt = SystemClock.elapsedRealtime()
-            AppLog.d("SpotifyWeb", "token refresh failed")
-            return@withLock null
-        }
-        token = fresh.accessToken
-        expiresAtMs = fresh.expiresAtMs.takeIf { it > 0 } ?: (System.currentTimeMillis() + FALLBACK_LIFETIME_MS)
-        refreshedAt = SystemClock.elapsedRealtime()
-        token
+    fun hash(operation: String): String? = hashes[operation]
+
+    fun remember(found: Map<String, String>) {
+        if (found.isEmpty()) return
+        hashes.putAll(found)
+        prefs.edit().apply { found.forEach { (name, hash) -> putString(name, hash) } }.apply()
     }
 
-    private suspend fun load(): WebPlayerToken? = suspendCancellableCoroutine { continuation ->
-        val cookie = sessionCookie()
-        if (cookie.isBlank() || !SpotifyWebPlayer.supported) { continuation.resume(null); return@suspendCancellableCoroutine }
-        CookieManager.getInstance().setCookie(SpotifyWebPlayer.ORIGIN, "sp_dc=$cookie; Domain=.spotify.com; Path=/; Secure; HttpOnly")
-        val view = WebView(context.applicationContext)
-        var done = false
-        fun finish(result: WebPlayerToken?) {
-            if (done) return
-            done = true
-            view.stopLoading()
-            view.destroy()
-            if (continuation.isActive) continuation.resume(result)
+    fun forget() {
+        hashes.clear()
+        prefs.edit().clear().apply()
+    }
+}
+
+// one open.spotify.com page; install on the main thread before its first load
+class SpotifyPage(val view: WebView, private val operations: SpotifyOperations) : SpotifyGraphql {
+    private class Reply(val status: Int, val body: String, val hash: String)
+
+    private val ready = CompletableDeferred<Unit>()
+    private val calls = ConcurrentHashMap<Int, CompletableDeferred<Reply>>()
+    private val ids = AtomicInteger()
+    @Volatile var signedIn: Boolean? = null
+        private set
+    var onSignedIn: () -> Unit = {}
+
+    fun install(): Boolean {
+        if (!SpotifyWebPlayer.supported) return false
+        WebViewCompat.addWebMessageListener(view, SpotifyWebPlayer.BRIDGE, setOf(SpotifyWebPlayer.ORIGIN)) { _, message, _, _, _ ->
+            receive(message.data)
         }
-        SpotifyWebPlayer.configure(view)
-        SpotifyWebPlayer.installHook(view) { captured -> if (!captured.anonymous) finish(captured) }
-        continuation.invokeOnCancellation { Handler(Looper.getMainLooper()).post { finish(null) } }
-        view.loadUrl(SpotifyWebPlayer.ORIGIN)
+        WebViewCompat.addDocumentStartJavaScript(view, SpotifyWebPlayer.SCRIPT, setOf(SpotifyWebPlayer.ORIGIN))
+        return true
+    }
+
+    private fun receive(data: String?) {
+        val json = runCatching { JSONObject(data ?: return) }.getOrNull() ?: return
+        when (json.optString("type")) {
+            "ready" -> ready.complete(Unit)
+            "token" -> {
+                val now = !json.optBoolean("anonymous")
+                signedIn = now
+                if (now) onSignedIn()
+            }
+            "ops" -> json.optJSONObject("ops")?.let { ops ->
+                operations.remember(ops.keys().asSequence().associateWith { ops.optString(it) }.filterValues { it.length == 64 })
+            }
+            "result" -> calls.remove(json.optInt("id"))
+                ?.complete(Reply(json.optInt("status"), json.optString("body"), json.optString("hash")))
+        }
+    }
+
+    suspend fun awaitReady(timeoutMs: Long): Boolean = withTimeoutOrNull(timeoutMs) { ready.await() } != null
+
+    override suspend fun query(operation: String, variables: JsonObject): JsonObject {
+        if (!awaitReady(READY_TIMEOUT_MS)) throw SpotifyGraphqlException("web player did not start")
+        if (signedIn == false) throw SpotifyGraphqlException("signed out", 401)
+        val cached = operations.hash(operation)
+        var reply = send(operation, variables, cached.orEmpty(), rescan = false)
+        if (cached != null && "PersistedQueryNotFound" in reply.body) {
+            // a new web player build retired the saved hashes
+            operations.forget()
+            reply = send(operation, variables, "", rescan = true)
+        }
+        if (reply.status == -1) throw SpotifyGraphqlException("unknown operation $operation", -1)
+        if (reply.hash.isNotBlank()) operations.remember(mapOf(operation to reply.hash))
+        val root = runCatching { JsonParser.parseString(reply.body).asJsonObject }.getOrNull()
+        if (reply.status !in 200..299 || root == null) throw SpotifyGraphqlException("$operation failed with ${reply.status}", reply.status)
+        val data = root.get("data")?.takeIf { it.isJsonObject }?.asJsonObject
+        if (data == null) {
+            val message = root.get("errors")?.takeIf { it.isJsonArray }?.asJsonArray
+                ?.joinToString("; ") { it.takeIf { e -> e.isJsonObject }?.asJsonObject?.get("message")?.asString.orEmpty() }
+            throw SpotifyGraphqlException("$operation failed: ${message.orEmpty().take(200)}", reply.status)
+        }
+        return data
+    }
+
+    private suspend fun send(operation: String, variables: JsonObject, hash: String, rescan: Boolean): Reply {
+        val id = ids.incrementAndGet()
+        val reply = CompletableDeferred<Reply>()
+        calls[id] = reply
+        try {
+            val script = "window.__aurora && window.__aurora.query($id, ${JSONObject.quote(operation)}, $variables, ${JSONObject.quote(hash)}, $rescan)"
+            withContext(Dispatchers.Main) { view.evaluateJavascript(script, null) }
+            return withTimeoutOrNull(QUERY_TIMEOUT_MS) { reply.await() } ?: throw SpotifyGraphqlException("$operation timed out")
+        } finally {
+            calls.remove(id)
+        }
+    }
+
+    // main thread
+    fun close() {
+        val closed = SpotifyGraphqlException("web player closed")
+        ready.completeExceptionally(closed)
+        calls.values.forEach { it.completeExceptionally(closed) }
+        calls.clear()
+        view.stopLoading()
+        view.destroy()
     }
 
     private companion object {
-        const val EARLY_MS = 2 * 60_000L
-        const val REUSE_MS = 20_000L
-        const val RETRY_MS = 60_000L
-        const val TIMEOUT_MS = 30_000L
-        const val FALLBACK_LIFETIME_MS = 50 * 60_000L
+        const val READY_TIMEOUT_MS = 30_000L
+        const val QUERY_TIMEOUT_MS = 30_000L
+    }
+}
+
+// a hidden web player signed in as the active account, closed again once it sits idle
+class SpotifyWebBridge(context: Context) {
+    private val context = context.applicationContext
+    val operations by lazy { SpotifyOperations(this.context) }
+    private val main = Handler(Looper.getMainLooper())
+    private val lock = Mutex()
+    private var page: SpotifyPage? = null
+    private var pageCookie = ""
+    @Volatile private var failedAt = 0L
+    private val inFlight = AtomicInteger()
+    private val idle = Runnable { if (inFlight.get() == 0) reset() else scheduleIdle() }
+
+    fun account(cookie: () -> String): SpotifyGraphql = object : SpotifyGraphql {
+        override suspend fun query(operation: String, variables: JsonObject): JsonObject = run(cookie(), operation, variables)
+    }
+
+    private suspend fun run(cookie: String, operation: String, variables: JsonObject): JsonObject {
+        if (cookie.isBlank()) throw SpotifyGraphqlException("signed out", 401)
+        inFlight.incrementAndGet()
+        try {
+            val current = open(cookie)
+            return try {
+                current.query(operation, variables)
+            } catch (e: SpotifyGraphqlException) {
+                if (e.status != 401) throw e
+                // the page's token ran out; a fresh start mints a new one
+                withContext(Dispatchers.Main) { close(current) }
+                try {
+                    open(cookie).query(operation, variables)
+                } catch (again: SpotifyGraphqlException) {
+                    // still refused, so the saved login itself expired; stop restarting the page for every call
+                    if (again.status == 401) failedAt = SystemClock.elapsedRealtime()
+                    throw again
+                }
+            }
+        } finally {
+            inFlight.decrementAndGet()
+            main.post(::scheduleIdle)
+        }
+    }
+
+    private suspend fun open(cookie: String): SpotifyPage = lock.withLock {
+        withContext(Dispatchers.Main) { page?.takeIf { pageCookie == cookie } }?.let { return@withLock it }
+        if (SystemClock.elapsedRealtime() - failedAt < RETRY_MS) throw SpotifyGraphqlException("web player unavailable")
+        val fresh = withContext(Dispatchers.Main) {
+            page?.let(::close)
+            start(cookie)
+        }
+        if (!fresh.awaitReady(BOOT_TIMEOUT_MS)) {
+            failedAt = SystemClock.elapsedRealtime()
+            withContext(Dispatchers.Main) { close(fresh) }
+            AppLog.d(TAG, "hidden web player did not start")
+            throw SpotifyGraphqlException("web player did not start")
+        }
+        fresh
+    }
+
+    // main thread
+    private fun start(cookie: String): SpotifyPage {
+        val view = WebView(context)
+        val metrics = context.resources.displayMetrics
+        // a zero-sized page lays out nothing and some of spotify's startup waits on layout
+        view.layout(0, 0, metrics.widthPixels, metrics.heightPixels)
+        SpotifyWebPlayer.configure(view)
+        view.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean = request.url.scheme != "https"
+        }
+        val created = SpotifyPage(view, operations)
+        if (!created.install()) {
+            view.destroy()
+            throw SpotifyGraphqlException("this webview is too old for spotify")
+        }
+        page = created
+        pageCookie = cookie
+        CookieManager.getInstance().setCookie(SpotifyWebPlayer.ORIGIN, "sp_dc=$cookie; Domain=.spotify.com; Path=/; Secure; HttpOnly") {
+            if (page === created) view.loadUrl(SpotifyWebPlayer.ORIGIN)
+        }
+        return created
+    }
+
+    // main thread
+    private fun close(target: SpotifyPage) {
+        if (page === target) {
+            page = null
+            pageCookie = ""
+        }
+        target.close()
+    }
+
+    private fun scheduleIdle() {
+        main.removeCallbacks(idle)
+        main.postDelayed(idle, IDLE_MS)
+    }
+
+    // main thread; next query starts a fresh page
+    fun reset() {
+        main.removeCallbacks(idle)
+        page?.let(::close)
+        failedAt = 0L
+    }
+
+    private companion object {
+        const val TAG = "SpotifyWeb"
+        const val BOOT_TIMEOUT_MS = 30_000L
+        const val RETRY_MS = 30_000L
+        const val IDLE_MS = 3 * 60_000L
     }
 }

@@ -215,19 +215,24 @@ class SpotifyWebBackend(
         }
     }.onFailure { AppLog.d(TAG, "$kind detail failed: ${it.message}") }.getOrNull()
 
+    // the full album query also pages tracks, so a fresh album costs one request
+    private suspend fun albumPage(id: String, offset: Int): Pair<JsonObject, Page> {
+        val known = albumRefs[id]
+        val a = if (known != null && offset > 0) q("queryAlbumTracks", "uri" to ALBUM + id, "offset" to offset, "limit" to ALBUM_PAGE).obj("albumUnion")
+            else q("getAlbum", "uri" to ALBUM + id, "locale" to "", "offset" to offset, "limit" to ALBUM_PAGE).obj("albumUnion")
+        val ref = known ?: AlbumRef(id, a.string("name"), image(a.obj("coverArt"))).also { albumRefs[id] = it }
+        val tracks = a.obj("tracksV2")
+        val items = tracks.list("items")
+        return a to Page(items.mapNotNull { song(it.obj("track"), album = ref) }, items.size, tracks.int("totalCount"))
+    }
+
     private suspend fun albumDetail(id: String): DetailData {
-        val a = q("getAlbum", "uri" to ALBUM + id, "locale" to "", "offset" to 0, "limit" to ALBUM_PAGE).obj("albumUnion")
-        val ref = AlbumRef(id, a.string("name"), image(a.obj("coverArt")))
-        albumRefs[id] = ref
-        val tracksV2 = a.obj("tracksV2")
-        val items = tracksV2.list("items")
-        val tracks = items.mapNotNull { song(it.obj("track"), album = ref) }
-        cursors[cursor("album", id, tracks.size)] = items.size
-        val model = album(a, ALBUM + id)
+        val (a, page) = albumPage(id, 0)
+        mark(cursor("album", id, page.songs.size), page.consumed)
         return DetailData(
-            DetailInfo(ref.name, artistNames(a), ref.art, accentArgbFor(id), false,
-                tracksV2.int("totalCount").takeIf { it > 0 } ?: tracks.size, model?.typeLabel ?: "Album"),
-            tracks,
+            DetailInfo(a.string("name"), artistNames(a), image(a.obj("coverArt")), accentArgbFor(id), false,
+                page.total.takeIf { it > 0 } ?: page.songs.size, album(a, ALBUM + id)?.typeLabel ?: "Album"),
+            page.songs,
         )
     }
 
@@ -265,7 +270,7 @@ class SpotifyWebBackend(
         val content = p.obj("content")
         val items = content.list("items")
         val tracks = items.mapNotNull(::playlistSong)
-        cursors[cursor("playlist", id, tracks.size)] = items.size
+        mark(cursor("playlist", id, tracks.size), items.size)
         val owner = p.obj("ownerV2").obj("data").string("name")
         return DetailData(
             DetailInfo(p.string("name").ifBlank { "Playlist" }, if (owner.isNotBlank()) "by $owner" else "",
@@ -277,7 +282,7 @@ class SpotifyWebBackend(
 
     private suspend fun likedDetail(): DetailData {
         val page = likedPage(0, TRACK_PAGE)
-        cursors[cursor("liked", "", page.songs.size)] = page.consumed
+        mark(cursor("liked", "", page.songs.size), page.consumed)
         return DetailData(
             DetailInfo("Liked Songs", "${page.total} songs", page.songs.firstOrNull()?.artworkUrl.orEmpty(),
                 accentArgbFor("liked"), false, page.total, "Liked"),
@@ -296,14 +301,13 @@ class SpotifyWebBackend(
             val items = content.list("items")
             Page(items.mapNotNull(::playlistSong), items.size, content.int("totalCount"))
         }
-        "album" -> {
-            val ref = albumRefs[id] ?: run { albumDetail(id); albumRefs[id] }
-            val tracks = q("queryAlbumTracks", "uri" to ALBUM + id, "offset" to offset, "limit" to ALBUM_PAGE)
-                .obj("albumUnion").obj("tracksV2")
-            val items = tracks.list("items")
-            Page(items.mapNotNull { song(it.obj("track"), album = ref) }, items.size, tracks.int("totalCount"))
-        }
+        "album" -> albumPage(id, offset).second
         else -> null
+    }
+
+    private fun mark(key: String, serverOffset: Int) {
+        if (cursors.size > CURSOR_CAP) cursors.clear()
+        cursors[key] = serverOffset
     }
 
     override suspend fun detailPage(kind: String, id: String, offset: Int): List<Song> = runCatching {
@@ -316,7 +320,7 @@ class SpotifyWebBackend(
             server += page.consumed
             handed += page.songs.size
             songs = page.songs
-            cursors[cursor(kind, key, handed)] = server
+            mark(cursor(kind, key, handed), server)
             if (page.consumed == 0 || server >= page.total) break
         }
         songs
@@ -351,7 +355,10 @@ class SpotifyWebBackend(
                 val uri = when (kind) {
                     "album" -> ALBUM + id
                     "artist" -> ARTIST + id
-                    else -> TRACK + id.also { likedCache = null }
+                    else -> {
+                        likedCache = null
+                        TRACK + id
+                    }
                 }
                 if (starred) q("addToLibrary", "libraryItemUris" to listOf(uri), "interactionId" to null)
                 else q("removeFromLibrary", "libraryItemUris" to listOf(uri))
@@ -446,6 +453,7 @@ class SpotifyWebBackend(
         private const val RADIO_SIZE = 50
         private const val LIKED_CAP = 10_000
         private const val PARALLEL = 4
+        private const val CURSOR_CAP = 2000
 
         suspend fun profile(gql: SpotifyGraphql): SpotifyWebProfile? {
             val p = gql.query("profileAttributes", JsonObject()).obj("me").obj("profile")
