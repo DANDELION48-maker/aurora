@@ -397,15 +397,20 @@ class MergedBackend(
         else route(id) { src, i, oid -> src.collectionTracks(kind, oid).map { it.wrap(i) } }
             ?: error("This collection's source is unavailable.")
 
+    // a song from any source can borrow the canvas of its spotify twin while a spotify account takes part
     override fun supportsCanvas(song: Song): Boolean {
         val (i, oid) = unwrap(song.id) ?: return false
-        return sources[i].supportsCanvas(song.copy(id = oid))
+        return sources[i].supportsCanvas(song.copy(id = oid)) || (spotifyIndex >= 0 && i != spotifyIndex && !song.isRadio() && !song.isPodcast())
     }
 
     override suspend fun canvasUrl(song: Song): String? {
         val (i, oid) = unwrap(song.id) ?: return null
         val original = song.copy(id = oid)
-        return if (sources[i].supportsCanvas(original)) sources[i].canvasUrl(original) else null
+        if (sources[i].supportsCanvas(original)) return sources[i].canvasUrl(original)
+        val spotify = sources.getOrNull(spotifyIndex)?.takeIf { i != spotifyIndex } ?: return null
+        val twin = runCatching { spotify.search("${recordingTitle(song.title)} ${song.artist}".trim()).songs }.getOrDefault(emptyList())
+            .firstOrNull { recordingMatches(song, it) || sameLength(song, it) } ?: return null
+        return if (spotify.supportsCanvas(twin)) spotify.canvasUrl(twin) else null
     }
 
     override suspend fun serverLyrics(song: Song): Lyrics? {

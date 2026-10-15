@@ -138,8 +138,21 @@ class MergedSpotifyTest {
         assertTrue(merged.supportsCanvas(track))
         assertEquals("https://canvaz.scdn.co/loop.mp4", merged.canvasUrl(track))
         assertEquals(listOf(spotifySong.id), spotifyCalls.canvases)
+        // a server copy borrows the canvas of its spotify twin, found by title, artist and length
         val hosted = merged.search("never", "library").songs.single()
-        assertFalse(merged.supportsCanvas(hosted))
+        assertTrue(merged.supportsCanvas(hosted))
+        assertEquals("https://canvaz.scdn.co/loop.mp4", merged.canvasUrl(hosted))
+        assertEquals(listOf(spotifySong.id, spotifySong.id), spotifyCalls.canvases)
+        assertEquals("Never Gonna Rick", spotifyCalls.searches.last())
+    }
+
+    @Test fun aSongWithoutASpotifyTwinHasNoCanvas() = runBlocking {
+        val other = serverSong.copy(id = "other", title = "Something else", artist = "Nobody")
+        val merged = MergedBackend(listOf(source(server, listOf(other)), source(spotify, listOf(spotifySong))), spotify)
+        val hosted = merged.search("x", "library").songs.single()
         assertNull(merged.canvasUrl(hosted))
+        // without a spotify account nothing offers a canvas
+        val alone = MergedBackend(listOf(source(server, listOf(other))), server)
+        assertFalse(alone.supportsCanvas(alone.search("x", "library").songs.single()))
     }
 }
