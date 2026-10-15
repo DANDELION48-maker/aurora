@@ -417,6 +417,11 @@ class MergedBackend(
         val (i, oid) = unwrap(songId) ?: return if (SEP in songId) "" else primary?.streamUrl(songId, maxBitrate, lossless) ?: ""
         return sources.getOrNull(i)?.streamUrl(oid, maxBitrate, lossless) ?: ""
     }
+    // each source resolves its own download link, such as soundcloud's hls stream behind its play link
+    override suspend fun downloadUrl(songId: String, maxBitrate: Int, lossless: Boolean): String {
+        val (i, oid) = unwrap(songId) ?: return if (SEP in songId) "" else primary?.downloadUrl(songId, maxBitrate, lossless) ?: ""
+        return sources.getOrNull(i)?.downloadUrl(oid, maxBitrate, lossless) ?: ""
+    }
     override fun coverArtUrl(id: String, size: Int): String {
         val (i, oid) = unwrap(id) ?: return if (SEP in id) "" else primary?.coverArtUrl(id, size) ?: ""
         return sources.getOrNull(i)?.coverArtUrl(oid, size) ?: ""

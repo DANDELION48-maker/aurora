@@ -242,6 +242,12 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             container.sessionReady.collect { ready -> if (ready == true) refreshLikes() }
         }
+        // a song downloaded after likes were loaded still belongs in the offline liked songs
+        viewModelScope.launch {
+            container.downloadManager.downloads.collect { downloads ->
+                container.repository.markDownloadsLiked(downloads.values.filter { it.liked != true && it.id in serverLikedIds }.map { it.id }, true)
+            }
+        }
         // subsonic can't star playlists so locally-liked ones merge into the same set
         viewModelScope.launch {
             container.settingsStore.likedPlaylists.collect { ids ->

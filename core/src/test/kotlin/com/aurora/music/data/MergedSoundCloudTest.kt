@@ -26,6 +26,7 @@ class MergedSoundCloudTest {
                 "starredCount" -> songs.size
                 "allAlbums", "allArtists", "allPlaylists" -> emptyList<Any>()
                 "playbackSourceIdentity" -> PlaybackSourceIdentity.fromSession(session, (args!![0] as Song).albumId)
+                "downloadUrl" -> "https://cdn.example/${args!![0]}/playlist.m3u8"
                 else -> error("Unexpected ${method.name}")
             }
         } as MediaBackend
@@ -42,5 +43,8 @@ class MergedSoundCloudTest {
         // catalogues stay out of the merged library and its likes keep to their own view
         assertEquals(listOf("Local only"), merged.libraryView("library").allSongs().map { it.title })
         assertEquals(listOf("sake bomb"), merged.detail("liked", "soundcloud")!!.tracks.map { it.title })
+        // downloads ask the owning source, not the merged play link
+        val wrapped = merged.detail("liked", "soundcloud")!!.tracks.single().id
+        assertEquals("https://cdn.example/275215991/playlist.m3u8", merged.downloadUrl(wrapped, 0, true))
     }
 }
