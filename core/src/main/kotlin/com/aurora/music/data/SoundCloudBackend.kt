@@ -213,8 +213,8 @@ class SoundCloudBackend(
     override fun supportsComments(song: Song) = song.id.matches(Regex("[0-9]+"))
 
     // popular tracks carry thousands; the newest thousand are plenty to scatter along the waveform
-    override suspend fun comments(song: Song): List<TrackComment> {
-        if (!supportsComments(song)) return emptyList()
+    override suspend fun comments(song: Song): List<TrackComment>? {
+        if (!supportsComments(song)) return null
         val out = mutableListOf<TrackComment>()
         val seen = hashSetOf<String>()
         var next: String? = "/tracks/${song.id}/comments?threaded=0&filter_replies=0&limit=200"

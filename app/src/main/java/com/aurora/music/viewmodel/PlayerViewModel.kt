@@ -475,7 +475,6 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
                     else videoUri?.getQueryParameter("quality")?.toIntOrNull(),
                 videoIsCanvas = companionVideo.isCanvas,
                 supportsCanvas = container.repository.supportsCanvas(cur),
-                supportsComments = container.repository.supportsComments(cur),
                 isMix = container.mixController.activeProject != null,
                 isPlaying = c.effectivelyPlaying,
                 shuffle = c.shuffleModeEnabled,
@@ -1014,16 +1013,16 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     private var commentsFor: String? = null
     private var commentsJob: Job? = null
 
-    // comments load once per track and are dropped as soon as another one starts
+    // comments load once per track; the player offers them only once a soundcloud track for the song turned up
     private fun loadComments(song: Song) {
         if (song.id == commentsFor) return
         commentsFor = song.id
         commentsJob?.cancel()
-        _state.update { it.copy(comments = emptyList()) }
+        _state.update { it.copy(comments = emptyList(), supportsComments = false) }
         if (!container.repository.supportsComments(song)) return
         commentsJob = viewModelScope.launch {
             val list = runCatching { container.repository.comments(song) }.getOrNull() ?: return@launch
-            if (_state.value.current.id == song.id) _state.update { it.copy(comments = list) }
+            if (_state.value.current.id == song.id) _state.update { it.copy(comments = list, supportsComments = true) }
         }
     }
 

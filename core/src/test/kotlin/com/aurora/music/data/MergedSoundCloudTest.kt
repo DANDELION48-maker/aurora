@@ -3,6 +3,7 @@ package com.aurora.music.data
 import com.aurora.music.model.Song
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.lang.reflect.Proxy
@@ -60,10 +61,11 @@ class MergedSoundCloudTest {
         val merged = MergedBackend(listOf(source(server, listOf(hosted)), source(soundcloud, listOf(upload), searches)), server)
         val track = merged.libraryView("library").allSongs().single()
         assertTrue(merged.supportsComments(track))
-        assertEquals(listOf("c-275215991"), merged.comments(track).map { it.id })
+        assertEquals(listOf("c-275215991"), merged.comments(track)!!.map { it.id })
         assertEquals("new-275215991", merged.postComment(track, "yo", 1000)!!.id)
         assertEquals(listOf("sake bomb Topherblaine"), searches)
         val other = MergedBackend(listOf(source(server, listOf(hosted.copy(title = "Elsewhere"))), source(soundcloud, listOf(upload))), server)
-        assertTrue(other.comments(other.libraryView("library").allSongs().single()).isEmpty())
+        // no upload to match means no comments to show or post to
+        assertNull(other.comments(other.libraryView("library").allSongs().single()))
     }
 }

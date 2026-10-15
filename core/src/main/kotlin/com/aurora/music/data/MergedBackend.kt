@@ -442,12 +442,12 @@ class MergedBackend(
         return sources[i].supportsComments(song.copy(id = oid)) || borrows(soundcloudIndex, i, song)
     }
 
-    override suspend fun comments(song: Song): List<com.aurora.music.model.TrackComment> {
-        val (i, oid) = unwrap(song.id) ?: return emptyList()
+    override suspend fun comments(song: Song): List<com.aurora.music.model.TrackComment>? {
+        val (i, oid) = unwrap(song.id) ?: return null
         val original = song.copy(id = oid)
         if (sources[i].supportsComments(original)) return sources[i].comments(original)
-        if (!borrows(soundcloudIndex, i, song)) return emptyList()
-        return twinOn(soundcloudIndex, song)?.let { sources[soundcloudIndex].comments(it) }.orEmpty()
+        if (!borrows(soundcloudIndex, i, song)) return null
+        return twinOn(soundcloudIndex, song)?.let { sources[soundcloudIndex].comments(it) }
     }
 
     override suspend fun postComment(song: Song, body: String, timestampMs: Long): com.aurora.music.model.TrackComment? {

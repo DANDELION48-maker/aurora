@@ -150,13 +150,13 @@ class SoundCloudBackendTest {
         }
         val backend = SoundCloudBackend(session, api)
         val song = SoundCloudBackend.song(JsonParser.parseString(track(5)).asJsonObject)!!
-        val comments = backend.comments(song)
+        val comments = backend.comments(song)!!
         assertEquals(listOf("2", "1"), comments.map { it.id })
         assertEquals("nice 2", comments.first().body)
         assertEquals("https://i1.sndcdn.com/avatars-x-t500x500.jpg", comments.first().avatarUrl)
         assertEquals(42000L, backend.postComment(song, "wow", 42000)!!.timestampMs)
         assertEquals(listOf("POST /tracks/5/comments {body=wow, timestamp=42000}"), api.writes)
-        assertTrue(backend.comments(song.copy(id = "soundcloud:system-playlists:x")).isEmpty())
+        assertNull(backend.comments(song.copy(id = "soundcloud:system-playlists:x")))
     }
 
     @Test fun nextLinksStayOnTheApiHost() {

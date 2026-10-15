@@ -124,9 +124,9 @@ interface MediaBackend {
     fun supportsCanvas(song: Song): Boolean = false
     suspend fun canvasUrl(song: Song): String? = null
 
-    // timed comments along the track, where the service has them
+    // timed comments along the track; null when there is no track on the service to comment on
     fun supportsComments(song: Song): Boolean = false
-    suspend fun comments(song: Song): List<com.aurora.music.model.TrackComment> = emptyList()
+    suspend fun comments(song: Song): List<com.aurora.music.model.TrackComment>? = null
     suspend fun postComment(song: Song, body: String, timestampMs: Long): com.aurora.music.model.TrackComment? = null
 
     // a composite backend can show one library at a time; others are a single library
