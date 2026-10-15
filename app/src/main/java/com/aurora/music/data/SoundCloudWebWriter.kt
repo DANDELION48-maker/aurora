@@ -39,14 +39,14 @@ class SoundCloudWebWriter(context: Context) : SoundCloudBrowser {
     val captcha = MutableStateFlow<WebView?>(null)
     @Volatile private var solved: CompletableDeferred<Boolean>? = null
 
-    override suspend fun fetch(origin: String, method: String, url: String, token: String, body: String?): Pair<Int, String> = lock.withLock {
+    override suspend fun fetch(origin: String, method: String, url: String, token: String, body: String?, contentType: String): Pair<Int, String> = lock.withLock {
         require(origin in SoundCloudWebSession.ORIGINS && url.startsWith("https://api-v2.soundcloud.com/"))
         main.removeCallbacks(idle)
         try {
             val page = open(origin)
-            val first = request(page, method, url, token, body)
+            val first = request(page, method, url, token, body, contentType)
             val challenge = captchaUrl(first) ?: return@withLock first
-            if (solve(page, challenge)) request(page, method, url, token, body) else first
+            if (solve(page, challenge)) request(page, method, url, token, body, contentType) else first
         } finally {
             main.removeCallbacks(idle)
             main.postDelayed(idle, IDLE_MS)
@@ -73,14 +73,14 @@ class SoundCloudWebWriter(context: Context) : SoundCloudBrowser {
 
     fun cancelCaptcha() { solved?.complete(false) }
 
-    private suspend fun request(page: WebView, method: String, url: String, token: String, body: String?): Pair<Int, String> {
+    private suspend fun request(page: WebView, method: String, url: String, token: String, body: String?, contentType: String): Pair<Int, String> {
         val id = ids.incrementAndGet()
         val reply = CompletableDeferred<Pair<Int, String>>()
         replies[id] = reply
         return try {
             // the bot check's own script tags protected calls with the session it keeps in this cookie
             val script = """var dd = (document.cookie.match(/(?:^|; )datadome=([^;]+)/) || [])[1];
-                var headers = {'Authorization': ${JSONObject.quote("OAuth $token")}, 'Content-Type': 'application/json', 'Accept': 'application/json'};
+                var headers = {'Authorization': ${JSONObject.quote("OAuth $token")}, 'Content-Type': ${JSONObject.quote(contentType)}, 'Accept': 'application/json'};
                 if (dd) headers['x-datadome-clientid'] = dd;
                 fetch(${JSONObject.quote(url)}, {method: ${JSONObject.quote(method)}, credentials: 'include', headers: headers,
                 body: ${body?.let(JSONObject::quote) ?: "undefined"}})

@@ -73,7 +73,7 @@ class SoundCloudBackendTest {
     private class Recorder(private val reads: (String) -> String) : SoundCloudTransport {
         val writes = mutableListOf<String>()
         override suspend fun get(path: String) = JsonParser.parseString(reads(path))
-        override suspend fun send(method: String, path: String, body: com.google.gson.JsonObject?): com.google.gson.JsonElement {
+        override suspend fun send(method: String, path: String, body: com.google.gson.JsonObject?, form: Map<String, String>?): com.google.gson.JsonElement {
             writes += "$method $path ${body ?: ""}".trim()
             val tracks = body?.getAsJsonObject("playlist")?.getAsJsonArray("tracks")
             return JsonParser.parseString(if (method == "PUT" && tracks != null) """{"track_count":${tracks.size()}}""" else """{"id":77}""")
@@ -143,8 +143,8 @@ class SoundCloudBackendTest {
                 "https://api-v2.soundcloud.com/tracks/5/comments?offset=2" -> """{"collection":[${comment(2, 1500)}],"next_href":null}"""
                 else -> error(path)
             })
-            override suspend fun send(method: String, path: String, body: com.google.gson.JsonObject?): com.google.gson.JsonElement {
-                writes += "$method $path $body"
+            override suspend fun send(method: String, path: String, body: com.google.gson.JsonObject?, form: Map<String, String>?): com.google.gson.JsonElement {
+                writes += "$method $path $form"
                 return JsonParser.parseString(comment(3, 42000))
             }
         }
@@ -155,7 +155,7 @@ class SoundCloudBackendTest {
         assertEquals("nice 2", comments.first().body)
         assertEquals("https://i1.sndcdn.com/avatars-x-t500x500.jpg", comments.first().avatarUrl)
         assertEquals(42000L, backend.postComment(song, "wow", 42000)!!.timestampMs)
-        assertEquals(listOf("""POST /tracks/5/comments {"comment":{"body":"wow","timestamp":42000}}"""), api.writes)
+        assertEquals(listOf("POST /tracks/5/comments {body=wow, timestamp=42000}"), api.writes)
         assertTrue(backend.comments(song.copy(id = "soundcloud:system-playlists:x")).isEmpty())
     }
 

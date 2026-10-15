@@ -23,13 +23,14 @@ fun interface SoundCloudTransport {
     // path is an api-v2 path or an absolute next_href from a previous page
     suspend fun get(path: String): JsonElement
 
-    suspend fun send(method: String, path: String, body: JsonObject? = null): JsonElement =
+    // form is for the endpoints the web player posts form-encoded, such as comments
+    suspend fun send(method: String, path: String, body: JsonObject? = null, form: Map<String, String>? = null): JsonElement =
         throw IOException("SoundCloud changes are unavailable.")
 }
 
 // soundcloud's bot check turns away writes that don't come from a real browser, so the app can hand them to one
 fun interface SoundCloudBrowser {
-    suspend fun fetch(origin: String, method: String, url: String, token: String, body: String?): Pair<Int, String>
+    suspend fun fetch(origin: String, method: String, url: String, token: String, body: String?, contentType: String): Pair<Int, String>
 }
 
 /** SoundCloud's web api: the signed-in web player's oauth token plus the client id its scripts carry. */
@@ -70,12 +71,14 @@ class SoundCloudClient(
     // a stale client id is refused like a bad login, so retry once with a fresh one before refreshing the login
     override suspend fun get(path: String): JsonElement = send("GET", path)
 
-    override suspend fun send(method: String, path: String, body: JsonObject?): JsonElement = withContext(Dispatchers.IO) {
+    override suspend fun send(method: String, path: String, body: JsonObject?, form: Map<String, String>?): JsonElement = withContext(Dispatchers.IO) {
         require(method in setOf("GET", "POST", "PUT", "DELETE"))
         val base = url(path)
         if (auth().expiresAt - System.currentTimeMillis() / 1000 < 300) refreshLogin(auth().token)
-        attempt(base, false, method, body) ?: attempt(base, true, method, body)
-            ?: (if (refreshLogin(auth().token)) attempt(base, false, method, body) else null)
+        val payload = form?.entries?.joinToString("&") { "${java.net.URLEncoder.encode(it.key, "UTF-8")}=${java.net.URLEncoder.encode(it.value, "UTF-8")}" }
+            ?.let { it to FORM } ?: body?.let { it.toString() to JSON }
+        attempt(base, false, method, payload) ?: attempt(base, true, method, payload)
+            ?: (if (refreshLogin(auth().token)) attempt(base, false, method, payload) else null)
             ?: throw MediaAccountExpiredException()
     }
 
@@ -95,17 +98,17 @@ class SoundCloudClient(
         true
     }
 
-    private suspend fun attempt(base: HttpUrl, refresh: Boolean, method: String, body: JsonObject?): JsonElement? {
+    private suspend fun attempt(base: HttpUrl, refresh: Boolean, method: String, payload: Pair<String, String>?): JsonElement? {
         val auth = auth()
         val url = base.newBuilder().setQueryParameter("client_id", clientId(refresh)).build()
-        val (code, text) = if (method != "GET" && browser != null) browser.fetch(auth.origin, method, url.toString(), auth.token, body?.toString())
+        val (code, text) = if (method != "GET" && browser != null) browser.fetch(auth.origin, method, url.toString(), auth.token, payload?.first, payload?.second ?: JSON)
         else {
             val request = Request.Builder().url(url)
                 .header("Accept", "application/json").header("Origin", auth.origin).header("Referer", "${auth.origin}/")
                 .header("Authorization", "OAuth ${auth.token}")
                 .apply { auth.userAgent.takeIf { it.isNotBlank() }?.let { header("User-Agent", it) } }
-                .method(method, if (method == "GET" || method == "DELETE" && body == null) null
-                    else (body ?: JsonObject()).toString().toRequestBody("application/json".toMediaType())).build()
+                .method(method, if (method == "GET" || method == "DELETE" && payload == null) null
+                    else (payload?.first ?: "{}").toRequestBody((payload?.second ?: JSON).toMediaType())).build()
             runCatching { http.newCall(request).execute() }.getOrElse { throw IOException("Could not connect to SoundCloud. Please retry.") }
                 .use { it.code to it.body?.string().orEmpty() }
         }
@@ -121,6 +124,8 @@ class SoundCloudClient(
     companion object {
         const val WEB = "https://soundcloud.com"
         const val API = "https://api-v2.soundcloud.com"
+        private const val JSON = "application/json"
+        private const val FORM = "application/x-www-form-urlencoded; charset=UTF-8"
         // the mobile user agent is redirected to m.soundcloud.com, whose page carries no asset list
         private const val DESKTOP_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36"
 

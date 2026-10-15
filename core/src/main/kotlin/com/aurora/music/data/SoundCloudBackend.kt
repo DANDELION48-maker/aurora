@@ -228,8 +228,8 @@ class SoundCloudBackend(
 
     override suspend fun postComment(song: Song, body: String, timestampMs: Long): TrackComment? {
         if (!supportsComments(song)) return null
-        val payload = JsonObject().apply { add("comment", JsonObject().apply { addProperty("body", body); addProperty("timestamp", timestampMs) }) }
-        return comment(api.send("POST", "/tracks/${song.id}/comments", payload).asJsonObject)
+        // the web player posts comments form-encoded and unwrapped, and json gets a 400
+        return comment(api.send("POST", "/tracks/${song.id}/comments", form = mapOf("body" to body, "timestamp" to timestampMs.toString())).asJsonObject)
     }
 
     /** a signed hls link, or null when soundcloud only offers a preview or an encrypted stream */

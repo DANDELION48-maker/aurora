@@ -203,7 +203,9 @@ fun PlayerScreen(
     var sidePaneName by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(PlayerPane.LYRICS.name) }
     var portraitTabName by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf<String?>(null) }
     var showComments by remember { mutableStateOf(false) }
-    if (showComments && state.supportsComments) CommentsSheet(state, onDismiss = { showComments = false }, onSeek = onSeek, onPost = onPostComment)
+    var focusComment by remember { mutableStateOf<String?>(null) }
+    if (showComments && state.supportsComments) CommentsSheet(state, focusComment, onDismiss = { showComments = false; focusComment = null },
+        onSeek = onSeek, onPost = onPostComment)
     val sidePane = PlayerPane.valueOf(sidePaneName)
     val portraitTab = portraitTabName?.let { PlayerPane.valueOf(it) }
     LaunchedEffect(requestedPane) {
@@ -625,6 +627,7 @@ fun PlayerScreen(
                 waveBars = ui.playerWaveBars,
                 onSeek = onSeek,
                 comments = state.comments,
+                onOpenComment = { focusComment = it; showComments = true },
             )
 
             Spacer(Modifier.height(8.dp))
@@ -1218,6 +1221,7 @@ private fun SeekBar(
     onInteraction: () -> Unit = {},
     onSeekingChanged: (Boolean) -> Unit = {},
     comments: List<com.aurora.music.model.TrackComment> = emptyList(),
+    onOpenComment: (String) -> Unit = {},
 ) {
     val position = com.aurora.music.ui.components.LocalPlaybackPosition.current.value
     val positionSec = position.toInt()
@@ -1250,7 +1254,7 @@ private fun SeekBar(
             }
             return@Column
         }
-        CommentTrack(comments, durationSec, position, accent)
+        CommentTrack(comments, durationSec, position, accent, onOpenComment)
         if (seekStyle == SeekStyle.BAR) {
             Slider(
                 value = progress.coerceIn(0f, 1f),
@@ -1295,12 +1299,14 @@ private fun GlassArtBackdrop(song: com.aurora.music.model.Song, modifier: Modifi
 
 // soundcloud-style: the comment just passed pops up, and every commenter sits along the timeline
 @Composable
-private fun CommentTrack(comments: List<com.aurora.music.model.TrackComment>, durationSec: Int, positionSec: Float, accent: Color) {
+private fun CommentTrack(comments: List<com.aurora.music.model.TrackComment>, durationSec: Int, positionSec: Float, accent: Color,
+    onOpen: (String) -> Unit) {
     if (comments.isEmpty() || durationSec <= 0) return
     val passing = comments.lastOrNull { it.timestampMs / 1000f in (positionSec - 4f)..positionSec }
     Box(Modifier.fillMaxWidth().height(44.dp), contentAlignment = Alignment.BottomStart) {
         androidx.compose.animation.Crossfade(passing, label = "comment") { comment ->
-            if (comment != null) Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 2.dp)) {
+            if (comment != null) Row(verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clip(MaterialTheme.shapes.small).clickable { onOpen(comment.id) }.padding(bottom = 2.dp, end = 8.dp)) {
                 Artwork(comment.avatarUrl, accent, Modifier.size(24.dp), corner = 12.dp, decodeSize = 64)
                 Spacer(Modifier.width(8.dp))
                 Column {
@@ -1310,7 +1316,14 @@ private fun CommentTrack(comments: List<com.aurora.music.model.TrackComment>, du
             }
         }
     }
-    BoxWithConstraints(Modifier.fillMaxWidth().height(16.dp)) {
+    val current by rememberUpdatedState(comments)
+    BoxWithConstraints(Modifier.fillMaxWidth().height(20.dp).pointerInput(durationSec) {
+        // the avatars are small, so a tap anywhere on the strip opens the comment nearest to it
+        detectTapGestures { tap ->
+            val atMs = tap.x / size.width * durationSec * 1000f
+            current.minByOrNull { kotlin.math.abs(it.timestampMs - atMs) }?.let { onOpen(it.id) }
+        }
+    }, contentAlignment = Alignment.CenterStart) {
         // one avatar per small slice of the timeline, so a busy track stays readable
         val slices = (maxWidth / 14.dp).toInt().coerceAtLeast(1)
         val shown = remember(comments, slices, durationSec) {
@@ -1323,27 +1336,39 @@ private fun CommentTrack(comments: List<com.aurora.music.model.TrackComment>, du
     }
 }
 
+// a fixed height keeps the sheet from resizing while rows load and scroll
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
-private fun CommentsSheet(state: PlayerUiState, onDismiss: () -> Unit, onSeek: (Float) -> Unit, onPost: (String) -> Unit) {
+private fun CommentsSheet(state: PlayerUiState, focusId: String?, onDismiss: () -> Unit, onSeek: (Float) -> Unit, onPost: (String) -> Unit) {
     var draft by remember { mutableStateOf("") }
     val positionSec = com.aurora.music.ui.components.LocalPlaybackPosition.current.value
-    androidx.compose.material3.ModalBottomSheet(onDismissRequest = onDismiss) {
-        Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).imePadding()) {
+    val list = androidx.compose.foundation.lazy.rememberLazyListState()
+    val sheet = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    LaunchedEffect(focusId, state.comments.size) {
+        val index = state.comments.indexOfFirst { it.id == focusId }
+        if (index >= 0) list.scrollToItem(index)
+    }
+    androidx.compose.material3.ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheet) {
+        Column(Modifier.fillMaxWidth().fillMaxHeight(0.8f).padding(horizontal = 16.dp).imePadding()) {
             Text(appString(R.string.player_comments), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(8.dp))
-            if (state.comments.isEmpty()) Text(appString(R.string.comments_empty), style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(vertical = 16.dp))
-            androidx.compose.foundation.lazy.LazyColumn(Modifier.weight(1f, fill = false).heightIn(max = 420.dp)) {
+            androidx.compose.foundation.lazy.LazyColumn(Modifier.weight(1f).fillMaxWidth(), state = list) {
+                if (state.comments.isEmpty()) item {
+                    Text(appString(R.string.comments_empty), style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(vertical = 16.dp))
+                }
                 items(state.comments.size, key = { state.comments[it].id }) { index ->
                     val comment = state.comments[index]
-                    Row(Modifier.fillMaxWidth().clickable { onSeek(state.progressAt(comment.timestampMs / 1000f)) }.padding(vertical = 8.dp)) {
+                    val focused = comment.id == focusId
+                    Row(Modifier.fillMaxWidth().clip(MaterialTheme.shapes.small)
+                        .background(if (focused) MaterialTheme.colorScheme.primary.copy(alpha = .12f) else Color.Transparent)
+                        .clickable { onSeek(state.progressAt(comment.timestampMs / 1000f)) }.padding(8.dp)) {
                         Artwork(comment.avatarUrl, state.current.accent, Modifier.size(32.dp), corner = 16.dp, decodeSize = 96)
                         Spacer(Modifier.width(10.dp))
                         Column(Modifier.weight(1f)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                                 Text(comment.user, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+                                    overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
                                 Spacer(Modifier.width(6.dp))
                                 Text(formatTime((comment.timestampMs / 1000).toInt()), style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.primary)
