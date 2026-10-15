@@ -12,6 +12,20 @@ data class CatalogueMatchPrefs(
 // keep empty for all eligible servers
 const val MERGE_NONE = "__none__"
 
+// what the merged catalogues add to songs, switched overall and per kind of source a song comes from
+data class MergeFeatures(
+    val canvas: Boolean = true,
+    val canvasOff: Set<String> = emptySet(),
+    val videos: Boolean = true,
+    val videosOff: Set<String> = emptySet(),
+    val comments: Boolean = true,
+    val commentsOff: Set<String> = emptySet(),
+) {
+    fun canvasFor(type: ServerType?) = canvas && type?.name !in canvasOff
+    fun videosFor(type: ServerType?) = videos && type?.name !in videosOff
+    fun commentsFor(type: ServerType?) = comments && type?.name !in commentsOff
+}
+
 enum class ServerType {
     SUBSONIC, JELLYFIN, SPOTIFY, LOCAL, EXTENSION, YOUTUBE_MUSIC, PLEX, SOUNDCLOUD;
 

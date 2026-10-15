@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.MergeType
+import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
@@ -82,6 +83,7 @@ fun SettingsScreen(
     onOpenVisualizer: () -> Unit,
     onOpenSonic: () -> Unit,
     onOpenSources: () -> Unit,
+    onOpenMerge: () -> Unit = {},
     onOpenDownloads: () -> Unit,
     onOpenAppearance: () -> Unit,
     onOpenLanguage: () -> Unit,
@@ -168,6 +170,8 @@ fun SettingsScreen(
                     SettingsDestinationRow(Icons.Filled.SwitchAccount, SettingsDestinations.accounts, onClick = onOpenAccounts)
                     SettingsRowDivider()
                     SettingsDestinationRow(Icons.Filled.MergeType, SettingsDestinations.sources, onClick = onOpenSources)
+                    SettingsRowDivider()
+                    SettingsDestinationRow(Icons.Filled.Movie, SettingsDestinations.merge, onClick = onOpenMerge)
                     SettingsRowDivider()
                     SettingsDestinationRow(Icons.Filled.Download, SettingsDestinations.storage,
                         if (storage.ready) appString(R.string.storage_summary, storageSize(storage.total)) else SettingsDestinations.storage.description, onClick = onOpenDownloads)

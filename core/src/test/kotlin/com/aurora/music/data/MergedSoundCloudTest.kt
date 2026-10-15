@@ -3,6 +3,7 @@ package com.aurora.music.data
 import com.aurora.music.model.Song
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -67,5 +68,20 @@ class MergedSoundCloudTest {
         val other = MergedBackend(listOf(source(server, listOf(hosted.copy(title = "Elsewhere"))), source(soundcloud, listOf(upload))), server)
         // no upload to match means no comments to show or post to
         assertNull(other.comments(other.libraryView("library").allSongs().single()))
+    }
+
+    @Test fun mergeOptionsFollowTheSourceASongComesFrom() = runBlocking {
+        val hosted = Song("nd-1", "sake bomb", "Topherblaine", "Singles", "", 191, streamUrl = "https://server.invalid/stream")
+        val merged = MergedBackend(listOf(source(server, listOf(hosted)), source(soundcloud, listOf(scSong))), server)
+        val fromServer = merged.libraryView("library").allSongs().single()
+        val fromSoundcloud = merged.detail("liked", "soundcloud")!!.tracks.single()
+        assertEquals(ServerType.SUBSONIC, merged.sourceType(fromServer))
+        assertEquals(ServerType.SOUNDCLOUD, merged.sourceType(fromSoundcloud))
+        val options = MergeFeatures(commentsOff = setOf(ServerType.SUBSONIC.name), canvas = false)
+        assertFalse(options.commentsFor(ServerType.SUBSONIC))
+        assertTrue(options.commentsFor(ServerType.SOUNDCLOUD))
+        assertFalse(options.canvasFor(ServerType.SPOTIFY))
+        assertTrue(options.videosFor(ServerType.SUBSONIC))
+        assertFalse(MergeFeatures(videos = false).videosFor(ServerType.YOUTUBE_MUSIC))
     }
 }

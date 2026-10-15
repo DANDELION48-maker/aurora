@@ -320,7 +320,8 @@ fun PlayerScreen(
                 )
                 Spacer(Modifier.height(8.dp))
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    val showVideoModeControl = (state.hasTrack && !state.isMix && !song.isRadio() && !song.isPodcast()) || state.hasVideo
+                    val showVideoModeControl = (state.hasTrack && !state.isMix && !song.isRadio() && !song.isPodcast() &&
+                        (state.supportsMusicVideo || state.supportsCanvas)) || state.hasVideo
                     val headerTint = LocalContentColor.current
                     val haptics = androidx.compose.ui.platform.LocalHapticFeedback.current
                     val videoToggle: @Composable () -> Unit = {
@@ -344,13 +345,14 @@ fun PlayerScreen(
                                     if (showVideo) {
                                         fullscreenVideo = false
                                         showVideo = false
-                                    } else if (state.hasVideo && videoPlayer != null && !state.videoIsCanvas) {
+                                    } else if (state.hasVideo && videoPlayer != null && !state.videoIsCanvas && state.supportsMusicVideo) {
                                         showLyrics = false
                                         showVideo = true
                                         inlineVideoControlsVisible = false
-                                    } else if (!state.videoLoading) {
+                                    } else if (!state.videoLoading && (state.supportsMusicVideo || state.supportsCanvas)) {
+                                        // with music videos switched off the tap brings the canvas instead
                                         requestedVideo = true
-                                        onRequestVideo(false)
+                                        onRequestVideo(!state.supportsMusicVideo)
                                     }
                                 },
                             ).semantics {

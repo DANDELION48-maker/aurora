@@ -81,6 +81,7 @@ data class PlayerUiState(
     val supportsCanvas: Boolean = false,
     val supportsComments: Boolean = false,
     val comments: List<com.aurora.music.model.TrackComment> = emptyList(),
+    val supportsMusicVideo: Boolean = true,
 ) {
     val durationSec: Int get() = if (isLive) 0 else timelineDurationSec.takeIf { it > 0 } ?: current.durationSec
     fun progressAt(positionSec: Float): Float = if (durationSec == 0) 0f else (positionSec / durationSec).coerceIn(0f, 1f)
@@ -134,6 +135,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
 
     // likes merge server stars + local playlist likes
     private var serverLikedIds: Set<String> = emptySet()
+    @Volatile private var mergeFeatures = com.aurora.music.data.MergeFeatures()
     private var likedPlaylistIds: Set<String> = emptySet()
     private var lastRecordedId: String? = null
     private var lastNowPlayingId: String? = null
@@ -243,6 +245,14 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
 
         viewModelScope.launch {
             container.sessionReady.collect { ready -> if (ready == true) refreshLikes() }
+        }
+        // merge options apply to the song on screen right away
+        viewModelScope.launch {
+            container.settingsStore.mergeFeatures.collect {
+                mergeFeatures = it
+                commentsFor = null
+                syncFromController()
+            }
         }
         // a song downloaded after likes were loaded still belongs in the offline liked songs
         viewModelScope.launch {
@@ -457,6 +467,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         } else mediaId?.let { songById[it] } ?: _state.value.current
         val cur = com.aurora.music.playback.PreferredPlayback.applyTo(queued, c.currentMediaItem)
         companionVideo.clearIfSongChanged(cur.id)
+        val sourceType = container.repository.sourceType(cur)
         loadComments(cur)
         val videoUri = c.currentMediaItem?.localConfiguration?.uri
         val q = (0 until c.mediaItemCount).mapNotNull { i -> songById[c.getMediaItemAt(i).mediaId] }
@@ -474,7 +485,8 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
                 videoQualityHeight = if (companionVideo.isReady) companionVideo.qualityHeight.takeIf { !companionVideo.isCanvas }
                     else videoUri?.getQueryParameter("quality")?.toIntOrNull(),
                 videoIsCanvas = companionVideo.isCanvas,
-                supportsCanvas = container.repository.supportsCanvas(cur),
+                supportsCanvas = container.repository.supportsCanvas(cur) && mergeFeatures.canvasFor(sourceType),
+                supportsMusicVideo = mergeFeatures.videosFor(sourceType),
                 isMix = container.mixController.activeProject != null,
                 isPlaying = c.effectivelyPlaying,
                 shuffle = c.shuffleModeEnabled,
@@ -1019,7 +1031,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         commentsFor = song.id
         commentsJob?.cancel()
         _state.update { it.copy(comments = emptyList(), supportsComments = false) }
-        if (!container.repository.supportsComments(song)) return
+        if (!container.repository.supportsComments(song) || !mergeFeatures.commentsFor(container.repository.sourceType(song))) return
         commentsJob = viewModelScope.launch {
             val list = runCatching { container.repository.comments(song) }.getOrNull() ?: return@launch
             if (_state.value.current.id == song.id) _state.update { it.copy(comments = list, supportsComments = true) }

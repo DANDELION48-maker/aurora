@@ -421,6 +421,8 @@ class MergedBackend(
         return listOf(candidate, split).any { recordingMatches(song, it) || sameLength(song, it) }
     }
 
+    override fun sourceType(song: Song): ServerType = unwrap(song.id)?.let { sources[it.first].session.type } ?: session.type
+
     private fun borrows(catalogue: Int, owner: Int, song: Song) = catalogue >= 0 && owner != catalogue && !song.isRadio() && !song.isPodcast()
 
     override fun supportsCanvas(song: Song): Boolean {

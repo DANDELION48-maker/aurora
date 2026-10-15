@@ -345,6 +345,7 @@ class MusicRepository(
     suspend fun canvasUrl(song: Song): String? = if (offline) null else backend?.canvasUrl(song)
 
     fun supportsComments(song: Song): Boolean = !offline && backend?.supportsComments(song) == true
+    fun sourceType(song: Song): ServerType? = backend?.sourceType(song)
     suspend fun comments(song: Song): List<com.aurora.music.model.TrackComment>? = if (offline) null else backend?.comments(song)
     suspend fun postComment(song: Song, body: String, timestampMs: Long): com.aurora.music.model.TrackComment? =
         if (offline || body.isBlank()) null else backend?.postComment(song, body.trim(), timestampMs)

@@ -1153,6 +1153,19 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     val mergeSources: Flow<Set<String>> = dataStore.data.map { it[Keys.MERGE_SOURCES] ?: emptySet() }.distinctUntilChanged()
     suspend fun setMergeSources(keys: Set<String>) = dataStore.edit { it[Keys.MERGE_SOURCES] = keys }
 
+    val mergeFeatures: Flow<MergeFeatures> = dataStore.data.map {
+        MergeFeatures(
+            canvas = it[Keys.MERGE_CANVAS] ?: true, canvasOff = it[Keys.MERGE_CANVAS_OFF] ?: emptySet(),
+            videos = it[Keys.MERGE_VIDEOS] ?: true, videosOff = it[Keys.MERGE_VIDEOS_OFF] ?: emptySet(),
+            comments = it[Keys.MERGE_COMMENTS] ?: true, commentsOff = it[Keys.MERGE_COMMENTS_OFF] ?: emptySet(),
+        )
+    }.distinctUntilChanged()
+    suspend fun setMergeFeatures(f: MergeFeatures) = dataStore.edit {
+        it[Keys.MERGE_CANVAS] = f.canvas; it[Keys.MERGE_CANVAS_OFF] = f.canvasOff
+        it[Keys.MERGE_VIDEOS] = f.videos; it[Keys.MERGE_VIDEOS_OFF] = f.videosOff
+        it[Keys.MERGE_COMMENTS] = f.comments; it[Keys.MERGE_COMMENTS_OFF] = f.commentsOff
+    }
+
     val recentSearches: Flow<List<String>> = dataStore.data.map { it[Keys.RECENT_SEARCHES] }.distinctUntilChanged().map { parseStringList(it) }
 
     private fun parseStringList(json: String?): List<String> = runCatching {

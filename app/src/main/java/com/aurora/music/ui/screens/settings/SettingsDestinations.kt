@@ -16,6 +16,7 @@ data class SettingsDestination(val route: String, @androidx.annotation.StringRes
 object SettingsDestinations {
     val accounts = SettingsDestination(Routes.SETTINGS_ACCOUNTS, R.string.text_servers_accounts_59e105, R.string.text_switch_between_saved_logins_dfa5ef)
     val sources = SettingsDestination(Routes.SETTINGS_SOURCES, R.string.text_library_sources_101221, R.string.text_source_priority_and_unified_library_5d9b2c)
+    val merge = SettingsDestination(Routes.SETTINGS_MERGE, R.string.merge_options, R.string.merge_options_summary)
     val storage = SettingsDestination(Routes.SETTINGS_STORAGE, R.string.text_downloads_storage_f7c580, R.string.storage_description)
     val analysis = SettingsDestination(Routes.SETTINGS_SONIC, R.string.text_library_analysis_discovery_211d17, R.string.text_library_scans_sonic_radio_and_auto_dj_dbb04a)
     val playback = SettingsDestination(Routes.SETTINGS_PLAYBACK, R.string.text_playback_quality_144407, R.string.text_streaming_quality_crossfade_gapless_and_speed_602d35)
@@ -44,7 +45,7 @@ object SettingsDestinations {
     val backup = SettingsDestination(Routes.SETTINGS_BACKUP, R.string.text_backup_restore_a16162, R.string.text_export_or_import_settings_and_playlists_4ce918)
     val about = SettingsDestination(Routes.SETTINGS_ABOUT, R.string.text_about_aurora_b4ed8c, R.string.text_version_and_app_information_9c9a82)
 
-    val all = listOf(accounts, sources, storage, analysis, playback, output, network, equalizer, advancedAudio, processingRack, reverb, tuning, impulses, comparison, presetRules, processingPresets, loudness,
+    val all = listOf(accounts, sources, merge, storage, analysis, playback, output, network, equalizer, advancedAudio, processingRack, reverb, tuning, impulses, comparison, presetRules, processingPresets, loudness,
         listening, extensions, signalPath, alarm, appearance, visualizer, gestures, integrations, permissions, insights, backup, about)
 }
 

@@ -124,6 +124,9 @@ interface MediaBackend {
     fun supportsCanvas(song: Song): Boolean = false
     suspend fun canvasUrl(song: Song): String? = null
 
+    // the kind of account a song comes from; a merged library answers for the source behind it
+    fun sourceType(song: Song): ServerType = session.type
+
     // timed comments along the track; null when there is no track on the service to comment on
     fun supportsComments(song: Song): Boolean = false
     suspend fun comments(song: Song): List<com.aurora.music.model.TrackComment>? = null
