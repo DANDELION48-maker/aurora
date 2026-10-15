@@ -88,7 +88,7 @@ class SoundCloudWebWriter(context: Context) : SoundCloudBrowser {
                 .catch(e => $BRIDGE.postMessage(JSON.stringify({id: $id, status: 0, body: String(e)})))"""
             withContext(Dispatchers.Main) { page.evaluateJavascript(script, null) }
             withTimeoutOrNull(TIMEOUT_MS) { reply.await() }?.takeIf { it.first != 0 }
-                ?: throw IOException("Could not connect to SoundCloud. Please retry.")
+                ?: throw IOException("Could not connect to SoundCloud. Please retry.").also { com.aurora.music.util.AppLog.d("SoundCloud", "$method got no answer from the page") }
         } finally {
             replies.remove(id)
         }

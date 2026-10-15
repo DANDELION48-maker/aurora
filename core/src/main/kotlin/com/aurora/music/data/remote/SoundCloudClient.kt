@@ -109,6 +109,7 @@ class SoundCloudClient(
             runCatching { http.newCall(request).execute() }.getOrElse { throw IOException("Could not connect to SoundCloud. Please retry.") }
                 .use { it.code to it.body?.string().orEmpty() }
         }
+        if (method != "GET" && code !in 200..299) com.aurora.music.util.AppLog.d("SoundCloud", "$method ${base.encodedPath} -> $code ${text.take(120)}")
         if (code == 401 || (code == 403 && !refresh)) return null
         if (code == 403) throw IOException("SoundCloud did not allow this request. Please try again.")
         if (code == 404) throw IOException("SoundCloud could not find this item.")
