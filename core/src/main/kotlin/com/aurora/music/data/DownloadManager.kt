@@ -220,7 +220,7 @@ class DownloadManager(
 
     @Synchronized
     fun downloadSong(song: Song): Boolean {
-        if (hasSourceMismatch(song)) { setState(song.id, DownloadState.Failed); return false }
+        if (hasSourceMismatch(song)) { com.aurora.music.util.AppLog.w("Downloads", "source mismatch for a download"); setState(song.id, DownloadState.Failed); return false }
         val identity = sourceIdentity(song)
         val serverId = currentServerIdProvider()
         val owner = DownloadOwner(identity?.providerId, serverId)
@@ -322,7 +322,8 @@ class DownloadManager(
                 albumId = song.albumId, artistId = song.artistId, durationSec = song.durationSec,
                 audioPath = audioFile.absolutePath,
                 coverPath = if (coverFile.exists()) coverFile.absolutePath else "",
-                suffix = if (hls) "m4a" else if (request.bitrate == 0) song.suffix else "mp3",
+                // the stitched stream is aac in mp4, and the player reads a bare m4a as lossless alac
+                suffix = if (hls) "aac" else if (request.bitrate == 0) song.suffix else "mp3",
                 bitrateKbps = if (request.bitrate == 0) song.bitrateKbps else request.bitrate,
                 sampleRateHz = song.sampleRateHz,
                 bitDepth = song.bitDepth,
@@ -334,6 +335,7 @@ class DownloadManager(
             saveIndex()
             setState(song.id, DownloadState.Done)
         } catch (e: Exception) {
+            com.aurora.music.util.AppLog.w("Downloads", "download failed: ${e.message}")
             runCatching { File(dir, "$stem.audio").delete(); File(dir, "$stem.part").delete() }
             setState(song.id, DownloadState.Failed)
         } finally {
