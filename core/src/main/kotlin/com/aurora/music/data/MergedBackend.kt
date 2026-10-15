@@ -413,6 +413,19 @@ class MergedBackend(
         return if (spotify.supportsCanvas(twin)) spotify.canvasUrl(twin) else null
     }
 
+    override fun supportsComments(song: Song): Boolean {
+        val (i, oid) = unwrap(song.id) ?: return false
+        return sources[i].supportsComments(song.copy(id = oid))
+    }
+    override suspend fun comments(song: Song): List<com.aurora.music.model.TrackComment> {
+        val (i, oid) = unwrap(song.id) ?: return emptyList()
+        return sources[i].comments(song.copy(id = oid))
+    }
+    override suspend fun postComment(song: Song, body: String, timestampMs: Long): com.aurora.music.model.TrackComment? {
+        val (i, oid) = unwrap(song.id) ?: return null
+        return sources[i].postComment(song.copy(id = oid), body, timestampMs)
+    }
+
     override suspend fun serverLyrics(song: Song): Lyrics? {
         val (i, oid) = unwrap(song.id) ?: return primary?.serverLyrics(song)
         return sources.getOrNull(i)?.serverLyrics(song.copy(id = oid))

@@ -79,6 +79,8 @@ data class PlayerUiState(
     val canSelectVideoQuality: Boolean = false,
     val videoIsCanvas: Boolean = false,
     val supportsCanvas: Boolean = false,
+    val supportsComments: Boolean = false,
+    val comments: List<com.aurora.music.model.TrackComment> = emptyList(),
 ) {
     val durationSec: Int get() = if (isLive) 0 else timelineDurationSec.takeIf { it > 0 } ?: current.durationSec
     fun progressAt(positionSec: Float): Float = if (durationSec == 0) 0f else (positionSec / durationSec).coerceIn(0f, 1f)
@@ -455,6 +457,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         } else mediaId?.let { songById[it] } ?: _state.value.current
         val cur = com.aurora.music.playback.PreferredPlayback.applyTo(queued, c.currentMediaItem)
         companionVideo.clearIfSongChanged(cur.id)
+        loadComments(cur)
         val videoUri = c.currentMediaItem?.localConfiguration?.uri
         val q = (0 until c.mediaItemCount).mapNotNull { i -> songById[c.getMediaItemAt(i).mediaId] }
         if (cur.id != lastKeyInfoId) { lastKeyInfoId = cur.id; lastKeyInfo = runCatching { container.sonicEngine.keyInfo(cur.id) }.getOrNull() }
@@ -472,6 +475,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
                     else videoUri?.getQueryParameter("quality")?.toIntOrNull(),
                 videoIsCanvas = companionVideo.isCanvas,
                 supportsCanvas = container.repository.supportsCanvas(cur),
+                supportsComments = container.repository.supportsComments(cur),
                 isMix = container.mixController.activeProject != null,
                 isPlaying = c.effectivelyPlaying,
                 shuffle = c.shuffleModeEnabled,
@@ -1006,6 +1010,33 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun toggleLikeCurrent() = toggleLike(_state.value.current.id)
+
+    private var commentsFor: String? = null
+    private var commentsJob: Job? = null
+
+    // comments load once per track and are dropped as soon as another one starts
+    private fun loadComments(song: Song) {
+        if (song.id == commentsFor) return
+        commentsFor = song.id
+        commentsJob?.cancel()
+        _state.update { it.copy(comments = emptyList()) }
+        if (!container.repository.supportsComments(song)) return
+        commentsJob = viewModelScope.launch {
+            val list = runCatching { container.repository.comments(song) }.getOrNull() ?: return@launch
+            if (_state.value.current.id == song.id) _state.update { it.copy(comments = list) }
+        }
+    }
+
+    // posted at the moment the track is at, the way soundcloud pins a comment
+    fun postComment(body: String) {
+        val song = _state.value.current
+        val at = (controller?.currentPosition ?: 0L).coerceAtLeast(0L)
+        viewModelScope.launch {
+            val posted = runCatching { container.repository.postComment(song, body, at) }.getOrNull()
+            if (posted == null) android.widget.Toast.makeText(getApplication(), appString(R.string.comment_failed), android.widget.Toast.LENGTH_SHORT).show()
+            else if (_state.value.current.id == song.id) _state.update { it.copy(comments = (it.comments + posted).sortedBy { c -> c.timestampMs }) }
+        }
+    }
 
     private fun recomputeLikes() {
         _state.update { it.copy(likedIds = serverLikedIds + likedPlaylistIds) }

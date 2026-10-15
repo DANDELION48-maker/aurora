@@ -80,6 +80,9 @@ import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -175,6 +178,7 @@ fun PlayerScreen(
     onSonicRadio: () -> Unit,
     onAutoDj: () -> Unit,
     onOpenMix: () -> Unit = {},
+    onPostComment: (String) -> Unit = {},
     videoPlayer: androidx.media3.common.Player? = null,
     onVideoQualityChange: (Int?) -> Unit = {},
     onRequestVideo: (canvas: Boolean) -> Unit = {},
@@ -198,6 +202,8 @@ fun PlayerScreen(
     var showVideo by androidx.compose.runtime.saveable.rememberSaveable(song.id) { mutableStateOf(false) }
     var sidePaneName by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(PlayerPane.LYRICS.name) }
     var portraitTabName by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf<String?>(null) }
+    var showComments by remember { mutableStateOf(false) }
+    if (showComments && state.supportsComments) CommentsSheet(state, onDismiss = { showComments = false }, onSeek = onSeek, onPost = onPostComment)
     val sidePane = PlayerPane.valueOf(sidePaneName)
     val portraitTab = portraitTabName?.let { PlayerPane.valueOf(it) }
     LaunchedEffect(requestedPane) {
@@ -404,6 +410,11 @@ fun PlayerScreen(
                                 text = { Text(appString(R.string.text_visualizer_7177c7)) },
                                 onClick = { showMenu = false; onOpenVisualizer() },
                                 leadingIcon = { Icon(Icons.Filled.GraphicEq, null) },
+                            )
+                            if (state.supportsComments) DropdownMenuItem(
+                                text = { Text(appString(R.string.player_comments)) },
+                                onClick = { showMenu = false; showComments = true },
+                                leadingIcon = { Icon(Icons.Filled.ChatBubble, null) },
                             )
                             MusicHapticsMenuItem()
                             DropdownMenuItem(
@@ -613,6 +624,7 @@ fun PlayerScreen(
                 seekStyle = ui.playerSeekStyle,
                 waveBars = ui.playerWaveBars,
                 onSeek = onSeek,
+                comments = state.comments,
             )
 
             Spacer(Modifier.height(8.dp))
@@ -1205,6 +1217,7 @@ private fun SeekBar(
     onSeek: (Float) -> Unit,
     onInteraction: () -> Unit = {},
     onSeekingChanged: (Boolean) -> Unit = {},
+    comments: List<com.aurora.music.model.TrackComment> = emptyList(),
 ) {
     val position = com.aurora.music.ui.components.LocalPlaybackPosition.current.value
     val positionSec = position.toInt()
@@ -1237,6 +1250,7 @@ private fun SeekBar(
             }
             return@Column
         }
+        CommentTrack(comments, durationSec, position, accent)
         if (seekStyle == SeekStyle.BAR) {
             Slider(
                 value = progress.coerceIn(0f, 1f),
@@ -1276,5 +1290,75 @@ private fun GlassArtBackdrop(song: com.aurora.music.model.Song, modifier: Modifi
         Box(Modifier.fillMaxSize().background(Brush.verticalGradient(
             if (dark) listOf(Color.Black.copy(alpha = .12f), Color.Black.copy(alpha = .3f), Color.Black.copy(alpha = .5f))
             else listOf(Color.White.copy(alpha = .1f), Color.White.copy(alpha = .3f), Color.White.copy(alpha = .55f)))))
+    }
+}
+
+// soundcloud-style: the comment just passed pops up, and every commenter sits along the timeline
+@Composable
+private fun CommentTrack(comments: List<com.aurora.music.model.TrackComment>, durationSec: Int, positionSec: Float, accent: Color) {
+    if (comments.isEmpty() || durationSec <= 0) return
+    val passing = comments.lastOrNull { it.timestampMs / 1000f in (positionSec - 4f)..positionSec }
+    Box(Modifier.fillMaxWidth().height(44.dp), contentAlignment = Alignment.BottomStart) {
+        androidx.compose.animation.Crossfade(passing, label = "comment") { comment ->
+            if (comment != null) Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 2.dp)) {
+                Artwork(comment.avatarUrl, accent, Modifier.size(24.dp), corner = 12.dp, decodeSize = 64)
+                Spacer(Modifier.width(8.dp))
+                Column {
+                    Text(comment.user, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(comment.body, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+            }
+        }
+    }
+    BoxWithConstraints(Modifier.fillMaxWidth().height(16.dp)) {
+        // one avatar per small slice of the timeline, so a busy track stays readable
+        val slices = (maxWidth / 14.dp).toInt().coerceAtLeast(1)
+        val shown = remember(comments, slices, durationSec) {
+            comments.distinctBy { (it.timestampMs / 1000f / durationSec * slices).toInt().coerceIn(0, slices - 1) }
+        }
+        shown.forEach { comment ->
+            val at = (comment.timestampMs / 1000f / durationSec).coerceIn(0f, 1f)
+            Artwork(comment.avatarUrl, accent, Modifier.offset(x = (maxWidth - 14.dp) * at).size(14.dp), corner = 7.dp, decodeSize = 48)
+        }
+    }
+}
+
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+@Composable
+private fun CommentsSheet(state: PlayerUiState, onDismiss: () -> Unit, onSeek: (Float) -> Unit, onPost: (String) -> Unit) {
+    var draft by remember { mutableStateOf("") }
+    val positionSec = com.aurora.music.ui.components.LocalPlaybackPosition.current.value
+    androidx.compose.material3.ModalBottomSheet(onDismissRequest = onDismiss) {
+        Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).imePadding()) {
+            Text(appString(R.string.player_comments), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(8.dp))
+            if (state.comments.isEmpty()) Text(appString(R.string.comments_empty), style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(vertical = 16.dp))
+            androidx.compose.foundation.lazy.LazyColumn(Modifier.weight(1f, fill = false).heightIn(max = 420.dp)) {
+                items(state.comments.size, key = { state.comments[it].id }) { index ->
+                    val comment = state.comments[index]
+                    Row(Modifier.fillMaxWidth().clickable { onSeek(state.progressAt(comment.timestampMs / 1000f)) }.padding(vertical = 8.dp)) {
+                        Artwork(comment.avatarUrl, state.current.accent, Modifier.size(32.dp), corner = 16.dp, decodeSize = 96)
+                        Spacer(Modifier.width(10.dp))
+                        Column(Modifier.weight(1f)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(comment.user, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+                                Spacer(Modifier.width(6.dp))
+                                Text(formatTime((comment.timestampMs / 1000).toInt()), style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.primary)
+                            }
+                            Text(comment.body, style = MaterialTheme.typography.bodyMedium)
+                        }
+                    }
+                }
+            }
+            Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                androidx.compose.material3.OutlinedTextField(draft, { draft = it }, Modifier.weight(1f), singleLine = true,
+                    placeholder = { Text(appString(R.string.comment_hint, formatTime(positionSec.toInt()))) })
+                Spacer(Modifier.width(8.dp))
+                androidx.compose.material3.TextButton(onClick = { onPost(draft); draft = "" }, enabled = draft.isNotBlank()) { Text(appString(R.string.comment_post)) }
+            }
+        }
     }
 }

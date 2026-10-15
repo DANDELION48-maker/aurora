@@ -1503,6 +1503,7 @@ fun AuroraApp() {
                     onSonicRadio = { playerVM.startSonicRadio(onResult = { confirm(it) }) },
                     onAutoDj = { playerVM.startAutoDj(onResult = { confirm(it) }) },
                     onOpenMix = { playerVM.setExpanded(false); mixQueue = playerState.queue.filterNot { it.id.startsWith("aurora-mix:") }; showMix = true },
+                    onPostComment = playerVM::postComment,
                     gestures = gesturePrefs,
                     requestedPane = playerPaneRequest,
                     onPaneRequestHandled = { playerPaneRequest = null },

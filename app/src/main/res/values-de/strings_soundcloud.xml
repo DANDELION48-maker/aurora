@@ -10,4 +10,9 @@
     <string name="soundcloud_connect_failed">"SoundCloud konnte nicht verbunden werden. Bitte versuche es erneut."</string>
     <string name="soundcloud_page_failed">"Die Anmeldeseite konnte nicht geladen werden. Prüfe deine Verbindung und lade neu."</string>
     <string name="soundcloud_captcha_hint">"SoundCloud möchte vor dem Speichern prüfen, ob du ein Mensch bist. Löse die Prüfung einmal, dann schließt Aurora die Änderung ab."</string>
+    <string name="player_comments">"Kommentare"</string>
+    <string name="comments_empty">"Noch keine Kommentare. Sei der Erste."</string>
+    <string name="comment_hint">"Kommentar bei %1$s"</string>
+    <string name="comment_post">"Senden"</string>
+    <string name="comment_failed">"Dein Kommentar konnte nicht gesendet werden. Versuche es erneut."</string>
 </resources>

@@ -10,4 +10,9 @@
     <string name="soundcloud_connect_failed">"Could not connect SoundCloud. Please try again."</string>
     <string name="soundcloud_page_failed">"The sign-in page could not load. Check your connection and reload."</string>
     <string name="soundcloud_captcha_hint">"SoundCloud wants to check you\'re human before saving this change. Solve it once and Aurora finishes the change."</string>
+    <string name="player_comments">"Comments"</string>
+    <string name="comments_empty">"No comments yet. Be the first."</string>
+    <string name="comment_hint">"Comment at %1$s"</string>
+    <string name="comment_post">"Post"</string>
+    <string name="comment_failed">"Couldn\'t post your comment. Try again."</string>
 </resources>

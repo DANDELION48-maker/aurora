@@ -10,4 +10,9 @@
     <string name="soundcloud_connect_failed">"SoundCloud نہیں جڑ سکا۔ دوبارہ کوشش کریں۔"</string>
     <string name="soundcloud_page_failed">"سائن ان صفحہ لوڈ نہیں ہو سکا۔ اپنا کنکشن چیک کر کے دوبارہ لوڈ کریں۔"</string>
     <string name="soundcloud_captcha_hint">"یہ تبدیلی محفوظ کرنے سے پہلے SoundCloud تصدیق کرنا چاہتا ہے کہ آپ انسان ہیں۔ اسے ایک بار حل کریں، پھر Aurora تبدیلی مکمل کر دے گا۔"</string>
+    <string name="player_comments">"تبصرے"</string>
+    <string name="comments_empty">"ابھی کوئی تبصرہ نہیں۔ پہلا تبصرہ آپ کریں۔"</string>
+    <string name="comment_hint">"%1$s پر تبصرہ"</string>
+    <string name="comment_post">"پوسٹ کریں"</string>
+    <string name="comment_failed">"آپ کا تبصرہ پوسٹ نہیں ہو سکا۔ دوبارہ کوشش کریں۔"</string>
 </resources>

@@ -10,4 +10,9 @@
     <string name="soundcloud_connect_failed">"SoundCloud bağlanamadı. Lütfen tekrar dene."</string>
     <string name="soundcloud_page_failed">"Giriş sayfası yüklenemedi. Bağlantını kontrol edip yeniden yükle."</string>
     <string name="soundcloud_captcha_hint">"SoundCloud bu değişikliği kaydetmeden önce insan olduğunu doğrulamak istiyor. Bir kez çöz, Aurora değişikliği tamamlasın."</string>
+    <string name="player_comments">"Yorumlar"</string>
+    <string name="comments_empty">"Henüz yorum yok. İlk yorumu sen yap."</string>
+    <string name="comment_hint">"%1$s anına yorum"</string>
+    <string name="comment_post">"Gönder"</string>
+    <string name="comment_failed">"Yorumun gönderilemedi. Tekrar dene."</string>
 </resources>

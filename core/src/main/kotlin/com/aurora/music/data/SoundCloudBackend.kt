@@ -210,6 +210,28 @@ class SoundCloudBackend(
         if (id.matches(Regex("[0-9]+"))) api.send("POST", "/me/play-history", JsonObject().apply { addProperty("track_urn", "soundcloud:tracks:$id") })
     }
 
+    override fun supportsComments(song: Song) = song.id.matches(Regex("[0-9]+"))
+
+    // popular tracks carry thousands; the newest thousand are plenty to scatter along the waveform
+    override suspend fun comments(song: Song): List<TrackComment> {
+        if (!supportsComments(song)) return emptyList()
+        val out = mutableListOf<TrackComment>()
+        val seen = hashSetOf<String>()
+        var next: String? = "/tracks/${song.id}/comments?threaded=0&filter_replies=0&limit=200"
+        while (next != null && out.size < 1000) {
+            val page = api.get(next).asJsonObject
+            out += page.items("collection").mapNotNull(::comment)
+            next = page.string("next_href").takeIf { it.isNotBlank() && seen.add(it) }
+        }
+        return out.sortedBy { it.timestampMs }
+    }
+
+    override suspend fun postComment(song: Song, body: String, timestampMs: Long): TrackComment? {
+        if (!supportsComments(song)) return null
+        val payload = JsonObject().apply { add("comment", JsonObject().apply { addProperty("body", body); addProperty("timestamp", timestampMs) }) }
+        return comment(api.send("POST", "/tracks/${song.id}/comments", payload).asJsonObject)
+    }
+
     /** a signed hls link, or null when soundcloud only offers a preview or an encrypted stream */
     suspend fun playbackUrl(id: String): String? {
         require(id.matches(Regex("[0-9]+")))
@@ -274,6 +296,14 @@ class SoundCloudBackend(
         }
 
         fun artist(u: JsonObject) = Artist(u.string("id"), u.string("username"), art(u.string("avatar_url")), 0)
+
+        fun comment(c: JsonObject): TrackComment? {
+            val id = c.string("id")
+            val body = c.string("body").trim()
+            if (id.isBlank() || body.isBlank()) return null
+            val user = c.obj("user")
+            return TrackComment(id, body, c.int("timestamp").toLong(), user.string("username"), art(user.string("avatar_url")))
+        }
 
         private fun collection(item: JsonObject): HomeFeedItem? = when (item.string("kind")) {
             "track" -> song(item)?.let(HomeFeedItem::Track)

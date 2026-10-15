@@ -10,4 +10,9 @@
     <string name="soundcloud_connect_failed">"SoundCloud를 연결하지 못했습니다. 다시 시도하세요."</string>
     <string name="soundcloud_page_failed">"로그인 페이지를 불러오지 못했습니다. 연결을 확인하고 새로고침하세요."</string>
     <string name="soundcloud_captcha_hint">"이 변경 사항을 저장하기 전에 SoundCloud가 사람인지 확인하려고 합니다. 한 번 풀면 Aurora가 변경을 마칩니다."</string>
+    <string name="player_comments">"댓글"</string>
+    <string name="comments_empty">"아직 댓글이 없습니다. 첫 댓글을 남겨 보세요."</string>
+    <string name="comment_hint">"%1$s에 댓글"</string>
+    <string name="comment_post">"게시"</string>
+    <string name="comment_failed">"댓글을 게시하지 못했습니다. 다시 시도하세요."</string>
 </resources>

@@ -10,4 +10,9 @@
     <string name="soundcloud_connect_failed">"تعذّر ربط SoundCloud. حاول مرة أخرى."</string>
     <string name="soundcloud_page_failed">"تعذّر تحميل صفحة تسجيل الدخول. تحقّق من اتصالك وأعد التحميل."</string>
     <string name="soundcloud_captcha_hint">"يريد SoundCloud التحقق من أنك إنسان قبل حفظ هذا التغيير. أكمل التحقق مرة واحدة وسيُكمل Aurora التغيير."</string>
+    <string name="player_comments">"التعليقات"</string>
+    <string name="comments_empty">"لا توجد تعليقات بعد. كن أول من يعلّق."</string>
+    <string name="comment_hint">"تعليق عند %1$s"</string>
+    <string name="comment_post">"نشر"</string>
+    <string name="comment_failed">"تعذّر نشر تعليقك. حاول مرة أخرى."</string>
 </resources>

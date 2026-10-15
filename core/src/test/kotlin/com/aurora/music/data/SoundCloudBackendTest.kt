@@ -134,6 +134,31 @@ class SoundCloudBackendTest {
         Unit
     }
 
+    @Test fun commentsFollowEveryPageInTrackOrderAndPostAtAPosition() = runBlocking {
+        fun comment(id: Int, at: Int) = """{"id":$id,"body":" nice $id ","timestamp":$at,"user":{"username":"fan$id","avatar_url":"https://i1.sndcdn.com/avatars-x-large.jpg"}}"""
+        val api = object : SoundCloudTransport {
+            val writes = mutableListOf<String>()
+            override suspend fun get(path: String) = JsonParser.parseString(when (path) {
+                "/tracks/5/comments?threaded=0&filter_replies=0&limit=200" -> """{"collection":[${comment(1, 90000)},{"id":9,"body":""}],"next_href":"https://api-v2.soundcloud.com/tracks/5/comments?offset=2"}"""
+                "https://api-v2.soundcloud.com/tracks/5/comments?offset=2" -> """{"collection":[${comment(2, 1500)}],"next_href":null}"""
+                else -> error(path)
+            })
+            override suspend fun send(method: String, path: String, body: com.google.gson.JsonObject?): com.google.gson.JsonElement {
+                writes += "$method $path $body"
+                return JsonParser.parseString(comment(3, 42000))
+            }
+        }
+        val backend = SoundCloudBackend(session, api)
+        val song = SoundCloudBackend.song(JsonParser.parseString(track(5)).asJsonObject)!!
+        val comments = backend.comments(song)
+        assertEquals(listOf("2", "1"), comments.map { it.id })
+        assertEquals("nice 2", comments.first().body)
+        assertEquals("https://i1.sndcdn.com/avatars-x-t500x500.jpg", comments.first().avatarUrl)
+        assertEquals(42000L, backend.postComment(song, "wow", 42000)!!.timestampMs)
+        assertEquals(listOf("""POST /tracks/5/comments {"comment":{"body":"wow","timestamp":42000}}"""), api.writes)
+        assertTrue(backend.comments(song.copy(id = "soundcloud:system-playlists:x")).isEmpty())
+    }
+
     @Test fun nextLinksStayOnTheApiHost() {
         assertEquals("api-v2.soundcloud.com", SoundCloudClient.url("/me").host)
         assertThrows(IllegalArgumentException::class.java) { SoundCloudClient.url("https://evil.example/me") }
