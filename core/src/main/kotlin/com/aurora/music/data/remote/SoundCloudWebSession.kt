@@ -12,6 +12,7 @@ class SoundCloudWebSession(val cookie: String, val userAgent: String = "", val o
     }.toMap()
 
     val token: String get() = cookies["oauth_token"].orEmpty()
+    fun value(name: String): String = cookies[name].orEmpty()
     val canRefresh: Boolean get() = !cookies["oauth_refresh_token"].isNullOrBlank()
 
     // phones get the mobile site, which keeps its own cookies and refresh route

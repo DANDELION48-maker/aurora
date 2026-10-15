@@ -39,9 +39,11 @@ class YoutubeMediaSourceFactory(
     private val resolver: YoutubeResolver,
     private val preferred: suspend (MediaItem) -> MediaItem = { it },
     private val prepare: (MediaItem) -> MediaItem = { it },
+    private val soundcloud: suspend (MediaItem) -> YoutubeResolver.PlaybackStream? = { null },
     private val resolveStream: suspend (MediaItem) -> YoutubeResolver.PlaybackStream? = { item ->
         val uri = item.localConfiguration!!.uri
-        if (uri.host == "video") resolver.resolvePlayback(uri.lastPathSegment.orEmpty(), uri.getQueryParameter("quality")?.toIntOrNull())
+        if (uri.scheme == "aurora-sc") soundcloud(item)
+        else if (uri.host == "video") resolver.resolvePlayback(uri.lastPathSegment.orEmpty(), uri.getQueryParameter("quality")?.toIntOrNull())
         else resolver.resolveSentinel(uri)?.let { YoutubeResolver.PlaybackStream(it) }
     },
 ) : MediaSource.Factory {
@@ -85,7 +87,7 @@ class YoutubeMediaSourceFactory(
     private suspend fun resolve(item: MediaItem): YoutubeResolution {
         val selected = prepare(preferred(item))
         val uri = selected.localConfiguration!!.uri
-        if (uri.scheme != "aurora-yt") return YoutubeResolution(selected, YoutubeResolver.PlaybackStream(uri.toString()))
+        if (uri.scheme !in SCHEMES) return YoutubeResolution(selected, YoutubeResolver.PlaybackStream(uri.toString()))
         var error: Throwable? = null
         // Extraction and stream probes fail transiently on flaky or just-woken networks; a later attempt usually succeeds.
         for (attempt in 0 until RESOLVE_ATTEMPTS) {
@@ -98,7 +100,7 @@ class YoutubeMediaSourceFactory(
         return YoutubeResolution(selected, null, error)
     }
 
-    private fun MediaItem.isYoutube() = localConfiguration?.uri?.scheme == "aurora-yt"
+    private fun MediaItem.isYoutube() = localConfiguration?.uri?.scheme in SCHEMES
     private fun key(item: MediaItem) = item.mediaId + "\u0000" + item.localConfiguration?.uri
 
     override fun getSupportedTypes(): IntArray = delegate.supportedTypes
@@ -107,6 +109,8 @@ class YoutubeMediaSourceFactory(
 
     private companion object {
         const val TAG = "YtMediaSource"
+        // soundcloud links resolve late too, to hls or to a youtube match
+        val SCHEMES = setOf("aurora-yt", "aurora-sc")
         const val RESOLVE_ATTEMPTS = 3
         const val RETRY_BACKOFF_MS = 1_500L
         const val MAX_PREFETCHED = 8

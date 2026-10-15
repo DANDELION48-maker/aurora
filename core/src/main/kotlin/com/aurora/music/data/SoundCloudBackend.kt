@@ -3,6 +3,8 @@ package com.aurora.music.data
 import com.aurora.music.data.remote.*
 import com.aurora.music.model.*
 import com.aurora.music.util.accentArgbFor
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -149,13 +151,69 @@ class SoundCloudBackend(override val session: Session, private val api: SoundClo
         else -> null
     }
 
-    // shortcut: read-only for now, likes and playlist edits arrive with playback
-    override suspend fun setStarred(id: String, starred: Boolean, kind: String) = false
-    override suspend fun createPlaylist(name: String) = false
-    override suspend fun updatePlaylist(id: String, name: String?, comment: String?) = false
-    override suspend fun deletePlaylist(id: String) = false
+    private suspend fun change(method: String, path: String, body: JsonObject? = null): JsonElement =
+        api.send(method, path, body).also { pageCache.clear() }
 
-    override suspend fun scrobble(id: String) {}
+    override suspend fun setStarred(id: String, starred: Boolean, kind: String): Boolean {
+        val path = when (kind) {
+            "artist" -> "/me/followings/$id"
+            "album", "playlist" -> if (id.startsWith(SYSTEM_PLAYLIST)) "/users/$user/system_playlist_likes/$id" else "/users/$user/playlist_likes/$id"
+            else -> "/users/$user/track_likes/$id"
+        }
+        change(if (!starred) "DELETE" else if (kind == "artist") "POST" else "PUT", path)
+        return true
+    }
+
+    // only playlists the account owns take new tracks
+    override suspend fun playlistsForSong(songId: String) =
+        withCovers(library().filter { it.string("type") == "playlist" && !it.obj("playlist").bool("is_album") }.map { playlist(it.obj("playlist")) })
+
+    override suspend fun createPlaylist(name: String) = createPlaylistWithId(name) != null
+    override suspend fun createPlaylistWithId(name: String): String? = createPlaylistWithId(name, emptyList())
+    override suspend fun createPlaylistWithId(name: String, trackIds: List<String>): String? {
+        if (name.isBlank()) return null
+        val body = JsonObject().apply { add("playlist", JsonObject().apply {
+            addProperty("title", name.trim()); addProperty("sharing", "private"); add("tracks", ids(trackIds))
+        }) }
+        return change("POST", "/playlists", body).asJsonObject.string("id").takeIf { it.isNotBlank() }
+    }
+
+    // soundcloud replaces a playlist's whole track list on every save, so each edit sends the full list back
+    private suspend fun saveTracks(id: String, edit: (List<String>) -> List<String>?, title: String? = null, description: String? = null): Boolean {
+        val set = api.get("/playlists/$id").asJsonObject
+        val current = set.items("tracks").map { it.string("id") }
+        if (current.size != set.int("track_count")) throw IOException("SoundCloud returned an incomplete playlist. Please retry.")
+        val next = edit(current) ?: return false
+        val saved = change("PUT", "/playlists/$id", JsonObject().apply { add("playlist", JsonObject().apply {
+            title?.let { addProperty("title", it) }; description?.let { addProperty("description", it) }; add("tracks", ids(next))
+        }) }).asJsonObject
+        if (saved.has("track_count") && saved.int("track_count") != next.size) throw IOException("SoundCloud did not save this playlist. Please retry.")
+        covers.remove(id)
+        return true
+    }
+
+    override suspend fun updatePlaylist(id: String, name: String?, comment: String?) =
+        if (name == null && comment == null) true else saveTracks(id, { it }, name?.trim()?.takeIf { it.isNotBlank() }, comment)
+    override suspend fun addToPlaylist(playlistId: String, trackIds: List<String>) =
+        trackIds.isEmpty() || saveTracks(playlistId, { it + trackIds })
+    // every occurrence goes, and a removal that matched nothing is not reported as done
+    override suspend fun removeFromPlaylist(playlistId: String, trackIds: List<String>) =
+        saveTracks(playlistId, { current -> current.filterNot { it in trackIds }.takeIf { it.size < current.size } })
+    override suspend fun deletePlaylist(id: String): Boolean { change("DELETE", "/playlists/$id"); return true }
+
+    // the web player adds each played track to the account's history the same way
+    override suspend fun scrobble(id: String) {
+        if (id.matches(Regex("[0-9]+"))) api.send("POST", "/me/play-history", JsonObject().apply { addProperty("track_urn", "soundcloud:tracks:$id") })
+    }
+
+    /** a signed hls link, or null when soundcloud only offers a preview or an encrypted stream */
+    suspend fun playbackUrl(id: String): String? {
+        require(id.matches(Regex("[0-9]+")))
+        val track = api.get("/tracks/$id").asJsonObject
+        val pick = transcoding(track) ?: return null
+        val auth = URLEncoder.encode(track.string("track_authorization"), "UTF-8")
+        return api.get("${pick.string("url")}?track_authorization=$auth").asJsonObject.string("url").takeIf { it.startsWith("https://") }
+    }
     override suspend fun serverLyrics(song: Song): Lyrics? = null
     override fun streamUrl(songId: String, maxBitrate: Int, lossless: Boolean) = sentinel(songId)
     override fun coverArtUrl(id: String, size: Int) = songs[id]?.artworkUrl.orEmpty()
@@ -164,6 +222,15 @@ class SoundCloudBackend(override val session: Session, private val api: SoundClo
         private const val SYSTEM_PLAYLIST = "soundcloud:system-playlists:"
 
         fun sentinel(id: String) = "aurora-sc://track/$id"
+
+        private val PRESETS = listOf("aac_160k", "aac_96k", "abr_sq", "mp3_1_0", "mp3_0_1")
+        private fun ids(values: List<String>) = JsonArray().apply { values.forEach { add(it.toLongOrNull() ?: return@forEach) } }
+
+        // previews and drm streams are never picked; a go+ account gets the high quality one first
+        fun transcoding(track: JsonObject): JsonObject? = track.obj("media").items("transcodings")
+            .filter { !it.bool("snipped") && it.obj("format").string("protocol") in setOf("hls", "progressive") && it.string("url").isNotBlank() }
+            .sortedWith(compareBy({ it.string("quality") != "hq" }, { PRESETS.indexOf(it.string("preset")).let { i -> if (i < 0) PRESETS.size else i } }))
+            .firstOrNull()
 
         // the api links 100px art, the same file comes in 500px
         fun art(url: String) = url.replace("-large.", "-t500x500.")

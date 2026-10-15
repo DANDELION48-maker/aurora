@@ -101,7 +101,7 @@ class MusicRepository(
             song.isRadio() -> com.aurora.music.data.rules.RuleSource.RADIO
             song.isPodcast() -> com.aurora.music.data.rules.RuleSource.PODCAST
             song.streamUrl.startsWith("file:") || song.streamUrl.startsWith("content:") -> com.aurora.music.data.rules.RuleSource.LOCAL_FILE
-            song.streamUrl.startsWith("http:") || song.streamUrl.startsWith("https:") || song.streamUrl.startsWith("aurora-yt:") -> com.aurora.music.data.rules.RuleSource.STREAM
+            song.streamUrl.startsWith("http:") || song.streamUrl.startsWith("https:") || song.streamUrl.startsWith("aurora-yt:") || song.streamUrl.startsWith("aurora-sc:") -> com.aurora.music.data.rules.RuleSource.STREAM
             else -> return null
         }
         return PlaybackSourceIdentity(source = source)

@@ -178,6 +178,19 @@ class AppContainer(context: Context) {
     val artistInfoClient by lazy { com.aurora.music.data.remote.ArtistInfoClient(http) }
     val artistInfoStore = ArtistInfoStore(appContext.filesDir)
 
+    // soundcloud previews and drm-only tracks play from a youtube match instead
+    suspend fun resolveSoundCloud(item: androidx.media3.common.MediaItem): com.aurora.music.playback.YoutubeResolver.PlaybackStream? {
+        val id = item.localConfiguration?.uri?.lastPathSegment?.takeIf { it.matches(Regex("[0-9]+")) } ?: return null
+        val source = backend as? SoundCloudBackend ?: settingsStore.savedSessions.first()
+            .firstOrNull { it.type == ServerType.SOUNDCLOUD }?.let { buildBackend(it) as? SoundCloudBackend }
+        source?.playbackUrl(id)?.let { return com.aurora.music.playback.YoutubeResolver.PlaybackStream(it) }
+        val meta = item.mediaMetadata
+        val query = java.net.URLEncoder.encode("${meta.title ?: ""} ${meta.artist ?: ""}".trim(), "UTF-8")
+        val duration = meta.extras?.getInt("aurora.durationSec") ?: 0
+        return youtubeResolver.resolveSentinel(android.net.Uri.parse("aurora-yt://sc$id?q=$query&dur=$duration"))
+            ?.let { com.aurora.music.playback.YoutubeResolver.PlaybackStream(it) }
+    }
+
     private fun resolveYtSentinel(sentinel: String): String? {
         val uri = runCatching { android.net.Uri.parse(sentinel) }.getOrNull() ?: return null
         return youtubeResolver.resolveSentinel(uri)

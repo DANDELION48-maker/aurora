@@ -70,6 +70,69 @@ class SoundCloudBackendTest {
         assertEquals(1, asked.count { it.startsWith("/playlists/") })
     }
 
+    private class Recorder(private val reads: (String) -> String) : SoundCloudTransport {
+        val writes = mutableListOf<String>()
+        override suspend fun get(path: String) = JsonParser.parseString(reads(path))
+        override suspend fun send(method: String, path: String, body: com.google.gson.JsonObject?): com.google.gson.JsonElement {
+            writes += "$method $path ${body ?: ""}".trim()
+            return JsonParser.parseString(if (method == "PUT") """{"track_count":${body!!.getAsJsonObject("playlist").getAsJsonArray("tracks").size()}}""" else """{"id":77}""")
+        }
+    }
+
+    @Test fun streamsSkipPreviewsAndDrmAndPreferHighQuality() {
+        fun coding(preset: String, protocol: String, quality: String = "sq", snipped: Boolean = false) =
+            """{"url":"https://api-v2.soundcloud.com/media/$preset/$protocol","preset":"$preset","snipped":$snipped,"quality":"$quality","format":{"protocol":"$protocol"}}"""
+        fun pick(vararg codings: String) = SoundCloudBackend.transcoding(JsonParser.parseString("""{"media":{"transcodings":[${codings.joinToString(",")}]}}""").asJsonObject)?.string("preset")
+        assertEquals("aac_160k", pick(coding("aac_96k", "hls"), coding("abr_sq", "hls"), coding("aac_160k", "hls")))
+        assertEquals("aac_96k", pick(coding("aac_160k", "ctr-encrypted-hls"), coding("aac_96k", "hls", "hq")))
+        assertNull(pick(coding("mp3_1_0", "hls", snipped = true), coding("aac_160k", "cbc-encrypted-hls")))
+    }
+
+    @Test fun playbackResolvesTheSignedLinkWithTheTrackAuthorization() = runBlocking {
+        val asked = mutableListOf<String>()
+        val backend = SoundCloudBackend(session, SoundCloudTransport { path ->
+            asked += path
+            JsonParser.parseString(when {
+                path == "/tracks/5" -> """{"track_authorization":"a+b","media":{"transcodings":[{"url":"https://api-v2.soundcloud.com/media/soundcloud:tracks:5/x/stream/hls","preset":"aac_160k","format":{"protocol":"hls"}}]}}"""
+                else -> """{"url":"https://playback.media-streaming.soundcloud.cloud/x/playlist.m3u8?expires=1"}"""
+            })
+        })
+        assertEquals("https://playback.media-streaming.soundcloud.cloud/x/playlist.m3u8?expires=1", backend.playbackUrl("5"))
+        assertEquals("https://api-v2.soundcloud.com/media/soundcloud:tracks:5/x/stream/hls?track_authorization=a%2Bb", asked[1])
+    }
+
+    @Test fun likesFollowsAndHistoryUseTheWebPlayersRoutes() = runBlocking {
+        val api = Recorder { error(it) }
+        val backend = SoundCloudBackend(session, api)
+        backend.setStarred("5", true, "song")
+        backend.setStarred("9", false, "playlist")
+        backend.setStarred("7", true, "artist")
+        backend.setStarred("soundcloud:system-playlists:weekly:42", true, "playlist")
+        backend.scrobble("5")
+        assertEquals(listOf("PUT /users/42/track_likes/5", "DELETE /users/42/playlist_likes/9", "POST /me/followings/7",
+            "PUT /users/42/system_playlist_likes/soundcloud:system-playlists:weekly:42",
+            """POST /me/play-history {"track_urn":"soundcloud:tracks:5"}"""), api.writes)
+    }
+
+    @Test fun playlistEditsSendTheWholeTrackListBack() = runBlocking {
+        val api = Recorder { """{"id":9,"track_count":3,"tracks":[${track(1)},${stub(2)},${stub(1)}]}""" }
+        val backend = SoundCloudBackend(session, api)
+        assertTrue(backend.addToPlaylist("9", listOf("4")))
+        assertTrue(backend.removeFromPlaylist("9", listOf("1")))
+        assertFalse(backend.removeFromPlaylist("9", listOf("8")))
+        assertTrue(backend.updatePlaylist("9", "New", null))
+        assertEquals(listOf("""PUT /playlists/9 {"playlist":{"tracks":[1,2,1,4]}}""", """PUT /playlists/9 {"playlist":{"tracks":[2]}}""",
+            """PUT /playlists/9 {"playlist":{"title":"New","tracks":[1,2,1]}}"""), api.writes)
+        assertEquals("77", backend.createPlaylistWithId("Mix", listOf("5")))
+        assertEquals("""POST /playlists {"playlist":{"title":"Mix","sharing":"private","tracks":[5]}}""", api.writes.last())
+    }
+
+    @Test fun editsRefuseAPlaylistThatCameBackIncomplete() = runBlocking {
+        val backend = SoundCloudBackend(session, Recorder { """{"id":9,"track_count":4,"tracks":[${stub(1)}]}""" })
+        assertThrows(java.io.IOException::class.java) { runBlocking { backend.addToPlaylist("9", listOf("4")) } }
+        Unit
+    }
+
     @Test fun nextLinksStayOnTheApiHost() {
         assertEquals("api-v2.soundcloud.com", SoundCloudClient.url("/me").host)
         assertThrows(IllegalArgumentException::class.java) { SoundCloudClient.url("https://evil.example/me") }

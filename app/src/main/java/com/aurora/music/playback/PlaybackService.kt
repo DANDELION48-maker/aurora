@@ -339,7 +339,8 @@ class PlaybackService : MediaLibraryService() {
         networkDataSource = dataSourceFactory
         val mediaSourceFactory = YoutubeMediaSourceFactory(
             androidx.media3.exoplayer.source.DefaultMediaSourceFactory(dataSourceFactory, DsdExtractorsFactory(rawOutput = dsdWire != null)), resolver,
-            preferred = { PreferredPlayback.resolve(this, container.repository, it) }, prepare = container.audioCache::prepare)
+            preferred = { PreferredPlayback.resolve(this, container.repository, it) }, prepare = container.audioCache::prepare,
+            soundcloud = container::resolveSoundCloud)
 
         musicSourceFactory = mediaSourceFactory
         val playerBuilder = ExoPlayer.Builder(this, renderersFactory)
@@ -1139,7 +1140,7 @@ class PlaybackService : MediaLibraryService() {
         val sourceCopy = when (item.localConfiguration?.uri?.scheme?.lowercase()) {
             "file", "content" -> "Local playable copy"
             "http", "https" -> "Network playable stream"
-            "aurora-yt" -> "Resolved network playable stream"
+            "aurora-yt", "aurora-sc" -> "Resolved network playable stream"
             else -> "Playable copy; origin unknown"
         }
         val desiredFloat = exclusiveUsbPref || preferHighResPref
