@@ -162,3 +162,25 @@ private fun clearSoundCloudCookies(onCleared: () -> Unit) {
     var pending = operations.size
     operations.forEach { (url, value) -> cookies.setCookie(url, value) { if (--pending == 0) { cookies.flush(); onCleared() } } }
 }
+
+/** SoundCloud asks for a captcha before some changes; the user solves it once in the page that sends them. */
+@Composable
+fun SoundCloudCaptchaDialog(writer: com.aurora.music.data.SoundCloudWebWriter) {
+    val page by writer.captcha.collectAsState()
+    val view = page ?: return
+    Dialog(onDismissRequest = writer::cancelCaptcha,
+        properties = DialogProperties(usePlatformDefaultWidth = false, dismissOnClickOutside = false, decorFitsSystemWindows = false)) {
+        Surface(Modifier.fillMaxSize()) {
+            Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars).imePadding()) {
+                Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                    TextButton(onClick = writer::cancelCaptcha) { Text(appString(R.string.text_close_bbfa77)) }
+                }
+                Text(appString(R.string.soundcloud_captcha_hint), style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
+                AndroidView(modifier = Modifier.weight(1f).fillMaxWidth(),
+                    factory = { (view.parent as? ViewGroup)?.removeView(view); view },
+                    onRelease = { (it.parent as? ViewGroup)?.removeView(it) })
+            }
+        }
+    }
+}

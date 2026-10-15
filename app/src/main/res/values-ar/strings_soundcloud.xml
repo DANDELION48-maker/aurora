@@ -9,4 +9,5 @@
     <string name="soundcloud_details">"يستخدم Aurora واجهة الويب غير الرسمية لـ SoundCloud ويحفظ تسجيل دخولك مشفّرًا على هذا الجهاز."</string>
     <string name="soundcloud_connect_failed">"تعذّر ربط SoundCloud. حاول مرة أخرى."</string>
     <string name="soundcloud_page_failed">"تعذّر تحميل صفحة تسجيل الدخول. تحقّق من اتصالك وأعد التحميل."</string>
+    <string name="soundcloud_captcha_hint">"يريد SoundCloud التحقق من أنك إنسان قبل حفظ هذا التغيير. أكمل التحقق مرة واحدة وسيُكمل Aurora التغيير."</string>
 </resources>

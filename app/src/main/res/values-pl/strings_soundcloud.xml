@@ -9,4 +9,5 @@
     <string name="soundcloud_details">"Aurora korzysta z nieoficjalnego interfejsu webowego SoundCloud i przechowuje logowanie zaszyfrowane na tym urządzeniu."</string>
     <string name="soundcloud_connect_failed">"Nie udało się połączyć SoundCloud. Spróbuj ponownie."</string>
     <string name="soundcloud_page_failed">"Nie udało się wczytać strony logowania. Sprawdź połączenie i odśwież."</string>
+    <string name="soundcloud_captcha_hint">"SoundCloud chce sprawdzić, czy jesteś człowiekiem, zanim zapisze tę zmianę. Rozwiąż to raz, a Aurora dokończy zmianę."</string>
 </resources>

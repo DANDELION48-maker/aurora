@@ -9,4 +9,5 @@
     <string name="soundcloud_details">"Aurora, SoundCloud\'un resmi olmayan web arayüzünü kullanır ve girişini bu cihazda şifreli olarak saklar."</string>
     <string name="soundcloud_connect_failed">"SoundCloud bağlanamadı. Lütfen tekrar dene."</string>
     <string name="soundcloud_page_failed">"Giriş sayfası yüklenemedi. Bağlantını kontrol edip yeniden yükle."</string>
+    <string name="soundcloud_captcha_hint">"SoundCloud bu değişikliği kaydetmeden önce insan olduğunu doğrulamak istiyor. Bir kez çöz, Aurora değişikliği tamamlasın."</string>
 </resources>

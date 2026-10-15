@@ -226,7 +226,7 @@ class AppContainer(context: Context) {
             }
             ServerType.SOUNDCLOUD -> SoundCloudBackend(session, com.aurora.music.data.remote.SoundCloudClient(
                 session = { com.aurora.music.data.remote.SoundCloudWebSession.decode(soundcloudCredentials.read(session.token)) },
-                onRefreshed = { soundcloudCredentials.update(session.token, it.encode()) }, http = http))
+                onRefreshed = { soundcloudCredentials.update(session.token, it.encode()) }, http = http, browser = soundcloudWriter))
             ServerType.EXTENSION -> extensions.backend(session) { song ->
                 val enabled = extensions.entries.value.any { it.component == session.userId && it.enabled }
                 val downloaded = if (!enabled) downloadManager.getByOriginalId(song.id)
@@ -295,6 +295,7 @@ class AppContainer(context: Context) {
     val youtubeMusicCredentials = WebCredentials.youtubeMusic(appContext)
     val spotifyCredentials = WebCredentials.spotify(appContext)
     val soundcloudCredentials = WebCredentials.soundcloud(appContext)
+    val soundcloudWriter by lazy { SoundCloudWebWriter(appContext) }
     val spotifyWeb by lazy { SpotifyWebBridge(appContext) }
     val youTubeDownloader by lazy {
         YouTubeDownloader(appContext, youtubeResolver, { settingsStore.youTubeDownloadPrefs.first() }, http) {

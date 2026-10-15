@@ -9,4 +9,5 @@
     <string name="soundcloud_details">"Aurora SoundCloud के अनौपचारिक वेब इंटरफ़ेस का उपयोग करता है और आपका साइन-इन इस डिवाइस पर एन्क्रिप्ट करके रखता है।"</string>
     <string name="soundcloud_connect_failed">"SoundCloud नहीं जुड़ सका। कृपया फिर से कोशिश करें।"</string>
     <string name="soundcloud_page_failed">"साइन-इन पेज लोड नहीं हो सका। अपना कनेक्शन जाँचें और रीलोड करें।"</string>
+    <string name="soundcloud_captcha_hint">"यह बदलाव सहेजने से पहले SoundCloud जाँचना चाहता है कि आप इंसान हैं। इसे एक बार हल करें, फिर Aurora बदलाव पूरा कर देगा।"</string>
 </resources>

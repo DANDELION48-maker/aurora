@@ -75,7 +75,8 @@ class SoundCloudBackendTest {
         override suspend fun get(path: String) = JsonParser.parseString(reads(path))
         override suspend fun send(method: String, path: String, body: com.google.gson.JsonObject?): com.google.gson.JsonElement {
             writes += "$method $path ${body ?: ""}".trim()
-            return JsonParser.parseString(if (method == "PUT") """{"track_count":${body!!.getAsJsonObject("playlist").getAsJsonArray("tracks").size()}}""" else """{"id":77}""")
+            val tracks = body?.getAsJsonObject("playlist")?.getAsJsonArray("tracks")
+            return JsonParser.parseString(if (method == "PUT" && tracks != null) """{"track_count":${tracks.size()}}""" else """{"id":77}""")
         }
     }
 

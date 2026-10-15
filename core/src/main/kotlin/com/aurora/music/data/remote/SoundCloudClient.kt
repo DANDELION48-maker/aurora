@@ -27,11 +27,17 @@ fun interface SoundCloudTransport {
         throw IOException("SoundCloud changes are unavailable.")
 }
 
+// soundcloud's bot check turns away writes that don't come from a real browser, so the app can hand them to one
+fun interface SoundCloudBrowser {
+    suspend fun fetch(origin: String, method: String, url: String, token: String, body: String?): Pair<Int, String>
+}
+
 /** SoundCloud's web api: the signed-in web player's oauth token plus the client id its scripts carry. */
 class SoundCloudClient(
     private val session: () -> SoundCloudWebSession,
     private val onRefreshed: (SoundCloudWebSession) -> Unit = {},
     http: OkHttpClient = OkHttpClient(),
+    private val browser: SoundCloudBrowser? = null,
 ) : SoundCloudTransport {
     private val http = http.newBuilder().callTimeout(30, TimeUnit.SECONDS).build()
     private val idLock = Mutex()
@@ -91,28 +97,24 @@ class SoundCloudClient(
 
     private suspend fun attempt(base: HttpUrl, refresh: Boolean, method: String, body: JsonObject?): JsonElement? {
         val auth = auth()
-        val request = Request.Builder().url(base.newBuilder().setQueryParameter("client_id", clientId(refresh)).build())
-            .header("Accept", "application/json").header("Origin", auth.origin).header("Referer", "${auth.origin}/")
-            .header("Authorization", "OAuth ${auth.token}")
-            // writes sit behind soundcloud's bot check, which reads the cookie the signed-in page earned
-            .apply { auth.value("datadome").takeIf { it.isNotBlank() && method != "GET" }?.let { header("Cookie", "datadome=$it") } }
-            .apply { auth.userAgent.takeIf { it.isNotBlank() }?.let { header("User-Agent", it) } }
-            .method(method, if (method == "GET" || method == "DELETE" && body == null) null
-                else (body ?: JsonObject()).toString().toRequestBody("application/json".toMediaType())).build()
-        val response = runCatching { http.newCall(request).execute() }
-            .getOrElse { throw IOException("Could not connect to SoundCloud. Please retry.") }
-        return response.use {
-            val bot = it.headers("Set-Cookie").filter { header -> header.startsWith("datadome=") }
-            if (bot.isNotEmpty()) auth.refreshed(bot).let { updated -> current = updated; onRefreshed(updated) }
-            if (it.code == 401 || (it.code == 403 && !refresh)) return null
-            if (it.code == 403) throw IOException("SoundCloud did not allow this request. Please try again.")
-            if (it.code == 404) throw IOException("SoundCloud could not find this item.")
-            if (!it.isSuccessful) throw IOException("SoundCloud request failed (${it.code}). Try again later.")
-            val text = it.body?.string().orEmpty()
-            if (text.isBlank()) return JsonNull.INSTANCE
-            runCatching { JsonParser.parseString(text) }
-                .getOrElse { throw IOException("SoundCloud returned an unreadable response.") }
+        val url = base.newBuilder().setQueryParameter("client_id", clientId(refresh)).build()
+        val (code, text) = if (method != "GET" && browser != null) browser.fetch(auth.origin, method, url.toString(), auth.token, body?.toString())
+        else {
+            val request = Request.Builder().url(url)
+                .header("Accept", "application/json").header("Origin", auth.origin).header("Referer", "${auth.origin}/")
+                .header("Authorization", "OAuth ${auth.token}")
+                .apply { auth.userAgent.takeIf { it.isNotBlank() }?.let { header("User-Agent", it) } }
+                .method(method, if (method == "GET" || method == "DELETE" && body == null) null
+                    else (body ?: JsonObject()).toString().toRequestBody("application/json".toMediaType())).build()
+            runCatching { http.newCall(request).execute() }.getOrElse { throw IOException("Could not connect to SoundCloud. Please retry.") }
+                .use { it.code to it.body?.string().orEmpty() }
         }
+        if (code == 401 || (code == 403 && !refresh)) return null
+        if (code == 403) throw IOException("SoundCloud did not allow this request. Please try again.")
+        if (code == 404) throw IOException("SoundCloud could not find this item.")
+        if (code !in 200..299) throw IOException("SoundCloud request failed ($code). Try again later.")
+        if (text.isBlank()) return JsonNull.INSTANCE
+        return runCatching { JsonParser.parseString(text) }.getOrElse { throw IOException("SoundCloud returned an unreadable response.") }
     }
 
     companion object {

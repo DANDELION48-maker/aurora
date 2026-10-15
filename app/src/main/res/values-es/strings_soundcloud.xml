@@ -9,4 +9,5 @@
     <string name="soundcloud_details">"Aurora usa la interfaz web no oficial de SoundCloud y guarda tu sesión cifrada en este dispositivo."</string>
     <string name="soundcloud_connect_failed">"No se pudo conectar SoundCloud. Inténtalo de nuevo."</string>
     <string name="soundcloud_page_failed">"No se pudo cargar la página de inicio de sesión. Revisa tu conexión y recarga."</string>
+    <string name="soundcloud_captcha_hint">"SoundCloud quiere comprobar que eres humano antes de guardar este cambio. Resuélvelo una vez y Aurora terminará el cambio."</string>
 </resources>

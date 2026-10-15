@@ -9,4 +9,5 @@
     <string name="soundcloud_details">"Aurora 使用 SoundCloud 的非官方网页接口，并在此设备上加密保存你的登录信息。"</string>
     <string name="soundcloud_connect_failed">"无法连接 SoundCloud，请重试。"</string>
     <string name="soundcloud_page_failed">"无法加载登录页面。请检查网络后重新加载。"</string>
+    <string name="soundcloud_captcha_hint">"保存此更改前，SoundCloud 需要确认你是真人。完成一次验证后，Aurora 会完成更改。"</string>
 </resources>

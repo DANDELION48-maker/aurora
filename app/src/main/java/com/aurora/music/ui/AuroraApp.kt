@@ -150,6 +150,7 @@ fun AuroraApp() {
     val playerState by playerVM.state.collectAsStateWithLifecycle()
     val authState by authVM.state.collectAsStateWithLifecycle()
     val sessionReady by container.sessionReady.collectAsStateWithLifecycle()
+    com.aurora.music.ui.screens.auth.SoundCloudCaptchaDialog(container.soundcloudWriter)
     val onboarding = rememberOnboardingState()
     androidx.compose.runtime.LaunchedEffect(container) {
         if (onboarding.phase == SetupPhase.HIDDEN && container.settingsStore.onboardingSeen.first() == null) {
