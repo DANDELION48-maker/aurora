@@ -39,6 +39,7 @@ class MergedSpotifyTest {
                 "playbackSourceIdentity" -> (args!![0] as Song).playbackSource ?: PlaybackSourceIdentity.fromSession(session, (args[0] as Song).albumId)
                 "supportsCanvas" -> session.type == ServerType.SPOTIFY
                 "canvasUrl" -> { calls.canvases += (args!![0] as Song).id; "https://canvaz.scdn.co/loop.mp4".takeIf { session.type == ServerType.SPOTIFY } }
+                "serverLyrics" -> Lyrics(listOf(LyricLine(0, "la")), true, "spotify").takeIf { session.type == ServerType.SPOTIFY }
                 "streamUrl" -> songs.firstOrNull { it.id == args!![0] }?.streamUrl.orEmpty()
                 else -> error("Unexpected ${method.name}")
             }
@@ -154,5 +155,13 @@ class MergedSpotifyTest {
         // without a spotify account nothing offers a canvas
         val alone = MergedBackend(listOf(source(server, listOf(other))), server)
         assertFalse(alone.supportsCanvas(alone.search("x", "library").songs.single()))
+    }
+
+    @Test fun aServerSongBorrowsItsSpotifyTwinsLyrics() = runBlocking {
+        val merged = MergedBackend(listOf(source(server, listOf(serverSong)), source(spotify, listOf(spotifySong))), spotify)
+        val hosted = merged.search("never", "library").songs.single()
+        assertEquals("spotify", merged.catalogueLyrics(hosted)!!.source)
+        // spotify's own songs already get theirs as their source's lyrics
+        assertNull(merged.catalogueLyrics(merged.search("never", "spotify").songs.single()))
     }
 }

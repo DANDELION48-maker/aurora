@@ -285,13 +285,13 @@ fun SourcesSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onA
     }
 }
 
-private fun List<String>.swapped(a: Int, b: Int): List<String> {
+internal fun List<String>.swapped(a: Int, b: Int): List<String> {
     if (a !in indices || b !in indices) return this
     return toMutableList().also { val t = it[a]; it[a] = it[b]; it[b] = t }
 }
 
 @Composable
-private fun PriorityRow(label: String, subtitle: String, enabled: Boolean, canUp: Boolean, canDown: Boolean, onUp: () -> Unit, onDown: () -> Unit) {
+internal fun PriorityRow(label: String, subtitle: String, enabled: Boolean, canUp: Boolean, canDown: Boolean, onUp: () -> Unit, onDown: () -> Unit) {
     val alpha = if (enabled) 1f else 0.4f
     Row(
         Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp).clip(RoundedCornerShape(14.dp))

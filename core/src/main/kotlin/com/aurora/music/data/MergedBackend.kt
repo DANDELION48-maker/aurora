@@ -439,6 +439,12 @@ class MergedBackend(
         return sources[spotifyIndex].takeIf { it.supportsCanvas(twin) }?.canvasUrl(twin)
     }
 
+    override suspend fun catalogueLyrics(song: Song): Lyrics? {
+        val (i, _) = unwrap(song.id) ?: return null
+        if (!borrows(spotifyIndex, i, song)) return null
+        return twinOn(spotifyIndex, song)?.let { sources[spotifyIndex].serverLyrics(it) }
+    }
+
     override fun supportsComments(song: Song): Boolean {
         val (i, oid) = unwrap(song.id) ?: return false
         return sources[i].supportsComments(song.copy(id = oid)) || borrows(soundcloudIndex, i, song)

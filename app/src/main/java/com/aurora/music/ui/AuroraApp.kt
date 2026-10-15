@@ -785,6 +785,9 @@ fun AuroraApp() {
                     com.aurora.music.ui.screens.settings.SourcesSettingsScreen(contentPadding = padding, onBack = { nav.popBackStack() },
                         onArtistSeparators = { nav.navigate(Routes.SETTINGS_ARTIST_SEPARATORS) })
                 }
+                composable(Routes.SETTINGS_LYRICS) {
+                    com.aurora.music.ui.screens.settings.LyricsSettingsScreen(contentPadding = padding, onBack = { nav.popBackStack() })
+                }
                 composable(Routes.SETTINGS_MERGE) {
                     com.aurora.music.ui.screens.settings.MergeOptionsScreen(contentPadding = padding, onBack = { nav.popBackStack() })
                 }
@@ -1323,6 +1326,7 @@ fun AuroraApp() {
                                     onOpenMerge = { open(Routes.SETTINGS_MERGE) },
                                     onOpenDownloads = { open(Routes.SETTINGS_STORAGE) },
                                     onOpenAppearance = { open(Routes.SETTINGS_APPEARANCE) },
+                                    onOpenLyricsSettings = { open(Routes.SETTINGS_LYRICS) },
                                     onOpenLanguage = { open(Routes.SETTINGS_LANGUAGE) },
                                     onOpenGestures = { open(Routes.SETTINGS_GESTURES) },
                                     onOpenInsights = { open(Routes.SETTINGS_INSIGHTS) },

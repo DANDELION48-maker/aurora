@@ -317,6 +317,8 @@ class AppContainer(context: Context) {
     val lyricsRepository by lazy {
         LyricsRepository(backendProvider = { backend }, lrclibEnabledProvider = { lrclibEnabled },
             separatorsProvider = { settingsStore.artistSeparators.first() },
+            orderProvider = { settingsStore.lyricsSources.first() },
+            spotifyAllowed = { type -> settingsStore.mergeFeatures.first().lyricsFor(type) },
             http = http.newBuilder().connectTimeout(8, java.util.concurrent.TimeUnit.SECONDS).readTimeout(8, java.util.concurrent.TimeUnit.SECONDS).build())
     }
 

@@ -1158,12 +1158,23 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
             canvas = it[Keys.MERGE_CANVAS] ?: true, canvasOff = it[Keys.MERGE_CANVAS_OFF] ?: emptySet(),
             videos = it[Keys.MERGE_VIDEOS] ?: true, videosOff = it[Keys.MERGE_VIDEOS_OFF] ?: emptySet(),
             comments = it[Keys.MERGE_COMMENTS] ?: true, commentsOff = it[Keys.MERGE_COMMENTS_OFF] ?: emptySet(),
+            lyrics = it[Keys.MERGE_LYRICS] ?: true, lyricsOff = it[Keys.MERGE_LYRICS_OFF] ?: emptySet(),
         )
     }.distinctUntilChanged()
     suspend fun setMergeFeatures(f: MergeFeatures) = dataStore.edit {
         it[Keys.MERGE_CANVAS] = f.canvas; it[Keys.MERGE_CANVAS_OFF] = f.canvasOff
         it[Keys.MERGE_VIDEOS] = f.videos; it[Keys.MERGE_VIDEOS_OFF] = f.videosOff
         it[Keys.MERGE_COMMENTS] = f.comments; it[Keys.MERGE_COMMENTS_OFF] = f.commentsOff
+        it[Keys.MERGE_LYRICS] = f.lyrics; it[Keys.MERGE_LYRICS_OFF] = f.lyricsOff
+    }
+
+    // a saved order keeps any source added later, at the end
+    val lyricsSources: Flow<List<String>> = dataStore.data.map { it[Keys.LYRICS_SOURCES] }.distinctUntilChanged().map { raw ->
+        val saved = parseStringList(raw).filter { it in DEFAULT_LYRICS_SOURCES }.distinct()
+        saved + DEFAULT_LYRICS_SOURCES.filterNot { it in saved }
+    }
+    suspend fun setLyricsSources(order: List<String>) = dataStore.edit {
+        it[Keys.LYRICS_SOURCES] = gson.toJson(order.filter { s -> s in DEFAULT_LYRICS_SOURCES }.distinct())
     }
 
     val recentSearches: Flow<List<String>> = dataStore.data.map { it[Keys.RECENT_SEARCHES] }.distinctUntilChanged().map { parseStringList(it) }

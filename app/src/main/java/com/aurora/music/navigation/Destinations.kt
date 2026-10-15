@@ -61,6 +61,7 @@ object Routes {
     const val SETTINGS_BACKUP = "settings_backup"
     const val SETTINGS_SOURCES = "settings_sources"
     const val SETTINGS_MERGE = "settings_merge"
+    const val SETTINGS_LYRICS = "settings_lyrics"
     const val SETTINGS_ARTIST_SEPARATORS = "settings_artist_separators"
     const val DISCORD_LOGIN = "discord_login"
     const val HISTORY = "history"

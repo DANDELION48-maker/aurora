@@ -37,6 +37,7 @@ object SettingsDestinations {
     val signalPath = SettingsDestination(Routes.SIGNAL_PATH, R.string.text_signal_path_c3e29b, R.string.text_inspect_the_current_playback_path_5a0995)
     val alarm = SettingsDestination(Routes.SETTINGS_ALARM, R.string.text_alarm_25f8c5, R.string.text_wake_to_your_liked_music_e4d8ed)
     val appearance = SettingsDestination(Routes.SETTINGS_APPEARANCE, R.string.text_appearance_41def7, R.string.text_theme_accent_and_layout_cb0657)
+    val lyrics = SettingsDestination(Routes.SETTINGS_LYRICS, R.string.lyrics_settings_title, R.string.lyrics_settings_summary)
     val visualizer = SettingsDestination(Routes.SETTINGS_VISUALIZER, R.string.text_visualizer_7177c7, R.string.text_spectrum_waveform_radial_and_particles_145442)
     val gestures = SettingsDestination(Routes.SETTINGS_GESTURES, R.string.text_gestures_behaviour_9d13b8, R.string.text_swipe_haptics_and_private_session_19567f)
     val integrations = SettingsDestination(Routes.SETTINGS_INTEGRATIONS, R.string.text_integrations_a7881c, R.string.text_scrobbling_presence_lyrics_and_metadata_687ea0)
@@ -46,7 +47,7 @@ object SettingsDestinations {
     val about = SettingsDestination(Routes.SETTINGS_ABOUT, R.string.text_about_aurora_b4ed8c, R.string.text_version_and_app_information_9c9a82)
 
     val all = listOf(accounts, sources, merge, storage, analysis, playback, output, network, equalizer, advancedAudio, processingRack, reverb, tuning, impulses, comparison, presetRules, processingPresets, loudness,
-        listening, extensions, signalPath, alarm, appearance, visualizer, gestures, integrations, permissions, insights, backup, about)
+        listening, extensions, signalPath, alarm, appearance, lyrics, visualizer, gestures, integrations, permissions, insights, backup, about)
 }
 
 @Composable

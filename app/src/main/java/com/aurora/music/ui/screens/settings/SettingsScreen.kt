@@ -38,6 +38,7 @@ import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.MergeType
 import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material.icons.filled.Lyrics
 import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
@@ -86,6 +87,7 @@ fun SettingsScreen(
     onOpenMerge: () -> Unit = {},
     onOpenDownloads: () -> Unit,
     onOpenAppearance: () -> Unit,
+    onOpenLyricsSettings: () -> Unit = {},
     onOpenLanguage: () -> Unit,
     onOpenGestures: () -> Unit,
     onOpenInsights: () -> Unit = {},
@@ -241,6 +243,8 @@ fun SettingsScreen(
                         }, onClick = onOpenLanguage)
                     SettingsRowDivider()
                     SettingsDestinationRow(Icons.Filled.Palette, SettingsDestinations.appearance, onClick = onOpenAppearance)
+                    SettingsRowDivider()
+                    SettingsDestinationRow(Icons.Filled.Lyrics, SettingsDestinations.lyrics, onClick = onOpenLyricsSettings)
                     SettingsRowDivider()
                     SettingsDestinationRow(Icons.Filled.GraphicEq, SettingsDestinations.visualizer, onClick = onOpenVisualizer)
                     SettingsRowDivider()

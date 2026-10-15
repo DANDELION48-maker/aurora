@@ -124,6 +124,9 @@ interface MediaBackend {
     fun supportsCanvas(song: Song): Boolean = false
     suspend fun canvasUrl(song: Song): String? = null
 
+    // lyrics a merged catalogue holds for a song that comes from somewhere else
+    suspend fun catalogueLyrics(song: Song): Lyrics? = null
+
     // the kind of account a song comes from; a merged library answers for the source behind it
     fun sourceType(song: Song): ServerType = session.type
 

@@ -20,11 +20,17 @@ data class MergeFeatures(
     val videosOff: Set<String> = emptySet(),
     val comments: Boolean = true,
     val commentsOff: Set<String> = emptySet(),
+    val lyrics: Boolean = true,
+    val lyricsOff: Set<String> = emptySet(),
 ) {
     fun canvasFor(type: ServerType?) = canvas && type?.name !in canvasOff
     fun videosFor(type: ServerType?) = videos && type?.name !in videosOff
     fun commentsFor(type: ServerType?) = comments && type?.name !in commentsOff
+    fun lyricsFor(type: ServerType?) = lyrics && type?.name !in lyricsOff
 }
+
+// "server" is the song's own source; the first synced result in this order wins, else the first with any lyrics
+val DEFAULT_LYRICS_SOURCES = listOf("server", "spotify", "lrclib")
 
 enum class ServerType {
     SUBSONIC, JELLYFIN, SPOTIFY, LOCAL, EXTENSION, YOUTUBE_MUSIC, PLEX, SOUNDCLOUD;

@@ -37,16 +37,29 @@ class LyricsRepository(
         .connectTimeout(8, TimeUnit.SECONDS)
         .readTimeout(8, TimeUnit.SECONDS)
         .build(),
+    private val orderProvider: suspend () -> List<String> = { DEFAULT_LYRICS_SOURCES },
+    // whether spotify may supply lyrics for songs of this kind of source, its own songs included
+    private val spotifyAllowed: suspend (ServerType?) -> Boolean = { true },
 ) {
     private val gson = Gson()
 
+    // sources are asked in the chosen order; synced lyrics win over an earlier plain result
     suspend fun lyricsFor(song: Song): Lyrics? {
-        val server = attempt { backendProvider()?.serverLyrics(song) }
-        // synced always wins regardless of source
-        if (server != null && server.synced) return server
-        val lrc = if (lrclibEnabledProvider()) fetchLrcLib(song) else null
-        if (lrc != null && lrc.synced) return lrc
-        return server ?: lrc
+        val backend = backendProvider()
+        val type = backend?.sourceType(song)
+        val spotify = spotifyAllowed(type)
+        var plain: Lyrics? = null
+        for (source in orderProvider()) {
+            val found = when (source) {
+                "server" -> if (type == ServerType.SPOTIFY && !spotify) null else attempt { backend?.serverLyrics(song) }
+                "spotify" -> if (spotify) attempt { backend?.catalogueLyrics(song) } else null
+                "lrclib" -> if (lrclibEnabledProvider()) fetchLrcLib(song) else null
+                else -> null
+            } ?: continue
+            if (found.synced) return found
+            if (plain == null) plain = found
+        }
+        return plain
     }
 
     private suspend fun fetchLrcLib(song: Song): Lyrics? = withContext(Dispatchers.IO) {
