@@ -71,7 +71,7 @@ class SoundCloudBackend(override val session: Session, private val api: SoundClo
     // the library lists coverless playlists without tracks, so borrow the first track's art like soundcloud does
     // shortcut: covers are kept for the session, a reordered playlist keeps its old cover until the app restarts
     private suspend fun withCovers(list: List<Playlist>): List<Playlist> {
-        val missing = list.filter { it.coverUrl.isBlank() && !it.id.startsWith(SYSTEM_PLAYLIST) && it.id !in covers }
+        val missing = list.filter { it.coverUrl.isBlank() && !it.id.startsWith(SYSTEM_PLAYLIST) && !covers.containsKey(it.id) }
         val gate = Semaphore(8)
         withTimeoutOrNull(8_000) {
             coroutineScope {
