@@ -11,6 +11,7 @@ class MergedSoundCloudTest {
     private val soundcloud = Session("https://soundcloud.com", "listener", "", "reference", ServerType.SOUNDCLOUD, userId = "42")
     private val yt = Session("https://music.youtube.com", "Listener", "", "token", ServerType.YOUTUBE_MUSIC, userId = "account")
     private val local = Session("On this device", "Local Library", "", "local", ServerType.LOCAL)
+    private val server = Session("https://server.invalid", "Listener", "", "token", ServerType.SUBSONIC)
 
     private val scSong = Song("275215991", "sake bomb", "Topherblaine", "", "", 191, streamUrl = "aurora-sc://track/275215991")
     private val ytSong = Song("youtube-id", "Still love you", "GLM-RST", "Still", "", 146, streamUrl = "aurora-yt://video/youtube-id")
@@ -27,6 +28,9 @@ class MergedSoundCloudTest {
                 "allAlbums", "allArtists", "allPlaylists" -> emptyList<Any>()
                 "playbackSourceIdentity" -> PlaybackSourceIdentity.fromSession(session, (args!![0] as Song).albumId)
                 "downloadUrl" -> "https://cdn.example/${args!![0]}/playlist.m3u8"
+                "supportsComments" -> session.type == ServerType.SOUNDCLOUD
+                "comments" -> listOf(com.aurora.music.model.TrackComment("c-${(args!![0] as Song).id}", "fire", 42000, "fan", ""))
+                "postComment" -> com.aurora.music.model.TrackComment("new-${(args!![0] as Song).id}", args[1] as String, args[2] as Long, "me", "")
                 else -> error("Unexpected ${method.name}")
             }
         } as MediaBackend
@@ -46,5 +50,20 @@ class MergedSoundCloudTest {
         // downloads ask the owning source, not the merged play link
         val wrapped = merged.detail("liked", "soundcloud")!!.tracks.single().id
         assertEquals("https://cdn.example/275215991/playlist.m3u8", merged.downloadUrl(wrapped, 0, true))
+    }
+
+    @Test fun songsFromElsewhereBorrowTheCommentsOfTheirSoundcloudUpload() = runBlocking {
+        val hosted = Song("nd-1", "sake bomb", "Topherblaine", "Singles", "", 191, streamUrl = "https://server.invalid/stream")
+        // the upload carries the artist in its title and comes from a fan account
+        val upload = scSong.copy(title = "Topherblaine - sake bomb", artist = "some uploader", durationSec = 191)
+        val searches = mutableListOf<String>()
+        val merged = MergedBackend(listOf(source(server, listOf(hosted)), source(soundcloud, listOf(upload), searches)), server)
+        val track = merged.libraryView("library").allSongs().single()
+        assertTrue(merged.supportsComments(track))
+        assertEquals(listOf("c-275215991"), merged.comments(track).map { it.id })
+        assertEquals("new-275215991", merged.postComment(track, "yo", 1000)!!.id)
+        assertEquals(listOf("sake bomb Topherblaine"), searches)
+        val other = MergedBackend(listOf(source(server, listOf(hosted.copy(title = "Elsewhere"))), source(soundcloud, listOf(upload))), server)
+        assertTrue(other.comments(other.libraryView("library").allSongs().single()).isEmpty())
     }
 }

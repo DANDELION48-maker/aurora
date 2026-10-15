@@ -397,33 +397,65 @@ class MergedBackend(
         else route(id) { src, i, oid -> src.collectionTracks(kind, oid).map { it.wrap(i) } }
             ?: error("This collection's source is unavailable.")
 
-    // a song from any source can borrow the canvas of its spotify twin while a spotify account takes part
+    // a song from another source borrows the canvas or comments of its twin on a merged catalogue
+    private val twins = object : LinkedHashMap<String, Song?>(64, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Song?>?) = size > 128
+    }
+
+    private suspend fun twinOn(index: Int, song: Song): Song? {
+        val source = sources.getOrNull(index) ?: return null
+        val key = "$index\u0000${song.id}"
+        synchronized(twins) { if (twins.containsKey(key)) return twins[key] }
+        // a failed search isn't remembered, so the next try asks again
+        val results = try { source.search("${recordingTitle(song.title)} ${song.artist}".trim()).songs }
+            catch (e: CancellationException) { throw e } catch (_: Exception) { return null }
+        val twin = results.firstOrNull { twinMatches(song, it) }
+        synchronized(twins) { twins[key] = twin }
+        return twin
+    }
+
+    // uploads often carry "artist - title" in the title, posted by a label or fan account
+    private fun twinMatches(song: Song, candidate: Song): Boolean {
+        val parts = candidate.title.split(" - ", " \u2013 ", limit = 2)
+        val split = if (parts.size == 2) candidate.copy(artist = parts[0], title = parts[1]) else candidate
+        return listOf(candidate, split).any { recordingMatches(song, it) || sameLength(song, it) }
+    }
+
+    private fun borrows(catalogue: Int, owner: Int, song: Song) = catalogue >= 0 && owner != catalogue && !song.isRadio() && !song.isPodcast()
+
     override fun supportsCanvas(song: Song): Boolean {
         val (i, oid) = unwrap(song.id) ?: return false
-        return sources[i].supportsCanvas(song.copy(id = oid)) || (spotifyIndex >= 0 && i != spotifyIndex && !song.isRadio() && !song.isPodcast())
+        return sources[i].supportsCanvas(song.copy(id = oid)) || borrows(spotifyIndex, i, song)
     }
 
     override suspend fun canvasUrl(song: Song): String? {
         val (i, oid) = unwrap(song.id) ?: return null
         val original = song.copy(id = oid)
         if (sources[i].supportsCanvas(original)) return sources[i].canvasUrl(original)
-        val spotify = sources.getOrNull(spotifyIndex)?.takeIf { i != spotifyIndex } ?: return null
-        val twin = runCatching { spotify.search("${recordingTitle(song.title)} ${song.artist}".trim()).songs }.getOrDefault(emptyList())
-            .firstOrNull { recordingMatches(song, it) || sameLength(song, it) } ?: return null
-        return if (spotify.supportsCanvas(twin)) spotify.canvasUrl(twin) else null
+        if (!borrows(spotifyIndex, i, song)) return null
+        val twin = twinOn(spotifyIndex, song) ?: return null
+        return sources[spotifyIndex].takeIf { it.supportsCanvas(twin) }?.canvasUrl(twin)
     }
 
     override fun supportsComments(song: Song): Boolean {
         val (i, oid) = unwrap(song.id) ?: return false
-        return sources[i].supportsComments(song.copy(id = oid))
+        return sources[i].supportsComments(song.copy(id = oid)) || borrows(soundcloudIndex, i, song)
     }
+
     override suspend fun comments(song: Song): List<com.aurora.music.model.TrackComment> {
         val (i, oid) = unwrap(song.id) ?: return emptyList()
-        return sources[i].comments(song.copy(id = oid))
+        val original = song.copy(id = oid)
+        if (sources[i].supportsComments(original)) return sources[i].comments(original)
+        if (!borrows(soundcloudIndex, i, song)) return emptyList()
+        return twinOn(soundcloudIndex, song)?.let { sources[soundcloudIndex].comments(it) }.orEmpty()
     }
+
     override suspend fun postComment(song: Song, body: String, timestampMs: Long): com.aurora.music.model.TrackComment? {
         val (i, oid) = unwrap(song.id) ?: return null
-        return sources[i].postComment(song.copy(id = oid), body, timestampMs)
+        val original = song.copy(id = oid)
+        if (sources[i].supportsComments(original)) return sources[i].postComment(original, body, timestampMs)
+        if (!borrows(soundcloudIndex, i, song)) return null
+        return twinOn(soundcloudIndex, song)?.let { sources[soundcloudIndex].postComment(it, body, timestampMs) }
     }
 
     override suspend fun serverLyrics(song: Song): Lyrics? {
