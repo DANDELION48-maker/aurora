@@ -226,7 +226,7 @@ class AppContainer(context: Context) {
             }
             ServerType.SOUNDCLOUD -> SoundCloudBackend(session, com.aurora.music.data.remote.SoundCloudClient(
                 session = { com.aurora.music.data.remote.SoundCloudWebSession.decode(soundcloudCredentials.read(session.token)) },
-                onRefreshed = { soundcloudCredentials.update(session.token, it.encode()) }, http = http, browser = soundcloudWriter))
+                onRefreshed = { soundcloudCredentials.update(session.token, it.encode()) }, http = http, browser = soundcloudWriter), localize)
             ServerType.EXTENSION -> extensions.backend(session) { song ->
                 val enabled = extensions.entries.value.any { it.component == session.userId && it.enabled }
                 val downloaded = if (!enabled) downloadManager.getByOriginalId(song.id)

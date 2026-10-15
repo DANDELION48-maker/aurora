@@ -310,7 +310,9 @@ class DownloadManager(
                 resolveSentinel(sentinel) ?: throw IOException("No stream found for this track")
             } else resolvedUrl
             val progress = progressReporter(song.id)
-            if (request.cached) requireNotNull(copyCached) { "Cached audio is unavailable." }(audioUrl, audioFile, progress)
+            val hls = !request.cached && !request.extension && HlsAudioDownload.isPlaylist(audioUrl)
+            if (hls) HlsAudioDownload.download(http, audioUrl, audioFile, File(dir, "$stem.part"), progress)
+            else if (request.cached) requireNotNull(copyCached) { "Cached audio is unavailable." }(audioUrl, audioFile, progress)
             else if (request.extension) requireNotNull(copyExtension) { "Extension downloads are unavailable." }(audioUrl, audioFile, progress)
             else downloadTo(audioUrl, audioFile, progress)
             val coverFile = File(dir, "$stem.jpg")
@@ -320,7 +322,7 @@ class DownloadManager(
                 albumId = song.albumId, artistId = song.artistId, durationSec = song.durationSec,
                 audioPath = audioFile.absolutePath,
                 coverPath = if (coverFile.exists()) coverFile.absolutePath else "",
-                suffix = if (request.bitrate == 0) song.suffix else "mp3",
+                suffix = if (hls) "m4a" else if (request.bitrate == 0) song.suffix else "mp3",
                 bitrateKbps = if (request.bitrate == 0) song.bitrateKbps else request.bitrate,
                 sampleRateHz = song.sampleRateHz,
                 bitDepth = song.bitDepth,
@@ -332,7 +334,7 @@ class DownloadManager(
             saveIndex()
             setState(song.id, DownloadState.Done)
         } catch (e: Exception) {
-            runCatching { File(dir, "$stem.audio").delete() }
+            runCatching { File(dir, "$stem.audio").delete(); File(dir, "$stem.part").delete() }
             setState(song.id, DownloadState.Failed)
         } finally {
             synchronized(this) { pendingSongs.remove(song.id) }

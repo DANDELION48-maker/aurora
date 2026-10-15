@@ -19,14 +19,18 @@ import java.io.IOException
 import java.net.URLEncoder
 import java.util.concurrent.ConcurrentHashMap
 
-class SoundCloudBackend(override val session: Session, private val api: SoundCloudTransport) : MediaBackend {
+class SoundCloudBackend(
+    override val session: Session,
+    private val api: SoundCloudTransport,
+    private val localize: (Song) -> Song = { it },
+) : MediaBackend {
     private val songs = ConcurrentHashMap<String, Song>()
     private val pageCache = ConcurrentHashMap<String, Pair<Long, List<JsonObject>>>()
     private val pageLock = Mutex()
     private val covers = ConcurrentHashMap<String, String>()
     private val user get() = session.userId
 
-    private fun remember(list: List<Song>) = list.onEach { songs[it.id] = it }
+    private fun remember(list: List<Song>) = list.map(localize).onEach { songs[it.id] = it }
 
     // every page of a listing, cached for a minute like the youtube music library
     private suspend fun pages(path: String, max: Int = 5000): List<JsonObject> = pageLock.withLock {
@@ -110,7 +114,7 @@ class SoundCloudBackend(override val session: Session, private val api: SoundClo
     override suspend fun songFor(id: String): Song? {
         songs[id]?.let { return it }
         if (!id.matches(Regex("[0-9]+"))) return null
-        return song(api.get("/tracks/$id").asJsonObject)?.also { songs[id] = it }
+        return song(api.get("/tracks/$id").asJsonObject)?.let(localize)?.also { songs[id] = it }
     }
 
     override suspend fun radio(seedId: String): List<Song> =
@@ -216,6 +220,13 @@ class SoundCloudBackend(override val session: Session, private val api: SoundClo
     }
     override suspend fun serverLyrics(song: Song): Lyrics? = null
     override fun streamUrl(songId: String, maxBitrate: Int, lossless: Boolean) = sentinel(songId)
+
+    // the hls stream is joined into one file; previews and drm-only tracks save their youtube match instead
+    override suspend fun downloadUrl(songId: String, maxBitrate: Int, lossless: Boolean): String {
+        playbackUrl(songId)?.let { return it }
+        val song = songFor(songId) ?: throw IOException("SoundCloud could not find this item.")
+        return "aurora-yt://sc$songId?q=${URLEncoder.encode("${song.title} ${song.artist}".trim(), "UTF-8")}&dur=${song.durationSec}"
+    }
     override fun coverArtUrl(id: String, size: Int) = songs[id]?.artworkUrl.orEmpty()
 
     companion object {
