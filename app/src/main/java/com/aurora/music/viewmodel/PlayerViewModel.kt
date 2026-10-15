@@ -263,6 +263,11 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         // on account change save outgoing queue first stop then restore incoming epoch only bumps on real transitions
         viewModelScope.launch {
             container.accountEpoch.drop(1).collect {
+                // likes belong to the account and session readiness doesn't change on a switch, so reload them here
+                serverLikedIds = emptySet()
+                likeChecked.clear()
+                recomputeLikes()
+                refreshLikes()
                 persistQueue(force = true)
                 container.queueStore.requestFlush()
                 suppressPersist = true         // clearing below must not wipe what we just saved
