@@ -123,7 +123,8 @@ class MusicRepository(
         return block(source).map { tag(it, source) }
     }
 
-    val libraryViews: List<LibraryViewChoice> get() = if (offline) emptyList() else backend?.libraryViews.orEmpty()
+    val libraryViews: List<LibraryViewChoice> get() = if (offline) offlineSources().map { LibraryViewChoice(it.viewId, it.label) }
+        else backend?.libraryViews.orEmpty()
 
     // null is the whole backend; a view narrows a composite one to the library the user picked
     private fun viewOf(view: String?): MediaBackend? = backend?.let { b -> if (view == null) b else b.libraryView(view) }
@@ -174,6 +175,12 @@ class MusicRepository(
 
     fun downloadedIds(): Set<String> = visibleDownloads().mapTo(linkedSetOf()) { it.id }
 
+    // likes learned online reach the active source's downloads; a starred list can be partial, so callers only add from one
+    fun markDownloadsLiked(ids: Collection<String>, liked: Boolean) {
+        if (offline) return
+        downloadManager.markLiked(ids.filter { id -> downloadManager.get(id)?.let(::ownsDownload) == true }, liked)
+    }
+
     fun isDownloaded(id: String): Boolean = downloadManager.get(id)?.let(::ownsDownload) == true
 
     fun removeDownload(id: String): Boolean {
@@ -190,17 +197,33 @@ class MusicRepository(
     fun downloadedSongs(): List<Song> = visibleDownloads()
         .sortedBy { it.title }.map { artwork(it.toSong(downloadManager.fileUri)) }
 
-    private fun offlineSongs(): List<Song> {
-        val downloads = downloadedSongs()
-        val identities = downloads.map { it.playbackSource?.providerId to it.id }.toSet()
-        val cached = cachedSongsProvider().filter { (it.playbackSource?.providerId to it.id) !in identities &&
-            downloads.none { download -> download.id == "cached:${it.streamUrl.substringAfter("://")}" } }
-            .map { it.copy(id = "cached:${it.streamUrl.substringAfter("://")}") }
-        return (downloads + cached).map { artwork(it) }
-            .sortedBy { it.title }
+    // offline gets one view per source that has downloads; a single source needs no switch
+    private fun offlineSources(): List<DownloadSource> =
+        visibleDownloads().map(DownloadSource::of).distinct().sorted().takeIf { it.size > 1 }.orEmpty()
+
+    private fun inView(download: DownloadedSong, view: String?): Boolean =
+        DownloadSource.forView(view)?.let { it == DownloadSource.of(download) } ?: true
+
+    // offline lists only what was downloaded; fully cached tracks still play when something asks for them by id
+    private fun offlineSongs(view: String? = null): List<Song> = visibleDownloads().filter { inView(it, view) }
+        .map { artwork(it.toSong(downloadManager.fileUri)) }.sortedBy { it.title }
+
+    private fun cachedSongs(): List<Song> = cachedSongsProvider().map { it.copy(id = "cached:${it.streamUrl.substringAfter("://")}") }
+
+    // downloads from liked songs, or of songs liked anywhere before they were saved
+    private fun offlineLiked(view: String? = null): List<Song> = offlineSongs(view).filter { it.liked }
+
+    private fun offlineArtists(view: String?): List<Artist> = offlineSongs(view).filter { it.artistId.isNotBlank() }
+        .groupBy { it.artistId }.map { (id, songs) -> Artist(id, songs.first().artist, songs.first().artworkUrl, 0) }.sortedBy { it.name }
+
+    private fun offlinePlaylists(view: String?): List<Playlist> {
+        val byId = downloadManager.downloads.value
+        return downloadManager.collections.value.filter { col ->
+            col.kind == "playlist" && col.trackIds.firstNotNullOfOrNull { byId[it] }?.let { inView(it, view) } ?: (view == null)
+        }.map { Playlist(it.id, it.title, it.subtitle, fileUri(it.coverPath), it.trackIds.size, accentArgbFor(it.id)) }
     }
 
-    private fun offlineAlbums(): List<Album> = offlineSongs().filter { it.albumId.isNotBlank() }
+    private fun offlineAlbums(view: String? = null): List<Album> = offlineSongs(view).filter { it.albumId.isNotBlank() }
         .groupBy { it.playbackSource?.providerId to it.albumId }.map { (_, songs) ->
             val first = songs.first()
             Album(first.playbackSource?.albumId ?: first.albumId, first.album, first.artist, first.artworkUrl, 0, songs.size,
@@ -241,14 +264,15 @@ class MusicRepository(
         }
         .sortedBy { it.title }
 
-    val homeFeeds: List<HomeFeedChoice> get() = if (offline) emptyList() else backend?.homeFeeds.orEmpty()
+    val homeFeeds: List<HomeFeedChoice> get() = if (offline) offlineSources().map { HomeFeedChoice(it.viewId, it.label) }
+        else backend?.homeFeeds.orEmpty()
 
     suspend fun playbackCandidates(song: Song): List<Song> = if (offline) emptyList() else backend?.playbackCandidates(song).orEmpty().map { artwork(it) }
 
     suspend fun home(feed: String = "library"): HomeData {
         if (offline) {
-            val albums = offlineAlbums()
-            return HomeData(newReleases = albums, recentlyPlayed = albums, starred = offlineSongs())
+            val albums = offlineAlbums(feed)
+            return HomeData(newReleases = albums, recentlyPlayed = albums, starred = offlineSongs(feed))
         }
         val source = backend ?: return HomeData()
         return tagHome(source.home(feed), source)
@@ -276,13 +300,13 @@ class MusicRepository(
     )
 
     suspend fun allAlbums(view: String? = null): List<Album> =
-        if (offline) offlineAlbums() else viewOf(view)?.allAlbums().orEmpty().map { artwork(it) }
+        if (offline) offlineAlbums(view) else viewOf(view)?.allAlbums().orEmpty().map { artwork(it) }
 
     suspend fun allArtists(view: String? = null): List<Artist> =
-        if (offline) emptyList() else viewOf(view)?.allArtists().orEmpty()
+        if (offline) offlineArtists(view) else viewOf(view)?.allArtists().orEmpty()
 
     suspend fun allPlaylists(view: String? = null): List<Playlist> =
-        if (offline) emptyList() else viewOf(view)?.allPlaylists().orEmpty()
+        if (offline) offlinePlaylists(view) else viewOf(view)?.allPlaylists().orEmpty()
 
     suspend fun allSongs(): List<Song> =
         if (offline) offlineSongs() else sourceSongs { it.allSongs() }
@@ -291,12 +315,12 @@ class MusicRepository(
         if (offline) offlineSongs() else sourceSongs { it.librarySongs(limit) }
 
     suspend fun songsPage(offset: Int, count: Int = 100, view: String? = null): List<Song> =
-        if (offline) offlineSongs().drop(offset).take(count) else sourceSongs(view) { it.songsPage(offset, count) }
+        if (offline) offlineSongs(view).drop(offset).take(count) else sourceSongs(view) { it.songsPage(offset, count) }
 
     // walks the whole library via the paging path (guaranteed to traverse every source, unlike a
     // one-shot request which some servers cap). deduped, capped so a pathological library can't run away.
     suspend fun allLibrarySongs(cap: Int = 10000, pageSize: Int = 200, view: String? = null): List<Song> {
-        if (offline) return offlineSongs()
+        if (offline) return offlineSongs(view)
         val b = viewOf(view) ?: return emptyList()
         val out = LinkedHashMap<String, Song>()
         var offset = 0
@@ -313,7 +337,7 @@ class MusicRepository(
 
     suspend fun starredSongs(): List<Song> = sourceSongs { it.starredSongs() }
 
-    suspend fun starredCount(view: String? = null): Int = if (offline) starredSongs().size else (viewOf(view)?.starredCount() ?: 0)
+    suspend fun starredCount(view: String? = null): Int = if (offline) offlineLiked(view).size else (viewOf(view)?.starredCount() ?: 0)
 
     suspend fun starredIds(): Set<String> = backend?.starredIds() ?: emptySet()
 
@@ -335,7 +359,7 @@ class MusicRepository(
                 else !download.serverId.isNullOrBlank() && download.serverId == source?.session?.server
             if (offline || sameSource) return artwork(song)
         }
-        if (offline) return offlineSongs().singleOrNull { it.id == id }
+        if (offline) return (offlineSongs() + cachedSongs()).firstOrNull { it.id == id }
         if (source == null) return null
         return source.songFor(id)?.let { tag(it, source) }
     }
@@ -507,6 +531,10 @@ class MusicRepository(
         if (offline) {
             val dls = offlineSongs()
             return when (kind) {
+                "liked" -> offlineLiked(id).let { tracks ->
+                    DetailData(DetailInfo("Liked Songs", "${tracks.size} downloaded songs you love", tracks.firstOrNull()?.artworkUrl.orEmpty(),
+                        accentArgbFor("liked"), false, tracks.size, "Liked"), tracks)
+                }
                 "album" -> dls.filter { it.albumId == id || it.playbackSource?.albumId == id }.takeIf { it.isNotEmpty() }?.let { tracks ->
                     val f = tracks.first()
                     val label = com.aurora.music.model.releaseTypeLabel(com.aurora.music.model.inferReleaseType(tracks.size, tracks.sumOf { it.durationSec }))

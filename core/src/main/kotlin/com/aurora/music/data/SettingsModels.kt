@@ -15,10 +15,10 @@ const val MERGE_NONE = "__none__"
 enum class ServerType {
     SUBSONIC, JELLYFIN, SPOTIFY, LOCAL, EXTENSION, YOUTUBE_MUSIC, PLEX, SOUNDCLOUD;
 
-    val supportsMergedLibrary: Boolean get() = this == SUBSONIC || this == JELLYFIN || this == PLEX || this == LOCAL || this == YOUTUBE_MUSIC || this == SPOTIFY
+    val supportsMergedLibrary: Boolean get() = this == SUBSONIC || this == JELLYFIN || this == PLEX || this == LOCAL || this == YOUTUBE_MUSIC || this == SPOTIFY || this == SOUNDCLOUD
 
     // streaming catalogues get their own home, search and library views instead of mixing into the merged one
-    val isCatalogue: Boolean get() = this == YOUTUBE_MUSIC || this == SPOTIFY
+    val isCatalogue: Boolean get() = this == YOUTUBE_MUSIC || this == SPOTIFY || this == SOUNDCLOUD
 }
 
 // sessions store tokens without raw passwords

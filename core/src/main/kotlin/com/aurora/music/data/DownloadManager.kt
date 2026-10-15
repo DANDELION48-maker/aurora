@@ -40,12 +40,15 @@ data class DownloadedSong(
     val serverId: String? = "",
     val playbackSource: PlaybackSourceIdentity? = null,
     val genre: String? = null,
+    // offline liked songs: saved from liked songs, or known to be liked when saved or since
+    val liked: Boolean? = null,
 ) {
     fun toSong(fileUri: (String) -> String): Song = Song(
         id = id,
         title = title,
         artist = artist,
         album = album,
+        liked = liked == true,
         artworkUrl = if (coverPath.isNotBlank()) fileUri(coverPath) else "",
         durationSec = durationSec,
         accentArgb = accentArgbFor(id),
@@ -155,7 +158,8 @@ class DownloadManager(
         pendingCollections[id] = owner
         scope.launch {
             try {
-                val coverFile = File(dir, "col_${fileStem(serverId, id)}.jpg")
+                val source = DownloadSource.of(songs.firstNotNullOfOrNull { sourceIdentity(it)?.providerLabel }, serverId)
+                val coverFile = File(folderFor(source), "col_${fileStem(serverId, id)}.jpg")
                 runCatching { if (coverUrl.isNotBlank()) downloadTo(coverUrl, coverFile) {} }
                 val collection = DownloadedCollection(id, kind, title, subtitle, if (coverFile.exists()) coverFile.absolutePath else "", songs.map { it.id }, serverId, identity, providerId)
                 _collections.update { (it.filterNot { c -> c.id == id }) + collection }
@@ -164,8 +168,23 @@ class DownloadManager(
                 synchronized(this@DownloadManager) { pendingCollections.remove(id) }
             }
         }
-        downloadAll(songs)
+        downloadAll(if (kind == "liked") songs.map { it.copy(liked = true) } else songs)
         return true
+    }
+
+    // likes learned online reach downloads so offline liked songs stay current
+    fun markLiked(ids: Collection<String>, liked: Boolean) {
+        if (ids.isEmpty()) return
+        val wanted = ids.toSet()
+        var changed = false
+        synchronized(this) {
+            _downloads.update { current ->
+                current.mapValues { (id, entry) ->
+                    if (id in wanted && (entry.liked == true) != liked) { changed = true; entry.copy(liked = liked) } else entry
+                }
+            }
+        }
+        if (changed) saveIndex()
     }
 
     fun removeCollection(id: String) {
@@ -187,7 +206,35 @@ class DownloadManager(
     val states: StateFlow<Map<String, DownloadState>> = _states.asStateFlow()
 
     init {
-        scope.launch { dropMissingFiles() }
+        scope.launch { moveIntoFolders(); dropMissingFiles() }
+    }
+
+    // downloads saved before per-source folders move into theirs once; an entry only changes after its file moved
+    private fun moveIntoFolders() {
+        fun move(path: String, target: File): String? {
+            val file = File(path)
+            if (path.isBlank() || file.parentFile?.absolutePath != dir.absolutePath) return null
+            val moved = File(target, file.name)
+            return moved.absolutePath.takeIf { file.renameTo(moved) }
+        }
+        val songs = _downloads.value.values.mapNotNull { entry ->
+            val target = folderFor(DownloadSource.of(entry))
+            val audio = move(entry.audioPath, target) ?: return@mapNotNull null
+            entry to entry.copy(audioPath = audio, coverPath = move(entry.coverPath, target) ?: entry.coverPath)
+        }
+        if (songs.isNotEmpty()) {
+            synchronized(this) { _downloads.update { current -> current + songs.filter { (old, _) -> current[old.id] === old }.associate { it.second.id to it.second } } }
+            saveIndex()
+        }
+        val byId = _downloads.value
+        val covers = _collections.value.mapNotNull { col ->
+            val source = col.trackIds.firstNotNullOfOrNull { byId[it] }?.let(DownloadSource::of) ?: DownloadSource.of(null, col.serverId)
+            move(col.coverPath, folderFor(source))?.let { col to col.copy(coverPath = it) }
+        }
+        if (covers.isNotEmpty()) {
+            synchronized(this) { _collections.update { current -> current.map { c -> covers.firstOrNull { it.first === c }?.second ?: c } } }
+            saveCollections()
+        }
     }
 
     fun isDownloaded(id: String): Boolean = _downloads.value.containsKey(id)
@@ -297,11 +344,14 @@ class DownloadManager(
         runCatching { File(it.audioPath).length() + (if (it.coverPath.isNotBlank()) File(it.coverPath).length() else 0L) }.getOrDefault(0L)
     }
 
+    private fun folderFor(source: DownloadSource) = File(dir, source.folder).apply { mkdirs() }
+
     private suspend fun doDownload(song: Song, request: DownloadRequest) {
         val stem = fileStem(request.serverId, song.id)
+        val folder = folderFor(DownloadSource.of(song.playbackSource?.providerLabel, request.serverId))
         try {
             setState(song.id, DownloadState.Downloading(0f))
-            val audioFile = File(dir, "$stem.audio")
+            val audioFile = File(folder, "$stem.audio")
             // resolve aurora-yt sentinel via the songs full sentinel which holds the search query
             val resolvedUrl = request.resolveUrl?.invoke(song.id, request.bitrate, request.bitrate == 0)
                 ?.takeIf { it.isNotBlank() } ?: request.url
@@ -311,11 +361,11 @@ class DownloadManager(
             } else resolvedUrl
             val progress = progressReporter(song.id)
             val hls = !request.cached && !request.extension && HlsAudioDownload.isPlaylist(audioUrl)
-            if (hls) HlsAudioDownload.download(http, audioUrl, audioFile, File(dir, "$stem.part"), progress)
+            if (hls) HlsAudioDownload.download(http, audioUrl, audioFile, File(folder, "$stem.part"), progress)
             else if (request.cached) requireNotNull(copyCached) { "Cached audio is unavailable." }(audioUrl, audioFile, progress)
             else if (request.extension) requireNotNull(copyExtension) { "Extension downloads are unavailable." }(audioUrl, audioFile, progress)
             else downloadTo(audioUrl, audioFile, progress)
-            val coverFile = File(dir, "$stem.jpg")
+            val coverFile = File(folder, "$stem.jpg")
             runCatching { if (!request.cached && song.artworkUrl.isNotBlank()) downloadTo(song.artworkUrl, coverFile) {} }
             val entry = DownloadedSong(
                 id = song.id, title = song.title, artist = song.artist, album = song.album,
@@ -330,13 +380,14 @@ class DownloadManager(
                 serverId = request.serverId,
                 playbackSource = song.playbackSource,
                 genre = song.genre,
+                liked = song.liked,
             )
             _downloads.update { it + (song.id to entry) }
             saveIndex()
             setState(song.id, DownloadState.Done)
         } catch (e: Exception) {
             com.aurora.music.util.AppLog.w("Downloads", "download failed: ${e.message}")
-            runCatching { File(dir, "$stem.audio").delete(); File(dir, "$stem.part").delete() }
+            runCatching { File(folder, "$stem.audio").delete(); File(folder, "$stem.part").delete() }
             setState(song.id, DownloadState.Failed)
         } finally {
             synchronized(this) { pendingSongs.remove(song.id) }

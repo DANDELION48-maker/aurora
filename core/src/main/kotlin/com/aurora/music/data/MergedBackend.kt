@@ -30,11 +30,13 @@ class MergedBackend(
         .takeIf { it >= 0 } ?: sources.indexOfFirst { it.session.type == type }
     private val youtubeIndex = catalogueOf(ServerType.YOUTUBE_MUSIC)
     private val spotifyIndex = catalogueOf(ServerType.SPOTIFY)
+    private val soundcloudIndex = catalogueOf(ServerType.SOUNDCLOUD)
     private fun isCatalogue(source: MediaBackend) = source.session.type.isCatalogue
 
     private fun catalogueFor(id: String): Int = when (id) {
         "discovery", "youtube" -> youtubeIndex
         "spotify" -> spotifyIndex
+        "soundcloud" -> soundcloudIndex
         else -> -1
     }
 
@@ -44,6 +46,7 @@ class MergedBackend(
             add(make(libraryId, libraryLabel))
             if (youtubeIndex >= 0) add(make(youtubeId, "YouTube Music"))
             if (spotifyIndex >= 0) add(make("spotify", "Spotify"))
+            if (soundcloudIndex >= 0) add(make("soundcloud", "SoundCloud"))
         }.takeIf { it.size > 1 }.orEmpty()
 
     override val homeFeeds: List<HomeFeedChoice> get() = choices(::HomeFeedChoice, "library", "Library", "discovery")
@@ -282,7 +285,8 @@ class MergedBackend(
         val index = when (source) {
             "library" -> -1
             "spotify" -> spotifyIndex.takeIf { it >= 0 } ?: youtubeIndex
-            else -> youtubeIndex.takeIf { it >= 0 } ?: spotifyIndex
+            "soundcloud" -> soundcloudIndex.takeIf { it >= 0 } ?: youtubeIndex
+            else -> youtubeIndex.takeIf { it >= 0 } ?: spotifyIndex.takeIf { it >= 0 } ?: soundcloudIndex
         }
         if (index >= 0) {
             val result = sources[index].search(query)
@@ -479,7 +483,7 @@ class MergedBackend(
         const val LIKED_TIMEOUT_MS = 90_000L
         const val DOWN_MS = 60_000L
         const val SLOW_EMPTY_MS = 8_000L
-        val VIEW_IDS = setOf("library", "youtube", "spotify")
+        val VIEW_IDS = setOf("library", "youtube", "spotify", "soundcloud")
         val LOSSLESS = setOf("flac", "alac", "wav", "aiff", "aif", "ape", "wv", "dsf", "dff")
         const val RELAXED_DURATION_SEC = 2
     }

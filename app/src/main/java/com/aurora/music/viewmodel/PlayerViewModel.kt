@@ -1014,6 +1014,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
             val recheck = (serverLikedIds - fresh).filter { it in likeChecked }
             serverLikedIds = fresh + recheck
             recomputeLikes()
+            container.repository.markDownloadsLiked(fresh, true)
             if (recheck.isEmpty()) return@launch
             val still = runCatching { container.repository.likedSongIds(recheck) }.getOrNull() ?: return@launch
             val gone = recheck.toSet() - still
@@ -1030,6 +1031,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             val liked = runCatching { container.repository.likedSongIds(toCheck) }.getOrNull() ?: return@launch
             likeChecked.addAll(toCheck)
+            container.repository.markDownloadsLiked(liked, true)
             if (liked.isNotEmpty()) {
                 serverLikedIds = serverLikedIds + liked
                 recomputeLikes()
@@ -1051,6 +1053,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         } else {
             serverLikedIds = if (nowLiked) serverLikedIds + id else serverLikedIds - id
             recomputeLikes()
+            container.repository.markDownloadsLiked(listOf(id), nowLiked)
             viewModelScope.launch { runCatching { container.repository.setStarred(id, nowLiked, kind) } }
         }
     }

@@ -191,6 +191,14 @@ class AppContainer(context: Context) {
             ?.let { com.aurora.music.playback.YoutubeResolver.PlaybackStream(it) }
     }
 
+    // one client per login: soundcloud rotates the refresh token, so two clients refreshing it would sign each other out
+    private val soundcloudClients = java.util.concurrent.ConcurrentHashMap<String, com.aurora.music.data.remote.SoundCloudClient>()
+    private fun soundcloudClient(session: Session) = soundcloudClients.getOrPut(session.token) {
+        com.aurora.music.data.remote.SoundCloudClient(
+            session = { com.aurora.music.data.remote.SoundCloudWebSession.decode(soundcloudCredentials.read(session.token)) },
+            onRefreshed = { soundcloudCredentials.update(session.token, it.encode()) }, http = http, browser = soundcloudWriter)
+    }
+
     private fun resolveYtSentinel(sentinel: String): String? {
         val uri = runCatching { android.net.Uri.parse(sentinel) }.getOrNull() ?: return null
         return youtubeResolver.resolveSentinel(uri)
@@ -224,9 +232,7 @@ class AppContainer(context: Context) {
                     (unifiedLibraryValue && lastSession?.type?.supportsMergedLibrary == true &&
                         (mergeSourceKeys.isEmpty() || session.accountKey() in mergeSourceKeys))) _sourceErrors.tryEmit(message)
             }
-            ServerType.SOUNDCLOUD -> SoundCloudBackend(session, com.aurora.music.data.remote.SoundCloudClient(
-                session = { com.aurora.music.data.remote.SoundCloudWebSession.decode(soundcloudCredentials.read(session.token)) },
-                onRefreshed = { soundcloudCredentials.update(session.token, it.encode()) }, http = http, browser = soundcloudWriter), localize)
+            ServerType.SOUNDCLOUD -> SoundCloudBackend(session, soundcloudClient(session), localize)
             ServerType.EXTENSION -> extensions.backend(session) { song ->
                 val enabled = extensions.entries.value.any { it.component == session.userId && it.enabled }
                 val downloaded = if (!enabled) downloadManager.getByOriginalId(song.id)
@@ -591,7 +597,7 @@ class AppContainer(context: Context) {
     suspend fun forgetSavedSession(session: Session) {
         settingsStore.removeSavedSession(session)
         if (session.type == ServerType.YOUTUBE_MUSIC) youtubeMusicCredentials.remove(session.token)
-        if (session.type == ServerType.SOUNDCLOUD) soundcloudCredentials.remove(session.token)
+        if (session.type == ServerType.SOUNDCLOUD) { soundcloudClients.remove(session.token); soundcloudCredentials.remove(session.token) }
         if (session.type == ServerType.SPOTIFY && session.salt == SpotifyWebBackend.WEB_PLAYER) {
             spotifyCredentials.remove(session.token)
             withContext(Dispatchers.Main) {
