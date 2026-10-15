@@ -109,30 +109,7 @@ class YouTubeDownloader(
         }
     }
 
-    // ranged requests keep youtube from throttling the transfer to playback speed
-    private fun fetch(url: String, file: File, onProgress: (Float) -> Unit) {
-        file.outputStream().use { output ->
-            var position = 0L
-            var total = -1L
-            while (total < 0 || position < total) {
-                val request = Request.Builder().url(url).header("Range", "bytes=$position-${position + CHUNK - 1}").build()
-                http.newCall(request).execute().use { response ->
-                    val body = response.body ?: throw IOException("Empty body")
-                    when (response.code) {
-                        206 -> total = response.header("Content-Range")?.substringAfter('/')?.toLongOrNull()
-                            ?: throw IOException("Missing length")
-                        200 -> total = 0
-                        else -> throw IOException("HTTP ${response.code}")
-                    }
-                    val copied = body.byteStream().copyTo(output)
-                    if (copied == 0L && total > 0) throw IOException("Truncated download")
-                    position += copied
-                }
-                if (total > 0) onProgress((position.toFloat() / total).coerceIn(0f, 1f))
-            }
-        }
-        if (file.length() == 0L) throw IOException("Empty download")
-    }
+    private fun fetch(url: String, file: File, onProgress: (Float) -> Unit) = com.aurora.music.data.RangedDownload.fetch(http, url, file, onProgress)
 
     private fun remux(source: File, target: File, format: YouTubeDownloadFormat) {
         val extractor = MediaExtractor()
@@ -229,7 +206,6 @@ class YouTubeDownloader(
     companion object {
         const val FOLDER = "Aurora"
         private const val TAG = "YouTubeDownloader"
-        private const val CHUNK = 1_048_576L
         private const val SAMPLE_BUFFER = 1_048_576
         private const val COVER_SIZE = 800
     }

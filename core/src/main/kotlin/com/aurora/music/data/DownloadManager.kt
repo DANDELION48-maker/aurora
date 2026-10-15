@@ -416,6 +416,7 @@ class DownloadManager(
             onProgress(1f)
             return
         }
+        if (RangedDownload.isThrottled(url)) return RangedDownload.fetch(http, url, file, onProgress)
         val request = Request.Builder().url(url).build()
         http.newCall(request).execute().use { resp ->
             if (!resp.isSuccessful) throw IOException("HTTP ${resp.code}")
