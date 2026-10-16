@@ -227,7 +227,7 @@ class AppContainer(context: Context) {
             ServerType.LOCAL -> LocalBackend(localLibrary, localStore, session)
             ServerType.YOUTUBE_MUSIC -> ReportingMediaBackend(YouTubeMusicBackend(session,
                 com.aurora.music.data.remote.YouTubeMusicClient(
-                    session = { com.aurora.music.data.remote.YouTubeMusicWebSession.decode(youtubeMusicCredentials.read(session.token)) }))) { message ->
+                    session = { com.aurora.music.data.remote.YouTubeMusicWebSession.decode(youtubeMusicCredentials.read(session.token)) }), youtubeResolver::signatureTimestamp)) { message ->
                 if (lastSession?.accountKey() == session.accountKey() ||
                     (unifiedLibraryValue && lastSession?.type?.supportsMergedLibrary == true &&
                         (mergeSourceKeys.isEmpty() || session.accountKey() in mergeSourceKeys))) _sourceErrors.tryEmit(message)

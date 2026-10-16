@@ -5,12 +5,18 @@ import com.aurora.music.data.remote.YouTubeMusicTransport
 import com.aurora.music.data.remote.json
 import com.aurora.music.data.remote.obj
 import com.aurora.music.data.remote.string
+import com.google.gson.JsonObject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.sync.withLock
 import java.io.IOException
 import java.security.SecureRandom
 
-internal class YouTubeMusicPlaybackTracker(private val api: YouTubeMusicTransport) {
+internal class YouTubeMusicPlaybackTracker(
+    private val api: YouTubeMusicTransport,
+    private val signatureTimestamp: (String) -> Int? = { null },
+) {
     private data class ListeningSession(
         val videoId: String,
         val playbackUrl: String,
@@ -32,7 +38,15 @@ internal class YouTubeMusicPlaybackTracker(private val api: YouTubeMusicTranspor
         if (active == null) {
             if (report.event !in setOf(PlaybackReportEvent.START, PlaybackReportEvent.PROGRESS) ||
                 report.state != PlaybackReportState.PLAYING) return@withLock
-            val tracking = api.request("player", json("videoId" to report.song.id)).obj("playbackTracking")
+            val body = json("videoId" to report.song.id)
+            // without the player's signature timestamp the web player answers "video unavailable" and no tracking urls
+            withContext(Dispatchers.IO) { signatureTimestamp(report.song.id) }?.let { sts ->
+                body.add("playbackContext", JsonObject().apply {
+                    add("contentPlaybackContext", JsonObject().apply { addProperty("signatureTimestamp", sts) })
+                })
+            }
+            val playerResponse = api.request("player", body)
+            val tracking = playerResponse.obj("playbackTracking")
             val playbackUrl = tracking.obj("videostatsPlaybackUrl").string("baseUrl")
             val watchtimeUrl = tracking.obj("videostatsWatchtimeUrl").string("baseUrl")
             if (playbackUrl.isBlank() || watchtimeUrl.isBlank()) {

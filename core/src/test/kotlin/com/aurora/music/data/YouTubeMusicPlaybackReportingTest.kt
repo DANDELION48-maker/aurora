@@ -36,8 +36,10 @@ class YouTubeMusicPlaybackReportingTest {
         var trackingFailure: Exception? = null
         var response = """{"playbackTracking":{"videostatsPlaybackUrl":{"baseUrl":"https://s.youtube.com/api/stats/playback?ei=opaque&of=identity"},"videostatsWatchtimeUrl":{"baseUrl":"https://s.youtube.com/api/stats/watchtime?ei=opaque&of=identity"}}}"""
         val pings = mutableListOf<Pair<String, Map<String, String>>>()
+        var lastBody: JsonObject? = null
         override suspend fun request(endpoint: String, body: JsonObject): JsonObject {
             assertEquals("player", endpoint)
+            lastBody = body
             assertEquals("abcdefghijk", body.string("videoId"))
             playerCalls++
             playerFailure?.let { throw it }
@@ -48,6 +50,14 @@ class YouTubeMusicPlaybackReportingTest {
             trackingFailure?.let { throw it }
             pings += url to parameters
         }
+    }
+
+    @Test fun thePlayerRequestCarriesTheSignatureTimestamp() = runBlocking {
+        val api = Fixture()
+        YouTubeMusicBackend(session, api) { 20739 }.reportPlayback(report())
+        assertEquals(20739, api.lastBody!!.getAsJsonObject("playbackContext")
+            .getAsJsonObject("contentPlaybackContext").get("signatureTimestamp").asInt)
+        assertEquals(1, api.pings.size)
     }
 
     @Test fun listeningStartsOneAuthenticatedHistoryEntryAndReportsRealIntervals() = runBlocking {

@@ -33,7 +33,8 @@ class PlaybackReportDispatcher(
                     } catch (_: CancellationException) {
                         currentCoroutineContext().ensureActive()
                         failed()
-                    } catch (_: Exception) {
+                    } catch (e: Exception) {
+                        com.aurora.music.util.AppLog.w("PlaybackReports", "${report.event} report failed: ${e.message}")
                         failed()
                     } finally {
                         if (report.event == PlaybackReportEvent.STOP) started -= report.sessionId

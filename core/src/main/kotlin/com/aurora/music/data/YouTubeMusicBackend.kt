@@ -12,12 +12,16 @@ import kotlinx.coroutines.sync.withLock
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 
-class YouTubeMusicBackend(override val session: Session, private val api: YouTubeMusicTransport) : MediaBackend {
+class YouTubeMusicBackend(
+    override val session: Session,
+    private val api: YouTubeMusicTransport,
+    signatureTimestamp: (String) -> Int? = { null },
+) : MediaBackend {
     private val songs = ConcurrentHashMap<String, Song>()
     private val pageCache = ConcurrentHashMap<String, Pair<Long, SearchResults>>()
     private val pageLock = Mutex()
     private val albumLookups = ConcurrentHashMap.newKeySet<String>()
-    private val playbackTracker = YouTubeMusicPlaybackTracker(api)
+    private val playbackTracker = YouTubeMusicPlaybackTracker(api, signatureTimestamp)
     private fun remember(result: SearchResults): SearchResults = result.also { it.songs.forEach { song -> songs[song.id] = song } }
     private suspend fun browse(id: String) = api.request("browse", json("browseId" to id))
 

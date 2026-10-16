@@ -122,7 +122,14 @@ object YouTubeMusicParser {
         }.orEmpty()
 
     fun thumbnail(root: JsonObject): String = root.array("thumbnails").lastOrNull()?.takeIf { it.isJsonObject }
-        ?.asJsonObject?.string("url").orEmpty()
+        ?.asJsonObject?.string("url").orEmpty().let(::fullSize)
+
+    // list rows only list 60-120px art, but google's image urls serve any size the url asks for
+    fun fullSize(url: String): String {
+        val host = runCatching { java.net.URI(url).host }.getOrNull().orEmpty()
+        if (!host.endsWith("googleusercontent.com") && !host.endsWith("ggpht.com")) return url
+        return url.replace(Regex("""=w\d+-h\d+"""), "=w1200-h1200").replace(Regex("""=s\d+(?=-|$)"""), "=s1200")
+    }
 
     fun duration(value: String): Int? {
         if (!value.matches(Regex("\\d{1,3}:[0-5]\\d(?::[0-5]\\d)?"))) return null

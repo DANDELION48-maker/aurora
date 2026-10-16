@@ -36,6 +36,11 @@ class YoutubeResolver(private val http: OkHttpClient = OkHttpClient()) {
     private val bitrates = ConcurrentHashMap<String, Int>()
     @Volatile private var initialized = false
 
+    fun signatureTimestamp(videoId: String): Int? {
+        ensureInit()
+        return runCatching { org.schabi.newpipe.extractor.services.youtube.YoutubeJavaScriptPlayerManager.getSignatureTimestamp(videoId) }.getOrNull()
+    }
+
     private fun ensureInit() {
         if (initialized) return
         synchronized(this) {
