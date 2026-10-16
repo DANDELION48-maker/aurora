@@ -521,7 +521,7 @@ class PlexBackendTest {
             summary = "Original / mix & notes"
             val withDescription = requireNotNull(source.detail("playlist", "900"))
             assertEquals(summary, withDescription.info.editableDescription)
-            assertEquals(summary, withDescription.info.subtitle)
+            assertEquals(summary, withDescription.info.description)
         }
     }
 

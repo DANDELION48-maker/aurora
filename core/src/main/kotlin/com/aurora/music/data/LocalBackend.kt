@@ -14,8 +14,14 @@ class LocalBackend(
     override val session: Session,
 ) : MediaBackend {
 
+    private fun LocalPlaylist.entries(): List<Song> {
+        val others = foreign.orEmpty().associateBy { it.id }
+        return trackIds.orEmpty().mapNotNull { library.song(it) ?: others[it]?.toSong() }
+    }
+
+    // the list counts songs from merged sources too; only the merged library can open those
     private fun LocalPlaylist.toPlaylist(): Playlist {
-        val tracks = trackIds.orEmpty().mapNotNull { library.song(it) }
+        val tracks = entries()
         return Playlist(
             id = id,
             title = title ?: "",
@@ -122,8 +128,8 @@ class LocalBackend(
                 val pl = store.playlist(id) ?: return null
                 val tracks = pl.trackIds.orEmpty().mapNotNull { library.song(it) }
                 DetailData(
-                    info = DetailInfo(pl.title ?: "", pl.subtitle ?: "", tracks.firstOrNull { it.artworkUrl.isNotBlank() }?.artworkUrl ?: "", accentArgbFor(id), false, tracks.size, "Playlist",
-                        editableDescription = pl.subtitle.orEmpty()),
+                    info = DetailInfo(pl.title ?: "", "${tracks.size} song${if (tracks.size == 1) "" else "s"}", tracks.firstOrNull { it.artworkUrl.isNotBlank() }?.artworkUrl ?: "", accentArgbFor(id), false, tracks.size, "Playlist",
+                        editableDescription = pl.subtitle.orEmpty(), description = pl.subtitle.orEmpty()),
                     tracks = tracks,
                 )
             }
@@ -151,6 +157,12 @@ class LocalBackend(
     override suspend fun deletePlaylist(id: String): Boolean { store.deletePlaylist(id); return true }
 
     override suspend fun addToPlaylist(playlistId: String, trackIds: List<String>): Boolean { store.addTracks(playlistId, trackIds); return true }
+    override val acceptsForeignTracks get() = true
+    override suspend fun addSongsToPlaylist(playlistId: String, songs: List<Song>): Boolean {
+        store.addTracks(playlistId, songs.map { it.id }, songs.filter { MERGE_NAMESPACE_SEP in it.id }.map { it.toSavedTrack() })
+        return true
+    }
+    override suspend fun playlistEntries(id: String): List<Song>? = store.playlist(id)?.entries()
     override suspend fun removeFromPlaylist(playlistId: String, trackIds: List<String>): Boolean { store.removeTracks(playlistId, trackIds); return true }
 
     // folder tree rooted at the deepest common directory

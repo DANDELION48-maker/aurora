@@ -216,8 +216,14 @@ class JellyfinBackend(
         return entries.isEmpty() || client.api.removePlaylistItems(playlistId, entries.joinToString(",")).isSuccessful
     }
 
-    // jellyfin has no playlist rename/comment endpoint so edit is a no-op
-    override suspend fun updatePlaylist(id: String, name: String?, comment: String?): Boolean = false
+    // the playlist item itself carries name and overview, and jellyfin wants the whole item back
+    override suspend fun updatePlaylist(id: String, name: String?, comment: String?): Boolean = runCatching {
+        if (name == null && comment == null) return true
+        val item = client.api.itemRaw(uid, id)
+        name?.trim()?.takeIf { it.isNotBlank() }?.let { item.addProperty("Name", it) }
+        comment?.let { item.addProperty("Overview", it) }
+        client.api.updateItem(id, item).isSuccessful
+    }.getOrDefault(false)
 
     override suspend fun deletePlaylist(id: String): Boolean =
         runCatching { client.api.deleteItem(id).isSuccessful }.getOrDefault(false)
@@ -254,7 +260,8 @@ class JellyfinBackend(
                     client.api.playlistItems(id, mapOf("userId" to uid, "Fields" to "MediaSources,Genres,DateCreated")).Items
                 }.getOrDefault(emptyList()).map { it.toSong() }
                 DetailData(
-                    DetailInfo(p.Name ?: "Playlist", "${tracks.size} songs", client.coverArtUrl(p.imageId()), accentArgbFor(p.Id), false, tracks.size, "Playlist"),
+                    DetailInfo(p.Name ?: "Playlist", "${tracks.size} songs", client.coverArtUrl(p.imageId()), accentArgbFor(p.Id), false, tracks.size, "Playlist",
+                        editableDescription = p.Overview.orEmpty(), description = p.Overview.orEmpty()),
                     tracks,
                 )
             }

@@ -439,12 +439,18 @@ class MusicRepository(
         return backend?.prefersServerRadio(id) == true
     }
 
-    // a library view creates in that library's own account
-    suspend fun createPlaylist(name: String, view: String? = null): Boolean {
-        val id = viewOf(view)?.createPlaylistWithId(name) ?: return false
+    // a library view creates in that library's own account, or in the self-hosted one picked from its targets
+    suspend fun createPlaylist(name: String, view: String? = null, description: String = "", target: String? = null): Boolean {
+        val source = viewOf(view) ?: return false
+        val id = (if (target != null) source.createPlaylistIn(target, name) else source.createPlaylistWithId(name)) ?: return false
+        if (description.isNotBlank() && !source.updatePlaylist(id, null, description)) {
+            com.aurora.music.util.AppLog.w("Playlists", "created $id but its description was not saved")
+        }
         playlistChangeEvents.tryEmit(id)
         return true
     }
+
+    fun playlistTargets(view: String? = null): List<PlaylistTarget> = if (offline) emptyList() else viewOf(view)?.playlistTargets.orEmpty()
 
     private val playlistChangeEvents = kotlinx.coroutines.flow.MutableSharedFlow<String>(extraBufferCapacity = 16)
     val playlistChanges: kotlinx.coroutines.flow.Flow<String> = playlistChangeEvents
@@ -455,7 +461,7 @@ class MusicRepository(
         val id = backendSongId(song.id) ?: return null
         val expectedProvider = source.playbackSourceIdentity(song.copy(id = id, playbackSource = null, streamUrl = ""))?.providerId
         if (song.playbackSource?.providerId != null && song.playbackSource.providerId != expectedProvider) return null
-        return PlaylistMembershipEditor(source, id, isActive = { !offline && backend === source },
+        return PlaylistMembershipEditor(source, id, song.copy(id = id), isActive = { !offline && backend === source },
             onChanged = { playlistChangeEvents.tryEmit(it) })
     }
 

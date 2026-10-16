@@ -354,7 +354,7 @@ class PlexBackend(
         val subtitle = when (kind) {
             "album" -> listOfNotNull(item.parentTitle, item.year?.toString()).joinToString(" · ")
             "artist" -> "${albums.size} albums · ${tracks.size} tracks"
-            else -> item.summary?.takeIf { it.isNotBlank() } ?: "${tracks.size} songs"
+            else -> "${tracks.size} songs"
         }
         val label = when (kind) {
             "album" -> releaseTypeLabel(inferReleaseType(tracks.size, tracks.sumOf { it.durationSec }))
@@ -363,7 +363,8 @@ class PlexBackend(
         }
         return DetailData(DetailInfo(item.title ?: label, subtitle, client.coverArtUrl(id), accentArgbFor(id),
             kind == "artist", tracks.size, label,
-            editableDescription = if (kind == "playlist") item.summary.orEmpty() else null), tracks, albums)
+            editableDescription = if (kind == "playlist") item.summary.orEmpty() else null,
+            description = if (kind == "playlist") item.summary.orEmpty() else ""), tracks, albums)
     }
 
     override suspend fun collectionTracks(kind: String, id: String): List<Song> {

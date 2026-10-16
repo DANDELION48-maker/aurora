@@ -8,6 +8,7 @@ import kotlinx.coroutines.sync.withLock
 class PlaylistMembershipEditor internal constructor(
     private val backend: MediaBackend,
     private val songId: String,
+    private val song: com.aurora.music.model.Song? = null,
     private val isActive: () -> Boolean = { true },
     private val onChanged: (String) -> Unit = {},
 ) {
@@ -34,7 +35,7 @@ class PlaylistMembershipEditor internal constructor(
         val alreadyIncluded = contains(playlistId)
         if (alreadyIncluded == included) return@withLock true
         if (!isActive()) return@withLock false
-        val changed = if (included) backend.addToPlaylist(playlistId, listOf(songId))
+        val changed = if (included) song?.let { backend.addSongsToPlaylist(playlistId, listOf(it)) } ?: backend.addToPlaylist(playlistId, listOf(songId))
             else backend.removeFromPlaylist(playlistId, listOf(songId))
         if (changed) changedIds += playlistId
         changed

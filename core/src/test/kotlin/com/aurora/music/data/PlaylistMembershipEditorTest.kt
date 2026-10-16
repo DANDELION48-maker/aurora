@@ -19,6 +19,8 @@ class PlaylistMembershipEditorTest {
                 "getSession" -> Session(host, "Listener", "", "token", ServerType.SUBSONIC)
                 "allSongs" -> listOf(song)
                 "playbackSourceIdentity" -> null
+                "getAcceptsForeignTracks" -> false
+                "playlistEntries" -> null
                 "playlistsForSong", "allPlaylists" -> listOf(Playlist("playlist", "Playlist", "", "", tracks.size))
                 "collectionTracks" -> { check(!failRead) { "Unavailable" }; tracks }
                 "addToPlaylist", "removeFromPlaylist" -> {

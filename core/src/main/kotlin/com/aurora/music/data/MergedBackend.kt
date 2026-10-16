@@ -386,15 +386,27 @@ class MergedBackend(
             )
         }
         return route(id) { src, i, oid ->
-            src.detail(kind, oid)?.let { d -> d.copy(tracks = d.tracks.map { it.wrap(i) }, albums = d.albums.map { it.wrap(i) }) }
+            src.detail(kind, oid)?.let { d ->
+                val mixed = if (kind == "playlist") src.playlistEntries(oid)?.let { mixed(it, i) } else null
+                d.copy(tracks = mixed ?: d.tracks.map { it.wrap(i) }, albums = d.albums.map { it.wrap(i) },
+                    info = if (mixed == null) d.info else d.info.copy(songCount = mixed.size,
+                        subtitle = "${mixed.size} song${if (mixed.size == 1) "" else "s"}",
+                        artUrl = d.info.artUrl.ifBlank { mixed.firstOrNull { it.artworkUrl.isNotBlank() }?.artworkUrl.orEmpty() }))
+            }
         }
     }
+
+    // songs another source lent a local playlist keep their ids; ones from a source no longer merged drop out
+    private fun mixed(entries: List<Song>, index: Int) =
+        entries.mapNotNull { if (SEP in it.id) it.takeIf { song -> unwrap(song.id) != null } else it.wrap(index) }
     override suspend fun detailPage(kind: String, id: String, offset: Int): List<Song> =
         route(id) { src, i, oid -> src.detailPage(kind, oid, offset).map { it.wrap(i) } } ?: emptyList()
 
     override suspend fun collectionTracks(kind: String, id: String): List<Song> =
         if (kind == "liked") likedScope(id).starredSongs()
-        else route(id) { src, i, oid -> src.collectionTracks(kind, oid).map { it.wrap(i) } }
+        else route(id) { src, i, oid ->
+            (if (kind == "playlist") src.playlistEntries(oid)?.let { mixed(it, i) } else null) ?: src.collectionTracks(kind, oid).map { it.wrap(i) }
+        }
             ?: error("This collection's source is unavailable.")
 
     // a song from another source borrows the canvas or comments of its twin on a merged catalogue
@@ -486,6 +498,14 @@ class MergedBackend(
     }
 
     override suspend fun createPlaylist(name: String): Boolean = primary?.createPlaylist(name) ?: false
+    override val playlistTargets: List<PlaylistTarget> get() = sources.mapIndexedNotNull { i, source ->
+        val type = source.session.type
+        if (type !in PLAYLIST_HOMES) null else PlaylistTarget(namespaces[i], source.session.typeLabel, type)
+    }.takeIf { it.size > 1 }.orEmpty()
+    override suspend fun createPlaylistIn(target: String, name: String): String? {
+        val index = namespaces.indexOf(target).takeIf { it >= 0 && sources[it].session.type in PLAYLIST_HOMES } ?: return null
+        return sources[index].createPlaylistWithId(name)?.let { wrapId(index, it) }
+    }
     override suspend fun createPlaylistWithId(name: String): String? {
         val pIdx = sources.indexOfFirst { it === primary }
         val pid = primary?.createPlaylistWithId(name) ?: return null
@@ -514,16 +534,32 @@ class MergedBackend(
         return src.addToPlaylist(oPid, ids.map { it.second })
     }
 
+    override suspend fun addSongsToPlaylist(playlistId: String, songs: List<Song>): Boolean {
+        val (i, oPid) = unwrap(playlistId) ?: return false
+        val src = sources.getOrNull(i) ?: return false
+        val own = songs.map { song ->
+            val (index, original) = unwrap(song.id) ?: return false
+            if (index == i) song.copy(id = original) else if (src.acceptsForeignTracks) song else return false
+        }
+        return src.addSongsToPlaylist(oPid, own)
+    }
+
+    // a song can go in its own source's playlists and in any local one
     override suspend fun playlistsForSong(songId: String): List<Playlist> {
         val (index, original) = unwrap(songId) ?: return emptyList()
-        return sources[index].playlistsForSong(original).map { it.wrap(index) }
+        val local = sources.withIndex().filter { it.index != index && it.value.acceptsForeignTracks }
+            .flatMap { (i, source) -> source.allPlaylists().map { it.wrap(i) } }
+        return sources[index].playlistsForSong(original).map { it.wrap(index) } + local
     }
 
     override suspend fun removeFromPlaylist(playlistId: String, trackIds: List<String>): Boolean {
         val (index, original) = unwrap(playlistId) ?: return false
-        val ids = trackIds.map { unwrap(it) ?: return false }
-        if (ids.any { it.first != index }) return false
-        return sources[index].removeFromPlaylist(original, ids.map { it.second })
+        val source = sources.getOrNull(index) ?: return false
+        val ids = trackIds.map { id ->
+            val (i, oid) = unwrap(id) ?: return false
+            if (i == index) oid else if (source.acceptsForeignTracks) id else return false
+        }
+        return source.removeFromPlaylist(original, ids)
     }
 
     override suspend fun profileImageUrl(): String = primary?.profileImageUrl() ?: ""
@@ -547,6 +583,7 @@ class MergedBackend(
         const val DOWN_MS = 60_000L
         const val SLOW_EMPTY_MS = 8_000L
         val VIEW_IDS = setOf("library", "youtube", "spotify", "soundcloud")
+        val PLAYLIST_HOMES = setOf(ServerType.LOCAL, ServerType.SUBSONIC, ServerType.JELLYFIN, ServerType.PLEX)
         val LOSSLESS = setOf("flac", "alac", "wav", "aiff", "aif", "ape", "wv", "dsf", "dff")
         const val RELAXED_DURATION_SEC = 2
     }

@@ -1094,11 +1094,13 @@ fun AuroraApp() {
                                 onRemoveDownload = onRemoveDownload,
                                 onOpenSearch = { navigateTopLevel(Routes.SEARCH) },
                                 onOpenMix = { playerVM.setExpanded(false); mixQueue = playerState.queue.filterNot { it.id.startsWith("aurora-mix:") }; showMix = true },
-                                onCreatePlaylist = { name ->
-                                    playlistMutation { container.repository.createPlaylist(name, libraryVM.scope()) }.also { created ->
+                                onCreatePlaylist = { name, description, target ->
+                                    playlistMutation { container.repository.createPlaylist(name, libraryVM.scope(), description, target) }.also { created ->
                                         if (created) libraryVM.load()
                                     }
                                 },
+                                playlistTargets = remember(libraryState.view, libraryState.views, libraryState.loading) { container.repository.playlistTargets(libraryVM.scope()) },
+                                playlistHome = session?.typeLabel?.localizedMediaType() ?: "",
                                 onCreateSmart = { navController.navigate(Routes.smartEdit()) },
                                 onEditSmart = { id -> navController.navigate(Routes.smartEdit(id)) },
                                 onDeleteSmart = { id -> scope.launch { container.settingsStore.deleteSmartPlaylist(id) } },

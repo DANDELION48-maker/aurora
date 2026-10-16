@@ -80,6 +80,15 @@ interface MediaBackend {
     }
 
     suspend fun addToPlaylist(playlistId: String, trackIds: List<String>): Boolean = false
+    suspend fun addSongsToPlaylist(playlistId: String, songs: List<Song>): Boolean = addToPlaylist(playlistId, songs.map { it.id })
+
+    // a merged library over several self-hosted ones lets the new playlist pick its home
+    val playlistTargets: List<PlaylistTarget> get() = emptyList()
+    suspend fun createPlaylistIn(target: String, name: String): String? = createPlaylistWithId(name)
+
+    // local playlists also keep songs from other merged sources, whose ids stay namespaced
+    val acceptsForeignTracks: Boolean get() = false
+    suspend fun playlistEntries(id: String): List<Song>? = null
     suspend fun removeFromPlaylist(playlistId: String, trackIds: List<String>): Boolean = false
     suspend fun playlistsForSong(songId: String): List<Playlist> = allPlaylists()
     suspend fun setStarred(id: String, starred: Boolean, kind: String): Boolean
@@ -154,3 +163,5 @@ interface MediaBackend {
 data class HomeFeedChoice(val id: String, val label: String)
 data class SearchSourceChoice(val id: String, val label: String)
 data class LibraryViewChoice(val id: String, val label: String)
+
+data class PlaylistTarget(val id: String, val label: String, val type: ServerType)

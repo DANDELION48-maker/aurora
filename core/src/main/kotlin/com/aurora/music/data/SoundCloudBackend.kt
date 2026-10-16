@@ -140,6 +140,7 @@ class SoundCloudBackend(
             val owner = set.obj("user").string("username").ifBlank { "SoundCloud" }
             DetailData(DetailInfo(set.string("title"), owner, cover(set).ifBlank { tracks.firstOrNull()?.artworkUrl.orEmpty() }, accentArgbFor(id), false,
                 tracks.size, if (set.bool("is_album")) "Album" else "Playlist", description = set.string("description"),
+                editableDescription = set.string("description"),
                 editable = set.obj("user").string("id") == user && !id.startsWith(SYSTEM_PLAYLIST)), tracks)
         }
         "artist" -> coroutineScope {

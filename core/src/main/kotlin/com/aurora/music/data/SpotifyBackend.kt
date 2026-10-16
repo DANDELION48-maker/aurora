@@ -344,7 +344,7 @@ class SpotifyBackend(
                 if (apiTracks.isNotEmpty()) {
                     DetailData(
                         info = DetailInfo(header?.name ?: "Playlist", sub, img(header?.images), accentArgbFor(id), false, apiPage?.total ?: apiTracks.size, "Playlist",
-                            editableDescription = header?.description.orEmpty(), editable = owned),
+                            editableDescription = header?.description.orEmpty(), description = header?.description.orEmpty(), editable = owned),
                         tracks = apiTracks,
                     )
                 } else {
@@ -353,7 +353,7 @@ class SpotifyBackend(
                     AppLog.d("SpotifyBE", "playlist $id non-owned → embed tracks=${embed.size}")
                     DetailData(
                         info = DetailInfo(header?.name ?: "Playlist", sub, img(header?.images), accentArgbFor(id), false, embed.size, "Playlist",
-                            editableDescription = header?.description.orEmpty(), editable = owned),
+                            editableDescription = header?.description.orEmpty(), description = header?.description.orEmpty(), editable = owned),
                         tracks = embed,
                     )
                 }

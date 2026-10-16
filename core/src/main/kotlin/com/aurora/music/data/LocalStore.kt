@@ -13,6 +13,7 @@ data class LocalPlaylist(
     val title: String? = "",
     val subtitle: String? = "",
     val trackIds: List<String>? = emptyList(),
+    val foreign: List<SavedTrack>? = null,
 )
 
 private data class LocalState(
@@ -62,9 +63,11 @@ class LocalStore(filesDir: File) {
         persist()
     }
 
-    fun addTracks(id: String, trackIds: List<String>) = synchronized(lock) {
+    fun addTracks(id: String, trackIds: List<String>, foreign: List<SavedTrack> = emptyList()) = synchronized(lock) {
+        val added = foreign.map { it.id }.toSet()
         state = state.copy(playlists = state.playlists.orEmpty().map {
-            if (it.id == id) it.copy(trackIds = (it.trackIds.orEmpty() + trackIds).distinct()) else it
+            if (it.id == id) it.copy(trackIds = (it.trackIds.orEmpty() + trackIds).distinct(),
+                foreign = it.foreign.orEmpty().filterNot { t -> t.id in added } + foreign) else it
         })
         persist()
     }
@@ -72,7 +75,8 @@ class LocalStore(filesDir: File) {
     fun removeTracks(id: String, trackIds: List<String>) = synchronized(lock) {
         val drop = trackIds.toSet()
         state = state.copy(playlists = state.playlists.orEmpty().map {
-            if (it.id == id) it.copy(trackIds = it.trackIds.orEmpty().filterNot { t -> t in drop }) else it
+            if (it.id == id) it.copy(trackIds = it.trackIds.orEmpty().filterNot { t -> t in drop },
+                foreign = it.foreign?.filterNot { t -> t.id in drop }) else it
         })
         persist()
     }

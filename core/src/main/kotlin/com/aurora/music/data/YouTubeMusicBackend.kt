@@ -130,7 +130,7 @@ class YouTubeMusicBackend(
         val description = if (kind != "playlist") null
             else header?.objects("musicDescriptionShelfRenderer")?.firstOrNull()?.obj("description")?.label().orEmpty()
         return DetailData(DetailInfo(title, header?.obj("subtitle")?.label().orEmpty(), art, accentArgbFor(id), kind == "artist", enriched.size,
-            kind.replaceFirstChar { it.uppercase() }, editableDescription = description), enriched, initial.albums)
+            kind.replaceFirstChar { it.uppercase() }, editableDescription = description, description = description.orEmpty()), enriched, initial.albums)
     }
 
     private suspend fun mutation(endpoint: String, body: JsonObject): Boolean {

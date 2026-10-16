@@ -165,7 +165,9 @@ fun LibraryScreen(
     onRemoveDownload: (String) -> Unit,
     onOpenSearch: () -> Unit,
     onOpenMix: () -> Unit = {},
-    onCreatePlaylist: suspend (String) -> Boolean,
+    onCreatePlaylist: suspend (name: String, description: String, target: String?) -> Boolean,
+    playlistTargets: List<com.aurora.music.data.PlaylistTarget> = emptyList(),
+    playlistHome: String = "",
     onCreateSmart: () -> Unit,
     onEditSmart: (String) -> Unit,
     onDeleteSmart: (String) -> Unit,
@@ -254,7 +256,9 @@ fun LibraryScreen(
         }
 
         if (showCreate) {
-            CreatePlaylistDialog(
+            CreatePlaylistSheet(
+                destination = state.views.firstOrNull { it.id == state.view }?.label ?: playlistHome,
+                targets = playlistTargets,
                 onCreate = onCreatePlaylist,
                 onCreateSmart = { showCreate = false; onCreateSmart() },
                 onImportM3u = { showCreate = false; onImportM3u() },
@@ -908,55 +912,6 @@ private fun buildRows(state: LibraryUiState, filter: LibraryFilter, sort: Librar
     val deduped = sorted.filterNot { (it.kind to it.id) in pinned }
     val liked = LibRow(appString(R.string.text_liked_songs_58c3a9), appString(R.string.playlist_track_count, appPlural(R.plurals.track_count, (state.likedSongCount))), state.likedCover, accentFor("liked"), state.likedId, "liked")
     return (listOf(liked) + deduped).distinctBy { "${it.kind}:${it.id}" }
-}
-
-@Composable
-private fun CreatePlaylistDialog(onCreate: suspend (String) -> Boolean, onCreateSmart: () -> Unit, onImportM3u: () -> Unit, onDismiss: () -> Unit) {
-    var name by remember { mutableStateOf("") }
-    var saving by remember { mutableStateOf(false) }
-    var failed by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-    AlertDialog(
-        onDismissRequest = { if (!saving) onDismiss() },
-        title = { Text(appString(R.string.text_new_playlist_a5474a), fontWeight = FontWeight.Bold) },
-        text = {
-            Column {
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it; failed = false },
-                    label = { Text(appString(R.string.text_playlist_name_544f75)) },
-                    singleLine = true,
-                    enabled = !saving,
-                )
-                if (failed) {
-                    Text(appString(R.string.playlist_create_failed), color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
-                }
-                TextButton(onClick = onCreateSmart, enabled = !saving, modifier = Modifier.padding(top = 6.dp)) {
-                    Text(appString(R.string.text_create_a_smart_playlist_instead_f73978))
-                }
-                TextButton(onClick = onImportM3u, enabled = !saving) {
-                    Text(appString(R.string.text_import_an_m3u_file_3ae427))
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = {
-                saving = true
-                failed = false
-                scope.launch {
-                    try {
-                        if (onCreate(name.trim())) onDismiss() else failed = true
-                    } finally {
-                        saving = false
-                    }
-                }
-            }, enabled = name.isNotBlank() && !saving) {
-                Text(appString(if (saving) R.string.playlist_creating else R.string.text_create_6e157c))
-            }
-        },
-        dismissButton = { TextButton(onClick = onDismiss, enabled = !saving) { Text(appString(R.string.text_cancel_77dfd2)) } },
-    )
 }
 
 @Composable
