@@ -22,7 +22,9 @@ class AuroraApplication : Application(), coil.ImageLoaderFactory {
         container = AppContainer(this)
     }
 
+    // upgrading before coil's cache key also replaces small art saved in queues, history and playlists
     override fun newImageLoader() = coil.ImageLoader.Builder(this)
+        .components { add(coil.map.Mapper<String, String> { data, _ -> com.aurora.music.data.remote.YouTubeMusicParser.fullSize(data) }) }
         .okHttpClient { okhttp3.OkHttpClient.Builder().addInterceptor(com.aurora.music.data.remote.YouTubeArtworkFallback).build() }
         .build()
 
