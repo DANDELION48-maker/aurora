@@ -39,7 +39,7 @@ class DiscordRpc(
     @Volatile private var connectedToken: String? = null
     @Volatile private var showAlbum = true
     @Volatile private var activityName = "aurora"
-    private val loader = coil.ImageLoader(context)
+    private val loader = coil.Coil.imageLoader(context)
     private val inFlight = ConcurrentHashMap.newKeySet<String>()
     private val failedImages = ConcurrentHashMap<String, Long>()
     private var positionAt = 0L
@@ -222,7 +222,11 @@ internal fun discordActivity(song: Song, showAlbum: Boolean, activityName: Strin
 internal suspend fun loadDiscordArtwork(context: android.content.Context, loader: coil.ImageLoader, url: String): ByteArray? {
     val result = loader.execute(coil.request.ImageRequest.Builder(context).data(url).size(512).allowHardware(false).build())
     val drawable = (result as? coil.request.SuccessResult)?.drawable ?: return null
-    val bitmap = drawable.toBitmap(512, 512)
+    // centre square instead of squashing wide video thumbnails into 512x512
+    val full = drawable.toBitmap()
+    val side = minOf(full.width, full.height)
+    val bitmap = android.graphics.Bitmap.createScaledBitmap(
+        android.graphics.Bitmap.createBitmap(full, (full.width - side) / 2, (full.height - side) / 2, side, side), 512, 512, true)
     return java.io.ByteArrayOutputStream().use { output ->
         if (!bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, output)) return null
         output.toByteArray()

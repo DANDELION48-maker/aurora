@@ -127,6 +127,8 @@ object YouTubeMusicParser {
     // list rows only list 60-120px art, but google's image urls serve any size the url asks for
     fun fullSize(url: String): String {
         val host = runCatching { java.net.URI(url).host }.getOrNull().orEmpty()
+        if (host == "i.ytimg.com") return Regex("""^https://i\.ytimg\.com/vi(?:_webp)?/([A-Za-z0-9_-]{11})/""").find(url)
+            ?.let { "https://i.ytimg.com/vi/${it.groupValues[1]}/maxresdefault.jpg" }?.takeIf { it != url } ?: url
         if (!host.endsWith("googleusercontent.com") && !host.endsWith("ggpht.com")) return url
         return url.replace(Regex("""=w\d+-h\d+"""), "=w1200-h1200").replace(Regex("""=s\d+(?=-|$)"""), "=s1200")
     }

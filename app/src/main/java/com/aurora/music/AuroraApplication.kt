@@ -5,7 +5,7 @@ import android.util.Log
 import com.aurora.music.data.AppContainer
 import com.aurora.music.util.AppLog
 
-class AuroraApplication : Application() {
+class AuroraApplication : Application(), coil.ImageLoaderFactory {
     lateinit var container: AppContainer
         private set
 
@@ -21,6 +21,10 @@ class AuroraApplication : Application() {
         com.aurora.music.localization.AppStrings.initialize(this)
         container = AppContainer(this)
     }
+
+    override fun newImageLoader() = coil.ImageLoader.Builder(this)
+        .okHttpClient { okhttp3.OkHttpClient.Builder().addInterceptor(com.aurora.music.data.remote.YouTubeArtworkFallback).build() }
+        .build()
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)
