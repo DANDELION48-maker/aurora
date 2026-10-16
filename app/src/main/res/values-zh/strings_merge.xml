@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_options">"合并选项"</string>
+    <string name="merge_options_summary">"跨来源的 Canvas、音乐视频和评论"</string>
+    <string name="merge_canvas">"Spotify Canvas"</string>
+    <string name="merge_canvas_summary">"播放器背后来自 Spotify 的循环画面"</string>
+    <string name="merge_videos">"YouTube 音乐视频"</string>
+    <string name="merge_videos_summary">"通过视频按钮观看 YouTube 音乐视频"</string>
+    <string name="merge_comments">"SoundCloud 评论"</string>
+    <string name="merge_comments_summary">"沿波形显示的 SoundCloud 定时评论"</string>
+    <string name="merge_on_songs_from">"在以下来源的歌曲上显示"</string>
+</resources>

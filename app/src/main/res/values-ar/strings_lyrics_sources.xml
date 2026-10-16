@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_summary">"المزامنة والترجمة والمصادر المفضلة"</string>
+    <string name="lyrics_sources_title">"مصادر كلمات الأغاني"</string>
+    <string name="lyrics_sources_desc">"يسأل Aurora هذه المصادر بالترتيب. يفوز أول مصدر بكلمات متزامنة، وإلا فأول مصدر بأي كلمات."</string>
+    <string name="lyrics_source_own">"المصدر الأصلي للأغنية"</string>
+    <string name="lyrics_source_own_desc">"كلمات يوفرها خادمك أو خدمتك"</string>
+    <string name="lyrics_source_spotify_desc">"مطابقة على Spotify أثناء الدمج"</string>
+    <string name="lyrics_source_lrclib_desc">"قاعدة كلمات عامة"</string>
+    <string name="merge_lyrics">"كلمات Spotify"</string>
+    <string name="merge_lyrics_summary">"كلمات متزامنة من Spotify لأغاني أي مصدر"</string>
+</resources>

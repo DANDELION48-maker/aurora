@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_options">"ضم کرنے کے اختیارات"</string>
+    <string name="merge_options_summary">"تمام ذرائع میں کینوس، میوزک ویڈیوز اور تبصرے"</string>
+    <string name="merge_canvas">"Spotify کینوس"</string>
+    <string name="merge_canvas_summary">"پلیئر کے پیچھے Spotify کے دہرائے جانے والے مناظر"</string>
+    <string name="merge_videos">"YouTube میوزک ویڈیوز"</string>
+    <string name="merge_videos_summary">"ویڈیو بٹن پر YouTube کی میوزک ویڈیوز"</string>
+    <string name="merge_comments">"SoundCloud تبصرے"</string>
+    <string name="merge_comments_summary">"ویوفارم کے ساتھ SoundCloud کے وقت والے تبصرے"</string>
+    <string name="merge_on_songs_from">"ان ذرائع کے گانوں پر دکھائیں"</string>
+</resources>

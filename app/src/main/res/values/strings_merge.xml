@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_options">"Merge options"</string>
+    <string name="merge_options_summary">"Canvas, music videos and comments across sources"</string>
+    <string name="merge_canvas">"Spotify canvas"</string>
+    <string name="merge_canvas_summary">"Looping visuals from Spotify behind the player"</string>
+    <string name="merge_videos">"YouTube music videos"</string>
+    <string name="merge_videos_summary">"Music videos from YouTube on the video button"</string>
+    <string name="merge_comments">"SoundCloud comments"</string>
+    <string name="merge_comments_summary">"Timed comments from SoundCloud along the waveform"</string>
+    <string name="merge_on_songs_from">"Show on songs from"</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playlist_saved_to">"%1$s میں محفوظ ہوگی"</string>
+    <string name="playlist_save_to">"یہاں محفوظ کریں"</string>
+    <string name="playlist_description_optional">"تفصیل (اختیاری)"</string>
+    <string name="playlist_local_hint">"ہر ضم شدہ ذریعے کے گانے رکھ سکتی ہے"</string>
+    <string name="playlist_smart_hint">"آپ کے اصولوں سے خود بھرتی ہے"</string>
+    <string name="playlist_import_title">"M3U درآمد کریں"</string>
+    <string name="playlist_import_hint">"اپنی لائبریری سے پلے لسٹ فائل دوبارہ بنائیں"</string>
+</resources>

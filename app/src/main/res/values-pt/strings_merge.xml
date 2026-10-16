@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_options">"Opções de fusão"</string>
+    <string name="merge_options_summary">"Canvas, videoclipes e comentários entre fontes"</string>
+    <string name="merge_canvas">"Canvas do Spotify"</string>
+    <string name="merge_canvas_summary">"Visuais em loop do Spotify atrás do player"</string>
+    <string name="merge_videos">"Videoclipes do YouTube"</string>
+    <string name="merge_videos_summary">"Videoclipes do YouTube no botão de vídeo"</string>
+    <string name="merge_comments">"Comentários do SoundCloud"</string>
+    <string name="merge_comments_summary">"Comentários com tempo do SoundCloud ao longo da onda"</string>
+    <string name="merge_on_songs_from">"Mostrar em músicas de"</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_summary">"सिंक, अनुवाद और पसंदीदा स्रोत"</string>
+    <string name="lyrics_sources_title">"लिरिक्स स्रोत"</string>
+    <string name="lyrics_sources_desc">"Aurora इन्हें क्रम से देखता है। सिंक लिरिक्स वाला पहला जीतता है, नहीं तो कोई भी लिरिक्स वाला पहला।"</string>
+    <string name="lyrics_source_own">"गाने का अपना स्रोत"</string>
+    <string name="lyrics_source_own_desc">"आपके सर्वर या सेवा के लिरिक्स"</string>
+    <string name="lyrics_source_spotify_desc">"मर्ज होने पर Spotify पर मिलान"</string>
+    <string name="lyrics_source_lrclib_desc">"सार्वजनिक लिरिक्स डेटाबेस"</string>
+    <string name="merge_lyrics">"Spotify लिरिक्स"</string>
+    <string name="merge_lyrics_summary">"किसी भी स्रोत के गानों के लिए Spotify के सिंक लिरिक्स"</string>
+</resources>

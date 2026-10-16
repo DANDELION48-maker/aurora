@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_options">"Opcje scalania"</string>
+    <string name="merge_options_summary">"Canvas, teledyski i komentarze ze wszystkich źródeł"</string>
+    <string name="merge_canvas">"Canvas Spotify"</string>
+    <string name="merge_canvas_summary">"Zapętlone wizualizacje Spotify za odtwarzaczem"</string>
+    <string name="merge_videos">"Teledyski z YouTube"</string>
+    <string name="merge_videos_summary">"Teledyski z YouTube pod przyciskiem wideo"</string>
+    <string name="merge_comments">"Komentarze SoundCloud"</string>
+    <string name="merge_comments_summary">"Komentarze z SoundCloud wzdłuż przebiegu fali"</string>
+    <string name="merge_on_songs_from">"Pokazuj przy utworach z"</string>
+</resources>

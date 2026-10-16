@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_options">"병합 옵션"</string>
+    <string name="merge_options_summary">"모든 소스의 캔버스, 뮤직비디오, 댓글"</string>
+    <string name="merge_canvas">"Spotify 캔버스"</string>
+    <string name="merge_canvas_summary">"플레이어 뒤에 흐르는 Spotify 반복 영상"</string>
+    <string name="merge_videos">"YouTube 뮤직비디오"</string>
+    <string name="merge_videos_summary">"비디오 버튼으로 보는 YouTube 뮤직비디오"</string>
+    <string name="merge_comments">"SoundCloud 댓글"</string>
+    <string name="merge_comments_summary">"파형을 따라 표시되는 SoundCloud 타임 댓글"</string>
+    <string name="merge_on_songs_from">"다음 소스의 곡에 표시"</string>
+</resources>

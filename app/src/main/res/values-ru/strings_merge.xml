@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_options">"Параметры объединения"</string>
+    <string name="merge_options_summary">"Canvas, клипы и комментарии из разных источников"</string>
+    <string name="merge_canvas">"Canvas Spotify"</string>
+    <string name="merge_canvas_summary">"Зацикленные видео Spotify за плеером"</string>
+    <string name="merge_videos">"Клипы YouTube"</string>
+    <string name="merge_videos_summary">"Клипы с YouTube по кнопке видео"</string>
+    <string name="merge_comments">"Комментарии SoundCloud"</string>
+    <string name="merge_comments_summary">"Комментарии SoundCloud с метками времени вдоль волны"</string>
+    <string name="merge_on_songs_from">"Показывать для треков из"</string>
+</resources>

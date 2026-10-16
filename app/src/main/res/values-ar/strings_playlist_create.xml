@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playlist_saved_to">"يُحفظ في %1$s"</string>
+    <string name="playlist_save_to">"الحفظ في"</string>
+    <string name="playlist_description_optional">"الوصف (اختياري)"</string>
+    <string name="playlist_local_hint">"تضم أغاني من كل المصادر المدمجة"</string>
+    <string name="playlist_smart_hint">"تمتلئ تلقائيًا وفق القواعد التي تحددها"</string>
+    <string name="playlist_import_title">"استيراد M3U"</string>
+    <string name="playlist_import_hint">"أعد بناء ملف قائمة تشغيل من مكتبتك"</string>
+</resources>

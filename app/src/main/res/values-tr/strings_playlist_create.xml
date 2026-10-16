@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playlist_saved_to">"%1$s konumuna kaydedilir"</string>
+    <string name="playlist_save_to">"Kaydedilecek yer"</string>
+    <string name="playlist_description_optional">"Açıklama (isteğe bağlı)"</string>
+    <string name="playlist_local_hint">"Birleştirilen tüm kaynaklardan şarkı alabilir"</string>
+    <string name="playlist_smart_hint">"Belirlediğin kurallarla kendini doldurur"</string>
+    <string name="playlist_import_title">"M3U içe aktar"</string>
+    <string name="playlist_import_hint">"Kitaplığından bir çalma listesi dosyasını yeniden oluştur"</string>
+</resources>

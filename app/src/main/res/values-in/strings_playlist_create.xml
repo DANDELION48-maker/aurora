@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playlist_saved_to">"Disimpan ke %1$s"</string>
+    <string name="playlist_save_to">"Simpan ke"</string>
+    <string name="playlist_description_optional">"Deskripsi (opsional)"</string>
+    <string name="playlist_local_hint">"Bisa berisi lagu dari semua sumber gabungan"</string>
+    <string name="playlist_smart_hint">"Terisi sendiri sesuai aturan Anda"</string>
+    <string name="playlist_import_title">"Impor M3U"</string>
+    <string name="playlist_import_hint">"Bangun ulang file playlist dari pustaka Anda"</string>
+</resources>

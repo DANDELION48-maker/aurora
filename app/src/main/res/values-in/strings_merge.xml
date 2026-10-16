@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_options">"Opsi gabungan"</string>
+    <string name="merge_options_summary">"Canvas, video musik, dan komentar di semua sumber"</string>
+    <string name="merge_canvas">"Canvas Spotify"</string>
+    <string name="merge_canvas_summary">"Visual berulang dari Spotify di belakang pemutar"</string>
+    <string name="merge_videos">"Video musik YouTube"</string>
+    <string name="merge_videos_summary">"Video musik dari YouTube di tombol video"</string>
+    <string name="merge_comments">"Komentar SoundCloud"</string>
+    <string name="merge_comments_summary">"Komentar berwaktu dari SoundCloud di sepanjang gelombang"</string>
+    <string name="merge_on_songs_from">"Tampilkan di lagu dari"</string>
+</resources>

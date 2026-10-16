@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_summary">"同期、翻訳、優先ソース"</string>
+    <string name="lyrics_sources_title">"歌詞のソース"</string>
+    <string name="lyrics_sources_desc">"Auroraは順番に問い合わせます。同期歌詞が最初に見つかったものを優先し、なければ最初に見つかった歌詞を使います。"</string>
+    <string name="lyrics_source_own">"曲自体のソース"</string>
+    <string name="lyrics_source_own_desc">"サーバーやサービスが提供する歌詞"</string>
+    <string name="lyrics_source_spotify_desc">"統合中はSpotifyで照合"</string>
+    <string name="lyrics_source_lrclib_desc">"公開歌詞データベース"</string>
+    <string name="merge_lyrics">"Spotifyの歌詞"</string>
+    <string name="merge_lyrics_summary">"あらゆるソースの曲にSpotifyの同期歌詞を表示"</string>
+</resources>

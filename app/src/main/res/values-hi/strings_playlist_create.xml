@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playlist_saved_to">"%1$s में सहेजी जाएगी"</string>
+    <string name="playlist_save_to">"यहाँ सहेजें"</string>
+    <string name="playlist_description_optional">"विवरण (वैकल्पिक)"</string>
+    <string name="playlist_local_hint">"हर मर्ज किए गए स्रोत के गाने रख सकती है"</string>
+    <string name="playlist_smart_hint">"आपके नियमों से अपने आप भरती है"</string>
+    <string name="playlist_import_title">"M3U आयात करें"</string>
+    <string name="playlist_import_hint">"अपनी लाइब्रेरी से प्लेलिस्ट फ़ाइल दोबारा बनाएँ"</string>
+</resources>

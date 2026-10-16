@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_options">"統合オプション"</string>
+    <string name="merge_options_summary">"ソースをまたいだCanvas、ミュージックビデオ、コメント"</string>
+    <string name="merge_canvas">"Spotify Canvas"</string>
+    <string name="merge_canvas_summary">"プレーヤーの背景に流れるSpotifyのループ映像"</string>
+    <string name="merge_videos">"YouTubeミュージックビデオ"</string>
+    <string name="merge_videos_summary">"ビデオボタンでYouTubeのミュージックビデオ"</string>
+    <string name="merge_comments">"SoundCloudのコメント"</string>
+    <string name="merge_comments_summary">"波形に沿ったSoundCloudのタイムコメント"</string>
+    <string name="merge_on_songs_from">"表示する曲のソース"</string>
+</resources>

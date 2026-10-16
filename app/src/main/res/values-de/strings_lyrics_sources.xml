@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_summary">"Synchronisierung, Übersetzung und bevorzugte Quellen"</string>
+    <string name="lyrics_sources_title">"Liedtext-Quellen"</string>
+    <string name="lyrics_sources_desc">"Aurora fragt sie der Reihe nach. Die erste mit synchronisiertem Text gewinnt, sonst die erste mit irgendeinem Text."</string>
+    <string name="lyrics_source_own">"Die eigene Quelle des Titels"</string>
+    <string name="lyrics_source_own_desc">"Liedtexte deines Servers oder Dienstes"</string>
+    <string name="lyrics_source_spotify_desc">"Auf Spotify gefunden, solange es zusammengeführt ist"</string>
+    <string name="lyrics_source_lrclib_desc">"Öffentliche Liedtext-Datenbank"</string>
+    <string name="merge_lyrics">"Spotify-Liedtexte"</string>
+    <string name="merge_lyrics_summary">"Synchronisierte Liedtexte von Spotify für Titel aus jeder Quelle"</string>
+</resources>

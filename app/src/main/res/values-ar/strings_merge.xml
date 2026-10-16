@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_options">"خيارات الدمج"</string>
+    <string name="merge_options_summary">"كانفاس وفيديوهات موسيقية وتعليقات عبر المصادر"</string>
+    <string name="merge_canvas">"كانفاس Spotify"</string>
+    <string name="merge_canvas_summary">"مقاطع متكررة من Spotify خلف المشغل"</string>
+    <string name="merge_videos">"فيديوهات YouTube الموسيقية"</string>
+    <string name="merge_videos_summary">"فيديوهات موسيقية من YouTube عبر زر الفيديو"</string>
+    <string name="merge_comments">"تعليقات SoundCloud"</string>
+    <string name="merge_comments_summary">"تعليقات SoundCloud المؤقتة على طول الموجة"</string>
+    <string name="merge_on_songs_from">"إظهار على أغاني"</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playlist_saved_to">"Se guarda en %1$s"</string>
+    <string name="playlist_save_to">"Guardar en"</string>
+    <string name="playlist_description_optional">"Descripción (opcional)"</string>
+    <string name="playlist_local_hint">"Admite canciones de todas las fuentes combinadas"</string>
+    <string name="playlist_smart_hint">"Se llena sola con las reglas que elijas"</string>
+    <string name="playlist_import_title">"Importar M3U"</string>
+    <string name="playlist_import_hint">"Reconstruye un archivo de lista con tu biblioteca"</string>
+</resources>

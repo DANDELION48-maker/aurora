@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playlist_saved_to">"%1$s に保存"</string>
+    <string name="playlist_save_to">"保存先"</string>
+    <string name="playlist_description_optional">"説明（任意）"</string>
+    <string name="playlist_local_hint">"統合したすべてのソースの曲を入れられます"</string>
+    <string name="playlist_smart_hint">"設定したルールで自動的に追加"</string>
+    <string name="playlist_import_title">"M3U を読み込む"</string>
+    <string name="playlist_import_hint">"ライブラリからプレイリストファイルを再現"</string>
+</resources>

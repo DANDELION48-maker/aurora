@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playlist_saved_to">"保存到 %1$s"</string>
+    <string name="playlist_save_to">"保存到"</string>
+    <string name="playlist_description_optional">"描述（可选）"</string>
+    <string name="playlist_local_hint">"可容纳所有合并来源的歌曲"</string>
+    <string name="playlist_smart_hint">"按你设定的规则自动填充"</string>
+    <string name="playlist_import_title">"导入 M3U"</string>
+    <string name="playlist_import_hint">"用你的资料库重建播放列表文件"</string>
+</resources>

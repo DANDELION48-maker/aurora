@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_summary">"ہم آہنگی، ترجمہ اور پسندیدہ ذرائع"</string>
+    <string name="lyrics_sources_title">"بول کے ذرائع"</string>
+    <string name="lyrics_sources_desc">"Aurora انہیں ترتیب سے دیکھتا ہے۔ ہم آہنگ بول والا پہلا جیتتا ہے، ورنہ کوئی بھی بول والا پہلا۔"</string>
+    <string name="lyrics_source_own">"گانے کا اپنا ذریعہ"</string>
+    <string name="lyrics_source_own_desc">"آپ کے سرور یا سروس کے بول"</string>
+    <string name="lyrics_source_spotify_desc">"ضم ہونے پر Spotify پر ملایا گیا"</string>
+    <string name="lyrics_source_lrclib_desc">"عوامی بولوں کا ڈیٹابیس"</string>
+    <string name="merge_lyrics">"Spotify بول"</string>
+    <string name="merge_lyrics_summary">"کسی بھی ذریعے کے گانوں کے لیے Spotify کے ہم آہنگ بول"</string>
+</resources>

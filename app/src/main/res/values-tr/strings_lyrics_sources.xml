@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lyrics_settings_summary">"Senkron, çeviri ve tercih edilen kaynaklar"</string>
+    <string name="lyrics_sources_title">"Şarkı sözü kaynakları"</string>
+    <string name="lyrics_sources_desc">"Aurora bunlara sırayla bakar. Senkron sözü olan ilk kaynak kazanır, yoksa sözü olan ilk kaynak."</string>
+    <string name="lyrics_source_own">"Şarkının kendi kaynağı"</string>
+    <string name="lyrics_source_own_desc">"Sunucunun veya servisin verdiği sözler"</string>
+    <string name="lyrics_source_spotify_desc">"Birleştirildiğinde Spotify\'da eşleştirilir"</string>
+    <string name="lyrics_source_lrclib_desc">"Herkese açık söz veritabanı"</string>
+    <string name="merge_lyrics">"Spotify sözleri"</string>
+    <string name="merge_lyrics_summary">"Her kaynaktan şarkılar için Spotify\'dan senkron sözler"</string>
+</resources>

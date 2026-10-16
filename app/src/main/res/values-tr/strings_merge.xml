@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_options">"Birleştirme seçenekleri"</string>
+    <string name="merge_options_summary">"Kaynaklar arasında canvas, müzik videoları ve yorumlar"</string>
+    <string name="merge_canvas">"Spotify canvas"</string>
+    <string name="merge_canvas_summary">"Oynatıcının arkasında Spotify\'dan döngüsel görseller"</string>
+    <string name="merge_videos">"YouTube müzik videoları"</string>
+    <string name="merge_videos_summary">"Video düğmesinde YouTube müzik videoları"</string>
+    <string name="merge_comments">"SoundCloud yorumları"</string>
+    <string name="merge_comments_summary">"Dalga formu boyunca SoundCloud\'dan zamanlı yorumlar"</string>
+    <string name="merge_on_songs_from">"Şu kaynaklardaki şarkılarda göster"</string>
+</resources>
