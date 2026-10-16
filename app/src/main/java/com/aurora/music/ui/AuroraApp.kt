@@ -1,5 +1,7 @@
 package com.aurora.music.ui
 
+import androidx.compose.material.icons.outlined.Check
+import com.aurora.music.ui.components.longPressFirst
 import com.aurora.music.localization.localizedMediaType
 
 import com.aurora.music.localization.appPlural
@@ -359,6 +361,33 @@ fun AuroraApp() {
             popUpTo(navController.graph.findStartDestination().id) { saveState = false }
             launchSingleTop = true
             restoreState = false
+        }
+    }
+
+    var homeFeedMenu by remember { mutableStateOf<Pair<List<com.aurora.music.data.HomeFeedChoice>, String>?>(null) }
+    val voiceSearch = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()) { result ->
+        val spoken = result.data?.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS)?.firstOrNull()
+        if (!spoken.isNullOrBlank()) {
+            androidx.lifecycle.ViewModelProvider(activityOwner)[SearchViewModel::class.java].voiceSearch(spoken)
+            navigateTopLevel(Routes.SEARCH)
+        }
+    }
+    // holding search goes straight to speech, holding home picks which merged feed opens
+    fun onNavLongPress(route: String) {
+        when (route) {
+            Routes.SEARCH -> {
+                container.haptic()
+                val intent = android.content.Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                    putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(android.speech.RecognizerIntent.EXTRA_PROMPT, appString(R.string.text_speak_to_search_91f0aa))
+                }
+                runCatching { voiceSearch.launch(intent) }.onFailure { navigateTopLevel(Routes.SEARCH) }
+            }
+            Routes.HOME -> {
+                val home = androidx.lifecycle.ViewModelProvider(activityOwner)[HomeViewModel::class.java].state.value
+                if (home.feeds.size > 1) { container.haptic(); homeFeedMenu = home.feeds to home.selectedFeed }
+            }
         }
     }
 
@@ -906,8 +935,28 @@ fun AuroraApp() {
                                 )
                                 Spacer(Modifier.height(8.dp))
                             }
-                            if (!rail) FloatingNav(currentRoute, navLayout.bar, navLayout.barMore,
-                                onNavigate = { navigateTopLevel(it) }, onMore = { showNavMore = true })
+                            if (!rail) Box {
+                                FloatingNav(currentRoute, navLayout.bar, navLayout.barMore,
+                                    onNavigate = { navigateTopLevel(it) }, onMore = { showNavMore = true }, onLongPress = ::onNavLongPress)
+                                Box(Modifier.align(Alignment.TopStart).padding(start = 8.dp)) {
+                                    androidx.compose.material3.DropdownMenu(expanded = homeFeedMenu != null, onDismissRequest = { homeFeedMenu = null },
+                                        shape = RoundedCornerShape(18.dp)) {
+                                        val (feeds, selected) = homeFeedMenu ?: (emptyList<com.aurora.music.data.HomeFeedChoice>() to "")
+                                        feeds.forEach { feed ->
+                                            androidx.compose.material3.DropdownMenuItem(
+                                                leadingIcon = { Icon(com.aurora.music.ui.components.sourceViewIcon(feed.id), null) },
+                                                text = { Text(feed.label, fontWeight = if (feed.id == selected) FontWeight.Bold else FontWeight.Medium) },
+                                                trailingIcon = { if (feed.id == selected) Icon(androidx.compose.material.icons.Icons.Outlined.Check, null, tint = MaterialTheme.colorScheme.primary) },
+                                                onClick = {
+                                                    homeFeedMenu = null
+                                                    androidx.lifecycle.ViewModelProvider(activityOwner)[HomeViewModel::class.java].selectFeed(feed.id)
+                                                    navigateTopLevel(Routes.HOME)
+                                                },
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
                         }
                     }
@@ -1694,9 +1743,10 @@ private fun FloatingNav(
     moreTab: Boolean,
     onNavigate: (String) -> Unit,
     onMore: () -> Unit,
+    onLongPress: (String) -> Unit = {},
 ) {
     if (com.aurora.music.ui.theme.isGlassTheme()) {
-        GlassFloatingNav(currentRoute, tabs, moreTab, onNavigate, onMore)
+        GlassFloatingNav(currentRoute, tabs, moreTab, onNavigate, onMore, onLongPress)
         return
     }
     val classic = com.aurora.music.ui.theme.LocalUiPrefs.current.themeStyle == com.aurora.music.data.ThemeStyle.AURORA
@@ -1713,7 +1763,8 @@ private fun FloatingNav(
     ) {
         tabs.forEach { tab ->
             val selected = currentRoute == tab.route
-            NavTab(tab.shortLabel, if (selected) tab.selectedIcon else tab.icon, selected, classic, Modifier.weight(if (selected) 1.4f else 1f)) {
+            NavTab(tab.shortLabel, if (selected) tab.selectedIcon else tab.icon, selected, classic,
+                Modifier.weight(if (selected) 1.4f else 1f).longPressFirst(tab.route) { _, _ -> onLongPress(tab.route) }) {
                 onNavigate(tab.route)
             }
         }
@@ -1754,6 +1805,7 @@ private fun GlassFloatingNav(
     moreTab: Boolean,
     onNavigate: (String) -> Unit,
     onMore: () -> Unit,
+    onLongPress: (String) -> Unit,
 ) {
     val backdrop = com.aurora.music.ui.theme.LocalGlassBackdrop.current
     val search = tabs.firstOrNull { it.route == Routes.SEARCH }
@@ -1768,6 +1820,7 @@ private fun GlassFloatingNav(
             onSelect = { index -> capsule.getOrNull(index)?.let { onNavigate(it.route) } ?: onMore() },
             backdrop = backdrop,
             modifier = Modifier.weight(1f),
+            onLongPress = { index -> capsule.getOrNull(index)?.let { onLongPress(it.route) } },
         )
         if (search != null) {
             val selected = currentRoute == search.route
@@ -1778,6 +1831,7 @@ private fun GlassFloatingNav(
                 modifier = Modifier.size(64.dp),
                 selected = selected,
                 contentDescription = search.shortLabel,
+                onLongClick = { onLongPress(search.route) },
             ) {
                 Icon(search.selectedIcon, null, Modifier.size(28.dp),
                     tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)

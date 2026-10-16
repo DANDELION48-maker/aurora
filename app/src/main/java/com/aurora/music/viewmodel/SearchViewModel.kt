@@ -62,6 +62,13 @@ class SearchViewModel(app: Application) : AndroidViewModel(app) {
         onQuery(_state.value.query)
     }
 
+    // a spoken search looks in your own library first and lands in recents like a typed one
+    fun voiceSearch(query: String) {
+        if (_state.value.sources.any { it.id == "library" }) _state.update { it.copy(selectedSource = "library") }
+        onQuery(query)
+        commit()
+    }
+
     fun commit() {
         viewModelScope.launch { container.settingsStore.addRecentSearch(_state.value.query) }
     }

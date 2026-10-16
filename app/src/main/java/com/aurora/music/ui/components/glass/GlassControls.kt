@@ -2,6 +2,7 @@ package com.aurora.music.ui.components.glass
 
 // tab bar, button and toggle adapted from kyant0/AndroidLiquidGlass catalog components (apache-2.0)
 
+import com.aurora.music.ui.components.longPressFirst
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.animateFloatAsState
@@ -107,6 +108,7 @@ fun GlassTabBar(
     onSelect: (Int) -> Unit,
     backdrop: Backdrop?,
     modifier: Modifier = Modifier,
+    onLongPress: ((Int) -> Unit)? = null,
 ) {
     val dark = glassIsDark()
     val live = backdrop != null && liveGlassSupported
@@ -118,7 +120,12 @@ fun GlassTabBar(
     val select by rememberUpdatedState(onSelect)
     val tabsBackdrop = rememberLayerBackdrop()
 
-    BoxWithConstraints(modifier, contentAlignment = Alignment.CenterStart) {
+    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val hold by rememberUpdatedState(onLongPress)
+    BoxWithConstraints(modifier.longPressFirst(count, onLongPress?.let { { at, size ->
+        val x = if (rtl) size.width - at.x else at.x
+        hold?.invoke((x / size.width * count).toInt().coerceIn(0, count - 1))
+    } }), contentAlignment = Alignment.CenterStart) {
         val density = LocalDensity.current
         val tabWidth = with(density) { (constraints.maxWidth.toFloat() - 8.dp.toPx()) / count }
         val offsetAnimation = remember { Animatable(0f) }
@@ -286,10 +293,12 @@ fun GlassButton(
     selected: Boolean = false,
     tint: Color = Color.Unspecified,
     contentDescription: String? = null,
+    onLongClick: (() -> Unit)? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val highlight = remember(scope) { InteractiveHighlight(scope) }
+    val hold by rememberUpdatedState(onLongClick)
     val dark = glassIsDark()
     Row(
         modifier
@@ -308,6 +317,7 @@ fun GlassButton(
                 if (tint != Color.Unspecified) drawRect(tint.copy(alpha = .85f))
                 else if (selected) drawRect(GlassColors.selection(dark))
             })
+            .longPressFirst(Unit, onLongClick?.let { { _, _ -> hold?.invoke() } })
             .clickable(interactionSource = null, indication = null, role = Role.Button, onClick = onClick)
             .semantics { if (contentDescription != null) this.contentDescription = contentDescription; this.selected = selected }
             .then(highlight.modifier)
