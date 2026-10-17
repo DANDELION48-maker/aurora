@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Workspaces
+import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.LibraryMusic
 import androidx.compose.material.icons.outlined.Search
@@ -30,6 +31,8 @@ class NavMenuItem(
     val locked: Boolean = false,
     val advancedAudio: Boolean = false,
     val audio: Boolean = false,
+    // shown only while the signed-in sources can explore a streaming catalogue
+    val discovery: Boolean = false,
 ) {
     val label: String get() = destination?.label ?: appString(labelRes)
     val topLevel: Boolean get() = route == Routes.HOME || route == Routes.SEARCH || route == Routes.LIBRARY
@@ -65,10 +68,13 @@ data class NavLayout(val main: List<NavMenuItem>, val more: List<NavMenuItem>, v
         return NavLayout(main.shifted(), more.shifted(), hidden)
     }
 
-    fun visible(simpleMode: Boolean): NavLayout =
-        if (!simpleMode) this else NavLayout(main.filterNot { it.advancedAudio }, more.filterNot { it.advancedAudio }, hidden)
+    fun visible(simpleMode: Boolean, discovery: Boolean = true): NavLayout {
+        fun List<NavMenuItem>.shown() = filterNot { (simpleMode && it.advancedAudio) || (!discovery && it.discovery) }
+        return NavLayout(main.shown(), more.shown(), hidden)
+    }
 
-    fun encode(): String = "main=" + main.joinToString(",") { it.id } + ";more=" + more.joinToString(",") { it.id }
+    fun encode(): String = "main=" + main.joinToString(",") { it.id } + ";more=" + more.joinToString(",") { it.id } +
+        ";hidden=" + hidden.joinToString(",") { it.id }
 }
 
 object NavMenu {
@@ -76,6 +82,7 @@ object NavMenu {
         NavMenuItem("home", Routes.HOME, Icons.Outlined.Home, R.string.text_home_70f8bb, locked = true),
         NavMenuItem("search", Routes.SEARCH, Icons.Outlined.Search, R.string.text_search_bce064, locked = true),
         NavMenuItem("library", Routes.LIBRARY, Icons.Outlined.LibraryMusic, R.string.text_your_library_fd740f, locked = true),
+        NavMenuItem("explore", Routes.EXPLORE, Icons.Outlined.Explore, R.string.discovery_explore, discovery = true),
         NavMenuItem("history", Routes.HISTORY, Icons.Filled.History, R.string.text_listening_history_bd9991),
         NavMenuItem("stats", Routes.STATS, Icons.Filled.Workspaces, R.string.text_listening_stats_a760b2),
         NavMenuItem("duplicates", Routes.DUPLICATES, Icons.Filled.ContentCopy, R.string.text_find_duplicates_586f31),
@@ -87,7 +94,7 @@ object NavMenu {
         NavMenuItem("signal_path", Routes.SIGNAL_PATH, Icons.Filled.Route, destination = SettingsDestinations.signalPath, audio = true, advancedAudio = true),
     )
 
-    private val defaultMain = listOf("home", "search", "library")
+    private val defaultMain = listOf("home", "search", "library", "explore")
     private val defaultMore = listOf("history", "stats", "duplicates")
 
     fun byId(id: String): NavMenuItem? = items.firstOrNull { it.id == id }
@@ -102,6 +109,10 @@ object NavMenu {
         val mainIds = (savedMain ?: defaultMain).filter { byId(it) != null }.distinct().toMutableList()
         val moreIds = (savedMore ?: defaultMore).filter { byId(it) != null && it !in mainIds }.distinct().toMutableList()
         items.filter { it.locked && it.id !in mainIds }.forEach { mainIds.add(0, it.id) }
+        // layouts saved before explore existed get it next to the library; a newer layout that hid it keeps it hidden
+        if (parts["hidden"] == null && "explore" !in mainIds && "explore" !in moreIds) {
+            mainIds.add((mainIds.indexOf("library") + 1).coerceIn(0, mainIds.size), "explore")
+        }
         moreIds.removeAll { byId(it)?.locked == true }
         val main = mainIds.mapNotNull(::byId)
         val more = moreIds.mapNotNull(::byId)

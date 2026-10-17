@@ -72,6 +72,7 @@ import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
+import com.aurora.music.ui.theme.themedCorner
 
 private data class HeatSelection(val days: IntRange, val hours: IntRange) {
     val single: Boolean get() = days.first == days.last && hours.first == hours.last
@@ -221,7 +222,7 @@ private fun Badges(badges: List<Badge>) {
     Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         badges.forEach { badge ->
             val (title, fact) = badgeText(badge)
-            Column(Modifier.width(200.dp).clip(RoundedCornerShape(18.dp)).background(MaterialTheme.colorScheme.primaryContainer).padding(14.dp)) {
+            Column(Modifier.width(200.dp).clip(RoundedCornerShape(themedCorner(18.dp))).background(MaterialTheme.colorScheme.primaryContainer).padding(14.dp)) {
                 Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimaryContainer)
                 Text(fact, Modifier.padding(top = 4.dp), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
             }
@@ -271,7 +272,7 @@ private fun Heatmap(heat: List<List<Long>>, selection: HeatSelection?, onSelect:
 
 @Composable
 private fun Section(title: String, content: @Composable () -> Unit) {
-    Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp).clip(RoundedCornerShape(18.dp))
+    Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp).clip(RoundedCornerShape(themedCorner(18.dp)))
         .background(MaterialTheme.colorScheme.surfaceContainerHigh).padding(16.dp)) {
         Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(8.dp))
@@ -281,7 +282,7 @@ private fun Section(title: String, content: @Composable () -> Unit) {
 
 @Composable
 private fun Stat(value: String, label: String, modifier: Modifier) {
-    Column(modifier.clip(RoundedCornerShape(18.dp)).background(MaterialTheme.colorScheme.surfaceContainerHigh).padding(14.dp)) {
+    Column(modifier.clip(RoundedCornerShape(themedCorner(18.dp))).background(MaterialTheme.colorScheme.surfaceContainerHigh).padding(14.dp)) {
         Text(value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, maxLines = 1)
         Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2)
     }

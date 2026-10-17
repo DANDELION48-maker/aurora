@@ -46,6 +46,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import com.aurora.music.ui.theme.themedCorner
 
 @Composable
 fun ListeningHistoryScreen(contentPadding: PaddingValues, onBack: () -> Unit, onPlay: (String) -> Unit) {
@@ -77,7 +78,7 @@ fun ListeningHistoryScreen(contentPadding: PaddingValues, onBack: () -> Unit, on
                 items(events.size) { i ->
                     val e = events[i]
                     Row(
-                        Modifier.fillMaxWidth().heightIn(min = PageMetrics.SongRowHeight).clip(RoundedCornerShape(12.dp)).clickable { onPlay(e.songId) }
+                        Modifier.fillMaxWidth().heightIn(min = PageMetrics.SongRowHeight).clip(RoundedCornerShape(themedCorner(12.dp))).clickable { onPlay(e.songId) }
                             .pointerHoverIcon(PointerIcon.Hand).padding(horizontal = 8.dp, vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {

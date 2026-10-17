@@ -58,6 +58,10 @@ dependencies {
         implementation(libs.dbus.java.core)
         runtimeOnly(libs.dbus.java.transport.unixsocket)
     }
+    implementation(libs.jna)
+    implementation(libs.jna.platform)
+    implementation(libs.jcefmaven)
+    implementation(libs.newpipeextractor)
     testImplementation(libs.junit)
     testImplementation(libs.okhttp.mockwebserver)
 }
@@ -127,6 +131,11 @@ compose.desktop {
     application {
         mainClass = "com.aurora.music.desktop.MainKt"
         jvmArgs += listOf("-XX:+UseZGC", "-XX:+ZGenerational", "-Dfile.encoding=UTF-8")
+        // compose draws through skiko; java2d's direct3d pipeline hangs on full-screen focus changes once chromium loads opengl
+        jvmArgs += listOf("-Dsun.java2d.d3d=false", "-Dsun.java2d.noddraw=true")
+        // embedded chromium (sign-in pages and the hidden spotify and soundcloud pages)
+        jvmArgs += listOf("--add-opens=java.desktop/sun.awt=ALL-UNNAMED", "--add-opens=java.desktop/java.awt.peer=ALL-UNNAMED",
+            "--add-exports=java.base/java.lang=ALL-UNNAMED", "--add-exports=java.desktop/sun.awt=ALL-UNNAMED", "--add-exports=java.desktop/sun.java2d=ALL-UNNAMED")
         if (hostLinux) jvmArgs += "--add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED"
         nativeDistributions {
             if (hostWindows) targetFormats(TargetFormat.Msi, TargetFormat.Exe)
@@ -135,7 +144,7 @@ compose.desktop {
             description = "Aurora music player"
             vendor = "Aurora"
             appResourcesRootDir.set(appResources)
-            modules("java.management", "java.naming", "java.sql", "jdk.crypto.ec", "jdk.unsupported")
+            modules("java.instrument", "java.management", "java.naming", "java.net.http", "java.sql", "jdk.crypto.ec", "jdk.dynalink", "jdk.unsupported")
             if (hostLinux) modules("jdk.security.auth")
             windows {
                 menuGroup = "Aurora"

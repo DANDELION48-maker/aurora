@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="chromium_downloading" formatted="false">"Downloading the sign-in browser. This happens once and takes about 150 MB."</string>
+    <string name="chromium_failed" formatted="false">"The sign-in browser could not start: %1$s"</string>
+    <string name="chromium_preparing" formatted="false">"Getting the sign-in browser ready…"</string>
+    <string name="discovery_explore" formatted="false">"Explore"</string>
+    <string name="discovery_explore_failed" formatted="false">"Explore couldn\'t load. Check your connection and try again."</string>
+    <string name="discovery_related" formatted="false">"Related"</string>
+    <string name="discovery_related_empty" formatted="false">"YouTube Music has nothing related to this song."</string>
+    <string name="discovery_start_radio" formatted="false">"Start radio"</string>
+    <string name="lyrics_settings_summary" formatted="false">"Sync style and where lyrics come from"</string>
+    <string name="lyrics_source_lrclib_detail" formatted="false">"Free community lyrics database"</string>
+    <string name="lyrics_source_server" formatted="false">"Song\'s Own Source"</string>
+    <string name="lyrics_source_server_detail" formatted="false">"Lyrics from your server, streaming service or the file itself"</string>
+    <string name="lyrics_source_spotify_detail" formatted="false">"Synced lyrics from a merged Spotify account"</string>
+    <string name="lyrics_sources_hint" formatted="false">"Aurora checks these in order. The first synced lyrics it finds are used, otherwise the first lyrics of any kind."</string>
+    <string name="lyrics_sources_title" formatted="false">"Lyrics Sources"</string>
+    <string name="merge_comments" formatted="false">"SoundCloud Comments"</string>
+    <string name="merge_comments_summary" formatted="false">"Show timed comments when a matching SoundCloud track is found"</string>
+    <string name="merge_lyrics" formatted="false">"Spotify Lyrics"</string>
+    <string name="merge_lyrics_summary" formatted="false">"Use Spotify\'s synced lyrics for songs from your other sources"</string>
+    <string name="merge_options" formatted="false">"Merge Options"</string>
+    <string name="merge_options_note" formatted="false">"When SoundCloud or Spotify is part of your unified library, Aurora can bring their extras to songs from your other sources. Turn each one off overall or for songs from a particular source."</string>
+    <string name="merge_options_summary" formatted="false">"What merged services add to your songs"</string>
+    <string name="merge_songs_from" formatted="false">"Songs From"</string>
+    <string name="playlist_save_to" formatted="false">"Save To"</string>
+    <string name="text_acrylic_f39ce1" formatted="false">"Acrylic"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"Add music folder"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Audio decoding. Copyright © the FFmpeg developers. LGPL-3.0-or-later, dynamically linked through JavaCPP Presets. Full licence: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
     <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"Aurora\'s volume sets the DAC\'s own volume when it has one. The audio stays bit-perfect."</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"Aurora takes sole control of the device and sends samples at the track\'s own rate and bit depth. Other apps are silent while Aurora plays. Output stays bit-perfect when processing, volume and ReplayGain leave the samples unchanged; if the device refuses a format Aurora falls back to shared mode and Signal Path shows why."</string>
+    <string name="text_background_tint_a39a12" formatted="false">"Background Tint"</string>
     <string name="text_bit_float_012895">"%1$d-bit float"</string>
     <string name="text_bit_integer_72520f">"%1$d-bit integer"</string>
     <string name="text_bit_perfect_output_that_bypasses_the_sound_server_d2dcd9" formatted="false">"Bit-perfect output that bypasses the sound server"</string>
@@ -26,14 +52,18 @@
     <string name="text_exclusive_mode_is_unavailable_0de552">"Exclusive mode is unavailable: %1$s"</string>
     <string name="text_exclusive_mode_is_unavailable_on_this_device_e51016" formatted="false">"Exclusive mode is unavailable on this device"</string>
     <string name="text_follow_the_playing_cover_5d2e91" formatted="false">"Follow the playing cover"</string>
+    <string name="text_glass_edges_f462cd" formatted="false">"Glass Edges"</string>
     <string name="text_hz_is_unavailable_using_hz_14de1c">"%1$d Hz is unavailable; using %2$d Hz."</string>
     <string name="text_in_use_by_the_sound_server_or_another_app_aa3eaa" formatted="false">"In use by the sound server or another app"</string>
     <string name="text_keep_aurora_playing_in_the_notification_area_when_the_window_clos_e5fed5" formatted="false">"Keep Aurora playing in the notification area when the window closes"</string>
     <string name="text_larger_buffers_ride_out_heavy_system_load_smaller_ones_react_fast_e4d5f8" formatted="false">"Larger buffers ride out heavy system load; smaller ones react faster to seeking and volume. Applies when the output reopens."</string>
+    <string name="text_let_your_desktop_show_through_the_window_blurred_windows_11_only_08f192" formatted="false">"Let your desktop show through the window, blurred. Windows 11 only."</string>
     <string name="text_linux_java_b7923f">"Linux · Java %1$d"</string>
     <string name="text_logs_126dd3" formatted="false">"Logs"</string>
+    <string name="text_mica_3ccf84" formatted="false">"Mica"</string>
     <string name="text_open_in_full_page_0ec923" formatted="false">"Open in full page"</string>
     <string name="text_output_buffer_61b372" formatted="false">"Output buffer"</string>
+    <string name="text_panel_frost_ada0d3" formatted="false">"Panel Frost"</string>
     <string name="text_playing_music_af9695" formatted="false">"Playing music"</string>
     <string name="text_shared_mode_mix_format_4a5bc8" formatted="false">"Shared mode mix format"</string>
     <string name="text_shared_mode_mixes_aurora_with_other_apps_through_the_system_sound_0c8e9d" formatted="false">"Shared mode mixes Aurora with other apps through the system sound server at 48 kHz. Turn on exclusive mode for bit-perfect playback."</string>
@@ -50,6 +80,7 @@
     <string name="text_the_track_could_not_be_opened_5719af" formatted="false">"The track could not be opened"</string>
     <string name="text_the_track_s_sample_rate_is_not_supported_5c8629" formatted="false">"The track\'s sample rate is not supported"</string>
     <string name="text_tint_the_whole_app_with_the_playing_song_s_cover_a83c17" formatted="false">"Tint the whole app with the colour of the song that's playing"</string>
+    <string name="text_translucent_window_d865c7" formatted="false">"Translucent Window"</string>
     <string name="text_using_your_system_accent_colour_89502e" formatted="false">"Using your system accent colour."</string>
     <string name="text_using_your_windows_accent_colour_7d4b4a" formatted="false">"Using your Windows accent colour."</string>
     <string name="text_volume_3b18e8" formatted="false">"Volume"</string>

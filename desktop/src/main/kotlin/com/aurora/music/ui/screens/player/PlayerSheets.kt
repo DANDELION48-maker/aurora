@@ -64,6 +64,7 @@ import com.aurora.music.desktop.natives.AudioDevice
 import com.aurora.music.desktop.natives.DeviceKind
 import com.aurora.music.desktop.platform.HostPlatform
 import kotlin.math.roundToInt
+import com.aurora.music.ui.theme.themedCorner
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +82,7 @@ fun OutputDeviceSheet(
 ) {
     val colors = MaterialTheme.colorScheme
     val systemDefault = devices.firstOrNull { it.isDefault }
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = colors.surface) {
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = com.aurora.music.ui.theme.solidColors().surface) {
         Column(Modifier.fillMaxWidth().heightIn(max = 650.dp).verticalScroll(rememberScrollState()).padding(horizontal = 8.dp).padding(bottom = 28.dp)) {
             Text(appString(R.string.text_play_on_4bd6fc), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black, modifier = Modifier.padding(start = 16.dp, bottom = 8.dp))
             OutputRow(Icons.Filled.SettingsSuggest, appString(R.string.language_system), systemDefault?.name, currentId == null) { onSelect(null) }
@@ -94,7 +95,7 @@ fun OutputDeviceSheet(
             HorizontalDivider(Modifier.padding(horizontal = 16.dp, vertical = 8.dp), color = colors.outlineVariant.copy(alpha = 0.5f))
             if (exclusiveAvailable) {
                 Row(
-                    Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp))
+                    Modifier.fillMaxWidth().clip(RoundedCornerShape(themedCorner(14.dp)))
                         .clickable(role = Role.Switch) { onExclusiveChange(!exclusive) }.pointerHoverIcon(PointerIcon.Hand)
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -137,7 +138,7 @@ fun OutputDeviceSheet(
 private fun OutputRow(icon: ImageVector, label: String, detail: String?, selected: Boolean, onClick: () -> Unit) {
     val colors = MaterialTheme.colorScheme
     Row(
-        Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).clickable(role = Role.RadioButton, onClick = onClick)
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(themedCorner(14.dp))).clickable(role = Role.RadioButton, onClick = onClick)
             .pointerHoverIcon(PointerIcon.Hand).padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -170,7 +171,7 @@ fun SleepTimerSheet(
         currentMinutes > 0 -> appString(R.string.text_pausing_in_min_fades_out_741f18, (currentMinutes))
         else -> appString(R.string.text_pause_playback_after_a_set_time_ef485a)
     }
-    ModalBottomSheet(onDismissRequest = onDismiss, containerColor = MaterialTheme.colorScheme.surface) {
+    ModalBottomSheet(onDismissRequest = onDismiss, containerColor = com.aurora.music.ui.theme.solidColors().surface) {
         Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(bottom = 28.dp)) {
             Text(appString(R.string.text_sleep_timer_e90613), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black, modifier = Modifier.padding(bottom = 4.dp))
             Text(status, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)

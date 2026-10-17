@@ -27,6 +27,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isSpecified
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 import kotlin.random.Random
@@ -47,6 +48,7 @@ fun Waveform(
     barCount: Int = 60,
     height: Dp = 52.dp,
     animated: Boolean = true,
+    barWidth: Dp = Dp.Unspecified,
 ) {
     val bars = remember(seed, barCount) {
         val rng = Random(seed)
@@ -136,15 +138,14 @@ fun Waveform(
             },
     ) {
         val n = bars.size
-        val gapRatio = 0.4f
-        val unit = size.width / (n * (1f + gapRatio))
-        val barW = unit
-        val gap = unit * gapRatio
+        val slot = size.width / n
+        val barW = if (barWidth.isSpecified) barWidth.toPx().coerceAtMost(slot * 0.8f) else slot / 1.4f
+        val inset = if (barWidth.isSpecified) (slot - barW) / 2f else 0f
         val midY = size.height / 2f
         val playedX = size.width * (dragPosition ?: shown.value).coerceIn(0f, 1f)
 
         for (i in 0 until n) {
-            val x = i * (barW + gap)
+            val x = i * slot + inset
             val barH = (bars[i] * size.height).coerceAtLeast(barW)
             drawRoundRect(
                 color = inactive,
@@ -157,7 +158,7 @@ fun Waveform(
         if (playedX > 0f) {
             clipRect(right = playedX) {
                 for (i in 0 until n) {
-                    val x = i * (barW + gap)
+                    val x = i * slot + inset
                     if (x > playedX) break
                     val barH = (bars[i] * size.height).coerceAtLeast(barW)
                     drawRoundRect(

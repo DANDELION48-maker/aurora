@@ -64,7 +64,7 @@ class GeneralSettingsTest {
                     onOpenPlayback = { opened += "playback" }, onOpenOutput = { opened += "output" }, onOpenLoudness = { opened += "loudness" },
                     onOpenAdvancedAudio = { opened += "advanced" }, onOpenSignalPath = { opened += "signal" }, onOpenEq = { opened += "eq" },
                     onOpenVisualizer = { opened += "visualizer" }, onOpenSonic = { opened += "sonic" }, onOpenSources = { opened += "sources" },
-                    onOpenDownloads = { opened += "storage" }, onOpenAppearance = { opened += "appearance" }, onOpenLanguage = { opened += "language" },
+                    onOpenDownloads = { opened += "storage" }, onOpenAppearance = { opened += "appearance" }, onOpenLyricsSettings = { opened += "lyrics" }, onOpenMerge = { opened += "merge" }, onOpenLanguage = { opened += "language" },
                     onOpenIntegrations = { opened += "integrations" }, onOpenAbout = { opened += "about" }, onOpenProfile = { opened += "profile" },
                     onOpenAccounts = { opened += "accounts" }, onOpenBackup = if (backup) ({ opened += "backup" }) else null, onLogout = { opened += "logout" },
                 )
@@ -76,10 +76,12 @@ class GeneralSettingsTest {
         val full = root("root", opened = opened).use { scene ->
             val image = scene.shot()
             scene.click(190f, 220f)
-            scene.click(190f, 610f)
-            scene.click(190f, 756f)
-            scene.click(190f, 1244f)
-            assertEquals(listOf("accounts", "output", "loudness", "integrations"), opened)
+            scene.click(190f, 368f)
+            scene.click(190f, 697f)
+            scene.click(190f, 843f)
+            scene.click(190f, 1221f)
+            scene.click(190f, 1416f)
+            assertEquals(listOf("accounts", "merge", "output", "loudness", "lyrics", "integrations"), opened)
             image
         }
         assertTrue(full.distinctColors() > 20)
@@ -87,7 +89,7 @@ class GeneralSettingsTest {
         opened.clear()
         root("root-simple", simpleMode = true, opened = opened).use { scene ->
             assertTrue(scene.shot().differsFrom(full))
-            scene.click(190f, 756f)
+            scene.click(190f, 843f)
             assertFalse("loudness" in opened)
         }
         val withoutBackup = root("root-no-backup", backup = false, opened = mutableListOf()).use { it.shot() }
@@ -180,10 +182,10 @@ class GeneralSettingsTest {
     @Test fun navigationMenuReordersAndPins() {
         GeneralSettingsScene("nav-menu", height = 1300) { NavigationMenuScreen(padding, onBack = {}) }.use { scene ->
             assertTrue(scene.shot().distinctColors() > 20)
-            scene.click(691f, 508f)
+            scene.click(691f, 590f)
             scene.await(read = { settingsStore.uiPrefs.first().navLayout }) { it.contains("more=stats,history,duplicates") }
-            scene.click(697f, 690f)
-            scene.await(read = { settingsStore.uiPrefs.first().navLayout }) { it.startsWith("main=home,search,library,playback;") }
+            scene.click(697f, 772f)
+            scene.await(read = { settingsStore.uiPrefs.first().navLayout }) { it.startsWith("main=home,search,library,explore,playback;") }
         }
     }
 

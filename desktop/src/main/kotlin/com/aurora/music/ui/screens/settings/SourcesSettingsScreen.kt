@@ -24,6 +24,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CreateNewFolder
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.HighQuality
+import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MergeType
@@ -57,6 +59,7 @@ import com.aurora.music.desktop.ui.FilePickers
 import com.aurora.music.desktop.ui.LocalDesktopContainer
 import kotlinx.coroutines.launch
 import java.io.File
+import com.aurora.music.ui.theme.themedCorner
 
 private fun tierLabel(t: String) = when (t) {
     "local" -> appString(R.string.text_on_device_file_7d2f79)
@@ -88,6 +91,7 @@ fun SourcesSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onA
     val unified by store.unifiedLibrary.collectAsStateWithLifecycle(initialValue = false)
     val mergeKeys by store.mergeSources.collectAsStateWithLifecycle(initialValue = emptySet())
     val saved by store.savedSessions.collectAsStateWithLifecycle(initialValue = emptyList())
+    val catalogue by store.catalogueMatch.collectAsStateWithLifecycle(initialValue = com.aurora.music.data.CatalogueMatchPrefs())
 
     val servers = remember(saved) {
         saved.filter { it.type.supportsMergedLibrary && it.type != ServerType.LOCAL }.distinctBy { it.accountKey() }
@@ -203,11 +207,40 @@ fun SourcesSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onA
                     }
                 }
             }
+
+            item { SettingsSectionTitle(appString(R.string.catalogue_section)) }
+            item {
+                SettingsGroup {
+                    SettingsSwitchRow(Icons.Filled.LibraryMusic, appString(R.string.catalogue_library_copies),
+                        appString(R.string.catalogue_library_copies_summary), catalogue.useLibrary) { v ->
+                        scope.launch { store.setCatalogueLibraryCopies(v) }
+                    }
+                    if (catalogue.useLibrary) {
+                        SettingsRowDivider()
+                        SegmentedRow(appString(R.string.catalogue_match), listOf(appString(R.string.catalogue_match_strict),
+                            appString(R.string.catalogue_match_relaxed)), if (catalogue.relaxed) 1 else 0) { i ->
+                            scope.launch { store.setCatalogueMatchRelaxed(i == 1) }
+                        }
+                        SettingsRowDivider()
+                        SettingsSwitchRow(Icons.Filled.HighQuality, appString(R.string.catalogue_lossless_only),
+                            appString(R.string.catalogue_lossless_only_summary), catalogue.losslessOnly) { v ->
+                            scope.launch { store.setCatalogueLosslessOnly(v) }
+                        }
+                    }
+                }
+            }
+            item {
+                Text(
+                    appString(if (catalogue.useLibrary) R.string.catalogue_note else R.string.catalogue_note_off),
+                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                )
+            }
         }
     }
 }
 
-private fun List<String>.swapped(a: Int, b: Int): List<String> {
+internal fun List<String>.swapped(a: Int, b: Int): List<String> {
     if (a !in indices || b !in indices) return this
     return toMutableList().also { val t = it[a]; it[a] = it[b]; it[b] = t }
 }
@@ -232,10 +265,10 @@ private fun FolderRow(path: String, onRemove: () -> Unit) {
 }
 
 @Composable
-private fun PriorityRow(label: String, subtitle: String, enabled: Boolean, canUp: Boolean, canDown: Boolean, onUp: () -> Unit, onDown: () -> Unit) {
+internal fun PriorityRow(label: String, subtitle: String, enabled: Boolean, canUp: Boolean, canDown: Boolean, onUp: () -> Unit, onDown: () -> Unit) {
     val alpha = if (enabled) 1f else 0.4f
     Row(
-        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp).clip(RoundedCornerShape(14.dp))
+        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp).clip(RoundedCornerShape(themedCorner(14.dp)))
             .background(MaterialTheme.colorScheme.surfaceContainerHigh).padding(horizontal = 14.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -261,7 +294,7 @@ private fun PriorityRow(label: String, subtitle: String, enabled: Boolean, canUp
 @Composable
 private fun SourceRow(title: String, subtitle: String, included: Boolean, toggleable: Boolean, onToggle: () -> Unit) {
     Row(
-        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp).clip(RoundedCornerShape(14.dp))
+        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp).clip(RoundedCornerShape(themedCorner(14.dp)))
             .background(MaterialTheme.colorScheme.surfaceContainerHigh).padding(horizontal = 14.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

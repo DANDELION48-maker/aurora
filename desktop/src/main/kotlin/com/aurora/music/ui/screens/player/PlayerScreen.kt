@@ -1,5 +1,6 @@
 package com.aurora.music.ui.screens.player
 
+import androidx.compose.material.icons.filled.ChatBubble
 import com.aurora.music.localization.appString
 import com.aurora.music.R
 
@@ -72,6 +73,7 @@ import androidx.compose.material3.Text
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -109,10 +111,14 @@ import com.aurora.music.ui.components.PaneDivider
 import com.aurora.music.ui.components.VolumeControl
 import com.aurora.music.ui.components.Waveform
 import com.aurora.music.ui.components.formatTime
+import com.aurora.music.ui.theme.LocalGlass
 import com.aurora.music.ui.theme.LocalUiPrefs
 import com.aurora.music.ui.theme.auroraBackdrop
 import com.aurora.music.ui.theme.auroraPanel
+import com.aurora.music.ui.theme.glassEdge
+import com.aurora.music.ui.theme.glassSheen
 import com.aurora.music.model.accent
+import com.aurora.music.ui.theme.themedCorner
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -141,6 +147,7 @@ fun PlayerScreen(
     onPaneRequestHandled: () -> Unit = {},
     paneActions: (@Composable (PlayerPane) -> Unit)? = null,
     onSplitChange: (Float) -> Unit = {},
+    onImmersiveLyrics: (Boolean) -> Unit = {},
     volume: Float = LocalPlayer.current.volume.collectAsState().value,
     onVolumeChange: (Float) -> Unit = LocalPlayer.current::setVolume,
     onToggleMute: () -> Unit = LocalPlayer.current::toggleMute,
@@ -159,6 +166,9 @@ fun PlayerScreen(
         onPaneRequestHandled()
     }
     var showMenu by remember { mutableStateOf(false) }
+    val comments = rememberTrackComments(song)
+    var showComments by remember { mutableStateOf(false) }
+    var focusComment by remember { mutableStateOf<String?>(null) }
     val playerAccent = MaterialTheme.colorScheme.primary
     val onPlayerAccent = MaterialTheme.colorScheme.onPrimary
     val g = ui.playerGradient
@@ -226,6 +236,11 @@ fun PlayerScreen(
                             text = { Text(appString(R.string.text_visualizer_7177c7)) },
                             onClick = { showMenu = false; onOpenVisualizer() },
                             leadingIcon = { Icon(Icons.Filled.GraphicEq, null) },
+                        )
+                        if (comments.supported) DropdownMenuItem(
+                            text = { Text(appString(R.string.player_comments)) },
+                            onClick = { showMenu = false; focusComment = null; showComments = true },
+                            leadingIcon = { Icon(Icons.Filled.ChatBubble, null) },
                         )
                         DropdownMenuItem(
                             text = { Text(appString(R.string.text_sleep_timer_e90613)) },
@@ -297,9 +312,9 @@ fun PlayerScreen(
                     Spacer(Modifier.width(10.dp))
                 }
                 Column(Modifier.weight(1f)) {
-                    Text(song.title, style = MaterialTheme.typography.headlineMedium, fontWeight = if (classic) FontWeight.Bold else MaterialTheme.typography.headlineMedium.fontWeight, color = MaterialTheme.colorScheme.onSurface, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    MarqueeTitle(song.title, MaterialTheme.typography.headlineMedium, fontWeight = if (classic) FontWeight.Bold else MaterialTheme.typography.headlineMedium.fontWeight)
                     Spacer(Modifier.height(2.dp))
-                    Text(song.artist, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    MarqueeTitle(song.artist, MaterialTheme.typography.titleMedium, MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = null)
                     if (state.bpm > 0) {
                         Spacer(Modifier.height(3.dp))
                         Text(
@@ -325,7 +340,7 @@ fun PlayerScreen(
             Spacer(Modifier.height(10.dp))
             FlowRow(
                 modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(themedCorner(12.dp)))
                     .clickable(role = Role.Button, onClickLabel = appString(R.string.text_open_signal_path_29e042), onClick = onOpenSignalPath)
                     .pointerHoverIcon(PointerIcon.Hand)
                     .padding(vertical = 6.dp),
@@ -340,7 +355,7 @@ fun PlayerScreen(
                 if (source != null) {
                     Box(
                         Modifier.then(
-                            if (classic) Modifier.clip(RoundedCornerShape(50)).background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
+                            if (classic) Modifier.clip(RoundedCornerShape(50)).background(if (LocalGlass.current) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)).glassEdge(RoundedCornerShape(50))
                             else Modifier.auroraPanel(MaterialTheme.shapes.extraSmall)
                         ).padding(horizontal = 10.dp, vertical = 3.dp),
                     ) { Text(source, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant) }
@@ -353,7 +368,7 @@ fun PlayerScreen(
                 if (badge.isNotEmpty()) {
                     Box(
                         Modifier.then(
-                            if (classic) Modifier.clip(RoundedCornerShape(50)).background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
+                            if (classic) Modifier.clip(RoundedCornerShape(50)).background(if (LocalGlass.current) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)).glassEdge(RoundedCornerShape(50))
                             else Modifier.auroraPanel(MaterialTheme.shapes.extraSmall)
                         ).padding(horizontal = 10.dp, vertical = 3.dp),
                     ) { Text(badge, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface) }
@@ -362,6 +377,7 @@ fun PlayerScreen(
 
             Spacer(Modifier.height(8.dp))
 
+            CommentTrack(comments.list, state.durationSec, state.positionSec, playerAccent) { focusComment = it; showComments = true }
             SeekBar(
                 progress = state.progress,
                 positionSec = state.positionSec.toInt(),
@@ -442,7 +458,8 @@ fun PlayerScreen(
                 VolumeControl(volume, onVolumeChange, onToggleMute, volumeWidth, Modifier.padding(start = 8.dp), fill = playerAccent)
             }
         }
-        val paneSurface = if (classic) Modifier.clip(RoundedCornerShape(28.dp)).background(MaterialTheme.colorScheme.surface.copy(alpha = 0.55f))
+        val paneSurface = if (classic && LocalGlass.current) Modifier.clip(RoundedCornerShape(themedCorner(28.dp))).background(glassSheen()).glassEdge(RoundedCornerShape(themedCorner(28.dp)))
+            else if (classic) Modifier.clip(RoundedCornerShape(themedCorner(28.dp))).background(MaterialTheme.colorScheme.surface.copy(alpha = 0.55f))
             else Modifier.auroraPanel(MaterialTheme.shapes.extraLarge)
         val spacing = ui.tabletPanelSpacing.dp.coerceAtLeast(4.dp)
         var split by remember(ui.tabletPlayerSplit) { mutableFloatStateOf(ui.tabletPlayerSplit) }
@@ -512,6 +529,10 @@ fun PlayerScreen(
             }
         }
         LyricsOverlay(showLyrics, state, onClose = { showLyrics = false }, onTogglePlay, onPrevious, onNext, onSeek)
+        val immersive by rememberUpdatedState(onImmersiveLyrics)
+        LaunchedEffect(showLyrics) { immersive(showLyrics) }
+        if (showComments && comments.supported) CommentsSheet(comments, playerAccent, state.positionSec, state.durationSec, focusComment,
+            onSeek = onSeek, onDismiss = { showComments = false; focusComment = null })
     }
     }
 }
@@ -544,13 +565,18 @@ private fun LyricsOverlay(
 }
 
 @Composable
-private fun MarqueeTitle(text: String) {
+private fun MarqueeTitle(
+    text: String,
+    style: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.labelLarge,
+    color: Color = MaterialTheme.colorScheme.onSurface,
+    fontWeight: FontWeight? = FontWeight.Bold,
+) {
     var fullWidth by remember(text) { androidx.compose.runtime.mutableIntStateOf(0) }
     var shownWidth by remember { androidx.compose.runtime.mutableIntStateOf(0) }
     val overflowing = fullWidth > shownWidth && shownWidth > 0
     Text(
-        text, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold,
-        maxLines = 1, softWrap = false, color = MaterialTheme.colorScheme.onSurface,
+        text, style = style, fontWeight = fontWeight,
+        maxLines = 1, softWrap = false, color = color,
         onTextLayout = { fullWidth = it.size.width },
         modifier = Modifier
             .onSizeChanged { shownWidth = it.width }
@@ -559,7 +585,7 @@ private fun MarqueeTitle(text: String) {
                 drawRect(Brush.horizontalGradient(0f to Color.Transparent, 0.08f to Color.Black, 0.92f to Color.Black, 1f to Color.Transparent),
                     blendMode = BlendMode.DstIn)
             } else Modifier)
-            .basicMarquee(initialDelayMillis = 1500, repeatDelayMillis = 2500),
+            .basicMarquee(iterations = Int.MAX_VALUE, initialDelayMillis = 1500, repeatDelayMillis = 2500),
     )
 }
 

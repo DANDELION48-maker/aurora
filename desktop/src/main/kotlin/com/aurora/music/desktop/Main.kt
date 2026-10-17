@@ -27,14 +27,17 @@ import com.aurora.music.desktop.platform.DesktopPaths
 import com.aurora.music.desktop.platform.DesktopRuntime
 import com.aurora.music.desktop.platform.HostPlatform
 import com.aurora.music.desktop.platform.SystemAccent
+import com.aurora.music.desktop.platform.WindowBackdrop
 import com.aurora.music.desktop.player.DesktopPlayer
 import com.aurora.music.desktop.player.playerDependencies
 import com.aurora.music.desktop.resources.AuroraLogo
 import com.aurora.music.desktop.ui.AppTray
 import com.aurora.music.desktop.ui.AuroraRoot
+import com.aurora.music.desktop.ui.LocalBackdropAvailable
 import com.aurora.music.desktop.ui.LocalTrayAvailable
 import com.aurora.music.desktop.ui.Shortcut
 import com.aurora.music.desktop.ui.WindowChrome
+import com.aurora.music.ui.theme.GlassLook
 import com.aurora.music.desktop.ui.claimsSpace
 import com.aurora.music.desktop.ui.shortcut
 import com.aurora.music.localization.AppStrings
@@ -68,8 +71,10 @@ fun main() {
     val (language, savedWindow, initialPrefs) = runBlocking {
         Triple(settings.languageTag.first(), settings.window.first(), container.settingsStore.uiPrefs.first())
     }
+    val initialTranslucent = runBlocking { settings.translucentWindow.first() }
+    val glassAtStart = initialTranslucent && WindowBackdrop.supported
     AppStrings.setLocale(language)
-    val player = DesktopPlayer(DesktopPlaybackEngine(), container.playerDependencies())
+    val player = DesktopPlayer(DesktopPlaybackEngine(resolver = container.streamResolver), container.playerDependencies())
     val shortcuts = MutableSharedFlow<Shortcut>(extraBufferCapacity = 8)
     val raises = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     Runtime.getRuntime().addShutdownHook(Thread { container.folderLibrary.close(); container.queueStore.flushNow(); container.playHistory.flushNow() })
@@ -82,9 +87,15 @@ fun main() {
         )
         var bounds by remember { mutableStateOf(savedWindow) }
         var restorePlacement by remember { mutableStateOf(windowState.placement) }
+        var composeWindow by remember { mutableStateOf<androidx.compose.ui.awt.ComposeWindow?>(null) }
+        var borderless by remember { mutableStateOf(false) }
         var visible by remember { mutableStateOf(true) }
+        var revealed by remember { mutableStateOf(!glassAtStart) }
         var quitting by remember { mutableStateOf(false) }
         val closeToTray by settings.closeToTray.collectAsState(false)
+        val translucentWindow by settings.translucentWindow.collectAsState(initialTranslucent)
+        val micaBackdrop by settings.micaBackdrop.collectAsState(false)
+        val glassLook by settings.glassLook.collectAsState(GlassLook())
         val trayAvailable = remember { runCatching { SystemTray.isSupported() }.getOrDefault(false) }
         val icon = rememberVectorPainter(AuroraLogo)
         var systemAccent by remember { mutableStateOf(SystemAccent.current()?.let { Color(it) }) }
@@ -95,7 +106,7 @@ fun main() {
 
         fun placement(): SavedWindow? {
             val position = windowState.position
-            if (windowState.placement == WindowPlacement.Floating && position.isSpecified) {
+            if (windowState.placement == WindowPlacement.Floating && position.isSpecified && !borderless) {
                 bounds = SavedWindow(position.x.value.roundToInt(), position.y.value.roundToInt(),
                     windowState.size.width.value.roundToInt(), windowState.size.height.value.roundToInt())
             }
@@ -104,11 +115,22 @@ fun main() {
         }
 
         fun setFullscreen(on: Boolean) {
+            val handle = composeWindow?.windowHandle ?: 0L
+            if (com.aurora.music.desktop.platform.BorderlessFullscreen.supported && handle != 0L) {
+                if (on && !borderless) borderless = com.aurora.music.desktop.platform.BorderlessFullscreen.enter(handle)
+                else if (!on && borderless) borderless = !com.aurora.music.desktop.platform.BorderlessFullscreen.exit(handle)
+                return
+            }
             val current = windowState.placement
             if (on && current != WindowPlacement.Fullscreen) {
                 restorePlacement = current
                 windowState.placement = WindowPlacement.Fullscreen
             } else if (!on && current == WindowPlacement.Fullscreen) {
+                // compose only leaves full screen on the way to floating; going straight to maximized keeps the bare full-screen frame
+                composeWindow?.let { window ->
+                    window.placement = WindowPlacement.Floating
+                    window.placement = restorePlacement
+                }
                 windowState.placement = restorePlacement
             }
         }
@@ -125,6 +147,7 @@ fun main() {
             placement()?.let { runCatching { runBlocking { settings.setWindow(it) } } }
             player.close()
             container.close()
+            com.aurora.music.desktop.web.Chromium.shutdown()
             instance.close()
             exitApplication()
         }
@@ -141,19 +164,28 @@ fun main() {
         Window(
             onCloseRequest = { if (closeToTray && trayAvailable) visible = false else quit() },
             state = windowState,
-            visible = visible,
+            visible = visible && revealed,
             title = "Aurora",
             icon = icon,
             onPreviewKeyEvent = { it.claimsSpace() },
             onKeyEvent = { event -> event.shortcut()?.let(shortcuts::tryEmit) == true },
         ) {
             var windowHandle by remember { mutableStateOf(0L) }
+            var translucent by remember { mutableStateOf(false) }
             LaunchedEffect(window) {
+                composeWindow = window
                 window.minimumSize = Dimension(960, 600)
+                if (!revealed) {
+                    WindowBackdrop.prepare(window)
+                    revealed = true
+                }
                 while (!window.isDisplayable) delay(16)
                 windowHandle = window.windowHandle
                 player.mediaControls.attach(windowHandle) { raises.tryEmit(Unit) }
                 AppLog.d(TAG, "Window shown")
+            }
+            LaunchedEffect(windowHandle, translucentWindow, micaBackdrop) {
+                if (windowHandle != 0L) translucent = WindowBackdrop.apply(window, translucentWindow, micaBackdrop)
             }
             LaunchedEffect(window) {
                 merge(instance.activations, raises).collect {
@@ -164,14 +196,15 @@ fun main() {
                     window.requestFocus()
                 }
             }
-            CompositionLocalProvider(LocalTrayAvailable provides trayAvailable) {
-                AuroraRoot(container, player, initialPrefs, systemAccent) {
-                    WindowChrome(windowHandle)
+            CompositionLocalProvider(LocalTrayAvailable provides trayAvailable, LocalBackdropAvailable provides WindowBackdrop.supported) {
+                AuroraRoot(container, player, initialPrefs, systemAccent, translucent, glassLook) {
+                    WindowChrome(windowHandle, translucent)
                     AuroraApp(
                         shortcuts = shortcuts,
-                        fullscreen = windowState.placement == WindowPlacement.Fullscreen,
+                        fullscreen = borderless || windowState.placement == WindowPlacement.Fullscreen,
                         onFullscreenChange = ::setFullscreen,
                     )
+                    com.aurora.music.ui.screens.auth.SoundCloudCaptchaWindow(container.soundcloudWriter)
                 }
             }
         }

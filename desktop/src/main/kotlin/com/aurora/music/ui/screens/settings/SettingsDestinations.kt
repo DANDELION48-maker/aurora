@@ -15,6 +15,7 @@ data class SettingsDestination(val route: String, private val labelRes: Int, pri
 object SettingsDestinations {
     val accounts = SettingsDestination(Routes.SETTINGS_ACCOUNTS, R.string.text_servers_accounts_59e105, R.string.text_switch_between_saved_logins_dfa5ef)
     val sources = SettingsDestination(Routes.SETTINGS_SOURCES, R.string.text_library_sources_101221, R.string.text_source_priority_and_unified_library_5d9b2c)
+    val merge = SettingsDestination(Routes.SETTINGS_MERGE, R.string.merge_options, R.string.merge_options_summary)
     val storage = SettingsDestination(Routes.SETTINGS_STORAGE, R.string.text_downloads_storage_f7c580, R.string.text_download_quality_and_offline_files_157e78)
     val analysis = SettingsDestination(Routes.SETTINGS_SONIC, R.string.text_library_analysis_discovery_211d17, R.string.text_library_scans_sonic_radio_and_auto_dj_dbb04a)
     val playback = SettingsDestination(Routes.SETTINGS_PLAYBACK, R.string.text_playback_quality_144407, R.string.text_streaming_quality_crossfade_gapless_and_speed_602d35)
@@ -27,18 +28,20 @@ object SettingsDestinations {
     val impulses = SettingsDestination(Routes.SETTINGS_IMPULSES, R.string.text_impulse_responses_b2ac6e, R.string.text_saved_wavs_trimming_and_normalization_732c0c)
     val comparison = SettingsDestination(Routes.SETTINGS_COMPARISON, R.string.text_compare_presets_b7d8ea, R.string.text_level_matched_a_b_and_blind_abx_611108)
     val presetRules = SettingsDestination(Routes.SETTINGS_PRESET_RULES, R.string.text_preset_rules_c9d4d1, R.string.text_switch_presets_by_track_and_output_546392)
+    val reverb = SettingsDestination(Routes.SETTINGS_REVERB, R.string.reverb_title, R.string.reverb_summary)
     val loudness = SettingsDestination(Routes.SETTINGS_LOUDNESS, R.string.text_volume_loudness_0e8ee1, R.string.text_replaygain_and_volume_leveling_39af19)
     val listening = SettingsDestination(Routes.SETTINGS_LISTENING, R.string.text_listening_levels_c1db13, R.string.text_headphone_calibration_and_local_level_history_3c0581)
     val signalPath = SettingsDestination(Routes.SIGNAL_PATH, R.string.text_signal_path_c3e29b, R.string.text_inspect_the_current_playback_path_5a0995)
     val appearance = SettingsDestination(Routes.SETTINGS_APPEARANCE, R.string.text_appearance_41def7, R.string.text_theme_accent_and_layout_cb0657)
+    val lyrics = SettingsDestination(Routes.SETTINGS_LYRICS, R.string.lyrics_settings_title, R.string.lyrics_settings_summary)
     val visualizer = SettingsDestination(Routes.SETTINGS_VISUALIZER, R.string.text_visualizer_7177c7, R.string.text_spectrum_waveform_radial_and_particles_145442)
     val integrations = SettingsDestination(Routes.SETTINGS_INTEGRATIONS, R.string.text_integrations_a7881c, R.string.text_scrobbling_presence_lyrics_and_metadata_687ea0)
     val insights = SettingsDestination(Routes.SETTINGS_INSIGHTS, R.string.insights_title, R.string.insights_description)
     val backup = SettingsDestination(Routes.SETTINGS_BACKUP, R.string.text_backup_restore_a16162, R.string.text_export_or_import_settings_and_playlists_4ce918)
     val about = SettingsDestination(Routes.SETTINGS_ABOUT, R.string.text_about_aurora_b4ed8c, R.string.text_version_and_app_information_9c9a82)
 
-    val all = listOf(accounts, sources, storage, analysis, playback, output, equalizer, advancedAudio, processingRack, tuning, impulses, comparison, presetRules, processingPresets, loudness,
-        listening, signalPath, appearance, visualizer, integrations, insights, backup, about)
+    val all = listOf(accounts, sources, merge, storage, analysis, playback, output, equalizer, advancedAudio, processingRack, reverb, tuning, impulses, comparison, presetRules, processingPresets, loudness,
+        listening, signalPath, appearance, lyrics, visualizer, integrations, insights, backup, about)
 }
 
 @Composable

@@ -264,7 +264,8 @@ private fun LyricsBackdrop(song: Song) {
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun ImmersiveLyrics(source: Lyrics, positionSec: Float, playing: Boolean, durationSec: Int, onSeek: (Float) -> Unit, compact: Boolean = false) {
-    val lyrics = remember(source) { source.withWordTiming() }
+    val wordByWord = com.aurora.music.ui.theme.LocalUiPrefs.current.lyricsSync != com.aurora.music.data.LyricsSync.LINE
+    val lyrics = remember(source, wordByWord) { if (wordByWord) source.withWordTiming() else source }
     val lines = lyrics.lines
     val clock = rememberLyricsClock(positionSec, playing)
     val current by remember(lyrics) {
@@ -321,7 +322,7 @@ private fun ImmersiveLyrics(source: Lyrics, positionSec: Float, playing: Boolean
                     else ((abs(index - current) - 1).coerceAtLeast(0) * 1.6f).coerceAtMost(7f),
                     tween(450), label = "lineSoftness")
                 val line = lines[index]
-                val text = if (active && !browsing && line.words.isNotEmpty())
+                val text = if (wordByWord && active && !browsing && line.words.isNotEmpty())
                     karaoke(line.displayText, line.charFill(clock.longValue), alpha)
                 else AnnotatedString(line.displayText.ifBlank { "•••" })
                 Text(text,

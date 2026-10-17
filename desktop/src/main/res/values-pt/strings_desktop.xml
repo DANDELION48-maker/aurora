@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="chromium_downloading" formatted="false">"A transferir o navegador de início de sessão. Acontece uma vez e ocupa cerca de 150 MB."</string>
+    <string name="chromium_failed" formatted="false">"Não foi possível iniciar o navegador de início de sessão: %1$s"</string>
+    <string name="chromium_preparing" formatted="false">"A preparar o navegador de início de sessão…"</string>
+    <string name="discovery_explore" formatted="false">"Explorar"</string>
+    <string name="discovery_explore_failed" formatted="false">"Não foi possível carregar Explorar. Verifica a ligação e tenta novamente."</string>
+    <string name="discovery_related" formatted="false">"Relacionado"</string>
+    <string name="discovery_related_empty" formatted="false">"O YouTube Music não tem nada relacionado com esta música."</string>
+    <string name="discovery_start_radio" formatted="false">"Iniciar rádio"</string>
+    <string name="lyrics_settings_summary" formatted="false">"Estilo de sincronização e origem das letras"</string>
+    <string name="lyrics_source_lrclib_detail" formatted="false">"Base de dados de letras gratuita da comunidade"</string>
+    <string name="lyrics_source_server" formatted="false">"Origem da Música"</string>
+    <string name="lyrics_source_server_detail" formatted="false">"Letras do teu servidor, serviço de streaming ou do próprio ficheiro"</string>
+    <string name="lyrics_source_spotify_detail" formatted="false">"Letras sincronizadas de uma conta Spotify combinada"</string>
+    <string name="lyrics_sources_hint" formatted="false">"O Aurora consulta-as por esta ordem. Usa as primeiras letras sincronizadas que encontrar ou, se não houver, as primeiras de qualquer tipo."</string>
+    <string name="lyrics_sources_title" formatted="false">"Fontes de Letras"</string>
+    <string name="merge_comments" formatted="false">"Comentários do SoundCloud"</string>
+    <string name="merge_comments_summary" formatted="false">"Mostra comentários com tempo quando é encontrada uma faixa correspondente no SoundCloud"</string>
+    <string name="merge_lyrics" formatted="false">"Letras do Spotify"</string>
+    <string name="merge_lyrics_summary" formatted="false">"Usa as letras sincronizadas do Spotify nas músicas das outras fontes"</string>
+    <string name="merge_options" formatted="false">"Opções de Combinação"</string>
+    <string name="merge_options_note" formatted="false">"Quando o SoundCloud ou o Spotify fazem parte da tua biblioteca unificada, o Aurora pode levar os seus extras às músicas das outras fontes. Desativa cada um por completo ou para músicas de uma fonte específica."</string>
+    <string name="merge_options_summary" formatted="false">"O que os serviços combinados acrescentam às tuas músicas"</string>
+    <string name="merge_songs_from" formatted="false">"Músicas De"</string>
+    <string name="playlist_save_to" formatted="false">"Guardar Em"</string>
+    <string name="text_acrylic_f39ce1" formatted="false">"Acrílico"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"Adicionar pasta de músicas"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Decodificação de áudio. Copyright © os desenvolvedores do FFmpeg. LGPL-3.0-or-later, vinculado dinamicamente por meio do JavaCPP Presets. Licença completa: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
     <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"O volume do Aurora ajusta o volume do próprio DAC quando ele tem um. O áudio continua bit-perfect."</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"O Aurora assume o controle exclusivo do dispositivo e envia as amostras na taxa e na profundidade de bits da própria faixa. Os outros apps ficam em silêncio enquanto o Aurora toca. A saída continua bit-perfect quando o processamento, o volume e o ReplayGain deixam as amostras inalteradas; se o dispositivo recusar um formato, o Aurora volta ao modo compartilhado e o Caminho do sinal mostra o motivo."</string>
+    <string name="text_background_tint_a39a12" formatted="false">"Tom do fundo"</string>
     <string name="text_bit_float_012895">"Ponto flutuante de %1$d bits"</string>
     <string name="text_bit_integer_72520f">"Inteiro de %1$d bits"</string>
     <string name="text_bit_perfect_output_that_bypasses_the_sound_server_d2dcd9" formatted="false">"Saída bit-perfect que ignora o servidor de som"</string>
@@ -26,14 +52,18 @@
     <string name="text_exclusive_mode_is_unavailable_0de552">"O modo exclusivo está indisponível: %1$s"</string>
     <string name="text_exclusive_mode_is_unavailable_on_this_device_e51016" formatted="false">"O modo exclusivo está indisponível neste dispositivo"</string>
     <string name="text_follow_the_playing_cover_5d2e91" formatted="false">"Seguir a capa em reprodução"</string>
+    <string name="text_glass_edges_f462cd" formatted="false">"Bordas de vidro"</string>
     <string name="text_hz_is_unavailable_using_hz_14de1c">"%1$d Hz está indisponível; usando %2$d Hz."</string>
     <string name="text_in_use_by_the_sound_server_or_another_app_aa3eaa" formatted="false">"Em uso pelo servidor de som ou por outro app"</string>
     <string name="text_keep_aurora_playing_in_the_notification_area_when_the_window_clos_e5fed5" formatted="false">"Mantém o Aurora tocando na área de notificação quando a janela é fechada"</string>
     <string name="text_larger_buffers_ride_out_heavy_system_load_smaller_ones_react_fast_e4d5f8" formatted="false">"Buffers maiores aguentam melhor cargas altas do sistema; os menores reagem mais rápido a saltos e ao volume. Vale quando a saída é reaberta."</string>
+    <string name="text_let_your_desktop_show_through_the_window_blurred_windows_11_only_08f192" formatted="false">"Deixa a área de trabalho aparecer através da janela, desfocada. Somente no Windows 11."</string>
     <string name="text_linux_java_b7923f">"Linux · Java %1$d"</string>
     <string name="text_logs_126dd3" formatted="false">"Logs"</string>
+    <string name="text_mica_3ccf84" formatted="false">"Mica"</string>
     <string name="text_open_in_full_page_0ec923" formatted="false">"Abrir em página inteira"</string>
     <string name="text_output_buffer_61b372" formatted="false">"Buffer de saída"</string>
+    <string name="text_panel_frost_ada0d3" formatted="false">"Fosco dos painéis"</string>
     <string name="text_playing_music_af9695" formatted="false">"Reproduzindo música"</string>
     <string name="text_shared_mode_mix_format_4a5bc8" formatted="false">"Formato de mixagem do modo compartilhado"</string>
     <string name="text_shared_mode_mixes_aurora_with_other_apps_through_the_system_sound_0c8e9d" formatted="false">"O modo compartilhado mistura o Aurora com outros apps pelo servidor de som do sistema, a 48 kHz. Ative o modo exclusivo para reprodução bit-perfect."</string>
@@ -50,6 +80,7 @@
     <string name="text_the_track_could_not_be_opened_5719af" formatted="false">"Não foi possível abrir a faixa"</string>
     <string name="text_the_track_s_sample_rate_is_not_supported_5c8629" formatted="false">"A taxa de amostragem da faixa não é compatível"</string>
     <string name="text_tint_the_whole_app_with_the_playing_song_s_cover_a83c17" formatted="false">"Colore o app inteiro com a cor da música que está tocando"</string>
+    <string name="text_translucent_window_d865c7" formatted="false">"Janela translúcida"</string>
     <string name="text_using_your_system_accent_colour_89502e" formatted="false">"Usando sua cor de destaque do sistema."</string>
     <string name="text_using_your_windows_accent_colour_7d4b4a" formatted="false">"Usando sua cor de destaque do Windows."</string>
     <string name="text_volume_3b18e8" formatted="false">"Volume"</string>

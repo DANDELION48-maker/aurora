@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.aurora.music.ui.theme.GlassLook
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
@@ -40,6 +41,11 @@ class DesktopSettings(private val dataStore: DataStore<Preferences>) {
     val musicFolders: Flow<List<String>> = dataStore.data.map { parseFolders(it[MUSIC_FOLDERS]) }.distinctUntilChanged()
     val closeToTray: Flow<Boolean> = dataStore.data.map { it[CLOSE_TO_TRAY] ?: false }.distinctUntilChanged()
     val accentFollowsPlaying: Flow<Boolean> = dataStore.data.map { it[ACCENT_FOLLOWS_PLAYING] ?: false }.distinctUntilChanged()
+    val translucentWindow: Flow<Boolean> = dataStore.data.map { it[TRANSLUCENT_WINDOW] ?: true }.distinctUntilChanged()
+    val micaBackdrop: Flow<Boolean> = dataStore.data.map { it[MICA_BACKDROP] ?: false }.distinctUntilChanged()
+    val glassLook: Flow<GlassLook> = dataStore.data.map {
+        GlassLook(it[GLASS_TINT] ?: GlassLook().tint, it[GLASS_FROST] ?: GlassLook().frost, it[GLASS_EDGES] ?: true)
+    }.distinctUntilChanged()
     val recapSeen: Flow<Set<String>> = dataStore.data.map { it[RECAP_SEEN].orEmpty() }.distinctUntilChanged()
     val window: Flow<WindowPlacement?> = dataStore.data.map { p ->
         val width = p[WINDOW_WIDTH]
@@ -61,6 +67,11 @@ class DesktopSettings(private val dataStore: DataStore<Preferences>) {
     suspend fun setLanguageTag(tag: String) = dataStore.edit { it[LANGUAGE] = tag.trim() }
     suspend fun setCloseToTray(enabled: Boolean) = dataStore.edit { it[CLOSE_TO_TRAY] = enabled }
     suspend fun setAccentFollowsPlaying(enabled: Boolean) = dataStore.edit { it[ACCENT_FOLLOWS_PLAYING] = enabled }
+    suspend fun setTranslucentWindow(enabled: Boolean) = dataStore.edit { it[TRANSLUCENT_WINDOW] = enabled }
+    suspend fun setMicaBackdrop(enabled: Boolean) = dataStore.edit { it[MICA_BACKDROP] = enabled }
+    suspend fun setGlassTint(value: Float) = dataStore.edit { it[GLASS_TINT] = value.coerceIn(0f, 0.8f) }
+    suspend fun setGlassFrost(value: Float) = dataStore.edit { it[GLASS_FROST] = value.coerceIn(0f, 0.3f) }
+    suspend fun setGlassEdges(enabled: Boolean) = dataStore.edit { it[GLASS_EDGES] = enabled }
     suspend fun markRecapsSeen(keys: Set<String>) = dataStore.edit { it[RECAP_SEEN] = it[RECAP_SEEN].orEmpty() + keys }
 
     suspend fun setMusicFolders(folders: List<String>) = dataStore.edit { it[MUSIC_FOLDERS] = gson.toJson(normalize(folders)) }
@@ -109,6 +120,11 @@ class DesktopSettings(private val dataStore: DataStore<Preferences>) {
         private val MUSIC_FOLDERS = stringPreferencesKey("music_folders")
         private val CLOSE_TO_TRAY = booleanPreferencesKey("close_to_tray")
         private val ACCENT_FOLLOWS_PLAYING = booleanPreferencesKey("accent_follows_playing")
+        private val TRANSLUCENT_WINDOW = booleanPreferencesKey("translucent_window")
+        private val MICA_BACKDROP = booleanPreferencesKey("mica_backdrop")
+        private val GLASS_TINT = floatPreferencesKey("glass_tint")
+        private val GLASS_FROST = floatPreferencesKey("glass_frost")
+        private val GLASS_EDGES = booleanPreferencesKey("glass_edges")
         private val RECAP_SEEN = stringSetPreferencesKey("recap_seen")
         private val WINDOW_X = intPreferencesKey("window_x")
         private val WINDOW_Y = intPreferencesKey("window_y")

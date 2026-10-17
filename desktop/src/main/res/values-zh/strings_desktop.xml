@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="chromium_downloading" formatted="false">"正在下载登录浏览器。只需下载一次，约 150 MB。"</string>
+    <string name="chromium_failed" formatted="false">"无法启动登录浏览器：%1$s"</string>
+    <string name="chromium_preparing" formatted="false">"正在准备登录浏览器…"</string>
+    <string name="discovery_explore" formatted="false">"探索"</string>
+    <string name="discovery_explore_failed" formatted="false">"无法加载探索页。请检查网络连接后重试。"</string>
+    <string name="discovery_related" formatted="false">"相关"</string>
+    <string name="discovery_related_empty" formatted="false">"YouTube Music 没有与这首歌相关的内容。"</string>
+    <string name="discovery_start_radio" formatted="false">"开始电台"</string>
+    <string name="lyrics_settings_summary" formatted="false">"同步方式和歌词来源"</string>
+    <string name="lyrics_source_lrclib_detail" formatted="false">"免费的社区歌词数据库"</string>
+    <string name="lyrics_source_server" formatted="false">"歌曲自身来源"</string>
+    <string name="lyrics_source_server_detail" formatted="false">"来自你的服务器、流媒体服务或文件本身的歌词"</string>
+    <string name="lyrics_source_spotify_detail" formatted="false">"来自已合并 Spotify 账户的同步歌词"</string>
+    <string name="lyrics_sources_hint" formatted="false">"Aurora 会按此顺序查找。优先使用找到的第一份同步歌词，否则使用第一份任意歌词。"</string>
+    <string name="lyrics_sources_title" formatted="false">"歌词来源"</string>
+    <string name="merge_comments" formatted="false">"SoundCloud 评论"</string>
+    <string name="merge_comments_summary" formatted="false">"找到匹配的 SoundCloud 曲目时显示带时间点的评论"</string>
+    <string name="merge_lyrics" formatted="false">"Spotify 歌词"</string>
+    <string name="merge_lyrics_summary" formatted="false">"为其他来源的歌曲使用 Spotify 同步歌词"</string>
+    <string name="merge_options" formatted="false">"合并选项"</string>
+    <string name="merge_options_note" formatted="false">"当 SoundCloud 或 Spotify 加入你的统一音乐库后，Aurora 可以把它们的附加功能带到其他来源的歌曲上。你可以整体关闭各项功能，也可以只对某个来源的歌曲关闭。"</string>
+    <string name="merge_options_summary" formatted="false">"合并的服务为你的歌曲添加的内容"</string>
+    <string name="merge_songs_from" formatted="false">"歌曲来源"</string>
+    <string name="playlist_save_to" formatted="false">"保存到"</string>
+    <string name="text_acrylic_f39ce1" formatted="false">"亚克力"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"添加音乐文件夹"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"音频解码。版权所有 © FFmpeg 开发者。LGPL-3.0-or-later，通过 JavaCPP Presets 动态链接。完整许可：https://www.gnu.org/licenses/lgpl-3.0.html"</string>
     <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"DAC 自带音量时，Aurora 的音量会调节 DAC 自身的音量，音频保持 bit-perfect。"</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"Aurora 会独占设备，并按曲目自身的采样率和位深发送采样。Aurora 播放时其他应用将静音。当处理、音量和 ReplayGain 都不改变采样时，输出保持 bit-perfect；如果设备拒绝某种格式，Aurora 会回退到共享模式，并在“信号路径”中显示原因。"</string>
+    <string name="text_background_tint_a39a12" formatted="false">"背景色调"</string>
     <string name="text_bit_float_012895">"%1$d 位浮点"</string>
     <string name="text_bit_integer_72520f">"%1$d 位整数"</string>
     <string name="text_bit_perfect_output_that_bypasses_the_sound_server_d2dcd9" formatted="false">"绕过声音服务器的 bit-perfect 输出"</string>
@@ -26,14 +52,18 @@
     <string name="text_exclusive_mode_is_unavailable_0de552">"独占模式不可用：%1$s"</string>
     <string name="text_exclusive_mode_is_unavailable_on_this_device_e51016" formatted="false">"此设备不支持独占模式"</string>
     <string name="text_follow_the_playing_cover_5d2e91" formatted="false">"跟随正在播放的封面"</string>
+    <string name="text_glass_edges_f462cd" formatted="false">"玻璃边缘"</string>
     <string name="text_hz_is_unavailable_using_hz_14de1c">"%1$d Hz 不可用；正在使用 %2$d Hz。"</string>
     <string name="text_in_use_by_the_sound_server_or_another_app_aa3eaa" formatted="false">"正被声音服务器或其他应用使用"</string>
     <string name="text_keep_aurora_playing_in_the_notification_area_when_the_window_clos_e5fed5" formatted="false">"关闭窗口后让 Aurora 在通知区域继续播放"</string>
     <string name="text_larger_buffers_ride_out_heavy_system_load_smaller_ones_react_fast_e4d5f8" formatted="false">"较大的缓冲区能应对较高的系统负载；较小的缓冲区对跳转和音量变化响应更快。在输出重新打开时生效。"</string>
+    <string name="text_let_your_desktop_show_through_the_window_blurred_windows_11_only_08f192" formatted="false">"让桌面以模糊效果透过窗口显示。仅限 Windows 11。"</string>
     <string name="text_linux_java_b7923f">"Linux · Java %1$d"</string>
     <string name="text_logs_126dd3" formatted="false">"日志"</string>
+    <string name="text_mica_3ccf84" formatted="false">"云母"</string>
     <string name="text_open_in_full_page_0ec923" formatted="false">"在完整页面中打开"</string>
     <string name="text_output_buffer_61b372" formatted="false">"输出缓冲区"</string>
+    <string name="text_panel_frost_ada0d3" formatted="false">"面板磨砂"</string>
     <string name="text_playing_music_af9695" formatted="false">"正在播放音乐"</string>
     <string name="text_shared_mode_mix_format_4a5bc8" formatted="false">"共享模式混音格式"</string>
     <string name="text_shared_mode_mixes_aurora_with_other_apps_through_the_system_sound_0c8e9d" formatted="false">"共享模式会通过系统声音服务器，以 48 kHz 将 Aurora 与其他应用混合。开启独占模式可实现 bit-perfect 播放。"</string>
@@ -50,6 +80,7 @@
     <string name="text_the_track_could_not_be_opened_5719af" formatted="false">"无法打开此曲目"</string>
     <string name="text_the_track_s_sample_rate_is_not_supported_5c8629" formatted="false">"不支持此曲目的采样率"</string>
     <string name="text_tint_the_whole_app_with_the_playing_song_s_cover_a83c17" formatted="false">"用正在播放的歌曲的颜色为整个应用着色"</string>
+    <string name="text_translucent_window_d865c7" formatted="false">"半透明窗口"</string>
     <string name="text_using_your_system_accent_colour_89502e" formatted="false">"正在使用你的系统强调色。"</string>
     <string name="text_using_your_windows_accent_colour_7d4b4a" formatted="false">"正在使用你的 Windows 强调色。"</string>
     <string name="text_volume_3b18e8" formatted="false">"音量"</string>

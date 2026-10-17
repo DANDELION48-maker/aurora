@@ -77,6 +77,7 @@ import com.aurora.music.ui.components.formatTime
 import java.awt.Cursor
 import kotlin.math.roundToInt
 import com.aurora.music.model.accent
+import com.aurora.music.ui.theme.themedCorner
 
 @Composable
 fun QueueContent(
@@ -124,7 +125,7 @@ fun QueueContent(
             if (played.isNotEmpty()) {
                 item {
                     Row(
-                        Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp))
+                        Modifier.fillMaxWidth().clip(RoundedCornerShape(themedCorner(10.dp)))
                             .clickable { showHistory = !showHistory }.pointerHoverIcon(PointerIcon.Hand)
                             .padding(vertical = 8.dp, horizontal = 2.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -259,7 +260,7 @@ private fun QueueTrackRow(
             Modifier
                 .fillMaxWidth()
                 .height(rowHeight)
-                .clip(RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(themedCorner(12.dp)))
                 .background(if (dragging) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent)
                 .clickable(interactionSource = interaction, indication = LocalIndication.current, onClick = onClick)
                 .pointerHoverIcon(PointerIcon.Hand)
@@ -324,7 +325,7 @@ private fun QueueTrackRow(
 @Composable
 private fun SaveQueueDialog(onSave: (String) -> Unit, onDismiss: () -> Unit) {
     var name by remember { mutableStateOf("") }
-    AlertDialog(
+    AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, 
         onDismissRequest = onDismiss,
         title = { Text(appString(R.string.text_save_queue_as_playlist_7f09d8), fontWeight = FontWeight.Bold) },
         text = {

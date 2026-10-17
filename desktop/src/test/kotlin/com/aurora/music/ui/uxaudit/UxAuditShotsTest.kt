@@ -108,9 +108,9 @@ class UxAuditShotsTest {
 
         scene.navigate(Routes.SETTINGS)
         scene.shot("13-settings")
-        scene.click(scene.contentLeft + 170f, 543f)
+        scene.click(scene.contentLeft + 170f, 602f)
         scene.shot("13b-settings-pane-output")
-        scene.click(scene.contentLeft + 170f, 616f)
+        scene.click(scene.contentLeft + 170f, 669f)
         scene.shot("13c-settings-pane-eq")
         scene.click(scene.width - 46f, 52f)
         scene.awaitRoute(Routes.SETTINGS_EQ)

@@ -45,6 +45,7 @@ import com.aurora.music.ui.screens.visualizer.VisualizerCanvas
 import com.aurora.music.ui.screens.visualizer.VizColors
 import com.aurora.music.ui.screens.visualizer.label
 import kotlinx.coroutines.launch
+import com.aurora.music.ui.theme.themedCorner
 
 private val SWATCHES = listOf(
     0xFF7C4DFF, 0xFF00E5FF, 0xFF28D572, 0xFFFF5252, 0xFFFFC107,
@@ -185,7 +186,7 @@ private fun VisualizerPreview(prefs: VisualizerPrefs, controller: VisualizerCont
     }
     Box(
         Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp).height(160.dp)
-            .clip(RoundedCornerShape(18.dp)).background(Color.Black),
+            .clip(RoundedCornerShape(themedCorner(18.dp))).background(Color.Black),
     ) {
         VisualizerCanvas(controller, prefs, colors, Modifier.fillMaxWidth().height(160.dp).padding(8.dp))
         if (controller.frame.level <= 0.001f) {

@@ -1,6 +1,7 @@
 package com.aurora.music.ui.screens.home
 
 import com.aurora.music.localization.appString
+import com.aurora.music.ui.theme.fade
 import com.aurora.music.R
 
 import androidx.compose.animation.AnimatedVisibility
@@ -96,6 +97,7 @@ import com.aurora.music.ui.theme.auroraPanel
 import com.aurora.music.util.accentFor
 import com.aurora.music.viewmodel.HomeUiState
 import kotlinx.coroutines.launch
+import com.aurora.music.ui.theme.themedCorner
 
 private const val HeroCount = 5
 private val FavouritesHeight = 204.dp
@@ -136,12 +138,13 @@ fun HomeScreen(
     ) {
         item(key = "header") {
             PageHeader(greeting()) {
-                if (state.feeds.size > 1) {
-                    val next = state.feeds.first { it.id != state.selectedFeed }
-                    IconPill(if (state.selectedFeed == state.feeds.first().id) Icons.Outlined.LibraryMusic else Icons.Outlined.PlayCircle,
-                        appString(R.string.text_switch_to_home_42c520, (next.label))) { onSelectFeed(next.id) }
-                }
                 RecapInboxButton(onOpenNotifications)
+            }
+        }
+        if (state.feeds.size > 1) {
+            item(key = "feeds") {
+                com.aurora.music.ui.components.ChoiceTabs(state.feeds.map { Triple(it.id, it.label, com.aurora.music.ui.components.feedIcon(it.id)) },
+                    state.selectedFeed, onSelectFeed)
             }
         }
 
@@ -188,24 +191,7 @@ fun HomeScreen(
 
         data.sections.forEach { section ->
             item(key = "feed:${section.id}") {
-                val tracks = remember(section) { section.items.filterIsInstance<HomeFeedItem.Track>().map { it.song } }
-                Column {
-                    SectionHeader(section.title)
-                    if (section.subtitle.isNotBlank()) Text(section.subtitle,
-                        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(start = 14.dp, top = 2.dp))
-                    Spacer(Modifier.height(PageMetrics.HeaderToContent))
-                    AdaptiveShelf(section.items, bleed = gutter, key = { it.key }) { entry, width ->
-                        when (entry) {
-                            is HomeFeedItem.Record -> AlbumCard(entry.album, { onOpenDetail("album", entry.album.id) }, width = width)
-                            is HomeFeedItem.Collection -> PlaylistCard(entry.playlist, { onOpenDetail("playlist", entry.playlist.id) }, width = width)
-                            is HomeFeedItem.Performer -> ArtistCircle(entry.artist, { onOpenDetail("artist", entry.artist.id) }, width = width)
-                            is HomeFeedItem.Track -> HomeTrackCard(entry.song, width) {
-                                onPlayAll(tracks, tracks.indexOfFirst { it.id == entry.song.id }.coerceAtLeast(0))
-                            }
-                        }
-                    }
-                }
+                com.aurora.music.ui.components.FeedSection(section, gutter, onOpenDetail, onPlayAll)
             }
         }
         if (data.continuation != null || state.error != null) {
@@ -372,7 +358,7 @@ private fun HeroPager(albums: List<Album>, scale: Float, onOpenDetail: (String, 
 private fun HeroArrow(icon: ImageVector, label: String, onClick: () -> Unit) {
     Box(
         Modifier.size(36.dp).clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.9f))
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh.fade(0.9f))
             .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), CircleShape)
             .clickable(onClickLabel = label, onClick = onClick)
             .pointerHoverIcon(PointerIcon.Hand),
@@ -389,7 +375,7 @@ private fun HeroCard(album: Album, height: Dp, onOpenDetail: (String, String) ->
         Modifier
             .fillMaxWidth()
             .height(height)
-            .clip(RoundedCornerShape(24.dp))
+            .clip(RoundedCornerShape(themedCorner(24.dp)))
             .clickable { onOpenDetail("album", album.id) }
             .pointerHoverIcon(PointerIcon.Hand),
     ) {
@@ -450,13 +436,13 @@ private fun FavouriteCard(songs: List<Song>, scale: Float, modifier: Modifier, o
     val featured = songs.first()
     BoxWithConstraints(
         modifier
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(themedCorner(20.dp)))
             .background(Brush.linearGradient(listOf(MaterialTheme.colorScheme.surfaceContainerHigh, featured.accent.copy(alpha = 0.20f))))
             .clickable { onPlayAll(songs, 0) }
             .pointerHoverIcon(PointerIcon.Hand)
             .padding(16.dp * scale),
     ) {
-        val bars = (maxWidth / 15.dp).toInt().coerceIn(24, 72)
+        val bars = (maxWidth / 7.dp).toInt().coerceIn(32, 220)
         Column(Modifier.fillMaxWidth()) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Artwork(featured.artworkUrl, featured.accent, Modifier.size(56.dp * scale), corner = 14.dp)
@@ -474,7 +460,7 @@ private fun FavouriteCard(songs: List<Song>, scale: Float, modifier: Modifier, o
             Spacer(Modifier.height(14.dp * scale))
             Spacer(Modifier.weight(1f))
             Waveform(progress = 0.0f, accent = featured.accent, onSeek = {}, seed = featured.id.hashCode(),
-                barCount = bars, height = wave * scale)
+                barCount = bars, height = wave * scale, barWidth = 3.dp)
             Spacer(Modifier.height(8.dp * scale))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text("0:00", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -488,7 +474,7 @@ private fun FavouriteCard(songs: List<Song>, scale: Float, modifier: Modifier, o
 private fun LikedRow(song: Song, onClick: () -> Unit) {
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     Row(
-        Modifier.fillMaxWidth().height(LikedRowHeight).clip(RoundedCornerShape(12.dp))
+        Modifier.fillMaxWidth().height(LikedRowHeight).clip(RoundedCornerShape(themedCorner(12.dp)))
             .clickable(onClick = onClick).pointerHoverIcon(PointerIcon.Hand)
             .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -510,7 +496,7 @@ private fun LikedRow(song: Song, onClick: () -> Unit) {
 @Composable
 private fun OverlayTile(album: Album, width: Dp, onClick: () -> Unit) {
     Box(
-        Modifier.size(width).clip(RoundedCornerShape(18.dp)).clickable(onClick = onClick).pointerHoverIcon(PointerIcon.Hand),
+        Modifier.size(width).clip(RoundedCornerShape(themedCorner(18.dp))).clickable(onClick = onClick).pointerHoverIcon(PointerIcon.Hand),
     ) {
         Artwork(album.artworkUrl, accentFor(album.id), Modifier.matchParentSize(), corner = 18.dp)
         Box(
@@ -536,30 +522,3 @@ internal fun IconPill(icon: ImageVector, desc: String, onClick: () -> Unit) {
 
 private fun greeting(): String = appString(R.string.text_good_evening_47f6d5).lowercase().replaceFirstChar { it.titlecase() }
 
-@Composable
-private fun HomeTrackCard(song: Song, width: Dp, onClick: () -> Unit) {
-    val aurora = LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA
-    val shape = if (aurora) RoundedCornerShape(16.dp) else MaterialTheme.shapes.medium
-    val inset = if (aurora) 0.dp else 8.dp
-    val art = width - inset * 2
-    Column(
-        Modifier.width(width).clip(shape)
-            .then(if (aurora) Modifier else Modifier.auroraPanel(shape))
-            .clickable(onClick = onClick).pointerHoverIcon(PointerIcon.Hand)
-            .padding(inset),
-    ) {
-        Box {
-            Artwork(song.artworkUrl, song.accent, Modifier.size(art), corner = 14.dp)
-            Box(Modifier.align(Alignment.BottomEnd).padding(8.dp).size(34.dp).clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)), contentAlignment = Alignment.Center) {
-                Icon(Icons.Filled.PlayArrow, appString(R.string.text_play_5d12bd), tint = MaterialTheme.colorScheme.onSurface)
-            }
-        }
-        Spacer(Modifier.height(8.dp))
-        Text(song.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold,
-            maxLines = 1, overflow = TextOverflow.Ellipsis)
-        Text(song.artist, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1, overflow = TextOverflow.Ellipsis)
-        if (aurora) Spacer(Modifier.height(6.dp))
-    }
-}

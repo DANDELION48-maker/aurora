@@ -82,7 +82,7 @@ internal fun RackEqImportDialog(rack: ProcessingRack, onDismiss: () -> Unit,
         preview?.let { RackEqTextCodec.appendToRack(rack, it, name) }
     }
     val planError = appendPlan?.exceptionOrNull()?.message
-    AlertDialog(onDismissRequest = { if (!busy) onDismiss() }, title = { Text(appString(R.string.text_import_parametric_eq_658f13)) }, text = {
+    AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, onDismissRequest = { if (!busy) onDismiss() }, title = { Text(appString(R.string.text_import_parametric_eq_658f13)) }, text = {
         Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             if (preview == null) {
             Text(appString(R.string.text_open_equalizer_apo_text_autoeq_peq_json_or_aurora_eq_json_9a6150),
@@ -137,7 +137,7 @@ internal fun RackEqImportDialog(rack: ProcessingRack, onDismiss: () -> Unit,
 internal fun RackEqExportDialog(node: ProcessingRackNode, onDismiss: () -> Unit,
     onSaveText: (String) -> Unit, onOpenPresets: () -> Unit) {
     val encoded = remember(node) { runCatching { RackEqTextCodec.encode(ParsedEq(0f, node.audio.dspParametric)) } }
-    AlertDialog(onDismissRequest = onDismiss, title = { Text(appString(R.string.text_export_parametric_eq_text_39190f)) }, text = {
+    AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, onDismissRequest = onDismiss, title = { Text(appString(R.string.text_export_parametric_eq_text_39190f)) }, text = {
         Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(node.name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
             Text(appString(R.string.text_exports_parametric_filters_with_preamp_0_db_0ec77d, (node.audio.dspParametric.size)), style = MaterialTheme.typography.bodyMedium)

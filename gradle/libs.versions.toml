@@ -29,6 +29,8 @@ coil3 = "3.2.0"
 javacpp = "1.5.14"
 ffmpeg = "8.1.2-1.5.14"
 dbusJava = "5.2.2"
+jna = "5.16.0"
+jcefmaven = "146.0.10"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -80,6 +82,9 @@ javacpp = { group = "org.bytedeco", name = "javacpp", version.ref = "javacpp" }
 ffmpeg = { group = "org.bytedeco", name = "ffmpeg", version.ref = "ffmpeg" }
 dbus-java-core = { group = "com.github.hypfvieh", name = "dbus-java-core", version.ref = "dbusJava" }
 dbus-java-transport-unixsocket = { group = "com.github.hypfvieh", name = "dbus-java-transport-native-unixsocket", version.ref = "dbusJava" }
+jna = { group = "net.java.dev.jna", name = "jna", version.ref = "jna" }
+jna-platform = { group = "net.java.dev.jna", name = "jna-platform", version.ref = "jna" }
+jcefmaven = { group = "me.friwi", name = "jcefmaven", version.ref = "jcefmaven" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

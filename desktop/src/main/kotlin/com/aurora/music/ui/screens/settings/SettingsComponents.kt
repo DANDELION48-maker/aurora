@@ -1,6 +1,9 @@
 package com.aurora.music.ui.screens.settings
 
 import androidx.compose.foundation.background
+import com.aurora.music.ui.theme.LocalGlass
+import com.aurora.music.ui.theme.fade
+import com.aurora.music.ui.theme.glassEdge
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,8 +40,12 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
@@ -65,6 +72,7 @@ import com.aurora.music.ui.components.FullPageButton
 import com.aurora.music.ui.components.PageHeader
 import com.aurora.music.ui.layout.LocalPageGutter
 import com.aurora.music.ui.layout.PageMetrics
+import com.aurora.music.ui.theme.themedCorner
 
 val LocalSettingsPaneRoots = compositionLocalOf<Set<String>?> { null }
 
@@ -89,7 +97,6 @@ fun SettingsTopBar(title: String, onBack: () -> Unit, showBack: Boolean) {
     val route = (LocalViewModelStoreOwner.current as? NavBackStackEntry)?.destination?.route
     Box(
         Modifier.fillMaxWidth()
-            .then(if (LocalUiPrefs.current.themeStyle != ThemeStyle.AURORA) Modifier.auroraPanel(RectangleShape) else Modifier)
             .padding(start = gutter, end = if (LocalSettingsListPane.current) ListPaneEnd + GroupInset else gutter, bottom = 4.dp),
     ) {
         PageHeader(title, onBack = if (showBack) onBack else null) {
@@ -120,7 +127,7 @@ fun ColumnScope.SettingsList(
 ) {
     BoxWithConstraints(Modifier.fillMaxWidth().weight(1f)) {
         LazyColumn(
-            Modifier.fillMaxSize(),
+            Modifier.fillMaxSize().fadeTopEdge { state.canScrollBackward },
             state = state,
             contentPadding = settingsContentPadding(maxWidth, contentPadding),
             verticalArrangement = verticalArrangement,
@@ -138,12 +145,18 @@ fun ColumnScope.SettingsScroll(
     val scroll = rememberScrollState()
     BoxWithConstraints(Modifier.fillMaxWidth().weight(1f)) {
         Column(
-            Modifier.fillMaxWidth().verticalScroll(scroll).padding(settingsContentPadding(maxWidth, contentPadding)),
+            Modifier.fillMaxWidth().fadeTopEdge { scroll.canScrollBackward }.verticalScroll(scroll).padding(settingsContentPadding(maxWidth, contentPadding)),
             horizontalAlignment = horizontalAlignment,
             content = content,
         )
     }
 }
+
+private fun Modifier.fadeTopEdge(scrolled: () -> Boolean): Modifier =
+    graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }.drawWithContent {
+        drawContent()
+        if (scrolled()) drawRect(Brush.verticalGradient(0f to Color.Transparent, 1f to Color.Black, startY = 0f, endY = 18.dp.toPx()), blendMode = BlendMode.DstIn)
+    }
 
 @Composable
 fun SettingsSectionTitle(title: String) {
@@ -162,8 +175,9 @@ fun SettingsGroup(content: @Composable ColumnScope.() -> Unit) {
         Modifier.fillMaxWidth().padding(horizontal = 12.dp)
             .then(
                 if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA)
-                    Modifier.clip(RoundedCornerShape(18.dp))
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.5f))
+                    Modifier.clip(RoundedCornerShape(themedCorner(18.dp)))
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh.fade(if (LocalGlass.current) 1f else 0.5f))
+                        .glassEdge(RoundedCornerShape(themedCorner(18.dp)))
                 else Modifier.auroraPanel(MaterialTheme.shapes.medium)
             ),
         content = content,
@@ -196,7 +210,7 @@ internal fun SettingsRowIcon(icon: ImageVector) {
     Box(
         Modifier.size(if (LocalSettingsListPane.current) 34.dp else 38.dp).then(
             if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA)
-                Modifier.clip(RoundedCornerShape(10.dp)).background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                Modifier.clip(RoundedCornerShape(themedCorner(10.dp))).background(MaterialTheme.colorScheme.surfaceContainerHigh)
             else Modifier.auroraPanel(MaterialTheme.shapes.extraSmall)
         ),
         contentAlignment = Alignment.Center,
@@ -319,7 +333,7 @@ fun SettingsDropdownRow(
 ) {
     var expanded by remember { mutableStateOf(false) }
     val aurora = LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA
-    val shape = if (aurora) RoundedCornerShape(12.dp) else MaterialTheme.shapes.small
+    val shape = if (aurora) RoundedCornerShape(themedCorner(12.dp)) else MaterialTheme.shapes.small
     RowScaffold(icon, title, subtitle, { expanded = true }) {
         Box(Modifier.padding(start = 16.dp)) {
             Row(

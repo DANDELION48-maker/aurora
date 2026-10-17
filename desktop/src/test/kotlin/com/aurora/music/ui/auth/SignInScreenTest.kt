@@ -67,7 +67,7 @@ class SignInScreenTest {
         scene("sign-in", seed = { desktopSettings.setMusicFolders(listOf(music.path, albums.path)) }).use { scene ->
             val type = scene.shot("-type")
             assertTrue(type.distinctColors() > 20)
-            scene.click(549f, 430f)
+            scene.click(549f, 283f)
             assertEquals(AuthStep.FOLDERS, vm.state.value.step)
             assertEquals(ServerType.LOCAL, vm.state.value.type)
             assertTrue(scene.shot("-folders").differsFrom(type))
@@ -76,7 +76,7 @@ class SignInScreenTest {
             scene.shot("-folders-one")
             scene.click(254f, 270f)
             assertEquals(AuthStep.TYPE, vm.state.value.step)
-            scene.click(549f, 430f)
+            scene.click(549f, 283f)
             scene.click(549f, 628f)
             val session = scene.await(read = { settingsStore.session.first() }) { it != null }!!
             assertEquals(ServerType.LOCAL, session.type)
@@ -87,7 +87,7 @@ class SignInScreenTest {
 
     @Test fun localContinueNeedsAFolder() {
         scene("sign-in-no-folders").use { scene ->
-            scene.click(549f, 430f)
+            scene.click(549f, 283f)
             assertEquals(AuthStep.FOLDERS, vm.state.value.step)
             scene.shot()
             scene.click(549f, 608f)
@@ -104,7 +104,7 @@ class SignInScreenTest {
             server.enqueue(MockResponse().setHeader("Content-Type", "application/json").setBody("""{"subsonic-response":{"status":"ok","version":"1.16.1"}}"""))
             val host = "${server.hostName}:${server.port}"
             scene("sign-in-navidrome").use { scene ->
-                scene.click(398f, 566f)
+                scene.click(398f, 420f)
                 assertEquals(AuthStep.SERVER, vm.state.value.step)
                 assertEquals(ServerType.SUBSONIC, vm.state.value.type)
                 scene.click(549f, 606f)
@@ -136,7 +136,7 @@ class SignInScreenTest {
 
     @Test fun plexAsksOnlyForATokenAndLinksToHelp() {
         scene("sign-in-plex").use { scene ->
-            scene.click(549f, 667f)
+            scene.click(549f, 520f)
             assertEquals(ServerType.PLEX, vm.state.value.type)
             vm.onHost("https://plex.local:32400")
             assertEquals("https://", vm.state.value.scheme)
@@ -162,9 +162,9 @@ class SignInScreenTest {
             settingsStore.addSavedSession(Session("spotify", "mara", "", "t", ServerType.SPOTIFY))
         }).use { scene ->
             val collapsed = scene.shot()
-            scene.click(549f, 387f)
+            scene.click(549f, 253f)
             assertTrue(scene.shot("-expanded").differsFrom(collapsed))
-            scene.click(549f, 413f)
+            scene.click(549f, 326f)
             val session = scene.await(read = { settingsStore.session.first() }) { it != null }!!
             assertEquals(navidrome.accountKey(), session.accountKey())
         }

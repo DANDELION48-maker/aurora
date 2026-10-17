@@ -20,7 +20,7 @@ internal fun RackSubchainsDialog(rack: ProcessingRack, chains: List<RackSubchain
     var name by remember { mutableStateOf("") }
     var selected by remember { mutableStateOf(rack.nodes.map { it.id }.toSet()) }
     var error by remember { mutableStateOf<String?>(null) }
-    AlertDialog(onDismissRequest = onDismiss, title = { Text(if (saving) appString(R.string.text_save_subchain_d43195) else appString(R.string.text_saved_subchains_46c948)) }, text = {
+    AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, onDismissRequest = onDismiss, title = { Text(if (saving) appString(R.string.text_save_subchain_d43195) else appString(R.string.text_saved_subchains_46c948)) }, text = {
         Column(Modifier.verticalScroll(rememberScrollState())) {
             if (saving) {
                 OutlinedTextField(name, { name = it }, label = { Text(appString(R.string.text_name_709a23)) }, singleLine = true)

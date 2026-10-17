@@ -254,7 +254,7 @@ fun ProcessingPresetsScreen(
         )
     }
     deleteTarget?.let { preset ->
-        AlertDialog(
+        AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, 
             onDismissRequest = { deleteTarget = null },
             title = { Text(appString(R.string.text_delete_preset_f004e2)) },
             text = { Text(appString(R.string.text_delete_your_current_audio_settings_will_stay_as_they_are_243d73, (preset.name))) },
@@ -338,7 +338,7 @@ private fun ProcessingPresetNameDialog(dialog: PresetNameDialog, onDismiss: () -
     val focus = remember { FocusRequester() }
     LaunchedEffect(Unit) { focus.requestFocus() }
     val title = when (dialog.mode) { PresetNameMode.SAVE -> appString(R.string.text_save_current_settings_0eaab9); PresetNameMode.RENAME -> appString(R.string.text_rename_preset_52abbe); PresetNameMode.DUPLICATE -> appString(R.string.text_duplicate_preset_27bc59) }
-    AlertDialog(
+    AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, 
         onDismissRequest = onDismiss,
         title = { Text(title) },
         text = {

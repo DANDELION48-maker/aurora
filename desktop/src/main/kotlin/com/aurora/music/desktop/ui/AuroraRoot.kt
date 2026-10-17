@@ -20,6 +20,7 @@ import com.aurora.music.ui.layout.LocalPageGutter
 import com.aurora.music.ui.layout.LocalWindowLayout
 import com.aurora.music.ui.layout.WindowLayout
 import com.aurora.music.ui.theme.AuroraTheme
+import com.aurora.music.ui.theme.GlassLook
 import com.aurora.music.util.rememberDominantColor
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -30,6 +31,8 @@ fun AuroraRoot(
     player: PlayerController,
     initialPrefs: UiPrefs = UiPrefs(),
     systemAccent: Color? = null,
+    translucent: Boolean = false,
+    glassLook: GlassLook = GlassLook(),
     content: @Composable () -> Unit,
 ) {
     val uiPrefs by container.settingsStore.uiPrefs.collectAsState(initialPrefs)
@@ -39,7 +42,7 @@ fun AuroraRoot(
     val playingAccent = cover?.takeIf { followPlaying && uiPrefs.themeStyle == ThemeStyle.AURORA && it.artworkUrl.isNotBlank() }
         ?.let { rememberDominantColor(it.artworkUrl, it.accent).value }
     CompositionLocalProvider(LocalDesktopContainer provides container, LocalPlayer provides player) {
-        AuroraTheme(uiPrefs, systemAccent, playingAccent) {
+        AuroraTheme(uiPrefs, systemAccent, playingAccent, translucent, glassLook) {
             BoxWithConstraints(Modifier.fillMaxSize()) {
                 val window = WindowLayout(maxWidth.value.toInt(), maxHeight.value.toInt())
                 val margin = uiPrefs.tabletPageMargin - TabletSetting.PAGE_MARGIN.default

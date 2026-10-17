@@ -1,5 +1,7 @@
 package com.aurora.music.ui.screens.settings
 
+import androidx.compose.material.icons.filled.CallMerge
+import androidx.compose.material.icons.filled.Lyrics
 import com.aurora.music.localization.appString
 
 import com.aurora.music.R
@@ -93,6 +95,8 @@ fun SettingsScreen(
     onOpenSources: () -> Unit,
     onOpenDownloads: () -> Unit,
     onOpenAppearance: () -> Unit,
+    onOpenLyricsSettings: () -> Unit = {},
+    onOpenMerge: () -> Unit = {},
     onOpenLanguage: () -> Unit,
     onOpenIntegrations: () -> Unit,
     onOpenAbout: () -> Unit,
@@ -139,6 +143,8 @@ fun SettingsScreen(
                         SettingsDestinationRow(Icons.Filled.SwitchAccount, SettingsDestinations.accounts, onClick = onOpenAccounts)
                         SettingsRowDivider()
                         SettingsDestinationRow(Icons.Filled.MergeType, SettingsDestinations.sources, onClick = onOpenSources)
+                        SettingsRowDivider()
+                        SettingsDestinationRow(Icons.Filled.CallMerge, SettingsDestinations.merge, onClick = onOpenMerge)
                         SettingsRowDivider()
                         SettingsDestinationRow(Icons.Filled.Download, SettingsDestinations.storage, appString(R.string.text_downloaded_quality_and_offline_files_4bd602, (downloads.size)), onClick = onOpenDownloads)
                         if (onOpenSonic != null) {
@@ -199,6 +205,8 @@ fun SettingsScreen(
                             }, selected = LocalSelectedSettingsRoute.current == Routes.SETTINGS_LANGUAGE, onClick = onOpenLanguage)
                         SettingsRowDivider()
                         SettingsDestinationRow(Icons.Filled.Palette, SettingsDestinations.appearance, onClick = onOpenAppearance)
+                        SettingsRowDivider()
+                        SettingsDestinationRow(Icons.Filled.Lyrics, SettingsDestinations.lyrics, onClick = onOpenLyricsSettings)
                         SettingsRowDivider()
                         SettingsDestinationRow(Icons.Filled.GraphicEq, SettingsDestinations.visualizer, onClick = onOpenVisualizer)
                     }

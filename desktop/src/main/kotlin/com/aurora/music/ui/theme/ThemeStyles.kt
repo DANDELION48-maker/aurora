@@ -98,7 +98,7 @@ fun Modifier.auroraPanel(
 ): Modifier {
     val style = LocalUiPrefs.current.themeStyle
     val colors = MaterialTheme.colorScheme
-    val dark = colors.background.luminance() < 0.3f
+    val dark = colors.onBackground.luminance() > 0.5f
     val fill = colors.surfaceContainerHigh
     val edge = when (style) {
         ThemeStyle.RETRO -> colors.outline.copy(alpha = 0.75f)
@@ -121,6 +121,13 @@ fun Modifier.auroraPanel(
         ))
         else -> Brush.verticalGradient(listOf(fill.copy(alpha = 0.96f), fill.copy(alpha = 0.96f)))
     }
+    if (LocalGlass.current) {
+        val base = if (dark) Color.Black.copy(alpha = 0.35f) else Color.White.copy(alpha = 0.5f)
+        return this.clip(shape)
+            .then(if (emphasized) Modifier.background(base) else Modifier)
+            .background(glassSheen())
+            .then(if (LocalGlassLook.current.edges) Modifier.border(1.dp, edge, shape) else Modifier)
+    }
     return this.clip(shape)
         // floating controls sit over scrolling text so the glass shine must stay opaque
         .then(if (emphasized && style == ThemeStyle.GLASS) Modifier.background(fill) else Modifier)
@@ -132,7 +139,7 @@ fun Modifier.auroraPanel(
 fun Modifier.auroraBackdrop(): Modifier {
     val style = LocalUiPrefs.current.themeStyle
     val colors = MaterialTheme.colorScheme
-    val dark = colors.background.luminance() < 0.3f
+    val dark = colors.onBackground.luminance() > 0.5f
     return background(colors.background).drawWithCache {
         val w = size.width
         val h = size.height

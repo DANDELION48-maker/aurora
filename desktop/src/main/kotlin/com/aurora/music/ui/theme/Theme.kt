@@ -1,6 +1,13 @@
 package com.aurora.music.ui.theme
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -10,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
@@ -64,6 +72,43 @@ private val LightColors = lightColorScheme(
 
 val LocalUiPrefs = staticCompositionLocalOf { UiPrefs() }
 
+fun Color.fade(alpha: Float): Color = copy(alpha = this.alpha * alpha)
+
+data class GlassLook(val tint: Float = 0.28f, val frost: Float = 0.08f, val edges: Boolean = true)
+
+fun ColorScheme.glassScheme(dark: Boolean, look: GlassLook = GlassLook()): ColorScheme {
+    val panel = if (dark) look.frost else (0.15f + look.frost * 3f).coerceAtMost(0.75f)
+    return copy(
+        background = Color.Transparent,
+        surface = Color.Transparent,
+        surfaceContainerLowest = Color.White.copy(alpha = panel * 0.4f),
+        surfaceContainerLow = Color.White.copy(alpha = panel * 0.6f),
+        surfaceContainer = surfaceContainer.copy(alpha = 0.92f),
+        surfaceContainerHigh = Color.White.copy(alpha = panel),
+        surfaceContainerHighest = Color.White.copy(alpha = (panel * 1.5f).coerceAtMost(0.9f)),
+    )
+}
+
+val LocalGlass = staticCompositionLocalOf { false }
+
+val LocalGlassLook = staticCompositionLocalOf { GlassLook() }
+
+// the scheme before glass thinned it; dialogs and sheets float over busy content, so they stay solid
+val LocalSolidColors = staticCompositionLocalOf<ColorScheme?> { null }
+
+@Composable
+fun solidColors(): ColorScheme = LocalSolidColors.current ?: MaterialTheme.colorScheme
+
+@Composable
+fun Modifier.glassEdge(shape: Shape): Modifier = if (!LocalGlass.current || !LocalGlassLook.current.edges) this else
+    border(1.dp, Brush.verticalGradient(listOf(Color.White.copy(alpha = 0.28f), Color.White.copy(alpha = 0.05f))), shape)
+
+@Composable
+fun glassSheen(): Brush {
+    val frost = LocalGlassLook.current.frost
+    return Brush.verticalGradient(listOf(Color.White.copy(alpha = frost * 2f), Color.White.copy(alpha = frost * 0.75f)))
+}
+
 private fun onAccent(seed: Color): Color = if (seed.luminance() > 0.5f) Color(0xFF1A1016) else Color.White
 
 private fun ColorScheme.withAccent(seed: Color, dark: Boolean): ColorScheme {
@@ -96,7 +141,7 @@ fun rememberPlayerColorScheme(artworkUrl: String, fallback: Color): ColorScheme 
     if (prefs.themeStyle != ThemeStyle.AURORA) return appColors
 
     val accent by rememberDominantColor(artworkUrl, fallback)
-    val dark = appColors.background.luminance() < 0.5f
+    val dark = appColors.onBackground.luminance() > 0.5f
     val base = (if (dark) DarkColors else LightColors).withAccent(accent, dark)
     fun foreground(color: Color) = if (color.luminance() > 0.179f) Color.Black else Color.White
     val colors = base.copy(
@@ -119,6 +164,8 @@ fun AuroraTheme(
     uiPrefs: UiPrefs = UiPrefs(),
     systemAccent: Color? = null,
     playingAccent: Color? = null,
+    translucent: Boolean = false,
+    glassLook: GlassLook = GlassLook(),
     content: @Composable () -> Unit,
 ) {
     val systemDark = isSystemInDarkTheme()
@@ -142,6 +189,9 @@ fun AuroraTheme(
         }
     }
     if (amoled) colors = colors.toAmoled()
+    val tint = colors.background.copy(alpha = (0.35f + glassLook.tint * 0.65f + if (amoled) 0.15f else 0f).coerceIn(0f, 1f))
+    val solid = colors
+    if (translucent) colors = colors.glassScheme(useDark, glassLook)
 
     MaterialTheme(
         colorScheme = colors,
@@ -152,7 +202,11 @@ fun AuroraTheme(
         CompositionLocalProvider(
             LocalContentColor provides colors.onBackground,
             LocalUiPrefs provides uiPrefs,
-            content = content,
-        )
+            LocalGlass provides translucent,
+            LocalGlassLook provides glassLook,
+            LocalSolidColors provides solid,
+        ) {
+            if (translucent) Box(Modifier.fillMaxSize().background(tint)) { content() } else content()
+        }
     }
 }

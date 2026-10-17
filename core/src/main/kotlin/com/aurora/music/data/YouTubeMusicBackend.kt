@@ -90,6 +90,31 @@ class YouTubeMusicBackend(
         return merged.also { songs[id] = it }
     }
 
+    override val supportsExplore: Boolean get() = true
+
+    override suspend fun explore(): ExploreData = coroutineScope {
+        suspend fun page(id: String) = runCatching { browse(id) }.getOrNull()
+        val releases = async { page("FEmusic_new_releases") }
+        val charts = async { page("FEmusic_charts") }
+        val explore = async { page("FEmusic_explore") }
+        val moods = async { page("FEmusic_moods_and_genres") }
+        val pages = listOfNotNull(releases.await(), charts.await(), explore.await())
+        pages.forEach { remember(YouTubeMusicParser.results(it)) }
+        val sections = pages.flatMap { YouTubeMusicParser.home(it).sections }.distinctBy { it.id }
+        ExploreData(moods.await()?.let(YouTubeMusicParser::categories).orEmpty(), sections)
+    }
+
+    override suspend fun exploreCategory(params: String): HomeData =
+        homeData(api.request("browse", json("browseId" to "FEmusic_moods_and_genres_category", "params" to params))).copy(continuation = null)
+
+    // songs from elsewhere find their youtube twin first; the watch page then links the related shelves
+    override suspend fun related(song: Song): HomeData {
+        val id = song.id.takeIf { it.matches(VIDEO_ID) } ?: search("${song.title} ${song.artist}".trim()).songs
+            .firstOrNull { song.durationSec <= 0 || kotlin.math.abs(it.durationSec - song.durationSec) <= 3 }?.id ?: return HomeData()
+        val page = YouTubeMusicParser.relatedBrowseId(api.request("next", json("videoId" to id))) ?: return HomeData()
+        return homeData(browse(page)).copy(continuation = null)
+    }
+
     override suspend fun radio(seedId: String): List<Song> = remember(YouTubeMusicParser.results(
         api.request("next", json("videoId" to seedId, "playlistId" to "RDAMVM$seedId"))))
         .songs.distinctBy { it.id }.filter { it.id != seedId }
@@ -207,6 +232,8 @@ class YouTubeMusicBackend(
     override fun coverArtUrl(id: String, size: Int) = songs[id]?.artworkUrl.orEmpty()
 
     companion object {
+        private val VIDEO_ID = Regex("[A-Za-z0-9_-]{11}")
+
         suspend fun account(api: YouTubeMusicTransport, profileId: String = ""): Triple<String, String, String> {
             val response = api.request("account/account_menu", JsonObject())
             val header = response.objects("activeAccountHeaderRenderer").firstOrNull()
@@ -218,4 +245,5 @@ class YouTubeMusicBackend(
             return Triple(name, handle, YouTubeMusicParser.thumbnail(header.obj("accountPhoto")))
         }
     }
+
 }

@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="chromium_downloading" formatted="false">"サインイン用ブラウザをダウンロードしています。初回のみで、約 150 MB です。"</string>
+    <string name="chromium_failed" formatted="false">"サインイン用ブラウザを起動できませんでした: %1$s"</string>
+    <string name="chromium_preparing" formatted="false">"サインイン用ブラウザを準備しています…"</string>
+    <string name="discovery_explore" formatted="false">"探索"</string>
+    <string name="discovery_explore_failed" formatted="false">"探索を読み込めませんでした。接続を確認してもう一度お試しください。"</string>
+    <string name="discovery_related" formatted="false">"関連"</string>
+    <string name="discovery_related_empty" formatted="false">"YouTube Music にこの曲の関連コンテンツはありません。"</string>
+    <string name="discovery_start_radio" formatted="false">"ラジオを開始"</string>
+    <string name="lyrics_settings_summary" formatted="false">"同期スタイルと歌詞の取得元"</string>
+    <string name="lyrics_source_lrclib_detail" formatted="false">"無料のコミュニティ歌詞データベース"</string>
+    <string name="lyrics_source_server" formatted="false">"曲の取得元"</string>
+    <string name="lyrics_source_server_detail" formatted="false">"サーバー、ストリーミングサービス、またはファイル自体の歌詞"</string>
+    <string name="lyrics_source_spotify_detail" formatted="false">"統合した Spotify アカウントの同期歌詞"</string>
+    <string name="lyrics_sources_hint" formatted="false">"Aurora はこの順に確認します。最初に見つかった同期歌詞を使い、なければ最初に見つかった歌詞を使います。"</string>
+    <string name="lyrics_sources_title" formatted="false">"歌詞の取得元"</string>
+    <string name="merge_comments" formatted="false">"SoundCloud のコメント"</string>
+    <string name="merge_comments_summary" formatted="false">"一致する SoundCloud のトラックが見つかったとき、タイムスタンプ付きコメントを表示します"</string>
+    <string name="merge_lyrics" formatted="false">"Spotify の歌詞"</string>
+    <string name="merge_lyrics_summary" formatted="false">"他のソースの曲にも Spotify の同期歌詞を使います"</string>
+    <string name="merge_options" formatted="false">"統合オプション"</string>
+    <string name="merge_options_note" formatted="false">"SoundCloud や Spotify を統合ライブラリに含めると、Aurora はそれらの追加機能を他のソースの曲にも反映できます。各機能はまとめて、またはソースごとにオフにできます。"</string>
+    <string name="merge_options_summary" formatted="false">"統合したサービスが曲に追加するもの"</string>
+    <string name="merge_songs_from" formatted="false">"曲のソース"</string>
+    <string name="playlist_save_to" formatted="false">"保存先"</string>
+    <string name="text_acrylic_f39ce1" formatted="false">"アクリル"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"音楽フォルダを追加"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"音声デコード。Copyright © FFmpeg developers。LGPL-3.0-or-later、JavaCPP Presets を通じて動的リンク。ライセンス全文：https://www.gnu.org/licenses/lgpl-3.0.html"</string>
     <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"DAC に本体の音量調整がある場合、Aurora の音量でそれを調整します。音声は bit-perfect のままです。"</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"Aurora はデバイスを占有し、曲本来のサンプルレートとビット深度でサンプルを送信します。Aurora の再生中、他のアプリは無音になります。処理、音量、ReplayGain がサンプルを変更しない場合、出力はビットパーフェクトのままです。デバイスが形式を拒否した場合、Aurora は共有モードに戻り、信号経路に理由が表示されます。"</string>
+    <string name="text_background_tint_a39a12" formatted="false">"背景の色合い"</string>
     <string name="text_bit_float_012895">"%1$d ビット浮動小数点"</string>
     <string name="text_bit_integer_72520f">"%1$d ビット整数"</string>
     <string name="text_bit_perfect_output_that_bypasses_the_sound_server_d2dcd9" formatted="false">"サウンドサーバーをバイパスするビットパーフェクト出力"</string>
@@ -26,14 +52,18 @@
     <string name="text_exclusive_mode_is_unavailable_0de552">"排他モードを利用できません：%1$s"</string>
     <string name="text_exclusive_mode_is_unavailable_on_this_device_e51016" formatted="false">"このデバイスでは排他モードを利用できません"</string>
     <string name="text_follow_the_playing_cover_5d2e91" formatted="false">"再生中のカバーに合わせる"</string>
+    <string name="text_glass_edges_f462cd" formatted="false">"ガラスの縁"</string>
     <string name="text_hz_is_unavailable_using_hz_14de1c">"%1$d Hz は利用できないため、%2$d Hz を使用します。"</string>
     <string name="text_in_use_by_the_sound_server_or_another_app_aa3eaa" formatted="false">"サウンドサーバーまたは他のアプリが使用中"</string>
     <string name="text_keep_aurora_playing_in_the_notification_area_when_the_window_clos_e5fed5" formatted="false">"ウィンドウを閉じても通知領域で Aurora の再生を続ける"</string>
     <string name="text_larger_buffers_ride_out_heavy_system_load_smaller_ones_react_fast_e4d5f8" formatted="false">"大きいバッファはシステム負荷が高いときに強く、小さいバッファはシークや音量の操作に素早く反応します。出力を開き直したときに適用されます。"</string>
+    <string name="text_let_your_desktop_show_through_the_window_blurred_windows_11_only_08f192" formatted="false">"ウィンドウ越しにデスクトップをぼかして表示します。Windows 11 のみ。"</string>
     <string name="text_linux_java_b7923f">"Linux · Java %1$d"</string>
     <string name="text_logs_126dd3" formatted="false">"ログ"</string>
+    <string name="text_mica_3ccf84" formatted="false">"マイカ"</string>
     <string name="text_open_in_full_page_0ec923" formatted="false">"全画面ページで開く"</string>
     <string name="text_output_buffer_61b372" formatted="false">"出力バッファ"</string>
+    <string name="text_panel_frost_ada0d3" formatted="false">"パネルのすりガラス"</string>
     <string name="text_playing_music_af9695" formatted="false">"音楽を再生中"</string>
     <string name="text_shared_mode_mix_format_4a5bc8" formatted="false">"共有モードのミックス形式"</string>
     <string name="text_shared_mode_mixes_aurora_with_other_apps_through_the_system_sound_0c8e9d" formatted="false">"共有モードでは、システムのサウンドサーバーを通じて 48 kHz で Aurora と他のアプリをミックスします。ビットパーフェクト再生には排他モードをオンにしてください。"</string>
@@ -50,6 +80,7 @@
     <string name="text_the_track_could_not_be_opened_5719af" formatted="false">"曲を開けませんでした"</string>
     <string name="text_the_track_s_sample_rate_is_not_supported_5c8629" formatted="false">"曲のサンプルレートには対応していません"</string>
     <string name="text_tint_the_whole_app_with_the_playing_song_s_cover_a83c17" formatted="false">"再生中の曲の色でアプリ全体を色付け"</string>
+    <string name="text_translucent_window_d865c7" formatted="false">"半透明ウィンドウ"</string>
     <string name="text_using_your_system_accent_colour_89502e" formatted="false">"システムのアクセントカラーを使用しています。"</string>
     <string name="text_using_your_windows_accent_colour_7d4b4a" formatted="false">"Windows のアクセントカラーを使用しています。"</string>
     <string name="text_volume_3b18e8" formatted="false">"音量"</string>

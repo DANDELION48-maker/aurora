@@ -82,6 +82,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import com.aurora.music.R
+import com.aurora.music.data.MiniProgress
+import com.aurora.music.data.MiniStyle
 import com.aurora.music.data.ThemeStyle
 import com.aurora.music.desktop.player.PlayerUiState
 import com.aurora.music.desktop.player.RepeatMode
@@ -90,10 +92,14 @@ import com.aurora.music.model.accent
 import com.aurora.music.ui.screens.player.PlayerPane
 import com.aurora.music.ui.screens.player.volumeIcon
 import com.aurora.music.ui.theme.LocalUiPrefs
+import com.aurora.music.ui.theme.glassSheen
+import com.aurora.music.ui.theme.LocalGlass
 import com.aurora.music.ui.theme.auroraPanel
+import com.aurora.music.ui.theme.glassEdge
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import com.aurora.music.ui.theme.themedCorner
 
 private val DockButton = 48.dp
 private const val DockCenterShare = 1.4f / 3.4f
@@ -123,11 +129,15 @@ fun PlaybackDock(
     val classic = ui.themeStyle == ThemeStyle.AURORA
     val colors = MaterialTheme.colorScheme
     val scale = ui.tabletDockScale
+    val compact = ui.miniStyle == MiniStyle.COMPACT
+    val prominent = ui.miniStyle == MiniStyle.PROMINENT
     BoxWithConstraints(
         modifier
             .fillMaxWidth()
             .then(
-                if (classic) Modifier.clip(RoundedCornerShape(22.dp)).background(
+                if (classic && LocalGlass.current) Modifier.clip(RoundedCornerShape(themedCorner(22.dp))).background(glassSheen())
+                    .glassEdge(RoundedCornerShape(themedCorner(22.dp)))
+                else if (classic) Modifier.clip(RoundedCornerShape(themedCorner(22.dp))).background(
                     Brush.horizontalGradient(listOf(colors.surfaceContainerHigh, lerp(colors.surfaceContainerHigh, colors.primary, 0.14f)))
                 ) else Modifier.auroraPanel(MaterialTheme.shapes.extraLarge, emphasized = true)
             ),
@@ -140,27 +150,32 @@ fun PlaybackDock(
         val center = (inner * DockCenterShare).coerceAtMost(680.dp)
         val side = if (roomy) maxOf((inner - center) / 2, trailing) else trailing
         Row(
-            Modifier.fillMaxWidth().heightIn(min = 84.dp * scale).padding(horizontal = 8.dp, vertical = 4.dp),
+            Modifier.fillMaxWidth().heightIn(min = (if (compact) 68.dp else if (prominent) 100.dp else 84.dp) * scale).padding(horizontal = 8.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
                 Row(
-                    Modifier.weight(1f, fill = false).clip(RoundedCornerShape(14.dp))
+                    Modifier.weight(1f, fill = false).clip(RoundedCornerShape(themedCorner(14.dp)))
                         .clickable(onClickLabel = appString(R.string.tablet_open_now_playing), onClick = onExpand)
                         .pointerHoverIcon(PointerIcon.Hand)
                         .padding(4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Artwork(song.artworkUrl, song.accent, Modifier.size((if (roomy) 62.dp else 54.dp) * scale), corner = 10.dp)
+                    val art = when (ui.miniStyle) {
+                        MiniStyle.COMPACT -> if (roomy) 46.dp else 42.dp
+                        MiniStyle.PROMINENT -> if (roomy) 78.dp else 66.dp
+                        else -> if (roomy) 62.dp else 54.dp
+                    }
+                    Artwork(song.artworkUrl, song.accent, Modifier.size(art * scale), corner = 10.dp)
                     Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f, fill = false)) {
-                        Text(song.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold,
+                        Text(song.title, style = if (prominent) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold,
                             color = colors.onSurface, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         DockArtist(song.artist, if (song.artistId.isNotBlank()) onOpenArtist else null)
                     }
                 }
                 val likeTint by animateColorAsState(if (state.isCurrentLiked) colors.primary else colors.onSurfaceVariant, label = "dockLike")
-                IconButton(onClick = onToggleLike) {
+                if (!compact) IconButton(onClick = onToggleLike) {
                     Icon(if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                         appString(R.string.text_like_c7e02c), tint = likeTint, modifier = Modifier.size(22.dp))
                 }
@@ -192,7 +207,7 @@ fun PlaybackDock(
                             tint = if (state.repeat != RepeatMode.OFF) colors.primary else colors.onSurfaceVariant)
                     }
                 }
-                DockSeek(state, onSeek, showTimes = roomy)
+                if (ui.miniProgress != MiniProgress.NONE) DockSeek(state, onSeek, showTimes = roomy, thick = ui.miniProgress == MiniProgress.BAR)
             }
             Spacer(Modifier.width(8.dp))
             Row(Modifier.width(side), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
@@ -308,14 +323,14 @@ private fun VolumeTip(level: Float, width: Dp) {
         Text(
             "${(level * 100).roundToInt()}%",
             style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold, color = colors.inverseOnSurface,
-            modifier = Modifier.clip(RoundedCornerShape(8.dp)).background(colors.inverseSurface).padding(horizontal = 8.dp, vertical = 4.dp),
+            modifier = Modifier.clip(RoundedCornerShape(themedCorner(8.dp))).background(colors.inverseSurface).padding(horizontal = 8.dp, vertical = 4.dp),
         )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DockSeek(state: PlayerUiState, onSeek: (Float) -> Unit, showTimes: Boolean) {
+private fun DockSeek(state: PlayerUiState, onSeek: (Float) -> Unit, showTimes: Boolean, thick: Boolean = false) {
     val colors = MaterialTheme.colorScheme
     val duration = state.durationSec
     if (duration <= 0) {
@@ -348,9 +363,9 @@ private fun DockSeek(state: PlayerUiState, onSeek: (Float) -> Unit, showTimes: B
             onValueChangeFinished = { dragging?.let { onSeek(it); pending = it }; dragging = null },
             modifier = Modifier.weight(1f).height(24.dp).semantics { contentDescription = appString(R.string.tablet_seek) },
             colors = SliderDefaults.colors(thumbColor = colors.primary, activeTrackColor = colors.primary),
-            thumb = { Box(Modifier.size(12.dp).clip(CircleShape).background(thumbColor)) },
+            thumb = { Box(Modifier.size(if (thick) 14.dp else 12.dp).clip(CircleShape).background(thumbColor)) },
             track = { slider ->
-                Box(Modifier.fillMaxWidth().height(4.dp).clip(CircleShape).background(colors.onSurface.copy(alpha = 0.14f))) {
+                Box(Modifier.fillMaxWidth().height(if (thick) 8.dp else 4.dp).clip(CircleShape).background(colors.onSurface.copy(alpha = 0.14f))) {
                     Box(Modifier.fillMaxWidth(slider.value.coerceIn(0f, 1f)).fillMaxHeight().background(seekBrush))
                 }
             },

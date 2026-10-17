@@ -69,6 +69,7 @@ class PlayerScreenTest {
                             onMove = { from, to -> rec.events += "move:$from:$to" }, editable = true,
                             modifier = modifier.padding(horizontal = 4.dp),
                         )
+                        PlayerPane.RELATED -> Unit
                     }
                 },
                 paneActions = { pane ->

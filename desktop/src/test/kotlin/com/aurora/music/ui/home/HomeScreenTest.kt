@@ -67,9 +67,11 @@ class HomeScreenTest {
         home("home-feed-light", HomeUiState(loading = false, data = HomeData(sections = sections, continuation = null), feeds = feeds),
             UiPrefs(themeMode = ThemeMode.LIGHT), events).use { scene ->
             assertTrue(scene.shot().distinctColors(6) > 40)
-            scene.click(120f, 220f)
+            scene.click(150f, 265f)
             assertEquals("all:8:0", events.last())
-            scene.click(1116f, 52f)
+            scene.click(470f, 329f)
+            assertEquals("all:8:5", events.last())
+            scene.click(194f, 130f)
             assertEquals("feed:discovery", events.last())
         }
         home("home-glass", HomeUiState(loading = false, data = library), UiPrefs(themeStyle = ThemeStyle.GLASS)).use { it.shot() }

@@ -1,5 +1,6 @@
 package com.aurora.music.ui.screens.detail
 
+import androidx.compose.material.icons.filled.Radio
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -105,6 +106,7 @@ import com.aurora.music.ui.theme.readableAccent
 import com.aurora.music.util.rememberDominantColor
 import com.aurora.music.viewmodel.DetailUiState
 import kotlinx.coroutines.launch
+import com.aurora.music.ui.theme.themedCorner
 
 private val MetaSeparator = Regex("\\s+[•·]\\s+|\\s*[•·]\\s*$")
 private val YearPattern = Regex("(19|20)\\d{2}")
@@ -175,7 +177,7 @@ fun DetailScreen(
     val effectiveArt = artistInfo?.imageUrl?.takeIf { info.isArtist && it.isNotBlank() } ?: info.artUrl
     val accent by rememberDominantColor(effectiveArt, info.accent)
     val baseScheme = MaterialTheme.colorScheme
-    val accentInk = readableAccent(accent, baseScheme.background.luminance() < 0.5f)
+    val accentInk = readableAccent(accent, baseScheme.onBackground.luminance() > 0.5f)
     val albumScheme = baseScheme.copy(primary = accentInk, onPrimary = if (accentInk.luminance() > 0.5f) Color.Black else Color.White)
 
     val listState = rememberLazyListState()
@@ -272,6 +274,10 @@ fun DetailScreen(
                 DropdownMenuItem(text = { Text(appString(R.string.text_play_5d12bd)) }, enabled = tracks.isNotEmpty(), onClick = { headerMenu = false; onPlayAll(tracks, 0) }, leadingIcon = { Icon(Icons.Filled.PlayArrow, null) })
                 DropdownMenuItem(text = { Text(appString(R.string.text_shuffle_5b772b)) }, enabled = tracks.isNotEmpty(), onClick = { headerMenu = false; onShufflePlay(tracks) }, leadingIcon = { Icon(Icons.Filled.Shuffle, null) })
                 DropdownMenuItem(text = { Text(appString(R.string.text_add_all_to_queue_6cb104)) }, enabled = tracks.isNotEmpty(), onClick = { headerMenu = false; tracks.forEach { onAddToQueue(it) } }, leadingIcon = { Icon(Icons.AutoMirrored.Filled.QueueMusic, null) })
+                com.aurora.music.ui.components.LocalStartRadio.current?.let { startRadio ->
+                    DropdownMenuItem(text = { Text(appString(R.string.discovery_start_radio)) }, enabled = tracks.isNotEmpty(),
+                        onClick = { headerMenu = false; startRadio(tracks.first()) }, leadingIcon = { Icon(Icons.Filled.Radio, null) })
+                }
                 DropdownMenuItem(
                     text = { Text(appString(if (isPinned) R.string.text_unpin_from_library_5b3f2e else R.string.text_pin_to_library_7b01e2)) },
                     onClick = { headerMenu = false; onTogglePin() },
@@ -437,7 +443,7 @@ fun DetailScreen(
                             modifier = Modifier.clip(CircleShape).clickable { query = "" }.pointerHoverIcon(PointerIcon.Hand).padding(4.dp))
                     },
                     singleLine = true,
-                    shape = RoundedCornerShape(14.dp),
+                    shape = RoundedCornerShape(themedCorner(14.dp)),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -563,7 +569,7 @@ private fun Modifier.bleed(amount: Dp): Modifier = layout { measurable, constrai
 
 @Composable
 private fun panelShape(): Shape =
-    if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(28.dp) else MaterialTheme.shapes.extraLarge
+    if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(themedCorner(28.dp)) else MaterialTheme.shapes.extraLarge
 
 private fun totalLength(seconds: Int): String {
     val minutes = ((seconds + 30) / 60).coerceAtLeast(1)
@@ -677,7 +683,7 @@ private fun EditPlaylistDialog(initialName: String, initialDesc: String, onSave:
     var saving by remember { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    androidx.compose.material3.AlertDialog(
+    androidx.compose.material3.AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, 
         onDismissRequest = { if (!saving) onDismiss() },
         title = { Text(appString(R.string.text_edit_playlist_1528d5), fontWeight = FontWeight.Bold) },
         text = {

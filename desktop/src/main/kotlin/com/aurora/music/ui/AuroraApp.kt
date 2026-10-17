@@ -1,9 +1,16 @@
 package com.aurora.music.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import com.aurora.music.ui.theme.fade
+import com.aurora.music.ui.theme.glassEdge
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.animateFloatAsState
+import com.aurora.music.ui.theme.glassScheme
+import com.aurora.music.ui.theme.LocalGlassLook
+import com.aurora.music.ui.theme.LocalGlass
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
@@ -198,6 +205,7 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import com.aurora.music.ui.theme.themedCorner
 
 private val unportedRoutes = setOf(
     Routes.RADIO, Routes.PODCASTS, Routes.SETTINGS_TUNING, Routes.SETTINGS_COMPARISON, Routes.SETTINGS_PRESET_RULES, Routes.SETTINGS_LISTENING,
@@ -349,7 +357,11 @@ private fun Shell(
     val panelWidth = panelPane.resolve(TabletMetrics.SidePanelWidth, TabletMetrics.SidePanelMinWidth, windowLayout.maxSidePanelWidth)
     val shell = windowLayout.shell(panelRequested = rail && sidePane != null && playerState.hasTrack, panelWidth = panelWidth)
     val uiPrefs = LocalUiPrefs.current
-    val navLayout = remember(uiPrefs.navLayout, simpleMode) { NavMenu.parse(uiPrefs.navLayout).visible(simpleMode).ported() }
+    val libraryReloads by container.libraryReload.collectAsStateWithLifecycle()
+    val exploreAvailable = remember(sessionReady, accountEpoch, libraryReloads) { container.repository.supportsExplore }
+    val navLayout = remember(uiPrefs.navLayout, simpleMode, exploreAvailable) {
+        NavMenu.parse(uiPrefs.navLayout).visible(simpleMode, discovery = exploreAvailable).ported()
+    }
     val navGap = if (rail) (TabletMetrics.NavGap + (uiPrefs.tabletNavGap - TabletSetting.NAV_GAP.default).dp).coerceAtLeast(0.dp) else 0.dp
     val gutter = LocalPageGutter.current
     val panelSpacing = uiPrefs.tabletPanelSpacing.dp.coerceAtLeast(4.dp)
@@ -376,7 +388,11 @@ private fun Shell(
         }
     }
 
-    val playerColors = rememberPlayerColorScheme(playerState.current.artworkUrl, playerState.current.accent)
+    val glass = LocalGlass.current
+    val glassLook = LocalGlassLook.current
+    val artColors = rememberPlayerColorScheme(playerState.current.artworkUrl, playerState.current.accent)
+    val playerColors = if (glass) artColors.glassScheme(artColors.onBackground.luminance() > 0.5f, glassLook) else artColors
+    val shellAlpha by animateFloatAsState(if (glass && playerState.expanded) 0f else 1f, tween(260), label = "shellFade")
 
     fun navigateTopLevel(route: String) {
         if (navController.currentDestination?.route == route) return
@@ -475,13 +491,15 @@ private fun Shell(
         }
     }
     LaunchedEffect(shortcuts) { shortcuts.collect { onShortcut(it) } }
+    var lyricsFullscreen by remember { mutableStateOf(false) }
     LaunchedEffect(playerState.expanded, fullscreen) {
         if (fullscreen && !player.state.value.expanded) onFullscreenChange(false)
+        if (!fullscreen) lyricsFullscreen = false
     }
 
     val nowPlayingPane: @Composable (PlayerPane, Modifier) -> Unit = { pane, modifier ->
         when (pane) {
-            PlayerPane.LYRICS -> LyricsPane(playerState, onSeek = { player.seekTo(it) }, modifier = modifier.clip(RoundedCornerShape(20.dp)))
+            PlayerPane.LYRICS -> LyricsPane(playerState, onSeek = { player.seekTo(it) }, modifier = modifier.clip(RoundedCornerShape(themedCorner(20.dp))))
             PlayerPane.QUEUE -> QueueContent(
                 queue = playerState.queue,
                 currentIndex = playerState.currentIndex,
@@ -491,6 +509,12 @@ private fun Shell(
                 onMove = { from, to -> player.moveQueueItem(from, to) },
                 editable = !playerState.isMix,
                 modifier = modifier.padding(horizontal = 4.dp),
+            )
+            PlayerPane.RELATED -> com.aurora.music.ui.screens.player.RelatedPane(
+                playerState.current,
+                onOpenDetail = { kind, id -> player.setExpanded(false); openDetail(kind, id) },
+                onPlayAll = { songs, index -> player.playAll(songs, index) },
+                modifier = modifier,
             )
         }
     }
@@ -664,8 +688,12 @@ private fun Shell(
                 onOpenProcessingPresets = { nav.navigate(Routes.SETTINGS_PROCESSING_PRESETS) },
                 onOpenProcessingRack = { nav.navigate(Routes.SETTINGS_PROCESSING_RACK) },
                 onOpenImpulses = { nav.navigate(Routes.SETTINGS_IMPULSES) },
+                onOpenReverb = { nav.navigate(Routes.SETTINGS_REVERB) },
             )
         }
+        composable(Routes.SETTINGS_REVERB) { com.aurora.music.ui.screens.settings.ReverbSettingsScreen(padding, onBack = pop) }
+        composable(Routes.SETTINGS_LYRICS) { com.aurora.music.ui.screens.settings.LyricsSettingsScreen(padding, onBack = pop) }
+        composable(Routes.SETTINGS_MERGE) { com.aurora.music.ui.screens.settings.MergeOptionsScreen(padding, onBack = pop) }
         composable(Routes.SETTINGS_PROCESSING_PRESETS) {
             ProcessingPresetsScreen(padding, onBack = pop, onOpenSignalPath = { nav.navigate(Routes.SIGNAL_PATH) })
         }
@@ -686,6 +714,12 @@ private fun Shell(
         composable(Routes.SETTINGS_LANGUAGE) { LanguageSettingsScreen(padding, pop) }
     }
 
+    val startRadio: (Song) -> Unit = { song -> player.startSonicRadio(song) { confirm(it) } }
+    CompositionLocalProvider(
+        com.aurora.music.ui.components.LocalStartRadio provides startRadio,
+        com.aurora.music.ui.screens.player.LocalPlayerPanes provides
+            if (exploreAvailable) PlayerPane.entries else listOf(PlayerPane.LYRICS, PlayerPane.QUEUE),
+    ) {
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
@@ -720,7 +754,8 @@ private fun Shell(
         ) {
             AmbientBackground()
             if (rail) {
-                Box(Modifier.fillMaxHeight().then(if (dockVisible) Modifier.padding(bottom = dockHeight + 12.dp) else Modifier)) {
+                Box(Modifier.fillMaxHeight().graphicsLayer { alpha = shellAlpha }
+                    .then(if (dockVisible) Modifier.padding(bottom = dockHeight + 12.dp) else Modifier)) {
                     if (shell.expandedSidebar) {
                         TabletSidebar(
                             currentRoute = currentRoute,
@@ -744,7 +779,7 @@ private fun Shell(
                 }
             }
             Scaffold(
-                modifier = Modifier.padding(start = if (rail) shell.navWidth + navGap else 0.dp)
+                modifier = Modifier.graphicsLayer { alpha = shellAlpha }.padding(start = if (rail) shell.navWidth + navGap else 0.dp)
                     .then(if (dockVisible) Modifier.padding(bottom = dockHeight + 12.dp + panelSpacing) else Modifier),
                 containerColor = Color.Transparent,
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -789,6 +824,7 @@ private fun Shell(
                             popExitTransition = { ExitTransition.None },
                         ) {
                             composable(Routes.SIGN_IN) {
+                                val onSignedIn: () -> Unit = { navController.navigate(Routes.HOME) { popUpTo(Routes.SIGN_IN) { inclusive = true } } }
                                 SignInScreen(
                                     state = authState,
                                     onSelectType = authVM::selectType,
@@ -811,6 +847,14 @@ private fun Shell(
                                     onRemoveFolder = authVM::removeMusicFolder,
                                     savedSessions = savedSessions,
                                     onUseSaved = { authVM.useSaved(it) },
+                                    onConnectYouTubeMusic = { authVM.connectYouTubeMusic(it, onSignedIn) },
+                                    onConnectSpotifyWeb = { cookie, profile -> authVM.connectSpotifyWeb(cookie, profile, onSignedIn) },
+                                    onConnectSoundCloud = { authVM.connectSoundCloud(it, onSignedIn) },
+                                    spotifyOperations = container.spotifyWeb.operations,
+                                    onExit = if (sessionReady == true) ({
+                                        authVM.reset()
+                                        if (!navController.popBackStack()) navController.navigate(Routes.HOME) { popUpTo(Routes.SIGN_IN) { inclusive = true } }
+                                    }) else null,
                                 )
                             }
                             composable(Routes.NOTIFICATIONS) {
@@ -843,6 +887,25 @@ private fun Shell(
                                     onSelectFeed = homeVM::selectFeed,
                                     onOpenNotifications = { navController.navigate(Routes.NOTIFICATIONS) },
                                     onAddSource = { authVM.reset(); navController.navigate(Routes.SIGN_IN) },
+                                )
+                            }
+                            composable(Routes.EXPLORE) {
+                                com.aurora.music.ui.screens.explore.ExploreScreen(
+                                    contentPadding = inner,
+                                    onOpenDetail = { kind, id -> openDetail(kind, id) },
+                                    onPlayAll = { songs, index -> player.playAll(songs, index) },
+                                    onOpenCategory = { navController.navigate(Routes.exploreCategory(it.params, it.title)) },
+                                )
+                            }
+                            composable(Routes.EXPLORE_CATEGORY,
+                                arguments = listOf(navArgument("params") { defaultValue = "" }, navArgument("title") { defaultValue = "" })) { entry ->
+                                com.aurora.music.ui.screens.explore.ExploreCategoryScreen(
+                                    contentPadding = inner,
+                                    params = entry.arg("params"),
+                                    title = entry.arg("title"),
+                                    onBack = { navController.popBackStack() },
+                                    onOpenDetail = { kind, id -> openDetail(kind, id) },
+                                    onPlayAll = { songs, index -> player.playAll(songs, index) },
                                 )
                             }
                             composable(Routes.SEARCH) {
@@ -912,8 +975,10 @@ private fun Shell(
                                                 onDownload = onDownload,
                                                 onRemoveDownload = onRemoveDownload,
                                                 onOpenSearch = { navigateTopLevel(Routes.SEARCH) },
-                                                onCreatePlaylist = { name ->
-                                                    playlistMutation { repository.createPlaylist(name) }.also { created ->
+                                                playlistTargets = { repository.playlistTargets(libraryVM.scope()) },
+                                                onSelectView = libraryVM::selectView,
+                                                onCreatePlaylist = { name, description, target ->
+                                                    playlistMutation { repository.createPlaylist(name, libraryVM.scope(), description, target) }.also { created ->
                                                         if (created) {
                                                             libraryVM.load()
                                                             playlistsVersion++
@@ -1154,6 +1219,8 @@ private fun Shell(
                                                     onOpenSources = { open(Routes.SETTINGS_SOURCES) },
                                                     onOpenDownloads = { open(Routes.SETTINGS_STORAGE) },
                                                     onOpenAppearance = { open(Routes.SETTINGS_APPEARANCE) },
+                                                    onOpenLyricsSettings = { open(Routes.SETTINGS_LYRICS) },
+                                                    onOpenMerge = { open(Routes.SETTINGS_MERGE) },
                                                     onOpenLanguage = { open(Routes.SETTINGS_LANGUAGE) },
                                                     onOpenIntegrations = { open(Routes.SETTINGS_INTEGRATIONS) },
                                                     onOpenAbout = { open(Routes.SETTINGS_ABOUT) },
@@ -1255,6 +1322,7 @@ private fun Shell(
                     onOpenOutput = { showOutput = true },
                     onPane = { showPane(it) },
                     modifier = Modifier.align(Alignment.BottomCenter)
+                        .graphicsLayer { alpha = shellAlpha }
                         .padding(start = 12.dp, end = 12.dp, bottom = 12.dp)
                         .onSizeChanged { dockHeight = with(density) { it.height.toDp() } },
                 )
@@ -1305,6 +1373,16 @@ private fun Shell(
                         onPaneRequestHandled = { playerPaneRequest = null },
                         paneActions = nowPlayingPaneActions,
                         onSplitChange = { split -> scope.launch { store.setTabletSetting(TabletSetting.PLAYER_SPLIT, split) } },
+                        // full-screen lyrics take the whole screen too, and hand it back only if they took it
+                        onImmersiveLyrics = { on ->
+                            if (on && !fullscreen) {
+                                lyricsFullscreen = true
+                                onFullscreenChange(true)
+                            } else if (!on && lyricsFullscreen) {
+                                lyricsFullscreen = false
+                                onFullscreenChange(false)
+                            }
+                        },
                     )
                 }
             }
@@ -1314,12 +1392,18 @@ private fun Shell(
             }
         }
     }
+    }
 
     if (showSpeedSheet) {
         SpeedPitchSheet(
             speed = playerState.speed,
             onSpeed = { player.setSpeed(it) },
             onReset = { player.resetSpeedPitch() },
+            onOpenReverbSettings = {
+                showSpeedSheet = false
+                player.setExpanded(false)
+                navController.navigate(Routes.SETTINGS_REVERB) { launchSingleTop = true }
+            },
             onDismiss = { showSpeedSheet = false },
         )
     }
@@ -1362,9 +1446,10 @@ private fun DownloadProgressBanner(count: Int, progress: Float) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .then(if (classic) Modifier.clip(RoundedCornerShape(18.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.96f))
-                .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f), RoundedCornerShape(18.dp))
+            .then(if (classic) Modifier.clip(RoundedCornerShape(themedCorner(18.dp)))
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh.fade(0.96f))
+                .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f), RoundedCornerShape(themedCorner(18.dp)))
+                .glassEdge(RoundedCornerShape(themedCorner(18.dp)))
                 else Modifier.auroraPanel(MaterialTheme.shapes.large))
             .padding(horizontal = 14.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,

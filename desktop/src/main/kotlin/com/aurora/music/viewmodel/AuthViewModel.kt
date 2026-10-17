@@ -6,6 +6,18 @@ import com.aurora.music.data.ServerType
 import com.aurora.music.data.Session
 import com.aurora.music.desktop.DesktopContainer
 import com.aurora.music.desktop.auth.AccountAuthenticator
+import com.aurora.music.desktop.platform.WebCredentials
+import com.aurora.music.R
+import com.aurora.music.data.SoundCloudBackend
+import com.aurora.music.data.SpotifyWebBackend
+import com.aurora.music.data.SpotifyWebProfile
+import com.aurora.music.data.YouTubeMusicBackend
+import com.aurora.music.data.remote.SoundCloudClient
+import com.aurora.music.data.remote.SoundCloudWebSession
+import com.aurora.music.data.remote.YouTubeMusicClient
+import com.aurora.music.data.remote.YouTubeMusicWebSession
+import com.aurora.music.localization.appString
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
@@ -17,7 +29,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-enum class AuthStep { TYPE, SERVER, CREDENTIALS, FOLDERS }
+enum class AuthStep { TYPE, SERVER, CREDENTIALS, FOLDERS, YOUTUBE_MUSIC, SPOTIFY, SOUNDCLOUD }
 
 data class AuthUiState(
     val step: AuthStep = AuthStep.TYPE,
@@ -56,7 +68,63 @@ class AuthViewModel(private val container: DesktopContainer) : ViewModel() {
     fun selectType(type: ServerType) {
         if (type !in AccountAuthenticator.SUPPORTED) return
         _state.update { if (it.type != type) it.copy(password = "") else it }
-        _state.update { it.copy(type = type, step = if (type == ServerType.LOCAL) AuthStep.FOLDERS else AuthStep.SERVER, error = null) }
+        val step = when (type) {
+            ServerType.LOCAL -> AuthStep.FOLDERS
+            ServerType.YOUTUBE_MUSIC -> AuthStep.YOUTUBE_MUSIC
+            ServerType.SPOTIFY -> AuthStep.SPOTIFY
+            ServerType.SOUNDCLOUD -> AuthStep.SOUNDCLOUD
+            else -> AuthStep.SERVER
+        }
+        _state.update { it.copy(type = type, step = step, error = null) }
+    }
+
+    fun connectYouTubeMusic(webSession: String, onDone: () -> Unit = {}) = connectWeb(container.youtubeMusicCredentials, onDone,
+        failure = R.string.text_could_not_connect_youtube_music_please_try_again_e327a1) { save ->
+        val auth = YouTubeMusicWebSession.decode(webSession)
+        val client = YouTubeMusicClient(session = { auth }, http = container.http)
+        val (name, handle, photo) = YouTubeMusicBackend.account(client, auth.dataSyncId)
+        Session(YouTubeMusicClient.ORIGIN, name, "", save(auth.encode()), ServerType.YOUTUBE_MUSIC, userId = handle, imageUrl = photo)
+    }
+
+    fun connectSoundCloud(webSession: String, onDone: () -> Unit = {}) = connectWeb(container.soundcloudCredentials, onDone,
+        failure = R.string.soundcloud_connect_failed) { save ->
+        var auth = SoundCloudWebSession.decode(webSession)
+        val client = SoundCloudClient({ auth }, { auth = it }, container.http)
+        val (id, name, avatar) = SoundCloudBackend.profile(client)
+        Session(SoundCloudClient.WEB, name, "", save(auth.encode()), ServerType.SOUNDCLOUD, userId = id, imageUrl = avatar)
+    }
+
+    fun connectSpotifyWeb(sessionCookie: String, profile: SpotifyWebProfile?, onDone: () -> Unit = {}) {
+        if (sessionCookie.isBlank() || profile == null) {
+            _state.update { it.copy(loading = false, error = appString(R.string.spotify_web_failed)) }
+            return
+        }
+        connectWeb(container.spotifyCredentials, onDone, failure = R.string.spotify_web_failed) { save ->
+            SpotifyWebBackend.session(profile, save(sessionCookie))
+        }
+    }
+
+    // signing the same account in again replaces its saved login instead of leaving the old one behind
+    private fun connectWeb(credentials: WebCredentials, onDone: () -> Unit, failure: Int, build: suspend (save: (String) -> String) -> Session) {
+        if (_state.value.loading) return
+        _state.update { it.copy(loading = true, error = null) }
+        signInJob = viewModelScope.launch {
+            var reference: String? = null
+            try {
+                val session = build { value -> credentials.save(value).also { reference = it } }
+                val previous = container.settingsStore.savedSessions.first()
+                    .filter { it.type == session.type && it.userId == session.userId && it.salt == session.salt }
+                container.applySession(session)
+                previous.filter { it.token != reference }.forEach { credentials.remove(it.token) }
+                _state.update { it.copy(loading = false, error = null) }
+                onDone()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                reference?.let(credentials::remove)
+                _state.update { it.copy(loading = false, error = if (e is java.io.IOException) container.authenticator.errorMessage(e, it.type) else appString(failure)) }
+            }
+        }
     }
 
     fun addMusicFolder(path: String) {
@@ -90,7 +158,7 @@ class AuthViewModel(private val container: DesktopContainer) : ViewModel() {
     fun back() = _state.update {
         when (it.step) {
             AuthStep.CREDENTIALS -> it.copy(step = AuthStep.SERVER, error = null)
-            AuthStep.SERVER, AuthStep.FOLDERS -> it.copy(step = AuthStep.TYPE, error = null)
+            AuthStep.SERVER, AuthStep.FOLDERS, AuthStep.YOUTUBE_MUSIC, AuthStep.SPOTIFY, AuthStep.SOUNDCLOUD -> it.copy(step = AuthStep.TYPE, error = null)
             AuthStep.TYPE -> it
         }
     }

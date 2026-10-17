@@ -65,7 +65,7 @@ fun AboutSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
     var openNotice by remember { mutableStateOf<Notice?>(null) }
     var showFontLicenses by remember { mutableStateOf(false) }
     openNotice?.let { notice ->
-        AlertDialog(onDismissRequest = { openNotice = null }, title = { Text(notice.name) },
+        AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, onDismissRequest = { openNotice = null }, title = { Text(notice.name) },
             text = { Text(notice.detail, modifier = Modifier.verticalScroll(rememberScrollState())) },
             confirmButton = { TextButton(onClick = { openNotice = null }) { Text(appString(R.string.text_close_bbfa77)) } },
             dismissButton = { TextButton(onClick = { runCatching { uriHandler.openUri(notice.source) } }) { Text(appString(R.string.text_source_6da13a)) } })
@@ -78,7 +78,7 @@ fun AboutSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
                 "Manrope" to "manrope-OFL.txt",
             ).map { (name, file) -> name to (resourceText("font_licenses/$file") ?: "SIL Open Font License 1.1") }
         }
-        AlertDialog(
+        AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, 
             onDismissRequest = { showFontLicenses = false },
             title = { Text(appString(R.string.font_licenses_title)) },
             text = {

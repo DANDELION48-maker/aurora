@@ -153,7 +153,7 @@ fun DetailedStatsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpe
             }
         }
     }
-    if (confirmDelete) AlertDialog(
+    if (confirmDelete) AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, 
         onDismissRequest = { confirmDelete = false },
         icon = { androidx.compose.material3.Icon(Icons.Filled.Delete, null) },
         title = { Text(appString(R.string.insights_delete)) },

@@ -92,6 +92,7 @@ import com.aurora.music.ui.theme.auroraPanel
 import com.aurora.music.util.accentFor
 import com.aurora.music.viewmodel.SearchUiState
 import kotlin.math.roundToInt
+import com.aurora.music.ui.theme.themedCorner
 
 private enum class SearchFilter(private val labelRes: Int) {
     ALL(R.string.text_all_6a7208), SONGS(R.string.text_songs_e1404b), ALBUMS(R.string.text_albums_4c45e7), ARTISTS(R.string.text_artists_1528d8), PLAYLISTS(R.string.text_playlists_77b69f);
@@ -205,7 +206,7 @@ fun SearchScreen(
                         .clickable { onQuery("") }.pointerHoverIcon(PointerIcon.Hand).padding(7.dp))
                 }),
                 singleLine = true,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(themedCorner(16.dp)),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = { onCommitSearch() }),
                 colors = TextFieldDefaults.colors(
@@ -464,7 +465,7 @@ private fun TopRow(card: @Composable () -> Unit, list: @Composable () -> Unit) {
 
 @Composable
 private fun TopResultCard(hit: TopHit, onOpen: () -> Unit, onPlay: (() -> Unit)?) {
-    val shape = RoundedCornerShape(24.dp)
+    val shape = RoundedCornerShape(themedCorner(24.dp))
     Box(
         Modifier.fillMaxSize().auroraPanel(shape)
             .background(Brush.linearGradient(listOf(Color.Transparent, hit.accent.copy(alpha = 0.18f))))
@@ -525,7 +526,7 @@ private fun RecentSearches(
         items(recents.size) { i ->
             val q = recents[i]
             Row(
-                Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).clickable { onClick(q) }.pointerHoverIcon(PointerIcon.Hand)
+                Modifier.fillMaxWidth().clip(RoundedCornerShape(themedCorner(12.dp))).clickable { onClick(q) }.pointerHoverIcon(PointerIcon.Hand)
                     .padding(horizontal = 12.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {

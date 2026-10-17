@@ -9,16 +9,16 @@ import com.aurora.music.desktop.natives.WindowNative
 import com.aurora.music.desktop.platform.HostPlatform
 
 @Composable
-fun WindowChrome(windowHandle: Long) {
+fun WindowChrome(windowHandle: Long, translucent: Boolean = false) {
     val colors = MaterialTheme.colorScheme
-    val dark = colors.background.luminance() < 0.5f
+    val dark = colors.onBackground.luminance() > 0.5f
     val caption = colors.background.toArgb()
     val text = colors.onBackground.toArgb()
     val border = colors.outline.toArgb()
-    LaunchedEffect(windowHandle, dark, caption, text, border) {
+    LaunchedEffect(windowHandle, dark, caption, text, border, translucent) {
         if (windowHandle == 0L || !HostPlatform.isWindows) return@LaunchedEffect
         WindowNative.setDarkMode(windowHandle, dark)
-        WindowNative.setCaptionColor(windowHandle, caption)
+        if (translucent) WindowNative.clearCaptionColor(windowHandle) else WindowNative.setCaptionColor(windowHandle, caption)
         WindowNative.setTextColor(windowHandle, text)
         WindowNative.setBorderColor(windowHandle, border)
     }

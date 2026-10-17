@@ -48,6 +48,7 @@ import com.aurora.music.R
 import com.aurora.music.localization.appString
 import com.aurora.music.ui.layout.TabletMetrics
 import java.awt.Cursor
+import com.aurora.music.ui.theme.themedCorner
 
 @Stable
 class PaneWidth internal constructor(saved: Float?) {
@@ -143,6 +144,6 @@ fun HoverTooltip(label: String) {
         label,
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.inverseOnSurface,
-        modifier = Modifier.clip(RoundedCornerShape(6.dp)).background(MaterialTheme.colorScheme.inverseSurface).padding(horizontal = 8.dp, vertical = 4.dp),
+        modifier = Modifier.clip(RoundedCornerShape(themedCorner(6.dp))).background(MaterialTheme.colorScheme.inverseSurface).padding(horizontal = 8.dp, vertical = 4.dp),
     )
 }

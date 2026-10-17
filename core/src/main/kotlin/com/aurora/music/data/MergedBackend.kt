@@ -352,6 +352,27 @@ class MergedBackend(
 
     override suspend fun songFor(id: String): Song? = route(id) { src, i, oid -> src.songFor(oid)?.wrap(i) }
     override suspend fun radio(seedId: String): List<Song> = route(seedId) { src, i, oid -> src.radio(oid).map { it.wrap(i) } } ?: emptyList()
+
+    // discovery comes from the youtube music source, whichever source the song itself plays from
+    private val explorer: Int get() = youtubeIndex.takeIf { it >= 0 && sources[it].supportsExplore } ?: -1
+    override val supportsExplore: Boolean get() = explorer >= 0
+
+    override suspend fun explore(): ExploreData {
+        val index = explorer.takeIf { it >= 0 } ?: return ExploreData()
+        val data = sources[index].explore()
+        return data.copy(sections = HomeData(sections = data.sections).wrapHome(index).sections)
+    }
+
+    override suspend fun exploreCategory(params: String): HomeData {
+        val index = explorer.takeIf { it >= 0 } ?: return HomeData()
+        return sources[index].exploreCategory(params).wrapHome(index)
+    }
+
+    override suspend fun related(song: Song): HomeData {
+        val index = explorer.takeIf { it >= 0 } ?: return HomeData()
+        val (owner, original) = unwrap(song.id) ?: (-1 to song.id)
+        return sources[index].related(if (owner == index) song.copy(id = original) else song).wrapHome(index)
+    }
     override fun prefersServerRadio(seedId: String): Boolean {
         val (index, original) = unwrap(seedId) ?: return if (SEP in seedId) false
             else primary?.prefersServerRadio(seedId) ?: false

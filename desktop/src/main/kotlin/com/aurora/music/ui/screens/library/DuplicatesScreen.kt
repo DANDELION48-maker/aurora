@@ -1,6 +1,7 @@
 package com.aurora.music.ui.screens.library
 
 import com.aurora.music.localization.appPlural
+import com.aurora.music.ui.theme.fade
 
 import com.aurora.music.localization.appString
 import com.aurora.music.R
@@ -47,6 +48,7 @@ import com.aurora.music.ui.layout.LocalPageGutter
 import com.aurora.music.ui.theme.LocalUiPrefs
 import com.aurora.music.ui.theme.auroraPanel
 import com.aurora.music.model.accent
+import com.aurora.music.ui.theme.themedCorner
 
 @Composable
 fun DuplicatesScreen(
@@ -90,11 +92,11 @@ fun DuplicatesScreen(
 @Composable
 private fun GroupCard(group: DuplicateGroup, currentSongId: String, onPlay: (Song) -> Unit) {
     val aurora = LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA
-    val shape = if (aurora) RoundedCornerShape(18.dp) else MaterialTheme.shapes.medium
+    val shape = if (aurora) RoundedCornerShape(themedCorner(18.dp)) else MaterialTheme.shapes.medium
     Column(
         Modifier
             .fillMaxWidth()
-            .then(if (aurora) Modifier.clip(shape).background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.45f)) else Modifier.auroraPanel(shape))
+            .then(if (aurora) Modifier.clip(shape).background(MaterialTheme.colorScheme.surfaceContainerHigh.fade(0.45f)) else Modifier.auroraPanel(shape))
             .padding(12.dp),
     ) {
         Text(group.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -106,7 +108,7 @@ private fun GroupCard(group: DuplicateGroup, currentSongId: String, onPlay: (Son
         Spacer(Modifier.height(8.dp))
         group.songs.forEach { s ->
             Row(
-                Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).clickable { onPlay(s) }.pointerHoverIcon(PointerIcon.Hand).padding(6.dp),
+                Modifier.fillMaxWidth().clip(RoundedCornerShape(themedCorner(12.dp))).clickable { onPlay(s) }.pointerHoverIcon(PointerIcon.Hand).padding(6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Artwork(s.artworkUrl, s.accent, Modifier.size(40.dp), corner = 10.dp)

@@ -45,6 +45,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import com.aurora.music.ui.theme.themedCorner
 
 @Composable
 fun StorageSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
@@ -68,7 +69,7 @@ fun StorageSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
         SettingsTopBar(appString(R.string.text_downloads_storage_f7c580), onBack)
         SettingsScroll(contentPadding) {
             Row(
-                Modifier.fillMaxWidth().padding(16.dp).clip(RoundedCornerShape(18.dp)).background(MaterialTheme.colorScheme.surfaceContainerHigh).padding(18.dp),
+                Modifier.fillMaxWidth().padding(16.dp).clip(RoundedCornerShape(themedCorner(18.dp))).background(MaterialTheme.colorScheme.surfaceContainerHigh).padding(18.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(Icons.Filled.DownloadDone, null, tint = MaterialTheme.colorScheme.primary)
@@ -128,7 +129,7 @@ private fun FolderRow(icon: androidx.compose.ui.graphics.vector.ImageVector, tit
 private fun ActionRow(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String, tint: androidx.compose.ui.graphics.Color, enabled: Boolean = true, onClick: () -> Unit) {
     Row(
         Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)
-            .clip(RoundedCornerShape(14.dp)).background(MaterialTheme.colorScheme.surfaceContainerHigh)
+            .clip(RoundedCornerShape(themedCorner(14.dp))).background(MaterialTheme.colorScheme.surfaceContainerHigh)
             .then(if (enabled) Modifier.pointerHoverIcon(PointerIcon.Hand) else Modifier)
             .clickable(enabled = enabled, onClick = onClick)
             .padding(16.dp),

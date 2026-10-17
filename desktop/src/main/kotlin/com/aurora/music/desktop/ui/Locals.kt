@@ -9,3 +9,5 @@ val LocalDesktopContainer = staticCompositionLocalOf<DesktopContainer> { error("
 val LocalPlayer = staticCompositionLocalOf<PlayerController> { error("no player") }
 
 val LocalTrayAvailable = staticCompositionLocalOf { true }
+
+val LocalBackdropAvailable = staticCompositionLocalOf { false }

@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="chromium_downloading" formatted="false">"로그인 브라우저를 다운로드하는 중입니다. 한 번만 받으며 약 150MB입니다."</string>
+    <string name="chromium_failed" formatted="false">"로그인 브라우저를 시작할 수 없습니다: %1$s"</string>
+    <string name="chromium_preparing" formatted="false">"로그인 브라우저를 준비하는 중…"</string>
+    <string name="discovery_explore" formatted="false">"둘러보기"</string>
+    <string name="discovery_explore_failed" formatted="false">"둘러보기를 불러올 수 없습니다. 연결을 확인하고 다시 시도하세요."</string>
+    <string name="discovery_related" formatted="false">"관련"</string>
+    <string name="discovery_related_empty" formatted="false">"YouTube Music에 이 곡과 관련된 항목이 없습니다."</string>
+    <string name="discovery_start_radio" formatted="false">"라디오 시작"</string>
+    <string name="lyrics_settings_summary" formatted="false">"동기화 방식과 가사 출처"</string>
+    <string name="lyrics_source_lrclib_detail" formatted="false">"무료 커뮤니티 가사 데이터베이스"</string>
+    <string name="lyrics_source_server" formatted="false">"곡 자체의 출처"</string>
+    <string name="lyrics_source_server_detail" formatted="false">"서버, 스트리밍 서비스 또는 파일 자체의 가사"</string>
+    <string name="lyrics_source_spotify_detail" formatted="false">"병합된 Spotify 계정의 동기화 가사"</string>
+    <string name="lyrics_sources_hint" formatted="false">"Aurora는 이 순서대로 확인합니다. 처음 찾은 동기화 가사를 쓰고, 없으면 처음 찾은 가사를 씁니다."</string>
+    <string name="lyrics_sources_title" formatted="false">"가사 출처"</string>
+    <string name="merge_comments" formatted="false">"SoundCloud 댓글"</string>
+    <string name="merge_comments_summary" formatted="false">"일치하는 SoundCloud 트랙이 있으면 시간별 댓글을 표시합니다"</string>
+    <string name="merge_lyrics" formatted="false">"Spotify 가사"</string>
+    <string name="merge_lyrics_summary" formatted="false">"다른 출처의 곡에 Spotify 동기화 가사를 사용합니다"</string>
+    <string name="merge_options" formatted="false">"병합 옵션"</string>
+    <string name="merge_options_note" formatted="false">"SoundCloud나 Spotify가 통합 보관함에 포함되면 Aurora가 그 부가 기능을 다른 출처의 곡에도 적용할 수 있습니다. 각각을 전체 또는 특정 출처의 곡에 대해 끌 수 있습니다."</string>
+    <string name="merge_options_summary" formatted="false">"병합된 서비스가 곡에 더하는 것"</string>
+    <string name="merge_songs_from" formatted="false">"곡 출처"</string>
+    <string name="playlist_save_to" formatted="false">"저장 위치"</string>
+    <string name="text_acrylic_f39ce1" formatted="false">"아크릴"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"음악 폴더 추가"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"오디오 디코딩. Copyright © FFmpeg 개발자. LGPL-3.0-or-later, JavaCPP Presets를 통해 동적으로 링크됨. 전체 라이선스: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
     <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"DAC에 자체 볼륨이 있으면 Aurora 볼륨으로 이를 조절합니다. 오디오는 bit-perfect로 유지됩니다."</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"Aurora가 기기를 단독으로 제어하며 곡 고유의 샘플 레이트와 비트 깊이로 샘플을 보냅니다. Aurora가 재생하는 동안 다른 앱은 소리가 나지 않습니다. 처리, 볼륨, ReplayGain이 샘플을 바꾸지 않으면 출력은 비트 퍼펙트로 유지됩니다. 기기가 형식을 거부하면 Aurora는 공유 모드로 전환하며 신호 경로에 이유가 표시됩니다."</string>
+    <string name="text_background_tint_a39a12" formatted="false">"배경 색조"</string>
     <string name="text_bit_float_012895">"%1$d비트 부동소수점"</string>
     <string name="text_bit_integer_72520f">"%1$d비트 정수"</string>
     <string name="text_bit_perfect_output_that_bypasses_the_sound_server_d2dcd9" formatted="false">"사운드 서버를 거치지 않는 비트 퍼펙트 출력"</string>
@@ -26,14 +52,18 @@
     <string name="text_exclusive_mode_is_unavailable_0de552">"독점 모드를 사용할 수 없습니다: %1$s"</string>
     <string name="text_exclusive_mode_is_unavailable_on_this_device_e51016" formatted="false">"이 기기에서는 독점 모드를 사용할 수 없습니다"</string>
     <string name="text_follow_the_playing_cover_5d2e91" formatted="false">"재생 중인 커버 따르기"</string>
+    <string name="text_glass_edges_f462cd" formatted="false">"유리 테두리"</string>
     <string name="text_hz_is_unavailable_using_hz_14de1c">"%1$d Hz를 사용할 수 없어 %2$d Hz를 사용합니다."</string>
     <string name="text_in_use_by_the_sound_server_or_another_app_aa3eaa" formatted="false">"사운드 서버나 다른 앱이 사용 중"</string>
     <string name="text_keep_aurora_playing_in_the_notification_area_when_the_window_clos_e5fed5" formatted="false">"창을 닫아도 알림 영역에서 Aurora 재생 유지"</string>
     <string name="text_larger_buffers_ride_out_heavy_system_load_smaller_ones_react_fast_e4d5f8" formatted="false">"버퍼가 크면 시스템 부하가 높을 때도 안정적이고, 작으면 탐색과 볼륨에 더 빨리 반응합니다. 출력을 다시 열 때 적용됩니다."</string>
+    <string name="text_let_your_desktop_show_through_the_window_blurred_windows_11_only_08f192" formatted="false">"창 너머로 데스크톱이 흐릿하게 비쳐 보이게 합니다. Windows 11 전용."</string>
     <string name="text_linux_java_b7923f">"Linux · Java %1$d"</string>
     <string name="text_logs_126dd3" formatted="false">"로그"</string>
+    <string name="text_mica_3ccf84" formatted="false">"마이카"</string>
     <string name="text_open_in_full_page_0ec923" formatted="false">"전체 페이지로 열기"</string>
     <string name="text_output_buffer_61b372" formatted="false">"출력 버퍼"</string>
+    <string name="text_panel_frost_ada0d3" formatted="false">"패널 젖빛 유리"</string>
     <string name="text_playing_music_af9695" formatted="false">"음악 재생 중"</string>
     <string name="text_shared_mode_mix_format_4a5bc8" formatted="false">"공유 모드 믹스 형식"</string>
     <string name="text_shared_mode_mixes_aurora_with_other_apps_through_the_system_sound_0c8e9d" formatted="false">"공유 모드는 시스템 사운드 서버를 통해 48 kHz로 Aurora와 다른 앱을 섞습니다. 비트 퍼펙트 재생을 하려면 독점 모드를 켜세요."</string>
@@ -50,6 +80,7 @@
     <string name="text_the_track_could_not_be_opened_5719af" formatted="false">"곡을 열 수 없습니다"</string>
     <string name="text_the_track_s_sample_rate_is_not_supported_5c8629" formatted="false">"곡의 샘플 레이트가 지원되지 않습니다"</string>
     <string name="text_tint_the_whole_app_with_the_playing_song_s_cover_a83c17" formatted="false">"재생 중인 곡의 색상으로 앱 전체에 색 입히기"</string>
+    <string name="text_translucent_window_d865c7" formatted="false">"반투명 창"</string>
     <string name="text_using_your_system_accent_colour_89502e" formatted="false">"시스템 강조 색상을 사용 중입니다."</string>
     <string name="text_using_your_windows_accent_colour_7d4b4a" formatted="false">"Windows 강조 색상을 사용 중입니다."</string>
     <string name="text_volume_3b18e8" formatted="false">"볼륨"</string>

@@ -45,7 +45,7 @@ class LibraryScreensTest {
         contentPadding = padding, state = state, username = "Mara", likedIds = setOf("s1", "s3", "a1"), currentSongId = "s2", isPlaying = true,
         onFilter = {}, onSort = {}, onToggleLayout = {}, onOpenDrawer = {}, onPlayAll = { _, _ -> }, onAddToQueue = {}, onPlayNext = {},
         onToggleLike = {}, onOpenDetail = onOpenDetail, downloadedIds = setOf("s4"), onDownload = {}, onRemoveDownload = {}, onOpenSearch = {},
-        onCreatePlaylist = { true }, onCreateSmart = {}, onEditSmart = {}, onDeleteSmart = {}, onImportM3u = {}, onExportPlaylist = { _, _, _ -> },
+        onCreatePlaylist = { _, _, _ -> true }, onCreateSmart = {}, onEditSmart = {}, onDeleteSmart = {}, onImportM3u = {}, onExportPlaylist = { _, _, _ -> },
         onOpenFolders = {}, onPlayCollection = { _, _ -> }, onShuffleCollection = { _, _ -> }, onQueueCollection = { _, _ -> },
         onToggleLikeKind = { _, _ -> }, onDeletePlaylist = {}, pins = Samples.pins, selectedItem = selected,
     )

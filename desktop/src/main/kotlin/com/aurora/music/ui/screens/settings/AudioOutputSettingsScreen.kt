@@ -61,6 +61,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
+import com.aurora.music.ui.theme.themedCorner
 
 internal val OUTPUT_SUMMARY: String get() = appString(R.string.text_device_exclusive_mode_and_buffer_f2337c)
 
@@ -218,7 +219,7 @@ private fun DeviceRow(icon: ImageVector, title: String, subtitle: String?, selec
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
-            Modifier.size(38.dp).clip(RoundedCornerShape(10.dp)).background(if (selected) colors.primary else colors.surfaceContainerHigh),
+            Modifier.size(38.dp).clip(RoundedCornerShape(themedCorner(10.dp))).background(if (selected) colors.primary else colors.surfaceContainerHigh),
             contentAlignment = Alignment.Center,
         ) { Icon(icon, null, tint = if (selected) colors.onPrimary else colors.onSurface, modifier = Modifier.size(20.dp)) }
         Spacer(Modifier.width(14.dp))

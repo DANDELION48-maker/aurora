@@ -49,6 +49,7 @@ import com.aurora.music.data.ThemeStyle
 import com.aurora.music.localization.appString
 import com.aurora.music.ui.layout.PageMetrics
 import com.aurora.music.ui.theme.LocalUiPrefs
+import com.aurora.music.ui.theme.cornerDp
 import com.aurora.music.ui.theme.auroraBackdrop
 
 @Composable
@@ -59,11 +60,14 @@ fun Artwork(
     corner: Dp = 12.dp,
     contentScale: ContentScale = ContentScale.Crop,
 ) {
-    val artCorner = if (corner == 0.dp || corner >= 22.dp) corner else when (LocalUiPrefs.current.themeStyle) {
-        ThemeStyle.RETRO -> 2.dp
-        ThemeStyle.AERO -> 5.dp
-        ThemeStyle.GLASS -> 18.dp
-        else -> corner
+    val ui = LocalUiPrefs.current
+    val artCorner = when {
+        corner == 0.dp -> corner
+        ui.themeStyle == ThemeStyle.AURORA -> cornerDp(ui.cornerStyle, corner)
+        corner >= 22.dp -> corner
+        ui.themeStyle == ThemeStyle.RETRO -> 2.dp
+        ui.themeStyle == ThemeStyle.AERO -> 5.dp
+        else -> 18.dp
     }
     val placeholder = Brush.linearGradient(
         listOf(accent.copy(alpha = 0.55f), accent.copy(alpha = 0.12f))

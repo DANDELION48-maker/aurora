@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="chromium_downloading" formatted="false">"Загрузка браузера для входа. Это происходит один раз и занимает около 150 МБ."</string>
+    <string name="chromium_failed" formatted="false">"Не удалось запустить браузер для входа: %1$s"</string>
+    <string name="chromium_preparing" formatted="false">"Подготовка браузера для входа…"</string>
+    <string name="discovery_explore" formatted="false">"Обзор"</string>
+    <string name="discovery_explore_failed" formatted="false">"Не удалось загрузить обзор. Проверьте подключение и повторите попытку."</string>
+    <string name="discovery_related" formatted="false">"Похожее"</string>
+    <string name="discovery_related_empty" formatted="false">"В YouTube Music нет ничего похожего на этот трек."</string>
+    <string name="discovery_start_radio" formatted="false">"Запустить радио"</string>
+    <string name="lyrics_settings_summary" formatted="false">"Стиль синхронизации и источники текстов"</string>
+    <string name="lyrics_source_lrclib_detail" formatted="false">"Бесплатная база текстов от сообщества"</string>
+    <string name="lyrics_source_server" formatted="false">"Собственный источник трека"</string>
+    <string name="lyrics_source_server_detail" formatted="false">"Тексты с сервера, стримингового сервиса или из самого файла"</string>
+    <string name="lyrics_source_spotify_detail" formatted="false">"Синхронизированные тексты из объединённого аккаунта Spotify"</string>
+    <string name="lyrics_sources_hint" formatted="false">"Aurora проверяет их по порядку. Используется первый найденный синхронизированный текст, иначе первый любой."</string>
+    <string name="lyrics_sources_title" formatted="false">"Источники текстов"</string>
+    <string name="merge_comments" formatted="false">"Комментарии SoundCloud"</string>
+    <string name="merge_comments_summary" formatted="false">"Показывать комментарии с отметками времени, если найден подходящий трек SoundCloud"</string>
+    <string name="merge_lyrics" formatted="false">"Тексты Spotify"</string>
+    <string name="merge_lyrics_summary" formatted="false">"Использовать синхронизированные тексты Spotify для треков из других источников"</string>
+    <string name="merge_options" formatted="false">"Параметры объединения"</string>
+    <string name="merge_options_note" formatted="false">"Когда SoundCloud или Spotify входят в единую библиотеку, Aurora может добавлять их возможности к трекам из других источников. Отключите каждую полностью или для треков из определённого источника."</string>
+    <string name="merge_options_summary" formatted="false">"Что объединённые сервисы добавляют к вашим трекам"</string>
+    <string name="merge_songs_from" formatted="false">"Треки из"</string>
+    <string name="playlist_save_to" formatted="false">"Сохранить в"</string>
+    <string name="text_acrylic_f39ce1" formatted="false">"Акрил"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"Добавить папку с музыкой"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Декодирование аудио. Copyright © разработчики FFmpeg. LGPL-3.0-or-later, динамическая компоновка через JavaCPP Presets. Полный текст лицензии: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
     <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"Громкость Aurora меняет громкость самого ЦАП, если она у него есть. Звук остаётся bit-perfect."</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"Aurora получает единоличный доступ к устройству и передаёт сэмплы с частотой и разрядностью самого трека. Другие приложения молчат, пока играет Aurora. Вывод остаётся bit-perfect, если обработка, громкость и ReplayGain не изменяют сэмплы; если устройство не принимает формат, Aurora переходит в общий режим, а «Путь сигнала» показывает причину."</string>
+    <string name="text_background_tint_a39a12" formatted="false">"Оттенок фона"</string>
     <string name="text_bit_float_012895">"%1$d-бит float"</string>
     <string name="text_bit_integer_72520f">"%1$d-бит целочисленный"</string>
     <string name="text_bit_perfect_output_that_bypasses_the_sound_server_d2dcd9" formatted="false">"Вывод bit-perfect в обход звукового сервера"</string>
@@ -26,14 +52,18 @@
     <string name="text_exclusive_mode_is_unavailable_0de552">"Монопольный режим недоступен: %1$s"</string>
     <string name="text_exclusive_mode_is_unavailable_on_this_device_e51016" formatted="false">"Монопольный режим недоступен на этом устройстве"</string>
     <string name="text_follow_the_playing_cover_5d2e91" formatted="false">"Цвет текущей обложки"</string>
+    <string name="text_glass_edges_f462cd" formatted="false">"Стеклянные края"</string>
     <string name="text_hz_is_unavailable_using_hz_14de1c">"%1$d Гц недоступно; используется %2$d Гц."</string>
     <string name="text_in_use_by_the_sound_server_or_another_app_aa3eaa" formatted="false">"Используется звуковым сервером или другим приложением"</string>
     <string name="text_keep_aurora_playing_in_the_notification_area_when_the_window_clos_e5fed5" formatted="false">"После закрытия окна Aurora продолжает играть из области уведомлений"</string>
     <string name="text_larger_buffers_ride_out_heavy_system_load_smaller_ones_react_fast_e4d5f8" formatted="false">"Большой буфер выдерживает высокую нагрузку на систему, маленький быстрее реагирует на перемотку и громкость. Применяется при повторном открытии вывода."</string>
+    <string name="text_let_your_desktop_show_through_the_window_blurred_windows_11_only_08f192" formatted="false">"Рабочий стол размыто просвечивает сквозь окно. Только в Windows 11."</string>
     <string name="text_linux_java_b7923f">"Linux · Java %1$d"</string>
     <string name="text_logs_126dd3" formatted="false">"Журналы"</string>
+    <string name="text_mica_3ccf84" formatted="false">"Слюда"</string>
     <string name="text_open_in_full_page_0ec923" formatted="false">"Открыть на всю страницу"</string>
     <string name="text_output_buffer_61b372" formatted="false">"Буфер вывода"</string>
+    <string name="text_panel_frost_ada0d3" formatted="false">"Матовость панелей"</string>
     <string name="text_playing_music_af9695" formatted="false">"Воспроизведение музыки"</string>
     <string name="text_shared_mode_mix_format_4a5bc8" formatted="false">"Формат микшера общего режима"</string>
     <string name="text_shared_mode_mixes_aurora_with_other_apps_through_the_system_sound_0c8e9d" formatted="false">"Общий режим смешивает Aurora с другими приложениями через системный звуковой сервер на частоте 48 кГц. Включите монопольный режим для воспроизведения bit-perfect."</string>
@@ -50,6 +80,7 @@
     <string name="text_the_track_could_not_be_opened_5719af" formatted="false">"Не удалось открыть трек"</string>
     <string name="text_the_track_s_sample_rate_is_not_supported_5c8629" formatted="false">"Частота дискретизации трека не поддерживается"</string>
     <string name="text_tint_the_whole_app_with_the_playing_song_s_cover_a83c17" formatted="false">"Окрашивать всё приложение в цвет обложки играющего трека"</string>
+    <string name="text_translucent_window_d865c7" formatted="false">"Полупрозрачное окно"</string>
     <string name="text_using_your_system_accent_colour_89502e" formatted="false">"Используется системный акцентный цвет."</string>
     <string name="text_using_your_windows_accent_colour_7d4b4a" formatted="false">"Используется акцентный цвет Windows."</string>
     <string name="text_volume_3b18e8" formatted="false">"Громкость"</string>

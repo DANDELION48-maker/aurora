@@ -44,6 +44,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import com.aurora.music.ui.theme.themedCorner
 
 private data class InboxState(val windows: List<RecapWindow>, val seen: Set<String>, val history: List<PlayEvent>, val loading: Boolean,
     val markRead: (Set<String>) -> Unit) {
@@ -113,7 +114,7 @@ fun RecapInboxScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpen: 
             }
             if (inbox.loading) item(span = full) { Box(Modifier.fillMaxWidth().padding(40.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() } }
             else if (featured == null) item(span = full) {
-                Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(24.dp)).background(MaterialTheme.colorScheme.surfaceContainerHigh).padding(28.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(themedCorner(24.dp))).background(MaterialTheme.colorScheme.surfaceContainerHigh).padding(28.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     Icon(Icons.Outlined.Headphones, null, Modifier.size(40.dp), tint = MaterialTheme.colorScheme.primary)
                     Text(appString(R.string.text_good_listening_takes_time_eac7f9), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     Text(if (filter == "ALL") appString(R.string.text_listen_today_and_come_back_tomorrow_for_your_first_recap_9a9aec) else appString(R.string.recap_pending), color = MaterialTheme.colorScheme.onSurfaceVariant)

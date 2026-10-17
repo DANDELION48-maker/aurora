@@ -49,7 +49,8 @@ class DetailViewModel(private val container: DesktopContainer) : ViewModel() {
         curKind = kind; curId = id
         viewModelScope.launch {
             _state.update { it.copy(loading = true, data = null, loadingMore = false, canLoadMore = false, artistInfo = null) }
-            val data = container.repository.detail(kind, id)
+            // a collection that just went away (a deleted playlist reloading) shows the empty state instead of crashing
+            val data = try { container.repository.detail(kind, id) } catch (e: kotlinx.coroutines.CancellationException) { throw e } catch (_: Exception) { null }
             val canMore = data != null && data.tracks.size < data.info.songCount
             _state.update { it.copy(loading = false, data = data, canLoadMore = canMore) }
             if (kind == "artist" && data != null) enrichArtist(data.info.title)
@@ -79,7 +80,7 @@ class DetailViewModel(private val container: DesktopContainer) : ViewModel() {
         if (s.loadingMore || !s.canLoadMore) return
         _state.update { it.copy(loadingMore = true) }
         viewModelScope.launch {
-            val more = container.repository.detailPage(kind, id, data.tracks.size)
+            val more = try { container.repository.detailPage(kind, id, data.tracks.size) } catch (e: kotlinx.coroutines.CancellationException) { throw e } catch (_: Exception) { emptyList() }
             _state.update { cur ->
                 val d = cur.data ?: return@update cur.copy(loadingMore = false)
                 val newTracks = d.tracks + more

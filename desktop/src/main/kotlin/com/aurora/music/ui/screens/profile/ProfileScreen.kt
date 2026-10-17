@@ -56,6 +56,7 @@ import com.aurora.music.ui.layout.LocalPageGutter
 import com.aurora.music.ui.layout.PageMetrics
 import com.aurora.music.ui.layout.TabletMetrics
 import com.aurora.music.ui.layout.pagePadding
+import com.aurora.music.ui.theme.themedCorner
 
 private val WideProfile = 900.dp
 
@@ -145,7 +146,7 @@ private fun Banner(bannerUrl: String, height: Dp, gutter: Dp, onBack: () -> Unit
                 layout(constraints.maxWidth, placeable.height) { placeable.place(-extra, 0) }
             }
             .height(height)
-            .clip(RoundedCornerShape(28.dp))
+            .clip(RoundedCornerShape(themedCorner(28.dp)))
             .background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.secondary, MaterialTheme.colorScheme.secondary.copy(alpha = 0.25f)))),
     ) {
         if (bannerUrl.isNotBlank()) {

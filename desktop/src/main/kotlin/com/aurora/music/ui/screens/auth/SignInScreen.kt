@@ -1,5 +1,7 @@
 package com.aurora.music.ui.screens.auth
 
+import androidx.compose.material.icons.outlined.GraphicEq
+import androidx.compose.material.icons.outlined.MusicNote
 import com.aurora.music.localization.localizedMediaType
 
 import com.aurora.music.localization.appString
@@ -94,6 +96,7 @@ import com.aurora.music.ui.theme.AuroraRose
 import com.aurora.music.viewmodel.AuthStep
 import com.aurora.music.viewmodel.AuthUiState
 import java.io.File
+import com.aurora.music.ui.theme.themedCorner
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -115,8 +118,15 @@ fun SignInScreen(
     onRemoveFolder: (String) -> Unit = {},
     savedSessions: List<Session> = emptyList(),
     onUseSaved: (Session) -> Unit = {},
+    onConnectYouTubeMusic: (String) -> Unit = {},
+    onConnectSpotifyWeb: (String, com.aurora.music.data.SpotifyWebProfile?) -> Unit = { _, _ -> },
+    onConnectSoundCloud: (String) -> Unit = {},
+    spotifyOperations: com.aurora.music.desktop.web.SpotifyOperations? = null,
+    // leaves the page when it was opened to add another account
+    onExit: (() -> Unit)? = null,
 ) {
-    BackHandler(enabled = state.step != AuthStep.TYPE) { if (!state.loading) onBack() }
+    val exit = onExit?.takeIf { state.step == AuthStep.TYPE }
+    BackHandler(enabled = state.step != AuthStep.TYPE || exit != null) { if (!state.loading) exit?.invoke() ?: onBack() }
     val scroll = rememberScrollState()
     LaunchedEffect(state.step) { scroll.scrollTo(0) }
     val palette = darkColorScheme(primary = AuroraRose, onPrimary = Color(0xFF281019),
@@ -129,8 +139,8 @@ fun SignInScreen(
             Box(Modifier.fillMaxWidth().height(280.dp).background(Brush.verticalGradient(listOf(AuroraRose.copy(alpha = .09f), Color.Transparent))))
             val brand: @Composable () -> Unit = {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    if (state.step != AuthStep.TYPE) {
-                        IconButton(onClick = onBack, enabled = !state.loading, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
+                    if (state.step != AuthStep.TYPE || exit != null) {
+                        IconButton(onClick = { exit?.invoke() ?: onBack() }, enabled = !state.loading, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, appString(R.string.text_back_b52b36))
                         }
                     } else {
@@ -143,7 +153,7 @@ fun SignInScreen(
                         AuthStep.TYPE -> appString(R.string.text_your_music_your_way_db5743)
                         AuthStep.SERVER -> appString(R.string.text_01_address_ea85bc)
                         AuthStep.CREDENTIALS -> appString(R.string.text_02_account_8088a4)
-                        AuthStep.FOLDERS -> appString(R.string.text_connect_6e2889)
+                        AuthStep.FOLDERS, AuthStep.YOUTUBE_MUSIC, AuthStep.SPOTIFY, AuthStep.SOUNDCLOUD -> appString(R.string.text_connect_6e2889)
                     }, style = MaterialTheme.typography.labelSmall, color = palette.onSurfaceVariant, letterSpacing = 1.sp)
                 }
             }
@@ -154,6 +164,9 @@ fun SignInScreen(
                         AuthStep.SERVER -> appString(R.string.text_connect_your_server_8989fc)
                         AuthStep.CREDENTIALS -> appString(if (state.type == ServerType.PLEX) R.string.plex_connect_title else R.string.text_make_yourself_at_home_3ea2e2)
                         AuthStep.FOLDERS -> appString(R.string.text_music_on_this_device_21b6e9)
+                        AuthStep.YOUTUBE_MUSIC -> appString(R.string.text_connect_youtube_music_64e032)
+                        AuthStep.SPOTIFY -> appString(R.string.text_connect_spotify_529d56)
+                        AuthStep.SOUNDCLOUD -> appString(R.string.soundcloud_connect_title)
                     }
                     val type = state.step == AuthStep.TYPE
                     Text(headline, fontSize = if (wide) (if (type) 52.sp else 40.sp) else if (type) 38.sp else 30.sp,
@@ -168,6 +181,9 @@ fun SignInScreen(
                         })
                         AuthStep.CREDENTIALS -> appString(if (state.type == ServerType.PLEX) R.string.plex_token_detail else R.string.text_use_your_server_account_to_open_your_library_800ff2)
                         AuthStep.FOLDERS -> appString(R.string.text_start_listening_without_an_account_2e734d)
+                        AuthStep.YOUTUBE_MUSIC -> appString(R.string.text_your_favourites_mixes_and_new_discoveries_6c2fa1)
+                        AuthStep.SPOTIFY -> appString(R.string.text_bring_your_playlists_and_saved_music_into_aurora_df697e)
+                        AuthStep.SOUNDCLOUD -> appString(R.string.soundcloud_connect_subtitle)
                     }, style = MaterialTheme.typography.bodyLarge, color = palette.onSurfaceVariant)
                 }
             }
@@ -178,13 +194,16 @@ fun SignInScreen(
                         AuthStep.SERVER -> ServerStep(state, onScheme, onHost, canContinueServer, onContinueServer)
                         AuthStep.CREDENTIALS -> CredentialsStep(state, onUsername, onPassword, onBack, canSubmit, onSignIn)
                         AuthStep.FOLDERS -> FoldersStep(state, musicFolders, onAddFolder, onRemoveFolder, onLocal)
+                        AuthStep.YOUTUBE_MUSIC -> YouTubeMusicStep(state, onConnectYouTubeMusic)
+                        AuthStep.SPOTIFY -> spotifyOperations?.let { SpotifyWebStep(state, it, onConnectSpotifyWeb) }
+                        AuthStep.SOUNDCLOUD -> SoundCloudStep(state, onConnectSoundCloud)
                     }
                     if (state.loading) Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         CircularProgressIndicator(Modifier.size(20.dp), color = AuroraRose, strokeWidth = 2.dp)
                         Text(appString(R.string.text_connecting_your_library_a0430a), color = palette.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                     }
                     AnimatedVisibility(state.error != null) {
-                        Surface(color = palette.errorContainer, shape = RoundedCornerShape(16.dp)) {
+                        Surface(color = palette.errorContainer, shape = RoundedCornerShape(themedCorner(16.dp))) {
                             Text(state.error.orEmpty(), Modifier.fillMaxWidth().padding(16.dp), color = palette.onErrorContainer, style = MaterialTheme.typography.bodyMedium)
                         }
                     }
@@ -218,7 +237,7 @@ fun SignInScreen(
 @Composable
 private fun TypeStep(onSelectType: (ServerType) -> Unit, savedSessions: List<Session>, onUseSaved: (Session) -> Unit, enabled: Boolean) {
     var savedExpanded by rememberSaveable { mutableStateOf(false) }
-    val saved = savedSessions.filter { it.type in AccountAuthenticator.SUPPORTED }
+    val saved = savedSessions.filter(AccountAuthenticator::supports)
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (saved.isNotEmpty()) {
             TextButton(onClick = { savedExpanded = !savedExpanded }, modifier = Modifier.fillMaxWidth().pointerHoverIcon(PointerIcon.Hand)) {
@@ -240,6 +259,10 @@ private fun TypeStep(onSelectType: (ServerType) -> Unit, savedSessions: List<Ses
             ServerTile("Jellyfin", appString(R.string.text_your_media_library_77d854), Icons.Outlined.Cloud, Modifier.weight(1f), enabled) { onSelectType(ServerType.JELLYFIN) }
         }
         ServerTypeCard(Icons.Outlined.PlayCircle, "Plex", appString(R.string.setup_source_plex_detail), enabled = enabled) { onSelectType(ServerType.PLEX) }
+        SourceLabel(appString(R.string.text_streaming_0247ce))
+        ServerTypeCard(Icons.Outlined.PlayCircle, "YouTube Music", appString(R.string.text_your_google_account_playlists_and_mixes_120c0f), enabled = enabled) { onSelectType(ServerType.YOUTUBE_MUSIC) }
+        ServerTypeCard(Icons.Outlined.MusicNote, "Spotify", appString(R.string.text_your_library_played_through_youtube_a53b5e), enabled = enabled) { onSelectType(ServerType.SPOTIFY) }
+        ServerTypeCard(Icons.Outlined.GraphicEq, "SoundCloud", appString(R.string.soundcloud_card_detail), enabled = enabled) { onSelectType(ServerType.SOUNDCLOUD) }
     }
 }
 
@@ -251,8 +274,8 @@ private fun FoldersStep(state: AuthUiState, folders: List<String>, onAdd: (Strin
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SourceLabel(appString(R.string.text_folders_19adc4).uppercase(java.util.Locale.getDefault()))
         folders.forEach { path ->
-            Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(MaterialTheme.colorScheme.surface)
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(16.dp)).padding(start = 16.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
+            Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(themedCorner(16.dp))).background(MaterialTheme.colorScheme.surface)
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(themedCorner(16.dp))).padding(start = 16.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Outlined.Folder, null, tint = AuroraRose, modifier = Modifier.size(22.dp))
                 Spacer(Modifier.width(12.dp))
@@ -266,7 +289,7 @@ private fun FoldersStep(state: AuthUiState, folders: List<String>, onAdd: (Strin
             }
         }
         OutlinedButton(onClick = ::pick, enabled = !state.loading, modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp).pointerHoverIcon(PointerIcon.Hand),
-            shape = RoundedCornerShape(16.dp)) {
+            shape = RoundedCornerShape(themedCorner(16.dp))) {
             Icon(Icons.Outlined.CreateNewFolder, null, Modifier.size(20.dp))
             Spacer(Modifier.width(10.dp))
             Text(appString(R.string.text_add_music_folder_a083d8), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
@@ -288,8 +311,8 @@ private fun SourceLabel(label: String) {
 
 @Composable
 private fun ServerTile(title: String, subtitle: String, icon: ImageVector, modifier: Modifier, enabled: Boolean, onClick: () -> Unit) {
-    Column(modifier.clip(RoundedCornerShape(20.dp)).background(MaterialTheme.colorScheme.surface)
-        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(20.dp))
+    Column(modifier.clip(RoundedCornerShape(themedCorner(20.dp))).background(MaterialTheme.colorScheme.surface)
+        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(themedCorner(20.dp)))
         .clickable(enabled = enabled, role = Role.Button, onClick = onClick).pointerHoverIcon(PointerIcon.Hand).padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Icon(icon, null, tint = AuroraRose, modifier = Modifier.size(24.dp))
         Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
@@ -301,11 +324,11 @@ private fun ServerTile(title: String, subtitle: String, icon: ImageVector, modif
 
 @Composable
 private fun ServerTypeCard(icon: ImageVector, title: String, subtitle: String, enabled: Boolean = true, featured: Boolean = false, onClick: () -> Unit) {
-    Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp))
+    Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(themedCorner(20.dp)))
         .background(if (featured) AuroraRose.copy(alpha = .10f) else MaterialTheme.colorScheme.surface)
-        .border(1.dp, if (featured) AuroraRose.copy(alpha = .3f) else MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(20.dp))
+        .border(1.dp, if (featured) AuroraRose.copy(alpha = .3f) else MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(themedCorner(20.dp)))
         .clickable(enabled = enabled, role = Role.Button, onClick = onClick).pointerHoverIcon(PointerIcon.Hand).padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.size(42.dp).clip(RoundedCornerShape(13.dp)).background(AuroraRose.copy(alpha = .10f)), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(42.dp).clip(RoundedCornerShape(themedCorner(13.dp))).background(AuroraRose.copy(alpha = .10f)), contentAlignment = Alignment.Center) {
             Icon(icon, null, tint = AuroraRose, modifier = Modifier.size(23.dp))
         }
         Spacer(Modifier.width(14.dp))
@@ -353,7 +376,7 @@ private fun ServerStep(
                 else -> "192.168.1.10:4533"
             }) },
             singleLine = true,
-            shape = RoundedCornerShape(14.dp),
+            shape = RoundedCornerShape(themedCorner(14.dp)),
             leadingIcon = { Icon(Icons.Outlined.Dns, null) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onNext = { if (canContinue) onContinue() }),
@@ -384,7 +407,7 @@ private fun CredentialsStep(
     val uriHandler = LocalUriHandler.current
     val isPlex = state.type == ServerType.PLEX
     Column(Modifier.fillMaxWidth()) {
-        Surface(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp)) {
+        Surface(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(themedCorner(16.dp))) {
             Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Outlined.Dns, null, tint = AuroraRose)
                 Spacer(Modifier.width(12.dp))
@@ -400,7 +423,7 @@ private fun CredentialsStep(
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(appString(R.string.text_username_84c290)) },
                 singleLine = true,
-                shape = RoundedCornerShape(14.dp),
+                shape = RoundedCornerShape(themedCorner(14.dp)),
                 leadingIcon = { Icon(Icons.Outlined.Person, null) },
                 enabled = !state.loading,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -415,7 +438,7 @@ private fun CredentialsStep(
             modifier = Modifier.fillMaxWidth(),
             label = { Text(appString(if (isPlex) R.string.plex_token_label else R.string.text_password_8be3c9)) },
             singleLine = true,
-            shape = RoundedCornerShape(14.dp),
+            shape = RoundedCornerShape(themedCorner(14.dp)),
             leadingIcon = { Icon(Icons.Outlined.Lock, null) },
             enabled = !state.loading,
             trailingIcon = {
@@ -451,9 +474,9 @@ private fun SchemePill(label: String, selected: Boolean, modifier: Modifier = Mo
     Box(
         modifier
             .height(46.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(themedCorner(12.dp)))
             .background(if (selected) AuroraRose else MaterialTheme.colorScheme.surface.copy(alpha = 0.4f))
-            .then(if (selected) Modifier else Modifier.border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), RoundedCornerShape(12.dp)))
+            .then(if (selected) Modifier else Modifier.border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), RoundedCornerShape(themedCorner(12.dp))))
             .clickable(onClick = onClick)
             .pointerHoverIcon(PointerIcon.Hand),
         contentAlignment = Alignment.Center,
@@ -469,7 +492,7 @@ private fun SchemePill(label: String, selected: Boolean, modifier: Modifier = Mo
 
 @Composable
 private fun PrimaryButton(label: String, enabled: Boolean, modifier: Modifier = Modifier, loading: Boolean = false, onClick: () -> Unit) {
-    Button(onClick = onClick, enabled = enabled, modifier = modifier.heightIn(min = 54.dp).pointerHoverIcon(PointerIcon.Hand), shape = RoundedCornerShape(16.dp)) {
+    Button(onClick = onClick, enabled = enabled, modifier = modifier.heightIn(min = 54.dp).pointerHoverIcon(PointerIcon.Hand), shape = RoundedCornerShape(themedCorner(16.dp))) {
         if (loading) CircularProgressIndicator(Modifier.size(22.dp), strokeWidth = 2.dp)
         else Text(label, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
     }

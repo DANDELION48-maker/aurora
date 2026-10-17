@@ -30,7 +30,7 @@ fun LocalProfileDialog(onDismiss: () -> Unit) {
     fun choose(label: String, banner: Boolean) {
         FilePickers.openFile(appString(R.string.text_choose_c2c00f, label.lowercase()), imageExtensions)?.let { vm.image(it, banner) }
     }
-    AlertDialog(
+    AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, 
         onDismissRequest = { if (!state.busy) onDismiss() },
         title = { Text(appString(R.string.text_edit_local_profile_6f9d95)) },
         text = {

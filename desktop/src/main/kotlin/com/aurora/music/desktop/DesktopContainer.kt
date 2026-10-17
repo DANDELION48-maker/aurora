@@ -121,6 +121,48 @@ class DesktopContainer(
 
     val authenticator = AccountAuthenticator(clientInfo)
 
+    // streaming services sign in through the embedded browser; their logins stay encrypted on this pc
+    val youtubeMusicCredentials = com.aurora.music.desktop.platform.WebCredentials.youtubeMusic(paths.local)
+    val spotifyCredentials = com.aurora.music.desktop.platform.WebCredentials.spotify(paths.local)
+    val soundcloudCredentials = com.aurora.music.desktop.platform.WebCredentials.soundcloud(paths.local)
+    val soundcloudWriter = com.aurora.music.desktop.web.SoundCloudWebWriter()
+    val spotifyWeb = com.aurora.music.desktop.web.SpotifyWebBridge(java.io.File(paths.local, "web"))
+    val youtubeResolver by lazy { com.aurora.music.desktop.youtube.YoutubeResolver(http) }
+
+    // one client per login: soundcloud rotates the refresh token, so two clients refreshing it would sign each other out
+    init {
+        com.aurora.music.desktop.web.Chromium.configure(java.io.File(paths.local, "chromium"))
+    }
+
+    private val soundcloudClients = java.util.concurrent.ConcurrentHashMap<String, com.aurora.music.data.remote.SoundCloudClient>()
+    private fun soundcloudClient(session: Session) = soundcloudClients.getOrPut(session.token) {
+        com.aurora.music.data.remote.SoundCloudClient(
+            session = { com.aurora.music.data.remote.SoundCloudWebSession.decode(soundcloudCredentials.read(session.token)) },
+            onRefreshed = { soundcloudCredentials.update(session.token, it.encode()) }, http = http, browser = soundcloudWriter)
+    }
+
+    // soundcloud previews and drm-only tracks play from a youtube match instead
+    fun resolveSoundCloud(song: Song): String? {
+        val id = song.streamUrl.substringAfterLast('/').substringBefore('?').takeIf { it.matches(Regex("[0-9]+")) } ?: return null
+        val source = backend as? com.aurora.music.data.SoundCloudBackend ?: runBlocking { settingsStore.savedSessions.first() }
+            .firstOrNull { it.type == ServerType.SOUNDCLOUD }?.let { buildBackend(it) as? com.aurora.music.data.SoundCloudBackend }
+        runCatching { runBlocking { source?.playbackUrl(id) } }.getOrNull()?.let { return it }
+        val query = java.net.URLEncoder.encode("${song.title} ${song.artist}".trim(), "UTF-8")
+        return youtubeResolver.resolveSentinel("aurora-yt://sc$id?q=$query&dur=${song.durationSec}")
+    }
+
+    val streamResolver = com.aurora.music.desktop.audio.StreamResolver { song ->
+        val url = song.streamUrl.trim()
+        when {
+            url.startsWith("aurora-yt:") -> youtubeResolver.resolveSentinel(url)
+                ?.let { com.aurora.music.desktop.audio.ResolvedStream(it, userAgent = com.aurora.music.desktop.youtube.YoutubeResolver.USER_AGENT) }
+                ?: throw java.io.IOException("No YouTube stream was found for ${song.title}")
+            url.startsWith("aurora-sc:") -> resolveSoundCloud(song)?.let { com.aurora.music.desktop.audio.ResolvedStream(it) }
+                ?: throw java.io.IOException("SoundCloud could not play ${song.title}")
+            else -> com.aurora.music.desktop.audio.StreamResolver.Default.resolve(song)
+        }
+    }
+
     @Volatile private var squigBaseValue: String = DEFAULT_SQUIG_BASE
     @Volatile private var squigTargetValue: String = DEFAULT_SQUIG_TARGET
     val squigEq = SquigEqRepository(SquigClient(), baseProvider = { squigBaseValue }, targetProvider = { squigTargetValue })
@@ -153,14 +195,18 @@ class DesktopContainer(
         streamUrlProvider = { id, bitrate, lossless -> backend?.streamUrl(id, bitrate, lossless) },
         downloadBitrateProvider = { downloadBitrate },
         currentServerIdProvider = { currentServerId() },
+        resolveSentinel = { youtubeResolver.resolveSentinel(it) },
         playbackSourceProvider = { song -> backend?.playbackSourceIdentity(song) },
         playbackCollectionProvider = { kind, id, name -> repository.playbackCollectionIdentity(kind, id)?.copy(name = name) },
         downloadUrlResolverProvider = { backend?.let { source -> { id, bitrate, lossless -> source.downloadUrl(id, bitrate, lossless) } } },
     )
 
+    @Volatile private var catalogueMatchValue = com.aurora.music.data.CatalogueMatchPrefs()
+
     private val sourceLocalizer = SourceLocalizer(localMergeSession, downloadManager,
         preferLocal = { preferLocalSources }, priority = { sourcePriorityValue },
-        isLocalUrl = { it.startsWith("file:") }, findLocal = folderLibrary::findMatch)
+        isLocalUrl = { it.startsWith("file:") }, findLocal = folderLibrary::findMatch,
+        catalogueMatch = { catalogueMatchValue })
 
     val smartEngine = SmartPlaylistEngine(playHistory, downloadManager)
 
@@ -170,7 +216,9 @@ class DesktopContainer(
     val visualizer = VisualizerController(scope)
 
     val lyricsRepository = LyricsRepository(backendProvider = { backend }, lrclibEnabledProvider = { lrclibEnabled },
-        separatorsProvider = { settingsStore.artistSeparators.first() })
+        separatorsProvider = { settingsStore.artistSeparators.first() },
+        orderProvider = { settingsStore.lyricsSources.first() },
+        spotifyAllowed = { type -> settingsStore.mergeFeatures.first().lyricsFor(type) })
 
     val artworkRepository = ArtworkRepository(paths.artwork, ::openDesktopUri, SkiaArtworkImages,
         offline = { offlineToggle }, enabled = { settingsStore.artworkLookupEnabled.first() },
@@ -226,15 +274,26 @@ class DesktopContainer(
                         (mergeSourceKeys.isEmpty() || session.accountKey() in mergeSourceKeys))) _sourceErrors.tryEmit(message)
             }
             ServerType.LOCAL -> LocalBackend(folderLibrary, localStore, session)
-            ServerType.SPOTIFY, ServerType.YOUTUBE_MUSIC, ServerType.SOUNDCLOUD, ServerType.EXTENSION -> null
+            ServerType.SPOTIFY -> if (session.salt == com.aurora.music.data.SpotifyWebBackend.WEB_PLAYER)
+                com.aurora.music.data.SpotifyWebBackend(session, spotifyWeb.account { spotifyCredentials.read(session.token) }, localize) else null
+            ServerType.YOUTUBE_MUSIC -> ReportingMediaBackend(com.aurora.music.data.YouTubeMusicBackend(session,
+                com.aurora.music.data.remote.YouTubeMusicClient(
+                    session = { com.aurora.music.data.remote.YouTubeMusicWebSession.decode(youtubeMusicCredentials.read(session.token)) }, http = http),
+                youtubeResolver::signatureTimestamp)) { message ->
+                if (lastSession?.accountKey() == session.accountKey() ||
+                    (unifiedLibraryValue && lastSession?.type?.supportsMergedLibrary == true &&
+                        (mergeSourceKeys.isEmpty() || session.accountKey() in mergeSourceKeys))) _sourceErrors.tryEmit(message)
+            }
+            ServerType.SOUNDCLOUD -> com.aurora.music.data.SoundCloudBackend(session, soundcloudClient(session), localize)
+            ServerType.EXTENSION -> null
         }
     }
 
     private fun buildActiveBackend(session: Session, unified: Boolean, mergeKeys: Set<String>, saved: List<Session>): MediaBackend? {
-        if (session.type !in AccountAuthenticator.SUPPORTED) return null
+        if (!AccountAuthenticator.supports(session)) return null
         if (!unified || !session.type.supportsMergedLibrary) return buildBackend(session)
         return sourceLocalizer.mergedBackend(session, mergeKeys, saved, LocalBackend(folderLibrary, localStore, localMergeSession),
-            eligible = { it.type in AccountAuthenticator.SUPPORTED }, build = ::buildBackend)
+            eligible = AccountAuthenticator::supports, build = ::buildBackend)
     }
 
     private suspend fun rebuildBackend() {
@@ -246,7 +305,7 @@ class DesktopContainer(
     }
 
     private fun publishSession(session: Session?) {
-        _unsupportedAccount.value = session?.takeIf { it.type !in AccountAuthenticator.SUPPORTED }
+        _unsupportedAccount.value = session?.takeIf { !AccountAuthenticator.supports(it) }
         _sessionReady.value = session != null && backend != null
     }
 
@@ -332,6 +391,9 @@ class DesktopContainer(
             settingsStore.sourcePriority.collect { sourcePriorityValue = it }
         }
         scope.launch {
+            settingsStore.catalogueMatch.collect { catalogueMatchValue = it }
+        }
+        scope.launch {
             desktopSettings.musicFolders.drop(1).collect { runCatching { folderLibrary.refresh() } }
         }
         scope.launch {
@@ -368,6 +430,16 @@ class DesktopContainer(
 
     suspend fun forgetSavedSession(session: Session) {
         settingsStore.removeSavedSession(session)
+        when (session.type) {
+            ServerType.YOUTUBE_MUSIC -> youtubeMusicCredentials.remove(session.token)
+            ServerType.SOUNDCLOUD -> { soundcloudClients.remove(session.token); soundcloudCredentials.remove(session.token) }
+            ServerType.SPOTIFY -> if (session.salt == com.aurora.music.data.SpotifyWebBackend.WEB_PLAYER) {
+                spotifyCredentials.remove(session.token)
+                spotifyWeb.reset()
+                runCatching { com.aurora.music.desktop.web.SpotifyWebPlayer.clearCookies() }
+            }
+            else -> Unit
+        }
         if (backend?.session?.accountKey() == session.accountKey() || lastSession?.accountKey() == session.accountKey()) signOut()
     }
 

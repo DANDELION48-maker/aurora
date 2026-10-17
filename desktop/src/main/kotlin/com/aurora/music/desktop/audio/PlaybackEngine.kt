@@ -46,6 +46,7 @@ interface PlaybackEngine : AutoCloseable {
     fun applyDsp(settings: DspChainSettings)
     fun setLegacyImpulse(impulse: ImpulseResponse?, makeupDb: Float)
     fun setRackImpulses(impulses: Map<String, ImpulseResponse>)
+    fun setReverb(prefs: com.aurora.music.data.ReverbPrefs) {}
     fun dspReport(): DspChainReport?
     fun rackMeters(): List<RackNodeMeter>
 }

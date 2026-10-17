@@ -1,6 +1,7 @@
 package com.aurora.music.ui.screens.library
 
 import com.aurora.music.localization.appString
+import com.aurora.music.ui.theme.fade
 import com.aurora.music.R
 
 import androidx.compose.foundation.background
@@ -56,6 +57,7 @@ import com.aurora.music.ui.screens.settings.SettingsGroup
 import com.aurora.music.ui.components.PageHeader
 import com.aurora.music.ui.layout.LocalPageGutter
 import com.aurora.music.ui.layout.PageMetrics
+import com.aurora.music.ui.theme.themedCorner
 
 // keys must match SmartPlaylistEngine
 private const val TYPE_TEXT = 0
@@ -194,8 +196,8 @@ private fun RuleRow(rule: SmartRule, onChange: (SmartRule) -> Unit, onRemove: ()
     val ops = opsFor(spec.type)
     Column(
         Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.45f))
+            .clip(RoundedCornerShape(themedCorner(16.dp)))
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh.fade(0.45f))
             .padding(horizontal = 12.dp, vertical = 10.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -239,7 +241,7 @@ private fun Dropdown(options: List<String>, selected: Int, onSelect: (Int) -> Un
     var open by remember { mutableStateOf(false) }
     Box(modifier) {
         Row(
-            Modifier.clip(RoundedCornerShape(12.dp))
+            Modifier.clip(RoundedCornerShape(themedCorner(12.dp)))
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                 .clickable { open = true }
                 .pointerHoverIcon(PointerIcon.Hand)

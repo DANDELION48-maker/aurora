@@ -345,6 +345,10 @@ class DesktopPlaybackEngine(
         synchronized(chains) { chains.forEach { it.engine.setRackImpulses(impulses) } }
     }
 
+    override fun setReverb(prefs: com.aurora.music.data.ReverbPrefs) {
+        synchronized(chains) { chains.forEach { it.engine.reverbSettings = prefs } }
+    }
+
     override fun dspReport(): DspChainReport? = reportChain?.report()
 
     override fun rackMeters(): List<RackNodeMeter> = reportChain?.engine?.rackMeters().orEmpty()

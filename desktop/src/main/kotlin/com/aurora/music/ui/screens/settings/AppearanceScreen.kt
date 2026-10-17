@@ -57,8 +57,10 @@ import com.aurora.music.data.TabletSetting
 import com.aurora.music.data.ThemeStyle
 import com.aurora.music.data.UiPrefs
 import com.aurora.music.desktop.platform.HostPlatform
+import com.aurora.music.desktop.ui.LocalBackdropAvailable
 import com.aurora.music.desktop.ui.LocalDesktopContainer
 import com.aurora.music.ui.theme.AccentPresets
+import com.aurora.music.ui.theme.GlassLook
 import com.aurora.music.ui.theme.LocalUiPrefs
 import com.aurora.music.ui.theme.ThemeIdentities
 import com.aurora.music.ui.theme.ThemeIdentity
@@ -77,6 +79,10 @@ fun AppearanceScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenNa
     val store = LocalDesktopContainer.current.settingsStore
     val prefs by store.uiPrefs.collectAsStateWithLifecycle(initialValue = UiPrefs())
     val followPlaying by desktopSettings.accentFollowsPlaying.collectAsStateWithLifecycle(initialValue = false)
+    val translucentWindow by desktopSettings.translucentWindow.collectAsStateWithLifecycle(initialValue = true)
+    val backdropAvailable = LocalBackdropAvailable.current
+    val micaBackdrop by desktopSettings.micaBackdrop.collectAsStateWithLifecycle(initialValue = false)
+    val glassLook by desktopSettings.glassLook.collectAsStateWithLifecycle(initialValue = GlassLook())
     val scope = rememberCoroutineScope()
     fun tablet(setting: TabletSetting, value: Float) { scope.launch { store.setTabletSetting(setting, value) } }
 
@@ -102,6 +108,35 @@ fun AppearanceScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenNa
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 20.dp),
                 )
+            }
+
+            if (backdropAvailable) item {
+                SettingsSwitchRow(
+                    title = appString(R.string.text_translucent_window_d865c7),
+                    subtitle = appString(R.string.text_let_your_desktop_show_through_the_window_blurred_windows_11_only_08f192),
+                    checked = translucentWindow,
+                ) { v -> scope.launch { desktopSettings.setTranslucentWindow(v) } }
+            }
+            if (backdropAvailable && translucentWindow) {
+                item {
+                    SegmentedRow(appString(R.string.text_backdrop_d4f5e9),
+                        listOf(appString(R.string.text_acrylic_f39ce1), appString(R.string.text_mica_3ccf84)), if (micaBackdrop) 1 else 0) { i ->
+                        scope.launch { desktopSettings.setMicaBackdrop(i == 1) }
+                    }
+                }
+                item {
+                    SettingsSliderRow(appString(R.string.text_background_tint_a39a12), "${(glassLook.tint / 0.8f * 100).roundToInt()}%",
+                        glassLook.tint, 0f..0.8f) { v -> scope.launch { desktopSettings.setGlassTint(v) } }
+                }
+                item {
+                    SettingsSliderRow(appString(R.string.text_panel_frost_ada0d3), "${(glassLook.frost / 0.3f * 100).roundToInt()}%",
+                        glassLook.frost, 0f..0.3f) { v -> scope.launch { desktopSettings.setGlassFrost(v) } }
+                }
+                item {
+                    SettingsSwitchRow(title = appString(R.string.text_glass_edges_f462cd), checked = glassLook.edges) { v ->
+                        scope.launch { desktopSettings.setGlassEdges(v) }
+                    }
+                }
             }
 
             if (prefs.themeStyle == ThemeStyle.AURORA) {
@@ -320,7 +355,7 @@ private fun TypefacePicker(prefs: UiPrefs, onSelect: (Int) -> Unit) {
 
 @Composable
 private fun ThemeStylePicker(prefs: UiPrefs, onSelect: (Int) -> Unit) {
-    val dark = MaterialTheme.colorScheme.background.luminance() < 0.3f
+    val dark = MaterialTheme.colorScheme.onBackground.luminance() > 0.5f
     Column(Modifier.padding(horizontal = 20.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         ThemeIdentities.chunked(2).forEach { row ->
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {

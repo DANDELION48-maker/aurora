@@ -39,6 +39,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import com.aurora.music.model.accent
+import com.aurora.music.ui.theme.themedCorner
 
 @Composable
 internal fun TrackPlaylistsSheet(song: Song, onDismiss: () -> Unit) {
@@ -67,7 +68,7 @@ internal fun TrackPlaylistsSheet(song: Song, onDismiss: () -> Unit) {
     val colors = MaterialTheme.colorScheme
     val maxHeight = (LocalWindowLayout.current.heightDp * .86f).dp
     Dialog(onDismissRequest = { if (busy == null) onDismiss() }, properties = DialogProperties(usePlatformDefaultWidth = false)) {
-        Surface(shape = RoundedCornerShape(28.dp), color = colors.surface, tonalElevation = 0.dp,
+        Surface(shape = RoundedCornerShape(themedCorner(28.dp)), color = com.aurora.music.ui.theme.solidColors().surface, tonalElevation = 0.dp,
             modifier = Modifier.widthIn(max = 520.dp).fillMaxWidth().padding(24.dp)) {
         Column(Modifier.fillMaxWidth().heightIn(max = maxHeight).padding(start = 20.dp, end = 20.dp, top = 24.dp)) {
             Text(appString(R.string.track_swipe_playlists), style = MaterialTheme.typography.headlineMedium,
@@ -75,14 +76,14 @@ internal fun TrackPlaylistsSheet(song: Song, onDismiss: () -> Unit) {
             Text(appString(R.string.track_playlists_hint), style = MaterialTheme.typography.bodyMedium,
                 color = colors.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp, bottom = 18.dp))
             Row(
-                Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp))
+                Modifier.fillMaxWidth().clip(RoundedCornerShape(themedCorner(20.dp)))
                     .background(Brush.horizontalGradient(listOf(colors.primary.copy(alpha = .13f), colors.surfaceContainerHigh)))
-                    .border(1.dp, colors.primary.copy(alpha = .12f), RoundedCornerShape(20.dp))
+                    .border(1.dp, colors.primary.copy(alpha = .12f), RoundedCornerShape(themedCorner(20.dp)))
                     .padding(14.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Artwork(song.artworkUrl, song.accent,
-                    Modifier.size(60.dp).shadow(6.dp, RoundedCornerShape(12.dp)), corner = 12.dp)
+                    Modifier.size(60.dp).shadow(6.dp, RoundedCornerShape(themedCorner(12.dp))), corner = 12.dp)
                 Column(Modifier.weight(1f).padding(start = 14.dp)) {
                     Text(song.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold,
                         maxLines = 2, overflow = TextOverflow.Ellipsis)
@@ -130,7 +131,7 @@ internal fun TrackPlaylistsSheet(song: Song, onDismiss: () -> Unit) {
                             val borderColor by animateColorAsState(
                                 if (included == true) colors.primary.copy(alpha = .45f) else colors.outlineVariant.copy(alpha = .3f),
                                 label = "playlistSelectionBorder")
-                            val rowShape = RoundedCornerShape(16.dp)
+                            val rowShape = RoundedCornerShape(themedCorner(16.dp))
                             Row(Modifier.fillMaxWidth().clip(rowShape).background(rowColor).border(1.dp, borderColor, rowShape)
                                 .toggleable(value = included == true,
                                     enabled = included != null && busy == null, role = Role.Checkbox) { checked ->
@@ -173,7 +174,7 @@ internal fun TrackPlaylistsSheet(song: Song, onDismiss: () -> Unit) {
                     }
                 }
             }
-            Button(onClick = onDismiss, enabled = busy == null, shape = RoundedCornerShape(16.dp),
+            Button(onClick = onDismiss, enabled = busy == null, shape = RoundedCornerShape(themedCorner(16.dp)),
                 modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 20.dp).heightIn(min = 50.dp)) {
                 Text(appString(R.string.track_swipe_done), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
             }

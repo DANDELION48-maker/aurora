@@ -214,7 +214,7 @@ internal fun RackRoutingDialog(title: String, available: List<ProcessingRackNode
     onSave: (List<RackInput>?) -> Unit) {
     var inputs by remember { mutableStateOf(initial ?: listOf(RackInput(available.lastOrNull()?.id ?: RackInput.INPUT))) }
     var error by remember { mutableStateOf<String?>(null) }
-    AlertDialog(onDismissRequest = onDismiss, title = { Text(title) }, text = {
+    AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, onDismissRequest = onDismiss, title = { Text(title) }, text = {
         Column(Modifier.verticalScroll(rememberScrollState())) {
             inputs.forEachIndexed { index, edge ->
                 var sourceMenu by remember(index) { mutableStateOf(false) }

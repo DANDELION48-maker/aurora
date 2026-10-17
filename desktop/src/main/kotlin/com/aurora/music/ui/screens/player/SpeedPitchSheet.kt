@@ -1,5 +1,7 @@
 package com.aurora.music.ui.screens.player
 
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import com.aurora.music.localization.appString
 import com.aurora.music.R
 
@@ -40,15 +42,16 @@ fun SpeedPitchSheet(
     speed: Float,
     onSpeed: (Float) -> Unit,
     onReset: () -> Unit,
+    onOpenReverbSettings: () -> Unit = {},
     onDismiss: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh,
     ) {
-        Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(bottom = 32.dp)) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(bottom = 32.dp)) {
             Text(appString(R.string.text_playback_controls_5ee1ab), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(20.dp))
 
@@ -80,6 +83,9 @@ fun SpeedPitchSheet(
             ) {
                 Text(appString(R.string.text_reset_to_default_39c90e), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
             }
+
+            androidx.compose.material3.HorizontalDivider(Modifier.padding(vertical = 20.dp), color = MaterialTheme.colorScheme.outlineVariant)
+            com.aurora.music.ui.screens.settings.ReverbQuickControls(onOpenReverbSettings)
         }
     }
 }

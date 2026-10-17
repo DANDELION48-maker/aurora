@@ -1,6 +1,8 @@
 package com.aurora.music.ui.screens.settings
 
+import androidx.compose.material.icons.filled.Waves
 import com.aurora.music.localization.appPlural
+import com.aurora.music.ui.theme.fade
 
 import com.aurora.music.localization.appString
 import com.aurora.music.R
@@ -93,14 +95,16 @@ import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.math.roundToInt
+import com.aurora.music.ui.theme.themedCorner
 
 @Composable
 fun EqualizerScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenLoudness: () -> Unit,
-    onOpenProcessingPresets: () -> Unit, onOpenProcessingRack: () -> Unit, onOpenImpulses: () -> Unit) {
+    onOpenProcessingPresets: () -> Unit, onOpenProcessingRack: () -> Unit, onOpenImpulses: () -> Unit, onOpenReverb: () -> Unit = {}) {
     val store = LocalDesktopContainer.current.settingsStore
     val prefs by store.audioPrefs.collectAsStateWithLifecycle(initialValue = AudioPrefs())
     val playbackPrefs by store.playbackPrefs.collectAsStateWithLifecycle(initialValue = PlaybackPrefs())
     val rack by store.processingRack.collectAsStateWithLifecycle(initialValue = ProcessingRack())
+    val reverb by store.reverbPrefs.collectAsStateWithLifecycle(initialValue = com.aurora.music.data.ReverbPrefs())
     val scope = rememberCoroutineScope()
     val draft = remember { EqDraft(store) }
     LaunchedEffect(draft) { draft.run() }
@@ -143,6 +147,8 @@ fun EqualizerScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenLou
                         }
                         SettingsDestinationRow(Icons.Filled.Tune, SettingsDestinations.processingPresets,
                             appString(R.string.text_your_complete_processing_settings_ready_to_recall_a6fd9f), onClick = onOpenProcessingPresets)
+                        SettingsRowDivider()
+                        SettingsDestinationRow(Icons.Filled.Waves, SettingsDestinations.reverb, reverbSummary(reverb), onClick = onOpenReverb)
                     }
                 }
 
@@ -191,11 +197,11 @@ private fun CollapsibleSection(
 ) {
     Column(
         Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 5.dp)
-            .clip(RoundedCornerShape(18.dp)).background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.5f)),
+            .clip(RoundedCornerShape(themedCorner(18.dp))).background(MaterialTheme.colorScheme.surfaceContainerHigh.fade(0.5f)),
     ) {
         Row(Modifier.fillMaxWidth().pointerHoverIcon(PointerIcon.Hand).clickable(onClick = onToggle).padding(horizontal = 20.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
-                Modifier.size(38.dp).clip(RoundedCornerShape(10.dp)).background(MaterialTheme.colorScheme.surfaceContainerHighest),
+                Modifier.size(38.dp).clip(RoundedCornerShape(themedCorner(10.dp))).background(MaterialTheme.colorScheme.surfaceContainerHighest),
                 contentAlignment = Alignment.Center,
             ) { Icon(icon, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp)) }
             Spacer(Modifier.width(14.dp))
@@ -275,13 +281,13 @@ private fun ConvolutionPanel(prefs: AudioPrefs, store: SettingsStore, scope: Cor
         }
         Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Box(
-                Modifier.weight(1f).clip(RoundedCornerShape(12.dp)).background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                Modifier.weight(1f).clip(RoundedCornerShape(themedCorner(12.dp))).background(MaterialTheme.colorScheme.surfaceContainerHigh)
                     .pointerHoverIcon(PointerIcon.Hand).clickable(onClick = onOpenImpulses).padding(vertical = 12.dp),
                 contentAlignment = Alignment.Center,
             ) { Text(appString(R.string.text_impulse_library_ff955d), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary) }
             if (prefs.dspConvIrName.isNotBlank()) {
                 Box(
-                    Modifier.clip(RoundedCornerShape(12.dp)).background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                    Modifier.clip(RoundedCornerShape(themedCorner(12.dp))).background(MaterialTheme.colorScheme.surfaceContainerHigh)
                         .pointerHoverIcon(PointerIcon.Hand)
                         .clickable { scope.launch { store.setDspConvIr("", ""); store.setDspConvEnabled(false) } }.padding(horizontal = 16.dp, vertical = 12.dp),
                     contentAlignment = Alignment.Center,
@@ -381,7 +387,7 @@ private fun AutoEqPanel(prefs: AudioPrefs, store: SettingsStore, scope: Coroutin
             leadingIcon = { Icon(Icons.Filled.Search, null, tint = MaterialTheme.colorScheme.primary) },
             trailingIcon = { if (query.isNotEmpty()) Icon(Icons.Filled.Close, appString(R.string.text_clear_719ea3), modifier = Modifier.clip(RoundedCornerShape(50)).pointerHoverIcon(PointerIcon.Hand).clickable { query = "" }.padding(4.dp)) },
             singleLine = true,
-            shape = RoundedCornerShape(14.dp),
+            shape = RoundedCornerShape(themedCorner(14.dp)),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -408,7 +414,7 @@ private fun AutoEqPanel(prefs: AudioPrefs, store: SettingsStore, scope: Coroutin
         }
         results.take(visibleCount).forEach { p ->
             Row(
-                Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).pointerHoverIcon(PointerIcon.Hand).clickable(enabled = !working) {
+                Modifier.fillMaxWidth().clip(RoundedCornerShape(themedCorner(10.dp))).pointerHoverIcon(PointerIcon.Hand).clickable(enabled = !working) {
                     scope.launch {
                         working = true
                         val eq = squigEq.generate(p)
@@ -446,7 +452,7 @@ private fun AutoEqPanel(prefs: AudioPrefs, store: SettingsStore, scope: Coroutin
         }
         if (active.isNotBlank() && observedOutput.route.key != null) {
             Box(
-                Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                Modifier.fillMaxWidth().clip(RoundedCornerShape(themedCorner(12.dp))).background(MaterialTheme.colorScheme.surfaceContainerHigh)
                     .pointerHoverIcon(PointerIcon.Hand)
                     .clickable {
                         scope.launch {

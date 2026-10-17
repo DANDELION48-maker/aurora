@@ -7,7 +7,9 @@ object WindowNative {
     private const val BORDER_COLOR = 34
     private const val CAPTION_COLOR = 35
     private const val TEXT_COLOR = 36
+    private const val SYSTEM_BACKDROP = 38
     private const val DEFAULT_COLOR = -1
+    private const val NO_COLOR = 0xFFFFFFFE.toInt()
 
     private val accentListeners = CopyOnWriteArrayList<(Int) -> Unit>()
 
@@ -20,6 +22,10 @@ object WindowNative {
     fun setTextColor(hwnd: Long, argb: Int?): Boolean = setAttribute(hwnd, TEXT_COLOR, colorRef(argb)) == 0
 
     fun setBorderColor(hwnd: Long, argb: Int?): Boolean = setAttribute(hwnd, BORDER_COLOR, colorRef(argb)) == 0
+
+    fun clearCaptionColor(hwnd: Long): Boolean = setAttribute(hwnd, CAPTION_COLOR, NO_COLOR) == 0
+
+    fun setSystemBackdrop(hwnd: Long, type: Int): Boolean = setAttribute(hwnd, SYSTEM_BACKDROP, type) == 0
 
     fun accentColor(): Int? = accent().takeIf { it != 0 }
 

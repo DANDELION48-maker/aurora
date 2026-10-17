@@ -1,6 +1,11 @@
 package com.aurora.music.ui.screens.library
 
+import androidx.compose.material.icons.outlined.LibraryMusic
+import androidx.compose.material.icons.outlined.Cloud
+import androidx.compose.material.icons.outlined.GraphicEq
+import androidx.compose.material.icons.outlined.PlayCircle
 import com.aurora.music.localization.localizedMediaType
+import com.aurora.music.ui.theme.fade
 
 import com.aurora.music.localization.appPlural
 
@@ -142,6 +147,7 @@ import kotlin.math.roundToInt
 import com.aurora.music.data.accent
 import com.aurora.music.model.accent
 import com.aurora.music.model.label
+import com.aurora.music.ui.theme.themedCorner
 
 internal val LocalLibrarySelection = androidx.compose.runtime.compositionLocalOf<String?> { null }
 
@@ -230,7 +236,9 @@ fun LibraryScreen(
     onDownload: (Song) -> Unit,
     onRemoveDownload: (String) -> Unit,
     onOpenSearch: () -> Unit,
-    onCreatePlaylist: suspend (String) -> Boolean,
+    onCreatePlaylist: suspend (name: String, description: String, target: String?) -> Boolean,
+    playlistTargets: () -> List<com.aurora.music.data.PlaylistTarget> = { emptyList() },
+    onSelectView: (String) -> Unit = {},
     onCreateSmart: () -> Unit,
     onEditSmart: (String) -> Unit,
     onDeleteSmart: (String) -> Unit,
@@ -301,6 +309,7 @@ fun LibraryScreen(
 
         if (showCreate) {
             CreatePlaylistDialog(
+                targets = remember { playlistTargets() },
                 onCreate = onCreatePlaylist,
                 onCreateSmart = { showCreate = false; onCreateSmart() },
                 onImportM3u = { showCreate = false; onImportM3u() },
@@ -308,6 +317,7 @@ fun LibraryScreen(
             )
         }
 
+        if (state.views.size > 1) LibraryViewTabs(state.views, state.view, onSelectView)
         LibraryToolbar(filter, sort, layout, canDownload, compact, onFilter, onSort, onToggleLayout)
 
         val bottom = contentPadding.calculateBottomPadding() + 24.dp
@@ -389,6 +399,29 @@ private fun tabIcon(f: LibraryFilter): ImageVector = when (f) {
     LibraryFilter.DOWNLOADED -> Icons.Filled.Download
 }
 
+// a merged library keeps each streaming catalogue in a view of its own
+@Composable
+private fun LibraryViewTabs(views: List<com.aurora.music.data.LibraryViewChoice>, selected: String, onSelect: (String) -> Unit) {
+    val insets = LocalLibInsets.current
+    LazyRow(
+        Modifier.fillMaxWidth().height(48.dp),
+        contentPadding = PaddingValues(start = (insets.start - 10.dp).coerceAtLeast(0.dp), end = insets.end),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        items(views.size) { i ->
+            val view = views[i]
+            val icon = when (view.id) {
+                "youtube", "discovery" -> Icons.Outlined.PlayCircle
+                "spotify" -> Icons.Outlined.GraphicEq
+                "soundcloud" -> Icons.Outlined.Cloud
+                else -> Icons.Outlined.LibraryMusic
+            }
+            LibTab(label = view.label, icon = icon, selected = view.id == selected, iconOnly = false) { onSelect(view.id) }
+        }
+    }
+}
+
 @Composable
 private fun LibraryToolbar(
     filter: LibraryFilter,
@@ -459,7 +492,7 @@ private fun SortButton(sort: LibrarySort, iconOnly: Boolean, onSort: (LibrarySor
 private fun LayoutToggle(layout: LibraryLayout, onToggle: () -> Unit) {
     val label = appString(R.string.text_toggle_layout_6169e7)
     val shape = if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(50) else MaterialTheme.shapes.small
-    Row(Modifier.clip(shape).background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f)).padding(3.dp)) {
+    Row(Modifier.clip(shape).background(MaterialTheme.colorScheme.surfaceContainerHigh.fade(0.6f)).padding(3.dp)) {
         listOf(LibraryLayout.LIST to Icons.AutoMirrored.Filled.List, LibraryLayout.GRID to Icons.Filled.GridView).forEach { (mode, icon) ->
             val on = mode == layout
             Box(
@@ -482,7 +515,7 @@ private fun LibTab(label: String, icon: ImageVector, selected: Boolean, iconOnly
     val bare = iconOnly && !selected
     val tab: @Composable () -> Unit = {
         Column(
-            Modifier.clip(RoundedCornerShape(12.dp)).clickable(onClickLabel = label, onClick = onClick).pointerHoverIcon(PointerIcon.Hand).padding(horizontal = 10.dp, vertical = 6.dp),
+            Modifier.clip(RoundedCornerShape(themedCorner(12.dp))).clickable(onClickLabel = label, onClick = onClick).pointerHoverIcon(PointerIcon.Hand).padding(horizontal = 10.dp, vertical = 6.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(Modifier.height(20.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -546,7 +579,7 @@ private fun AllOverview(
         item {
             val liked = LibRow(
                 appString(R.string.text_liked_songs_58c3a9), appPlural(R.plurals.track_count, (state.likedSongCount)), state.likedCover,
-                accentFor("liked"), "liked", "liked",
+                accentFor("liked"), state.likedId, "liked",
             )
             val tiles = buildList {
                 add(QuickTile(liked.title, liked.subtitle, Icons.Filled.Favorite, state.likedCover, row = liked) { onOpen(liked) })
@@ -618,7 +651,7 @@ private fun QuickTiles(tiles: List<QuickTile>, compact: Boolean, actions: LibAct
 @Composable
 private fun QuickTileCard(tile: QuickTile, actions: LibActions, modifier: Modifier = Modifier) {
     val aurora = LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA
-    val shape = if (aurora) RoundedCornerShape(16.dp) else MaterialTheme.shapes.medium
+    val shape = if (aurora) RoundedCornerShape(themedCorner(16.dp)) else MaterialTheme.shapes.medium
     val row = tile.row
     var contextAt by remember { mutableStateOf<Offset?>(null) }
     var menuOpen by remember { mutableStateOf(false) }
@@ -631,7 +664,7 @@ private fun QuickTileCard(tile: QuickTile, actions: LibActions, modifier: Modifi
             Modifier
                 .fillMaxWidth()
                 .height(64.dp)
-                .then(if (aurora) Modifier.clip(shape).background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f)) else Modifier.auroraPanel(shape))
+                .then(if (aurora) Modifier.clip(shape).background(MaterialTheme.colorScheme.surfaceContainerHigh.fade(0.6f)) else Modifier.auroraPanel(shape))
                 .then(if (selected) Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.16f), shape) else Modifier)
                 .clickable(interactionSource = interaction, indication = LocalIndication.current, onClick = tile.onClick)
                 .pointerHoverIcon(PointerIcon.Hand)
@@ -643,7 +676,7 @@ private fun QuickTileCard(tile: QuickTile, actions: LibActions, modifier: Modifi
                 Artwork(tile.art, row?.accent ?: MaterialTheme.colorScheme.primary, Modifier.size(TileArt), corner = if (circle) TileArt else 10.dp)
             } else {
                 Box(
-                    Modifier.size(TileArt).clip(RoundedCornerShape(10.dp))
+                    Modifier.size(TileArt).clip(RoundedCornerShape(themedCorner(10.dp)))
                         .background(Brush.linearGradient(listOf(MaterialTheme.colorScheme.primary.copy(alpha = 0.85f), MaterialTheme.colorScheme.tertiary.copy(alpha = 0.85f)))),
                     contentAlignment = Alignment.Center,
                 ) { Icon(tile.icon, null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(20.dp)) }
@@ -1038,19 +1071,27 @@ private fun buildRows(state: LibraryUiState, filter: LibraryFilter, sort: Librar
     val pinned = pins.map { it.kind to it.id }.toSet()
     val deduped = sorted.filterNot { (it.kind to it.id) in pinned }
     val liked = LibRow(
-        appString(R.string.text_liked_songs_58c3a9), appString(R.string.playlist_track_count, appPlural(R.plurals.track_count, (state.likedSongCount))), state.likedCover, accentFor("liked"), "liked", "liked",
+        appString(R.string.text_liked_songs_58c3a9), appString(R.string.playlist_track_count, appPlural(R.plurals.track_count, (state.likedSongCount))), state.likedCover, accentFor("liked"), state.likedId, "liked",
         detail = appString(R.string.text_playlist_cd95b4), cells = listOf(state.likedSongCount.toString()),
     )
     return listOf(liked) + deduped
 }
 
 @Composable
-private fun CreatePlaylistDialog(onCreate: suspend (String) -> Boolean, onCreateSmart: () -> Unit, onImportM3u: () -> Unit, onDismiss: () -> Unit) {
+private fun CreatePlaylistDialog(
+    targets: List<com.aurora.music.data.PlaylistTarget>,
+    onCreate: suspend (name: String, description: String, target: String?) -> Boolean,
+    onCreateSmart: () -> Unit,
+    onImportM3u: () -> Unit,
+    onDismiss: () -> Unit,
+) {
     var name by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var target by remember(targets) { mutableStateOf(targets.firstOrNull()?.id) }
     var saving by remember { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    AlertDialog(
+    AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, 
         onDismissRequest = { if (!saving) onDismiss() },
         title = { Text(appString(R.string.text_new_playlist_a5474a), fontWeight = FontWeight.Bold) },
         text = {
@@ -1062,6 +1103,30 @@ private fun CreatePlaylistDialog(onCreate: suspend (String) -> Boolean, onCreate
                     singleLine = true,
                     enabled = !saving,
                 )
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text(appString(R.string.text_description_55f8eb)) },
+                    minLines = 2,
+                    maxLines = 4,
+                    enabled = !saving,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+                if (targets.size > 1) {
+                    Text(appString(R.string.playlist_save_to), style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.padding(top = 14.dp, bottom = 6.dp))
+                    targets.forEach { option ->
+                        Row(
+                            Modifier.fillMaxWidth().clip(RoundedCornerShape(themedCorner(10.dp)))
+                                .clickable(enabled = !saving) { target = option.id }.pointerHoverIcon(PointerIcon.Hand)
+                                .padding(vertical = 2.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            androidx.compose.material3.RadioButton(selected = target == option.id, onClick = { target = option.id }, enabled = !saving)
+                            Text(option.label, style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        }
+                    }
+                }
                 if (failed) {
                     Text(appString(R.string.playlist_create_failed), color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
@@ -1080,7 +1145,7 @@ private fun CreatePlaylistDialog(onCreate: suspend (String) -> Boolean, onCreate
                 failed = false
                 scope.launch {
                     try {
-                        if (onCreate(name.trim())) onDismiss() else failed = true
+                        if (onCreate(name.trim(), description.trim(), target.takeIf { targets.size > 1 })) onDismiss() else failed = true
                     } finally {
                         saving = false
                     }
@@ -1094,7 +1159,7 @@ private fun CreatePlaylistDialog(onCreate: suspend (String) -> Boolean, onCreate
 }
 
 @Composable
-private fun rowShape(): Shape = if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(12.dp) else MaterialTheme.shapes.small
+private fun rowShape(): Shape = if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(themedCorner(12.dp)) else MaterialTheme.shapes.small
 
 @Composable
 private fun artShape(row: LibRow): Shape = if (row.circle) CircleShape else RoundedCornerShape(
@@ -1185,7 +1250,7 @@ private fun LibCard(row: LibRow, actions: LibActions, onClick: () -> Unit) {
     val interaction = remember { MutableInteractionSource() }
     val hovered by interaction.collectIsHoveredAsState()
     val aurora = LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA
-    val shape = if (aurora) RoundedCornerShape(16.dp) else MaterialTheme.shapes.medium
+    val shape = if (aurora) RoundedCornerShape(themedCorner(16.dp)) else MaterialTheme.shapes.medium
     val selected = isSelected(row)
     val showActions = row.menu && (hovered || menuOpen)
     val align = if (row.circle) TextAlign.Center else TextAlign.Start

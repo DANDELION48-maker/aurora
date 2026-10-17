@@ -44,6 +44,36 @@ object YouTubeMusicParser {
         return HomeData(sections = sections.distinctBy { it.id }, continuation = token)
     }
 
+    // the mood and genre buttons on the explore pages, grouped under their shelf titles
+    fun categories(root: JsonElement): List<com.aurora.music.data.ExploreGroup> {
+        val groups = mutableListOf<com.aurora.music.data.ExploreGroup>()
+        fun visit(node: JsonElement) {
+            if (node.isJsonArray) { node.asJsonArray.forEach(::visit); return }
+            if (!node.isJsonObject) return
+            node.asJsonObject.entrySet().forEach { (key, value) ->
+                if (key in setOf("gridRenderer", "musicCarouselShelfRenderer") && value.isJsonObject) {
+                    val shelf = value.asJsonObject
+                    val header = shelf.obj("header").entrySet().firstOrNull { it.value.isJsonObject }?.value?.asJsonObject ?: JsonObject()
+                    val title = header.obj("title").label()
+                    val buttons = shelf.objects("musicNavigationButtonRenderer").mapNotNull { button ->
+                        val browse = button.obj("clickCommand").obj("browseEndpoint")
+                        val params = browse.string("params")
+                        if (browse.string("browseId") != "FEmusic_moods_and_genres_category" || params.isBlank()) return@mapNotNull null
+                        val color = button.obj("solid").get("leftStripeColor")?.takeIf { it.isJsonPrimitive }?.asLong ?: 0L
+                        com.aurora.music.data.ExploreCategory(button.obj("buttonText").label(), params, color)
+                    }.filter { it.title.isNotBlank() }.distinctBy { it.params }
+                    if (buttons.isNotEmpty()) groups += com.aurora.music.data.ExploreGroup(title, buttons) else visit(value)
+                } else if (key !in setOf("menu", "overlay", "trackingParams")) visit(value)
+            }
+        }
+        visit(root)
+        return groups
+    }
+
+    // the watch page links a track to its related page through one of its tabs
+    fun relatedBrowseId(root: JsonElement): String? = root.objects("browseEndpoint")
+        .map { it.string("browseId") }.firstOrNull { it.startsWith("MPTRt_") }
+
     fun results(root: JsonElement): SearchResults {
         val songs = mutableListOf<Song>()
         val albums = mutableListOf<Album>()

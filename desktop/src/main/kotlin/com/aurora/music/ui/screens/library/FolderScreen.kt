@@ -1,6 +1,7 @@
 package com.aurora.music.ui.screens.library
 
 import com.aurora.music.localization.appString
+import com.aurora.music.ui.theme.fade
 import com.aurora.music.R
 
 import androidx.compose.foundation.background
@@ -50,6 +51,7 @@ import com.aurora.music.ui.layout.PageMetrics
 import com.aurora.music.ui.theme.LocalUiPrefs
 import com.aurora.music.ui.theme.auroraPanel
 import kotlin.math.floor
+import com.aurora.music.ui.theme.themedCorner
 
 @Composable
 fun FolderScreen(
@@ -155,11 +157,11 @@ private fun FolderGrid(folders: List<Pair<String, String>>, modifier: Modifier =
 @Composable
 private fun FolderTile(name: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     val aurora = LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA
-    val shape = if (aurora) RoundedCornerShape(14.dp) else MaterialTheme.shapes.medium
+    val shape = if (aurora) RoundedCornerShape(themedCorner(14.dp)) else MaterialTheme.shapes.medium
     Row(
         modifier
             .height(56.dp)
-            .then(if (aurora) Modifier.clip(shape).background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.45f)) else Modifier.auroraPanel(shape))
+            .then(if (aurora) Modifier.clip(shape).background(MaterialTheme.colorScheme.surfaceContainerHigh.fade(0.45f)) else Modifier.auroraPanel(shape))
             .clickable(onClick = onClick)
             .pointerHoverIcon(PointerIcon.Hand)
             .padding(horizontal = 14.dp),

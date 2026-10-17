@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="chromium_downloading" formatted="false">"\u2067جارٍ تنزيل متصفح تسجيل الدخول. يحدث هذا مرة واحدة ويحتاج نحو 150 ميغابايت.\u2069"</string>
+    <string name="chromium_failed" formatted="false">"\u2067تعذر تشغيل متصفح تسجيل الدخول: %1$s\u2069"</string>
+    <string name="chromium_preparing" formatted="false">"\u2067جارٍ تجهيز متصفح تسجيل الدخول…\u2069"</string>
+    <string name="discovery_explore" formatted="false">"\u2067استكشاف\u2069"</string>
+    <string name="discovery_explore_failed" formatted="false">"\u2067تعذر تحميل الاستكشاف. تحقق من اتصالك وحاول مرة أخرى.\u2069"</string>
+    <string name="discovery_related" formatted="false">"\u2067ذات صلة\u2069"</string>
+    <string name="discovery_related_empty" formatted="false">"\u2067لا يوجد في YouTube Music شيء ذو صلة بهذه الأغنية.\u2069"</string>
+    <string name="discovery_start_radio" formatted="false">"\u2067بدء راديو\u2069"</string>
+    <string name="lyrics_settings_summary" formatted="false">"\u2067نمط المزامنة ومصادر الكلمات\u2069"</string>
+    <string name="lyrics_source_lrclib_detail" formatted="false">"\u2067قاعدة بيانات كلمات مجانية من المجتمع\u2069"</string>
+    <string name="lyrics_source_server" formatted="false">"\u2067مصدر الأغنية نفسه\u2069"</string>
+    <string name="lyrics_source_server_detail" formatted="false">"\u2067كلمات من خادمك أو خدمة البث أو الملف نفسه\u2069"</string>
+    <string name="lyrics_source_spotify_detail" formatted="false">"\u2067كلمات متزامنة من حساب Spotify مدمج\u2069"</string>
+    <string name="lyrics_sources_hint" formatted="false">"\u2067يتحقق Aurora منها بالترتيب. تُستخدم أول كلمات متزامنة يجدها، وإلا فأول كلمات من أي نوع.\u2069"</string>
+    <string name="lyrics_sources_title" formatted="false">"\u2067مصادر الكلمات\u2069"</string>
+    <string name="merge_comments" formatted="false">"\u2067تعليقات SoundCloud\u2069"</string>
+    <string name="merge_comments_summary" formatted="false">"\u2067عرض التعليقات المؤقتة عند العثور على مقطع مطابق في SoundCloud\u2069"</string>
+    <string name="merge_lyrics" formatted="false">"\u2067كلمات Spotify\u2069"</string>
+    <string name="merge_lyrics_summary" formatted="false">"\u2067استخدام كلمات Spotify المتزامنة لأغاني مصادرك الأخرى\u2069"</string>
+    <string name="merge_options" formatted="false">"\u2067خيارات الدمج\u2069"</string>
+    <string name="merge_options_note" formatted="false">"\u2067عندما يكون SoundCloud أو Spotify جزءًا من مكتبتك الموحدة، يمكن لـ Aurora إضافة مزاياهما إلى أغاني مصادرك الأخرى. أوقف كل ميزة بالكامل أو لأغاني مصدر معين.\u2069"</string>
+    <string name="merge_options_summary" formatted="false">"\u2067ما تضيفه الخدمات المدمجة إلى أغانيك\u2069"</string>
+    <string name="merge_songs_from" formatted="false">"\u2067الأغاني من\u2069"</string>
+    <string name="playlist_save_to" formatted="false">"\u2067حفظ في\u2069"</string>
+    <string name="text_acrylic_f39ce1" formatted="false">"\u2067أكريليك\u2069"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"\u2067إضافة مجلد موسيقى\u2069"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"\u2067فك ترميز الصوت. حقوق النشر © مطورو FFmpeg. LGPL-3.0-or-later، مرتبط ديناميكيًا عبر JavaCPP Presets. الترخيص الكامل: https://www.gnu.org/licenses/lgpl-3.0.html\u2069"</string>
     <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"\u2067يضبط مستوى صوت Aurora مستوى صوت DAC نفسه عندما يتوفر. يبقى الصوت bit-perfect.\u2069"</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"\u2067يتولى Aurora التحكم الكامل في الجهاز ويرسل العينات بمعدل المقطع وعمق البت الخاصين به. تصمت التطبيقات الأخرى أثناء تشغيل Aurora. يبقى الإخراج مطابقًا بت ببت عندما لا تغيّر المعالجة ومستوى الصوت وReplayGain العينات؛ وإذا رفض الجهاز صيغة ما، يعود Aurora إلى الوضع المشترك ويوضح مسار الإشارة السبب.\u2069"</string>
+    <string name="text_background_tint_a39a12" formatted="false">"\u2067تلوين الخلفية\u2069"</string>
     <string name="text_bit_float_012895">"\u2067عدد عشري %1$d بت\u2069"</string>
     <string name="text_bit_integer_72520f">"\u2067عدد صحيح %1$d بت\u2069"</string>
     <string name="text_bit_perfect_output_that_bypasses_the_sound_server_d2dcd9" formatted="false">"\u2067إخراج مطابق بت ببت يتجاوز خادم الصوت\u2069"</string>
@@ -26,14 +52,18 @@
     <string name="text_exclusive_mode_is_unavailable_0de552">"\u2067الوضع الحصري غير متاح: %1$s\u2069"</string>
     <string name="text_exclusive_mode_is_unavailable_on_this_device_e51016" formatted="false">"\u2067الوضع الحصري غير متاح على هذا الجهاز\u2069"</string>
     <string name="text_follow_the_playing_cover_5d2e91" formatted="false">"\u2067اتباع غلاف المقطع قيد التشغيل\u2069"</string>
+    <string name="text_glass_edges_f462cd" formatted="false">"\u2067حواف زجاجية\u2069"</string>
     <string name="text_hz_is_unavailable_using_hz_14de1c">"\u2067%1$d Hz غير متاح؛ يتم استخدام %2$d Hz.\u2069"</string>
     <string name="text_in_use_by_the_sound_server_or_another_app_aa3eaa" formatted="false">"\u2067قيد الاستخدام من خادم الصوت أو تطبيق آخر\u2069"</string>
     <string name="text_keep_aurora_playing_in_the_notification_area_when_the_window_clos_e5fed5" formatted="false">"\u2067إبقاء Aurora قيد التشغيل في منطقة الإشعارات عند إغلاق النافذة\u2069"</string>
     <string name="text_larger_buffers_ride_out_heavy_system_load_smaller_ones_react_fast_e4d5f8" formatted="false">"\u2067المخازن الأكبر تتحمل الحمل الثقيل على النظام؛ والأصغر تستجيب أسرع للتنقل ومستوى الصوت. يُطبَّق عند إعادة فتح المخرج.\u2069"</string>
+    <string name="text_let_your_desktop_show_through_the_window_blurred_windows_11_only_08f192" formatted="false">"\u2067اجعل سطح المكتب يظهر عبر النافذة بشكل ضبابي. على Windows 11 فقط.\u2069"</string>
     <string name="text_linux_java_b7923f">"Linux · Java %1$d"</string>
     <string name="text_logs_126dd3" formatted="false">"\u2067السجلات\u2069"</string>
+    <string name="text_mica_3ccf84" formatted="false">"\u2067ميكا\u2069"</string>
     <string name="text_open_in_full_page_0ec923" formatted="false">"\u2067الفتح في صفحة كاملة\u2069"</string>
     <string name="text_output_buffer_61b372" formatted="false">"\u2067المخزن المؤقت للإخراج\u2069"</string>
+    <string name="text_panel_frost_ada0d3" formatted="false">"\u2067ضبابية اللوحات\u2069"</string>
     <string name="text_playing_music_af9695" formatted="false">"\u2067تشغيل الموسيقى\u2069"</string>
     <string name="text_shared_mode_mix_format_4a5bc8" formatted="false">"\u2067صيغة المزج في الوضع المشترك\u2069"</string>
     <string name="text_shared_mode_mixes_aurora_with_other_apps_through_the_system_sound_0c8e9d" formatted="false">"\u2067يمزج الوضع المشترك Aurora مع التطبيقات الأخرى عبر خادم الصوت في النظام بتردد 48 kHz. فعّل الوضع الحصري للتشغيل المطابق بت ببت.\u2069"</string>
@@ -50,6 +80,7 @@
     <string name="text_the_track_could_not_be_opened_5719af" formatted="false">"\u2067تعذّر فتح المقطع\u2069"</string>
     <string name="text_the_track_s_sample_rate_is_not_supported_5c8629" formatted="false">"\u2067معدل عينات المقطع غير مدعوم\u2069"</string>
     <string name="text_tint_the_whole_app_with_the_playing_song_s_cover_a83c17" formatted="false">"\u2067تلوين التطبيق كله بلون الأغنية قيد التشغيل\u2069"</string>
+    <string name="text_translucent_window_d865c7" formatted="false">"\u2067نافذة شفافة\u2069"</string>
     <string name="text_using_your_system_accent_colour_89502e" formatted="false">"\u2067يتم استخدام لون التمييز في النظام.\u2069"</string>
     <string name="text_using_your_windows_accent_colour_7d4b4a" formatted="false">"\u2067يتم استخدام لون التمييز في Windows.\u2069"</string>
     <string name="text_volume_3b18e8" formatted="false">"\u2067مستوى الصوت\u2069"</string>

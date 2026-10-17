@@ -26,6 +26,11 @@ data class HomeData(
 
 data class HomeFeedSection(val id: String, val title: String, val subtitle: String = "", val items: List<HomeFeedItem>)
 
+// a mood or genre a streaming catalogue curates playlists for; params open its page
+data class ExploreCategory(val title: String, val params: String, val colorArgb: Long = 0)
+data class ExploreGroup(val title: String, val categories: List<ExploreCategory>)
+data class ExploreData(val groups: List<ExploreGroup> = emptyList(), val sections: List<HomeFeedSection> = emptyList())
+
 sealed interface HomeFeedItem {
     data class Track(val song: Song) : HomeFeedItem
     data class Record(val album: Album) : HomeFeedItem
@@ -276,6 +281,24 @@ class MusicRepository(
         }
         val source = backend ?: return HomeData()
         return tagHome(source.home(feed), source)
+    }
+
+    val supportsExplore: Boolean get() = !offline && backend?.supportsExplore == true
+
+    suspend fun explore(): ExploreData {
+        val source = backend?.takeIf { !offline } ?: return ExploreData()
+        val data = source.explore()
+        return data.copy(sections = tagHome(HomeData(sections = data.sections), source).sections)
+    }
+
+    suspend fun exploreCategory(params: String): HomeData {
+        val source = backend?.takeIf { !offline } ?: return HomeData()
+        return tagHome(source.exploreCategory(params), source)
+    }
+
+    suspend fun related(song: Song): HomeData {
+        val source = backend?.takeIf { !offline && song.id.isNotEmpty() } ?: return HomeData()
+        return tagHome(source.related(song), source)
     }
 
     suspend fun homePage(continuation: String, feed: String = "library"): HomeData {

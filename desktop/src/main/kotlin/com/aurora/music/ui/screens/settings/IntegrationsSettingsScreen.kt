@@ -283,7 +283,7 @@ fun ListenBrainzIntegrationScreen(contentPadding: PaddingValues, onBack: () -> U
 private fun ArtistRuleDialog(initial: ScrobbleArtistRule?, onDismiss: () -> Unit, onSave: (ScrobbleArtistRule) -> Unit, onDelete: (() -> Unit)?) {
     var source by remember(initial) { mutableStateOf(initial?.sourceArtist.orEmpty()) }
     var replacement by remember(initial) { mutableStateOf(initial?.replacementArtist.orEmpty()) }
-    AlertDialog(
+    AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, 
         onDismissRequest = onDismiss,
         title = { Text(if (initial == null) appString(R.string.text_add_artist_replacement_1379e2) else appString(R.string.text_edit_artist_replacement_2b228e)) },
         text = {

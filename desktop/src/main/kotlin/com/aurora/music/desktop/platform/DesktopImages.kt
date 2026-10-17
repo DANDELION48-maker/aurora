@@ -49,10 +49,22 @@ class LocalFileFetcher(private val path: Path) : Fetcher {
 fun desktopImageLoader(cacheDir: File, http: OkHttpClient, artwork: ArtworkRepository): ImageLoader =
     ImageLoader.Builder(PlatformContext.INSTANCE)
         .components {
+            // upgrading before coil's cache key also replaces small art saved in queues, history and playlists
+            add(coil3.map.Mapper<String, String> { data, _ -> com.aurora.music.data.remote.YouTubeMusicParser.fullSize(data) })
             add(ArtworkFetcher.Factory(artwork))
             add(LocalFileFetcher.Factory())
-            add(OkHttpNetworkFetcherFactory(callFactory = { http }))
+            add(OkHttpNetworkFetcherFactory(callFactory = { http.newBuilder().addInterceptor(::youtubeArtworkFallback).build() }))
         }
         .memoryCache { MemoryCache.Builder().maxSizePercent(PlatformContext.INSTANCE, 0.2).build() }
         .diskCache { DiskCache.Builder().directory(cacheDir.toOkioPath()).maxSizeBytes(256L * 1024 * 1024).build() }
         .build()
+
+// videos without a max-resolution thumbnail answer 404; the high-quality one always exists
+private fun youtubeArtworkFallback(chain: okhttp3.Interceptor.Chain): okhttp3.Response {
+    val request = chain.request()
+    val response = chain.proceed(request)
+    val url = request.url
+    if (response.code != 404 || url.host != "i.ytimg.com" || !url.encodedPath.endsWith("/maxresdefault.jpg")) return response
+    response.close()
+    return chain.proceed(request.newBuilder().url(url.toString().replace("/maxresdefault.jpg", "/hqdefault.jpg")).build())
+}

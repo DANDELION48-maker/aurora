@@ -67,6 +67,12 @@ interface MediaBackend {
     }
     suspend fun radio(seedId: String): List<Song>
     fun prefersServerRadio(seedId: String): Boolean = false
+
+    // streaming discovery: new releases, charts, moods and a song's related picks; only catalogues that offer it answer
+    val supportsExplore: Boolean get() = false
+    suspend fun explore(): ExploreData = ExploreData()
+    suspend fun exploreCategory(params: String): HomeData = HomeData()
+    suspend fun related(song: Song): HomeData = HomeData()
     suspend fun createPlaylist(name: String): Boolean
     suspend fun updatePlaylist(id: String, name: String?, comment: String?): Boolean
     suspend fun deletePlaylist(id: String): Boolean

@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="chromium_downloading" formatted="false">"Giriş tarayıcısı indiriliyor. Bu yalnızca bir kez olur ve yaklaşık 150 MB tutar."</string>
+    <string name="chromium_failed" formatted="false">"Giriş tarayıcısı başlatılamadı: %1$s"</string>
+    <string name="chromium_preparing" formatted="false">"Giriş tarayıcısı hazırlanıyor…"</string>
+    <string name="discovery_explore" formatted="false">"Keşfet"</string>
+    <string name="discovery_explore_failed" formatted="false">"Keşfet yüklenemedi. Bağlantınızı kontrol edip tekrar deneyin."</string>
+    <string name="discovery_related" formatted="false">"Benzer"</string>
+    <string name="discovery_related_empty" formatted="false">"YouTube Music\'te bu şarkıyla ilgili bir şey yok."</string>
+    <string name="discovery_start_radio" formatted="false">"Radyo başlat"</string>
+    <string name="lyrics_settings_summary" formatted="false">"Senkron stili ve şarkı sözlerinin kaynağı"</string>
+    <string name="lyrics_source_lrclib_detail" formatted="false">"Ücretsiz topluluk şarkı sözü veritabanı"</string>
+    <string name="lyrics_source_server" formatted="false">"Şarkının Kendi Kaynağı"</string>
+    <string name="lyrics_source_server_detail" formatted="false">"Sunucunuzdan, yayın hizmetinden veya dosyanın kendisinden sözler"</string>
+    <string name="lyrics_source_spotify_detail" formatted="false">"Birleştirilmiş Spotify hesabından senkron sözler"</string>
+    <string name="lyrics_sources_hint" formatted="false">"Aurora bunları bu sırayla kontrol eder. Bulduğu ilk senkron sözleri, yoksa ilk sözleri kullanır."</string>
+    <string name="lyrics_sources_title" formatted="false">"Şarkı Sözü Kaynakları"</string>
+    <string name="merge_comments" formatted="false">"SoundCloud Yorumları"</string>
+    <string name="merge_comments_summary" formatted="false">"Eşleşen bir SoundCloud parçası bulunduğunda zamanlı yorumları göster"</string>
+    <string name="merge_lyrics" formatted="false">"Spotify Şarkı Sözleri"</string>
+    <string name="merge_lyrics_summary" formatted="false">"Diğer kaynaklarınızdaki şarkılar için Spotify\'ın senkron sözlerini kullan"</string>
+    <string name="merge_options" formatted="false">"Birleştirme Seçenekleri"</string>
+    <string name="merge_options_note" formatted="false">"SoundCloud veya Spotify birleşik kitaplığınızın parçası olduğunda Aurora, bunların ek özelliklerini diğer kaynaklarınızdaki şarkılara getirebilir. Her birini tamamen ya da belirli bir kaynağın şarkıları için kapatın."</string>
+    <string name="merge_options_summary" formatted="false">"Birleştirilen hizmetlerin şarkılarınıza kattıkları"</string>
+    <string name="merge_songs_from" formatted="false">"Şarkıların Kaynağı"</string>
+    <string name="playlist_save_to" formatted="false">"Kaydedileceği Yer"</string>
+    <string name="text_acrylic_f39ce1" formatted="false">"Akrilik"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"Müzik klasörü ekle"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Ses kod çözme. Telif hakkı © FFmpeg geliştiricileri. LGPL-3.0-or-later, JavaCPP Presets aracılığıyla dinamik olarak bağlanmıştır. Lisansın tamamı: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
     <string name="text_aurora_s_volume_sets_the_dac_s_own_volume_when_it_has_one_the_audi_371db5" formatted="false">"Aurora\'nın ses düzeyi, varsa DAC\'ın kendi ses düzeyini ayarlar. Ses bit-perfect kalır."</string>
     <string name="text_aurora_takes_sole_control_of_the_device_and_sends_samples_at_the_cfbce6" formatted="false">"Aurora cihazın denetimini tek başına alır ve örnekleri parçanın kendi hızında ve bit derinliğinde gönderir. Aurora çalarken diğer uygulamalar sessiz kalır. İşleme, ses düzeyi ve ReplayGain örnekleri değiştirmediğinde çıkış bit-perfect kalır; cihaz bir biçimi reddederse Aurora paylaşımlı moda döner ve Sinyal yolu nedenini gösterir."</string>
+    <string name="text_background_tint_a39a12" formatted="false">"Arka plan tonu"</string>
     <string name="text_bit_float_012895">"%1$d bit kayan nokta"</string>
     <string name="text_bit_integer_72520f">"%1$d bit tam sayı"</string>
     <string name="text_bit_perfect_output_that_bypasses_the_sound_server_d2dcd9" formatted="false">"Ses sunucusunu atlayan bit-perfect çıkış"</string>
@@ -26,14 +52,18 @@
     <string name="text_exclusive_mode_is_unavailable_0de552">"Özel mod kullanılamıyor: %1$s"</string>
     <string name="text_exclusive_mode_is_unavailable_on_this_device_e51016" formatted="false">"Özel mod bu cihazda kullanılamıyor"</string>
     <string name="text_follow_the_playing_cover_5d2e91" formatted="false">"Çalan kapağı izle"</string>
+    <string name="text_glass_edges_f462cd" formatted="false">"Cam kenarlar"</string>
     <string name="text_hz_is_unavailable_using_hz_14de1c">"%1$d Hz kullanılamıyor; %2$d Hz kullanılıyor."</string>
     <string name="text_in_use_by_the_sound_server_or_another_app_aa3eaa" formatted="false">"Ses sunucusu veya başka bir uygulama tarafından kullanılıyor"</string>
     <string name="text_keep_aurora_playing_in_the_notification_area_when_the_window_clos_e5fed5" formatted="false">"Pencere kapandığında Aurora bildirim alanında çalmaya devam etsin"</string>
     <string name="text_larger_buffers_ride_out_heavy_system_load_smaller_ones_react_fast_e4d5f8" formatted="false">"Büyük arabellekler ağır sistem yükünü kaldırır; küçükler konum değiştirmeye ve ses düzeyine daha hızlı tepki verir. Çıkış yeniden açıldığında uygulanır."</string>
+    <string name="text_let_your_desktop_show_through_the_window_blurred_windows_11_only_08f192" formatted="false">"Masaüstünün pencerenin ardından bulanık görünmesini sağlar. Yalnızca Windows 11."</string>
     <string name="text_linux_java_b7923f">"Linux · Java %1$d"</string>
     <string name="text_logs_126dd3" formatted="false">"Günlükler"</string>
+    <string name="text_mica_3ccf84" formatted="false">"Mika"</string>
     <string name="text_open_in_full_page_0ec923" formatted="false">"Tam sayfada aç"</string>
     <string name="text_output_buffer_61b372" formatted="false">"Çıkış arabelleği"</string>
+    <string name="text_panel_frost_ada0d3" formatted="false">"Panel buzlanması"</string>
     <string name="text_playing_music_af9695" formatted="false">"Müzik çalınıyor"</string>
     <string name="text_shared_mode_mix_format_4a5bc8" formatted="false">"Paylaşımlı mod miks biçimi"</string>
     <string name="text_shared_mode_mixes_aurora_with_other_apps_through_the_system_sound_0c8e9d" formatted="false">"Paylaşımlı mod, Aurora\'yı sistem ses sunucusu üzerinden 48 kHz\'de diğer uygulamalarla karıştırır. Bit-perfect oynatma için özel modu açın."</string>
@@ -50,6 +80,7 @@
     <string name="text_the_track_could_not_be_opened_5719af" formatted="false">"Parça açılamadı"</string>
     <string name="text_the_track_s_sample_rate_is_not_supported_5c8629" formatted="false">"Parçanın örnekleme hızı desteklenmiyor"</string>
     <string name="text_tint_the_whole_app_with_the_playing_song_s_cover_a83c17" formatted="false">"Tüm uygulamayı çalan şarkının rengiyle renklendir"</string>
+    <string name="text_translucent_window_d865c7" formatted="false">"Yarı saydam pencere"</string>
     <string name="text_using_your_system_accent_colour_89502e" formatted="false">"Sistem vurgu renginiz kullanılıyor."</string>
     <string name="text_using_your_windows_accent_colour_7d4b4a" formatted="false">"Windows vurgu renginiz kullanılıyor."</string>
     <string name="text_volume_3b18e8" formatted="false">"Ses düzeyi"</string>

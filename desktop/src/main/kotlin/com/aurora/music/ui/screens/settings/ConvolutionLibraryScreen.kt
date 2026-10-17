@@ -180,7 +180,7 @@ fun ConvolutionLibraryScreen(contentPadding: PaddingValues, signalPath: StateFlo
         rename = null
         perform(appString(R.string.text_renaming_ir_4c7642)) { store.renameImpulse(entry.id, name).getOrThrow() }
     } }
-    delete?.let { entry -> AlertDialog(onDismissRequest = { if (!busy) delete = null }, title = { Text(appString(R.string.text_delete_137cdc, (entry.name))) },
+    delete?.let { entry -> AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, onDismissRequest = { if (!busy) delete = null }, title = { Text(appString(R.string.text_delete_137cdc, (entry.name))) },
         text = { Text(appString(R.string.text_removes_this_library_entry_selected_irs_and_saved_presets_stay_un_0fb84e)) },
         confirmButton = { TextButton(enabled = ready, onClick = { perform(appString(R.string.text_deleting_ir_794fb8)) {
             store.deleteImpulse(entry.id).getOrThrow()
@@ -291,7 +291,7 @@ private fun ImpulseDetails(entry: ImpulseLibraryEntry, enabled: Boolean, selecte
 @Composable
 private fun ImpulseNameDialog(initial: String, onDismiss: () -> Unit, onSave: (String) -> Unit) {
     var name by remember { mutableStateOf(initial) }
-    AlertDialog(onDismissRequest = onDismiss, title = { Text(appString(R.string.text_rename_ir_350160)) }, text = {
+    AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, onDismissRequest = onDismiss, title = { Text(appString(R.string.text_rename_ir_350160)) }, text = {
         OutlinedTextField(name, { name = it.take(80) }, label = { Text(appString(R.string.text_name_709a23)) }, singleLine = true)
     }, confirmButton = { TextButton(enabled = name.isNotBlank(), onClick = { onSave(name.trim()) }) { Text(appString(R.string.text_save_efc007)) } },
         dismissButton = { TextButton(onClick = onDismiss) { Text(appString(R.string.text_cancel_77dfd2)) } })

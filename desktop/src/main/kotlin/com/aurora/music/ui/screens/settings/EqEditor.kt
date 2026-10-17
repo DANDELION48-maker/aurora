@@ -90,6 +90,7 @@ import kotlin.math.log10
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import com.aurora.music.ui.theme.themedCorner
 
 private const val SIMPLE = 0
 private const val ADVANCED = 1
@@ -365,12 +366,12 @@ private fun AdvancedControls(bands: List<ParamBand>, current: Int, maxBands: Int
 @Composable
 private fun BandTab(number: Int, active: Boolean, enabled: Boolean, onClick: () -> Unit) {
     val accent = MaterialTheme.colorScheme.primary
-    Column(Modifier.clip(RoundedCornerShape(8.dp)).clickable(onClick = onClick).semantics { selected = active }
+    Column(Modifier.clip(RoundedCornerShape(themedCorner(8.dp))).clickable(onClick = onClick).semantics { selected = active }
         .padding(horizontal = 12.dp, vertical = 8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Text("$number", style = MaterialTheme.typography.titleMedium, fontWeight = if (active) FontWeight.Bold else FontWeight.Normal,
             color = (if (active) accent else MaterialTheme.colorScheme.onSurface).copy(alpha = if (enabled) 1f else .4f))
         Box(Modifier.padding(top = 4.dp).size(width = 16.dp, height = 2.dp)
-            .background(if (active) accent else Color.Transparent, RoundedCornerShape(1.dp)))
+            .background(if (active) accent else Color.Transparent, RoundedCornerShape(themedCorner(1.dp))))
     }
 }
 

@@ -1,5 +1,6 @@
 package com.aurora.music.ui.components
 
+import androidx.compose.material.icons.filled.Radio
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -86,6 +87,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import com.aurora.music.ui.theme.themedCorner
 
 private val RowInset = 8.dp
 private val IndexWidth = 32.dp
@@ -163,6 +165,13 @@ fun SongRow(
             onClick = { close(); onDownload() },
             leadingIcon = { Icon(Icons.Filled.Download, null) },
         )
+        LocalStartRadio.current?.let { startRadio ->
+            DropdownMenuItem(
+                text = { Text(appString(R.string.discovery_start_radio)) },
+                onClick = { close(); startRadio(song) },
+                leadingIcon = { Icon(Icons.Filled.Radio, null) },
+            )
+        }
         if (onGoToAlbum != null) DropdownMenuItem(
             text = { Text(appString(R.string.text_go_to_album_e2d3b3)) },
             onClick = { close(); onGoToAlbum() },
@@ -218,7 +227,7 @@ fun SongRow(
                 Artwork(song.artworkUrl, song.accent, Modifier.size(ArtSize), corner = 8.dp)
                 if (isPlaying && index == null) {
                     Box(
-                        Modifier.size(ArtSize).clip(RoundedCornerShape(8.dp))
+                        Modifier.size(ArtSize).clip(RoundedCornerShape(themedCorner(8.dp)))
                             .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.45f)),
                         contentAlignment = Alignment.Center,
                     ) {
@@ -352,12 +361,12 @@ private fun RowAction(icon: ImageVector, label: String, tint: Color, visible: Bo
 }
 
 @Composable
-private fun rowShape(): Shape = if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(12.dp) else MaterialTheme.shapes.small
+private fun rowShape(): Shape = if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(themedCorner(12.dp)) else MaterialTheme.shapes.small
 
 @Composable
 private fun MediaCard(width: Dp, onClick: () -> Unit, modifier: Modifier, content: @Composable ColumnScope.(art: Dp) -> Unit) {
     val aurora = LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA
-    val shape = if (aurora) RoundedCornerShape(16.dp) else MaterialTheme.shapes.medium
+    val shape = if (aurora) RoundedCornerShape(themedCorner(16.dp)) else MaterialTheme.shapes.medium
     Column(
         modifier = modifier
             .width(width)
@@ -406,7 +415,7 @@ fun AlbumCard(album: Album, onClick: () -> Unit, modifier: Modifier = Modifier, 
                     fontWeight = FontWeight.Black,
                     color = Color.White,
                     modifier = Modifier.align(Alignment.TopStart).padding(8.dp)
-                        .clip(RoundedCornerShape(6.dp))
+                        .clip(RoundedCornerShape(themedCorner(6.dp)))
                         .background(Color.Black.copy(alpha = 0.55f))
                         .padding(horizontal = 6.dp, vertical = 2.dp),
                 )
@@ -429,7 +438,7 @@ fun ArtistCircle(artist: Artist, onClick: () -> Unit, modifier: Modifier = Modif
     Column(
         modifier = modifier
             .width(width)
-            .clip(if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(16.dp) else MaterialTheme.shapes.medium)
+            .clip(if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(themedCorner(16.dp)) else MaterialTheme.shapes.medium)
             .clickable(onClick = onClick)
             .pointerHoverIcon(PointerIcon.Hand)
             .padding(bottom = 6.dp),

@@ -1,6 +1,7 @@
 package com.aurora.music.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
 import androidx.compose.material3.Shapes
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -16,6 +17,9 @@ fun cornerScale(style: Int): Float = when (style) {
 
 fun cornerDp(style: Int, base: Dp): Dp =
     if (style == CornerStyle.PILL) (base.value * 2.4f).dp else (base.value * cornerScale(style)).dp
+
+@Composable
+fun themedCorner(base: Dp): Dp = LocalUiPrefs.current.let { if (it.themeStyle == ThemeStyle.AURORA) cornerDp(it.cornerStyle, base) else base }
 
 fun auroraShapes(style: Int, themeStyle: Int = ThemeStyle.AURORA): Shapes = when (themeStyle) {
     ThemeStyle.RETRO -> Shapes(

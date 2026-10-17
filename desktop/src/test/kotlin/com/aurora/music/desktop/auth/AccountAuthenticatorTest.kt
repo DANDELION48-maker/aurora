@@ -12,6 +12,7 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
@@ -116,6 +117,10 @@ class AccountAuthenticatorTest {
         }
         assertEquals(appString(R.string.text_spotify_uses_the_connect_button_not_this_form_17d56a),
             failure { authenticator.signIn(ServerType.SPOTIFY, base, "a", "b") })
-        assertEquals(setOf(ServerType.SUBSONIC, ServerType.JELLYFIN, ServerType.PLEX, ServerType.LOCAL), AccountAuthenticator.SUPPORTED)
+        assertEquals(setOf(ServerType.SUBSONIC, ServerType.JELLYFIN, ServerType.PLEX, ServerType.LOCAL,
+            ServerType.YOUTUBE_MUSIC, ServerType.SPOTIFY, ServerType.SOUNDCLOUD), AccountAuthenticator.SUPPORTED)
+        val oauthSpotify = com.aurora.music.data.Session("https://api.spotify.com", "me", "refresh", "access", ServerType.SPOTIFY)
+        assertFalse(AccountAuthenticator.supports(oauthSpotify))
+        assertTrue(AccountAuthenticator.supports(oauthSpotify.copy(salt = com.aurora.music.data.SpotifyWebBackend.WEB_PLAYER)))
     }
 }

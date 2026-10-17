@@ -315,7 +315,7 @@ fun ProcessingRackScreen(contentPadding: PaddingValues, signalPath: StateFlow<Si
         }
     }
     removeTarget?.let { target ->
-        AlertDialog(onDismissRequest = { removeTarget = null }, title = { Text(appString(R.string.text_remove_436e1a, (target.name))) },
+        AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, onDismissRequest = { removeTarget = null }, title = { Text(appString(R.string.text_remove_436e1a, (target.name))) },
             text = { Text(appString(R.string.text_this_removes_the_stage_and_its_settings_from_this_rack_03575f)) },
             confirmButton = { TextButton(onClick = {
                 change { it.copy(nodes = it.nodes.filterNot { node -> node.id == target.id }) }
@@ -323,7 +323,7 @@ fun ProcessingRackScreen(contentPadding: PaddingValues, signalPath: StateFlow<Si
             }) { Text(appString(R.string.text_remove_e96390)) } }, dismissButton = { TextButton(onClick = { removeTarget = null }) { Text(appString(R.string.text_cancel_77dfd2)) } })
     }
     template?.let { selected ->
-        AlertDialog(onDismissRequest = { template = null }, title = { Text(appString(R.string.text_replace_this_rack_957859)) },
+        AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, onDismissRequest = { template = null }, title = { Text(appString(R.string.text_replace_this_rack_957859)) },
             text = { Text(if (selected == RackTemplate.LEGACY)
                 appString(R.string.text_copy_your_standard_software_eq_effects_and_mono_setting_into_an_e_4eccb4)
             else appString(R.string.text_copy_your_standard_sound_settings_into_separate_stages_and_place_61d4ee)) },
@@ -516,7 +516,7 @@ internal fun RackBandDialog(band: ParamBand, title: String, onDismiss: () -> Uni
     val frequencyValid = valid(f, band.freqHz, 10f..24_000f)
     val gainValid = !filterType.hasGain || valid(g, band.gainDb, -30f..30f)
     val qValid = !filterType.hasQ || valid(quality, band.q, 0.1f..100f)
-    AlertDialog(onDismissRequest = onDismiss, title = { Text(title) }, text = {
+    AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, onDismissRequest = onDismiss, title = { Text(title) }, text = {
         Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Box {
                 OutlinedButton(onClick = { typeMenu = true }, modifier = Modifier.fillMaxWidth()) {
@@ -565,7 +565,7 @@ internal fun RackBandDialog(band: ParamBand, title: String, onDismiss: () -> Uni
 @Composable
 private fun RackNameDialog(initial: String, title: String, onDismiss: () -> Unit, onSave: (String) -> Unit) {
     var name by remember(initial) { mutableStateOf(initial) }
-    AlertDialog(onDismissRequest = onDismiss, title = { Text(title) }, text = {
+    AlertDialog(containerColor = com.aurora.music.ui.theme.solidColors().surfaceContainerHigh, onDismissRequest = onDismiss, title = { Text(title) }, text = {
         OutlinedTextField(name, { name = it.take(80) }, label = { Text(appString(R.string.text_name_709a23)) }, singleLine = true)
     }, confirmButton = { TextButton(onClick = { onSave(name.trim()) }, enabled = name.isNotBlank()) { Text(appString(R.string.text_save_efc007)) } },
         dismissButton = { TextButton(onClick = onDismiss) { Text(appString(R.string.text_cancel_77dfd2)) } })

@@ -240,6 +240,11 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
         // account change saves the outgoing queue then restores the incoming one
         scope.launch {
             deps.accountEpoch.drop(1).collect {
+                // likes belong to the account, so the incoming one starts from its own
+                serverLikedIds = emptySet()
+                likeChecked.clear()
+                recomputeLikes()
+                refreshLikes()
                 persistQueue(engine.state.value)
                 deps.queueStore.requestFlush()
                 stopPlayback()
@@ -660,6 +665,7 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
             if (edits != likeEdits) return@launch
             serverLikedIds = fetched - likesInFlight + likesInFlight.filter { it in serverLikedIds }
             recomputeLikes()
+            runCatching { deps.repository.markDownloadsLiked(fetched, true) }
         }
     }
 
@@ -669,6 +675,7 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
         scope.launch {
             val liked = runCatching { deps.repository.likedSongIds(toCheck) }.getOrNull() ?: return@launch
             likeChecked.addAll(toCheck)
+            runCatching { deps.repository.markDownloadsLiked(liked, true) }
             if (liked.isNotEmpty()) {
                 serverLikedIds = serverLikedIds + liked
                 recomputeLikes()
@@ -691,6 +698,7 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
             likeEdits++
             likesInFlight += id
             recomputeLikes()
+            runCatching { deps.repository.markDownloadsLiked(listOf(id), nowLiked) }
             scope.launch {
                 runCatching { deps.repository.setStarred(id, nowLiked, kind) }
                 likeEdits++

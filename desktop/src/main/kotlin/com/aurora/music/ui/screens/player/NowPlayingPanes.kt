@@ -1,5 +1,6 @@
 package com.aurora.music.ui.screens.player
 
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -52,10 +53,14 @@ import com.aurora.music.ui.theme.auroraPanel
 
 enum class PlayerPane(val icon: ImageVector, private val labelRes: Int) {
     LYRICS(Icons.Filled.Lyrics, R.string.text_lyrics_8670cb),
-    QUEUE(Icons.AutoMirrored.Filled.QueueMusic, R.string.text_queue_d325fc);
+    QUEUE(Icons.AutoMirrored.Filled.QueueMusic, R.string.text_queue_d325fc),
+    RELATED(Icons.Filled.Explore, R.string.discovery_related);
 
     val label: String get() = appString(labelRes)
 }
+
+// related picks come from a streaming catalogue, so only accounts that can explore get that pane
+val LocalPlayerPanes = androidx.compose.runtime.staticCompositionLocalOf { listOf(PlayerPane.LYRICS, PlayerPane.QUEUE) }
 
 @Composable
 private fun TabGroup(modifier: Modifier, content: @Composable () -> Unit) {
@@ -73,7 +78,7 @@ private fun TabGroup(modifier: Modifier, content: @Composable () -> Unit) {
 }
 
 @Composable
-fun PaneSwitcher(selected: PlayerPane?, onSelect: (PlayerPane) -> Unit, modifier: Modifier = Modifier, panes: List<PlayerPane> = PlayerPane.entries) {
+fun PaneSwitcher(selected: PlayerPane?, onSelect: (PlayerPane) -> Unit, modifier: Modifier = Modifier, panes: List<PlayerPane> = LocalPlayerPanes.current) {
     TabGroup(modifier) {
         panes.forEach { pane -> PaneTab(pane.label, pane.icon, pane == selected) { onSelect(pane) } }
     }

@@ -42,6 +42,9 @@ fun PlaybackEngine.bindSettings(store: SettingsStore, scope: CoroutineScope): Jo
         }
     }
     launch {
+        store.reverbPrefs.collect { setReverb(it) }
+    }
+    launch {
         store.processingRackAssets.collectLatest { entries ->
             val loaded = withContext(Dispatchers.IO) {
                 entries.mapNotNull { entry ->

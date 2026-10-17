@@ -25,7 +25,7 @@ class NavigationTest {
 
     @Test fun defaultLayoutKeepsAndroidOnlyItemsOut() {
         val layout = NavMenu.parse("")
-        assertEquals(listOf("home", "search", "library"), layout.main.map { it.id })
+        assertEquals(listOf("home", "search", "library", "explore"), layout.main.map { it.id })
         assertEquals(listOf("history", "stats", "duplicates"), layout.more.map { it.id })
         assertEquals(listOf("playback", "output", "equalizer", "loudness", "advanced_audio", "signal_path"), layout.hidden.map { it.id })
         assertNull(NavMenu.byId("network"))
@@ -36,7 +36,7 @@ class NavigationTest {
 
     @Test fun savedLayoutsSurviveUnknownIdsAndKeepLockedItems() {
         val layout = NavMenu.parse("main=output,network,radio;more=home,podcasts,stats,network")
-        assertEquals(setOf("home", "search", "library", "output"), layout.main.map { it.id }.toSet())
+        assertEquals(setOf("home", "search", "library", "explore", "output"), layout.main.map { it.id }.toSet())
         assertEquals(listOf("stats"), layout.more.map { it.id })
         assertEquals(NavPlacement.HIDDEN, layout.placementOf("history"))
 
@@ -47,7 +47,10 @@ class NavigationTest {
         assertEquals(edited.more.map { it.id }, NavMenu.parse(edited.encode()).more.map { it.id })
 
         val advanced = NavMenu.parse("main=home,search,library,signal_path;more=loudness,stats")
-        assertEquals(listOf("home", "search", "library"), advanced.visible(simpleMode = true).main.map { it.id })
+        assertEquals(listOf("home", "search", "library", "explore"), advanced.visible(simpleMode = true).main.map { it.id })
+        assertEquals(listOf("home", "search", "library"), advanced.visible(simpleMode = true, discovery = false).main.map { it.id })
+        val hiddenExplore = NavMenu.parse(advanced.move("explore", NavPlacement.HIDDEN).encode())
+        assertEquals(NavPlacement.HIDDEN, hiddenExplore.placementOf("explore"))
         assertEquals(listOf("stats"), advanced.visible(simpleMode = true).more.map { it.id })
     }
 
