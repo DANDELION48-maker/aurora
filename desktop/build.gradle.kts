@@ -1,5 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.time.Duration
+import java.time.Instant
 import java.util.Properties
 
 plugins {
@@ -149,6 +151,11 @@ compose.desktop {
             modules("java.instrument", "java.management", "java.naming", "java.net.http", "java.sql", "jdk.crypto.ec", "jdk.dynalink", "jdk.httpserver", "jdk.unsupported")
             if (hostLinux) modules("jdk.security.auth")
             windows {
+                // the msi product code follows the version, so every build needs its own to replace the installed one
+                packageVersion = appVersion.getProperty("versionName").substringBeforeLast('.') + "." +
+                    Duration.between(Instant.parse("2026-01-01T00:00:00Z"), Instant.now()).toMinutes() % 65_536
+                // the uninstaller wipes its whole folder, so keep it apart from the data in %LOCALAPPDATA%\Aurora
+                installationPath = "Aurora Music"
                 menuGroup = "Aurora"
                 upgradeUuid = "67dc3d5a-e732-4a4a-b9a6-d1126d48bca5"
                 perUserInstall = true
