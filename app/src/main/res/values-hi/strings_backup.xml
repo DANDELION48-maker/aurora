@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_include_sign_ins">"साइन-इन शामिल करें"</string>
+    <string name="backup_include_sign_ins_summary">"लॉगिन टोकन और API कुंजियाँ सादे टेक्स्ट में सहेजता है। इस फ़ाइल को निजी रखें।"</string>
+</resources>

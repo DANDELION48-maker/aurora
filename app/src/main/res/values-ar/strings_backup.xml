@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_include_sign_ins">"تضمين بيانات تسجيل الدخول"</string>
+    <string name="backup_include_sign_ins_summary">"يحفظ رموز تسجيل الدخول ومفاتيح API كنص عادي. احتفظ بهذا الملف لنفسك."</string>
+</resources>

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +47,7 @@ fun BackupScreen(contentPadding: PaddingValues, onBack: () -> Unit, confirm: (St
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     var busy by remember { mutableStateOf(false) }
+    var includeSignIns by remember { mutableStateOf(false) }
 
     val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri ->
         if (uri != null) scope.launch {
@@ -53,7 +55,7 @@ fun BackupScreen(contentPadding: PaddingValues, onBack: () -> Unit, confirm: (St
             try {
                 val result = withContext(Dispatchers.IO) { runCatching {
                     requireNotNull(ctx.contentResolver.openOutputStream(uri)).use {
-                        container.backupManager.exportArchive(System.currentTimeMillis(), it).getOrThrow()
+                        container.backupManager.exportArchive(System.currentTimeMillis(), it, includeSignIns).getOrThrow()
                     }
                 } }
                 confirm(result.fold({ appString(R.string.text_backup_exported_with_processing_presets_and_impulse_responses_fa67a8) },
@@ -80,6 +82,8 @@ fun BackupScreen(contentPadding: PaddingValues, onBack: () -> Unit, confirm: (St
                 ActionRow(Icons.Filled.Backup, appString(R.string.text_export_backup_6043b4), appString(R.string.text_settings_racks_presets_impulse_responses_playlists_and_history_22c4f0)) {
                     if (!busy) exportLauncher.launch("aurora-backup.zip")
                 }
+                SettingsRowDivider()
+                SettingsSwitchRow(Icons.Filled.Lock, appString(R.string.backup_include_sign_ins), appString(R.string.backup_include_sign_ins_summary), includeSignIns) { includeSignIns = it }
                 SettingsRowDivider()
                 ActionRow(Icons.Filled.Restore, appString(R.string.text_restore_backup_a65eaa), appString(R.string.text_overwrites_current_settings_playlists_40eadc)) {
                     if (!busy) importLauncher.launch(arrayOf("application/zip", "application/json", "application/octet-stream"))

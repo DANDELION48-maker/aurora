@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_include_sign_ins">"로그인 정보 포함"</string>
+    <string name="backup_include_sign_ins_summary">"로그인 토큰과 API 키를 일반 텍스트로 저장합니다. 이 파일은 비공개로 보관하세요."</string>
+</resources>

@@ -1562,8 +1562,8 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     }
 
     // typed so json round-trips losslessly
-    suspend fun exportPrefs(): PrefsBackup {
-        val p = dataStore.data.first()
+    suspend fun exportPrefs(includeCredentials: Boolean = true): PrefsBackup {
+        val p = dataStore.data.first().let { if (includeCredentials) it else it.withoutCredentials() }
         val strings = HashMap<String, String>(); val ints = HashMap<String, Int>(); val longs = HashMap<String, Long>()
         val booleans = HashMap<String, Boolean>(); val floats = HashMap<String, Float>(); val sets = HashMap<String, List<String>>()
         for ((k, v) in p.asMap()) when (v) {
@@ -1629,8 +1629,9 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
             // Keeping this transaction about preferences also permits restoring an exact snapshot
             // whose disabled historical entries already reference unavailable source files.
             dataStore.edit { p ->
+                val restored = replacement.withAccountsFrom(p.toPreferences())
                 p.clear()
-                replacement.asMap().forEach { (key, value) ->
+                restored.asMap().forEach { (key, value) ->
                     @Suppress("UNCHECKED_CAST")
                     p[key as Preferences.Key<Any>] = value
                 }

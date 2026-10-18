@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_include_sign_ins">"Include sign-ins"</string>
+    <string name="backup_include_sign_ins_summary">"Saves login tokens and API keys in plain text. Keep this file private."</string>
+</resources>

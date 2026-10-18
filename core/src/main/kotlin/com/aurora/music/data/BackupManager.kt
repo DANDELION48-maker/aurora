@@ -47,11 +47,11 @@ class BackupManager(
     private val gson = Gson()
     private val restoreMutex = Mutex()
 
-    suspend fun export(nowMs: Long): String {
+    suspend fun export(nowMs: Long, includeSignIns: Boolean = false): String {
         val backup = AuroraBackup(
             version = 1,
             createdAt = nowMs,
-            prefs = settingsStore.exportPrefs(),
+            prefs = settingsStore.exportPrefs(includeSignIns),
             localStore = localStore.exportJson(),
             playHistory = playHistory.snapshot(),
             listeningProfiles = listeningLevels?.exportProfiles(),
@@ -63,9 +63,9 @@ class BackupManager(
         restoreValidated(withoutExternalIr(BackupArchive.decodeJson(json)))
     }.isSuccess
 
-    suspend fun exportArchive(nowMs: Long, output: OutputStream): Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun exportArchive(nowMs: Long, output: OutputStream, includeSignIns: Boolean = false): Result<Unit> = withContext(Dispatchers.IO) {
         backupResult {
-            val snapshot = AuroraBackup(2, nowMs, settingsStore.exportPrefs(), localStore.exportJson(), playHistory.snapshot(), listeningLevels?.exportProfiles())
+            val snapshot = AuroraBackup(2, nowMs, settingsStore.exportPrefs(includeSignIns), localStore.exportJson(), playHistory.snapshot(), listeningLevels?.exportProfiles())
             BackupArchive.write(snapshot, output)
         }
     }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_include_sign_ins">"サインイン情報を含める"</string>
+    <string name="backup_include_sign_ins_summary">"ログイントークンと API キーを平文で保存します。このファイルは他人と共有しないでください。"</string>
+</resources>

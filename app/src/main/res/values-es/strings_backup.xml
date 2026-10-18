@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_include_sign_ins">"Incluir inicios de sesión"</string>
+    <string name="backup_include_sign_ins_summary">"Guarda tokens de inicio de sesión y claves de API en texto sin cifrar. Mantén este archivo en privado."</string>
+</resources>

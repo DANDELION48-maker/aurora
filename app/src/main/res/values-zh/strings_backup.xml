@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_include_sign_ins">"包含登录信息"</string>
+    <string name="backup_include_sign_ins_summary">"以明文保存登录令牌和 API 密钥。请妥善保管此文件。"</string>
+</resources>

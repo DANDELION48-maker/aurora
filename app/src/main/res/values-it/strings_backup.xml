@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_include_sign_ins">"Includi gli accessi"</string>
+    <string name="backup_include_sign_ins_summary">"Salva token di accesso e chiavi API in chiaro. Tieni questo file privato."</string>
+</resources>

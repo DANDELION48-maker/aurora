@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_include_sign_ins">"Включить данные входа"</string>
+    <string name="backup_include_sign_ins_summary">"Сохраняет токены входа и ключи API в открытом виде. Не передавайте этот файл другим."</string>
+</resources>

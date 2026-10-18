@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_include_sign_ins">"Oturum açma bilgilerini dahil et"</string>
+    <string name="backup_include_sign_ins_summary">"Oturum açma belirteçlerini ve API anahtarlarını düz metin olarak kaydeder. Bu dosyayı gizli tutun."</string>
+</resources>

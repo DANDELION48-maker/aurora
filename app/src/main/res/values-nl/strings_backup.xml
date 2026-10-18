@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_include_sign_ins">"Aanmeldingen meenemen"</string>
+    <string name="backup_include_sign_ins_summary">"Slaat inlogtokens en API-sleutels op als platte tekst. Houd dit bestand privé."</string>
+</resources>

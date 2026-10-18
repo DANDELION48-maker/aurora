@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_include_sign_ins">"سائن اِن شامل کریں"</string>
+    <string name="backup_include_sign_ins_summary">"لاگ اِن ٹوکن اور API کیز سادہ متن میں محفوظ کرتا ہے۔ اس فائل کو نجی رکھیں۔"</string>
+</resources>
