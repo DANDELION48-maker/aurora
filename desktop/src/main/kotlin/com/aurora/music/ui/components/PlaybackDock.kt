@@ -61,6 +61,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.PointerEventType
@@ -292,7 +293,7 @@ fun VolumeControl(
                 interactionSource = touch,
                 modifier = Modifier.fillMaxWidth().height(24.dp).semantics { contentDescription = appString(R.string.text_volume_3b18e8) },
                 colors = SliderDefaults.colors(thumbColor = colors.primary, activeTrackColor = colors.primary),
-                thumb = { Box(Modifier.size(12.dp).clip(CircleShape).background(colors.onSurface)) },
+                thumb = { SliderDot(12.dp, colors.onSurface) },
                 track = { slider ->
                     Box(Modifier.fillMaxWidth().height(4.dp).clip(CircleShape).background(colors.onSurface.copy(alpha = 0.14f))) {
                         Box(Modifier.fillMaxWidth(slider.value.coerceIn(0f, 1f)).fillMaxHeight().background(fill))
@@ -302,6 +303,16 @@ fun VolumeControl(
             if (hovered || dragged || pressed) VolumeTip(level, sliderWidth)
         }
     }
+}
+
+// the slider pins its thumb to the top of its height, so the dot centres itself with the same rounding the slider uses for the track
+@Composable
+private fun SliderDot(size: Dp, color: Color) {
+    Box(Modifier.layout { measurable, constraints ->
+        val dot = measurable.measure(constraints.copy(minHeight = 0))
+        val height = if (constraints.hasBoundedHeight) maxOf(constraints.maxHeight, dot.height) else dot.height
+        layout(dot.width, height) { dot.place(0, (height - dot.height) / 2) }
+    }.size(size).clip(CircleShape).background(color))
 }
 
 @Composable
@@ -363,7 +374,7 @@ private fun DockSeek(state: PlayerUiState, onSeek: (Float) -> Unit, showTimes: B
             onValueChangeFinished = { dragging?.let { onSeek(it); pending = it }; dragging = null },
             modifier = Modifier.weight(1f).height(24.dp).semantics { contentDescription = appString(R.string.tablet_seek) },
             colors = SliderDefaults.colors(thumbColor = colors.primary, activeTrackColor = colors.primary),
-            thumb = { Box(Modifier.size(if (thick) 14.dp else 12.dp).clip(CircleShape).background(thumbColor)) },
+            thumb = { SliderDot(if (thick) 14.dp else 12.dp, thumbColor) },
             track = { slider ->
                 Box(Modifier.fillMaxWidth().height(if (thick) 8.dp else 4.dp).clip(CircleShape).background(colors.onSurface.copy(alpha = 0.14f))) {
                     Box(Modifier.fillMaxWidth(slider.value.coerceIn(0f, 1f)).fillMaxHeight().background(seekBrush))

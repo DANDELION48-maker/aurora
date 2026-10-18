@@ -111,15 +111,17 @@ fun main() {
                 bounds = SavedWindow(position.x.value.roundToInt(), position.y.value.roundToInt(),
                     windowState.size.width.value.roundToInt(), windowState.size.height.value.roundToInt())
             }
-            val effective = if (windowState.placement == WindowPlacement.Fullscreen) restorePlacement else windowState.placement
+            val effective = if (borderless || windowState.placement == WindowPlacement.Fullscreen) restorePlacement else windowState.placement
             return bounds?.copy(maximized = effective == WindowPlacement.Maximized)
         }
 
         fun setFullscreen(on: Boolean) {
             val handle = composeWindow?.windowHandle ?: 0L
             if (com.aurora.music.desktop.platform.BorderlessFullscreen.supported && handle != 0L) {
-                if (on && !borderless) borderless = com.aurora.music.desktop.platform.BorderlessFullscreen.enter(handle)
-                else if (!on && borderless) borderless = !com.aurora.music.desktop.platform.BorderlessFullscreen.exit(handle)
+                if (on && !borderless) {
+                    restorePlacement = windowState.placement
+                    borderless = com.aurora.music.desktop.platform.BorderlessFullscreen.enter(handle)
+                } else if (!on && borderless) borderless = !com.aurora.music.desktop.platform.BorderlessFullscreen.exit(handle)
                 return
             }
             val current = windowState.placement

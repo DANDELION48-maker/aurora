@@ -7,7 +7,7 @@ import com.sun.jna.platform.win32.WinUser
 
 // full screen without java's exclusive mode, which stalls the window once chromium's opengl shares the process
 object BorderlessFullscreen {
-    private class Saved(val style: Int, val placement: WinUser.WINDOWPLACEMENT)
+    private class Saved(val style: Int, val placement: WinUser.WINDOWPLACEMENT, val maximized: Boolean)
     private val saved = HashMap<Long, Saved>()
 
     val supported: Boolean get() = HostPlatform.isWindows
@@ -21,7 +21,11 @@ object BorderlessFullscreen {
         val monitor = WinUser.MONITORINFO()
         if (!user.GetMonitorInfo(user.MonitorFromWindow(hwnd, WinUser.MONITOR_DEFAULTTONEAREST), monitor).booleanValue()) return false
         val style = user.GetWindowLong(hwnd, WinUser.GWL_STYLE)
-        saved[handle] = Saved(style, placement)
+        val maximized = placement.showCmd == WinUser.SW_SHOWMAXIMIZED
+        // a window left maximized keeps the monitor-sized frame on exit and ends up under the taskbar
+        placement.showCmd = WinUser.SW_SHOWNORMAL
+        if (maximized) user.SetWindowPlacement(hwnd, placement)
+        saved[handle] = Saved(style, placement, maximized)
         user.SetWindowLong(hwnd, WinUser.GWL_STYLE, style and FRAME.inv())
         val area = monitor.rcMonitor
         user.SetWindowPos(hwnd, null, area.left, area.top, area.right - area.left, area.bottom - area.top,
@@ -37,6 +41,7 @@ object BorderlessFullscreen {
         user.SetWindowPlacement(hwnd, previous.placement)
         user.SetWindowPos(hwnd, null, 0, 0, 0, 0,
             WinUser.SWP_NOMOVE or WinUser.SWP_NOSIZE or WinUser.SWP_NOZORDER or SWP_NOOWNERZORDER or WinUser.SWP_FRAMECHANGED)
+        if (previous.maximized) user.ShowWindow(hwnd, WinUser.SW_MAXIMIZE)
         return true
     }
 
