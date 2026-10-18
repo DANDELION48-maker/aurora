@@ -15,7 +15,7 @@ data class SettingsDestination(val route: String, private val labelRes: Int, pri
 object SettingsDestinations {
     val accounts = SettingsDestination(Routes.SETTINGS_ACCOUNTS, R.string.text_servers_accounts_59e105, R.string.text_switch_between_saved_logins_dfa5ef)
     val sources = SettingsDestination(Routes.SETTINGS_SOURCES, R.string.text_library_sources_101221, R.string.text_source_priority_and_unified_library_5d9b2c)
-    val merge = SettingsDestination(Routes.SETTINGS_MERGE, R.string.merge_options, R.string.merge_options_summary)
+    val merge = SettingsDestination(Routes.SETTINGS_MERGE, R.string.merge_options_desktop, R.string.merge_options_summary_desktop)
     val storage = SettingsDestination(Routes.SETTINGS_STORAGE, R.string.text_downloads_storage_f7c580, R.string.text_download_quality_and_offline_files_157e78)
     val analysis = SettingsDestination(Routes.SETTINGS_SONIC, R.string.text_library_analysis_discovery_211d17, R.string.text_library_scans_sonic_radio_and_auto_dj_dbb04a)
     val playback = SettingsDestination(Routes.SETTINGS_PLAYBACK, R.string.text_playback_quality_144407, R.string.text_streaming_quality_crossfade_gapless_and_speed_602d35)
@@ -33,7 +33,7 @@ object SettingsDestinations {
     val listening = SettingsDestination(Routes.SETTINGS_LISTENING, R.string.text_listening_levels_c1db13, R.string.text_headphone_calibration_and_local_level_history_3c0581)
     val signalPath = SettingsDestination(Routes.SIGNAL_PATH, R.string.text_signal_path_c3e29b, R.string.text_inspect_the_current_playback_path_5a0995)
     val appearance = SettingsDestination(Routes.SETTINGS_APPEARANCE, R.string.text_appearance_41def7, R.string.text_theme_accent_and_layout_cb0657)
-    val lyrics = SettingsDestination(Routes.SETTINGS_LYRICS, R.string.lyrics_settings_title, R.string.lyrics_settings_summary)
+    val lyrics = SettingsDestination(Routes.SETTINGS_LYRICS, R.string.lyrics_settings_title, R.string.lyrics_settings_summary_desktop)
     val visualizer = SettingsDestination(Routes.SETTINGS_VISUALIZER, R.string.text_visualizer_7177c7, R.string.text_spectrum_waveform_radial_and_particles_145442)
     val integrations = SettingsDestination(Routes.SETTINGS_INTEGRATIONS, R.string.text_integrations_a7881c, R.string.text_scrobbling_presence_lyrics_and_metadata_687ea0)
     val insights = SettingsDestination(Routes.SETTINGS_INSIGHTS, R.string.insights_title, R.string.insights_description)

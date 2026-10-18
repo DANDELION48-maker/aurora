@@ -18,22 +18,22 @@
     <string name="location_open_windows_settings" formatted="false">"Abrir ajustes de ubicación"</string>
     <string name="location_unsupported" formatted="false">"La ubicación no está disponible en este sistema."</string>
     <string name="location_windows_off" formatted="false">"Windows está bloqueando la ubicación para las apps de escritorio. Activa el acceso a la ubicación, también para apps de escritorio, y vuelve a intentarlo."</string>
-    <string name="lyrics_settings_summary" formatted="false">"Estilo de sincronización y origen de las letras"</string>
+    <string name="lyrics_settings_summary_desktop" formatted="false">"Estilo de sincronización y origen de las letras"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Base de datos de letras gratuita y comunitaria"</string>
     <string name="lyrics_source_server" formatted="false">"Origen de la Canción"</string>
     <string name="lyrics_source_server_detail" formatted="false">"Letras de tu servidor, servicio de streaming o del propio archivo"</string>
     <string name="lyrics_source_spotify_detail" formatted="false">"Letras sincronizadas de una cuenta de Spotify combinada"</string>
     <string name="lyrics_sources_hint" formatted="false">"Aurora las consulta en este orden. Usa las primeras letras sincronizadas que encuentre o, si no hay, las primeras de cualquier tipo."</string>
-    <string name="lyrics_sources_title" formatted="false">"Fuentes de Letras"</string>
-    <string name="merge_comments" formatted="false">"Comentarios de SoundCloud"</string>
-    <string name="merge_comments_summary" formatted="false">"Muestra comentarios con marca de tiempo cuando se encuentra una pista de SoundCloud coincidente"</string>
-    <string name="merge_lyrics" formatted="false">"Letras de Spotify"</string>
-    <string name="merge_lyrics_summary" formatted="false">"Usa las letras sincronizadas de Spotify en canciones de tus otras fuentes"</string>
-    <string name="merge_options" formatted="false">"Opciones de Combinación"</string>
+    <string name="lyrics_sources_title_desktop" formatted="false">"Fuentes de Letras"</string>
+    <string name="merge_comments_desktop" formatted="false">"Comentarios de SoundCloud"</string>
+    <string name="merge_comments_summary_desktop" formatted="false">"Muestra comentarios con marca de tiempo cuando se encuentra una pista de SoundCloud coincidente"</string>
+    <string name="merge_lyrics_desktop" formatted="false">"Letras de Spotify"</string>
+    <string name="merge_lyrics_summary_desktop" formatted="false">"Usa las letras sincronizadas de Spotify en canciones de tus otras fuentes"</string>
+    <string name="merge_options_desktop" formatted="false">"Opciones de Combinación"</string>
     <string name="merge_options_note" formatted="false">"Cuando SoundCloud o Spotify forman parte de tu biblioteca unificada, Aurora puede llevar sus extras a canciones de tus otras fuentes. Desactiva cada uno por completo o para canciones de una fuente concreta."</string>
-    <string name="merge_options_summary" formatted="false">"Lo que los servicios combinados añaden a tus canciones"</string>
+    <string name="merge_options_summary_desktop" formatted="false">"Lo que los servicios combinados añaden a tus canciones"</string>
     <string name="merge_songs_from" formatted="false">"Canciones De"</string>
-    <string name="playlist_save_to" formatted="false">"Guardar En"</string>
+    <string name="playlist_save_to_desktop" formatted="false">"Guardar En"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"Las descargas de YouTube se guardan en Music/Aurora dentro de tu carpeta de usuario, que se añade a tus carpetas de música."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Escribir etiquetas modifica el archivo en este ordenador. Ciérralo antes en otras apps."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acrílico"</string>

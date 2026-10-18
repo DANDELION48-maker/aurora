@@ -18,22 +18,22 @@
     <string name="location_open_windows_settings" formatted="false">"स्थान सेटिंग खोलें"</string>
     <string name="location_unsupported" formatted="false">"इस सिस्टम पर स्थान उपलब्ध नहीं है।"</string>
     <string name="location_windows_off" formatted="false">"Windows डेस्कटॉप ऐप्स के लिए स्थान रोक रहा है। डेस्कटॉप ऐप्स सहित स्थान एक्सेस चालू करें, फिर दोबारा कोशिश करें।"</string>
-    <string name="lyrics_settings_summary" formatted="false">"सिंक शैली और बोल कहाँ से आते हैं"</string>
+    <string name="lyrics_settings_summary_desktop" formatted="false">"सिंक शैली और बोल कहाँ से आते हैं"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"मुफ़्त सामुदायिक बोल डेटाबेस"</string>
     <string name="lyrics_source_server" formatted="false">"गाने का अपना स्रोत"</string>
     <string name="lyrics_source_server_detail" formatted="false">"आपके सर्वर, स्ट्रीमिंग सेवा या फ़ाइल से बोल"</string>
     <string name="lyrics_source_spotify_detail" formatted="false">"मर्ज किए गए Spotify खाते से सिंक बोल"</string>
     <string name="lyrics_sources_hint" formatted="false">"Aurora इन्हें इसी क्रम में जाँचता है। पहले मिले सिंक बोल इस्तेमाल होते हैं, नहीं तो कोई भी पहले मिले बोल।"</string>
-    <string name="lyrics_sources_title" formatted="false">"बोल के स्रोत"</string>
-    <string name="merge_comments" formatted="false">"SoundCloud टिप्पणियाँ"</string>
-    <string name="merge_comments_summary" formatted="false">"मेल खाता SoundCloud ट्रैक मिलने पर समय वाली टिप्पणियाँ दिखाएँ"</string>
-    <string name="merge_lyrics" formatted="false">"Spotify बोल"</string>
-    <string name="merge_lyrics_summary" formatted="false">"दूसरे स्रोतों के गानों के लिए Spotify के सिंक बोल इस्तेमाल करें"</string>
-    <string name="merge_options" formatted="false">"मर्ज विकल्प"</string>
+    <string name="lyrics_sources_title_desktop" formatted="false">"बोल के स्रोत"</string>
+    <string name="merge_comments_desktop" formatted="false">"SoundCloud टिप्पणियाँ"</string>
+    <string name="merge_comments_summary_desktop" formatted="false">"मेल खाता SoundCloud ट्रैक मिलने पर समय वाली टिप्पणियाँ दिखाएँ"</string>
+    <string name="merge_lyrics_desktop" formatted="false">"Spotify बोल"</string>
+    <string name="merge_lyrics_summary_desktop" formatted="false">"दूसरे स्रोतों के गानों के लिए Spotify के सिंक बोल इस्तेमाल करें"</string>
+    <string name="merge_options_desktop" formatted="false">"मर्ज विकल्प"</string>
     <string name="merge_options_note" formatted="false">"जब SoundCloud या Spotify आपकी एकीकृत लाइब्रेरी का हिस्सा हो, तो Aurora उनकी अतिरिक्त सुविधाएँ आपके दूसरे स्रोतों के गानों में ला सकता है। हर एक को पूरी तरह या किसी खास स्रोत के गानों के लिए बंद करें।"</string>
-    <string name="merge_options_summary" formatted="false">"मर्ज की गई सेवाएँ आपके गानों में क्या जोड़ती हैं"</string>
+    <string name="merge_options_summary_desktop" formatted="false">"मर्ज की गई सेवाएँ आपके गानों में क्या जोड़ती हैं"</string>
     <string name="merge_songs_from" formatted="false">"गाने कहाँ से"</string>
-    <string name="playlist_save_to" formatted="false">"यहाँ सहेजें"</string>
+    <string name="playlist_save_to_desktop" formatted="false">"यहाँ सहेजें"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"YouTube से डाउनलोड आपके यूज़र फ़ोल्डर में Music/Aurora में सेव होते हैं, जिसे आपके संगीत फ़ोल्डरों में जोड़ा जाता है।"</string>
     <string name="tag_edit_desktop_note" formatted="false">"टैग लिखने से इस कंप्यूटर पर फ़ाइल बदल जाती है। पहले इसे दूसरे ऐप्स में बंद करें।"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"ऐक्रेलिक"</string>

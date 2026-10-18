@@ -18,22 +18,22 @@
     <string name="location_open_windows_settings" formatted="false">"Открыть настройки местоположения"</string>
     <string name="location_unsupported" formatted="false">"Определение местоположения недоступно в этой системе."</string>
     <string name="location_windows_off" formatted="false">"Windows блокирует определение местоположения для классических приложений. Включите доступ к местоположению, в том числе для классических приложений, и повторите попытку."</string>
-    <string name="lyrics_settings_summary" formatted="false">"Стиль синхронизации и источники текстов"</string>
+    <string name="lyrics_settings_summary_desktop" formatted="false">"Стиль синхронизации и источники текстов"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Бесплатная база текстов от сообщества"</string>
     <string name="lyrics_source_server" formatted="false">"Собственный источник трека"</string>
     <string name="lyrics_source_server_detail" formatted="false">"Тексты с сервера, стримингового сервиса или из самого файла"</string>
     <string name="lyrics_source_spotify_detail" formatted="false">"Синхронизированные тексты из объединённого аккаунта Spotify"</string>
     <string name="lyrics_sources_hint" formatted="false">"Aurora проверяет их по порядку. Используется первый найденный синхронизированный текст, иначе первый любой."</string>
-    <string name="lyrics_sources_title" formatted="false">"Источники текстов"</string>
-    <string name="merge_comments" formatted="false">"Комментарии SoundCloud"</string>
-    <string name="merge_comments_summary" formatted="false">"Показывать комментарии с отметками времени, если найден подходящий трек SoundCloud"</string>
-    <string name="merge_lyrics" formatted="false">"Тексты Spotify"</string>
-    <string name="merge_lyrics_summary" formatted="false">"Использовать синхронизированные тексты Spotify для треков из других источников"</string>
-    <string name="merge_options" formatted="false">"Параметры объединения"</string>
+    <string name="lyrics_sources_title_desktop" formatted="false">"Источники текстов"</string>
+    <string name="merge_comments_desktop" formatted="false">"Комментарии SoundCloud"</string>
+    <string name="merge_comments_summary_desktop" formatted="false">"Показывать комментарии с отметками времени, если найден подходящий трек SoundCloud"</string>
+    <string name="merge_lyrics_desktop" formatted="false">"Тексты Spotify"</string>
+    <string name="merge_lyrics_summary_desktop" formatted="false">"Использовать синхронизированные тексты Spotify для треков из других источников"</string>
+    <string name="merge_options_desktop" formatted="false">"Параметры объединения"</string>
     <string name="merge_options_note" formatted="false">"Когда SoundCloud или Spotify входят в единую библиотеку, Aurora может добавлять их возможности к трекам из других источников. Отключите каждую полностью или для треков из определённого источника."</string>
-    <string name="merge_options_summary" formatted="false">"Что объединённые сервисы добавляют к вашим трекам"</string>
+    <string name="merge_options_summary_desktop" formatted="false">"Что объединённые сервисы добавляют к вашим трекам"</string>
     <string name="merge_songs_from" formatted="false">"Треки из"</string>
-    <string name="playlist_save_to" formatted="false">"Сохранить в"</string>
+    <string name="playlist_save_to_desktop" formatted="false">"Сохранить в"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"Загрузки с YouTube сохраняются в Music/Aurora в папке пользователя, которая добавляется в ваши папки с музыкой."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Запись тегов изменяет файл на этом компьютере. Сначала закройте его в других приложениях."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Акрил"</string>

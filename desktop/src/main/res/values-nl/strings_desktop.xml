@@ -18,22 +18,22 @@
     <string name="location_open_windows_settings" formatted="false">"Locatie-instellingen openen"</string>
     <string name="location_unsupported" formatted="false">"Locatie is niet beschikbaar op dit systeem."</string>
     <string name="location_windows_off" formatted="false">"Windows blokkeert locatie voor desktop-apps. Zet locatietoegang aan, ook voor desktop-apps, en probeer het opnieuw."</string>
-    <string name="lyrics_settings_summary" formatted="false">"Synchronisatiestijl en bron van songteksten"</string>
+    <string name="lyrics_settings_summary_desktop" formatted="false">"Synchronisatiestijl en bron van songteksten"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Gratis songtekstdatabase van de community"</string>
     <string name="lyrics_source_server" formatted="false">"Eigen Bron van het Nummer"</string>
     <string name="lyrics_source_server_detail" formatted="false">"Songteksten van je server, streamingdienst of het bestand zelf"</string>
     <string name="lyrics_source_spotify_detail" formatted="false">"Gesynchroniseerde songteksten van een samengevoegd Spotify-account"</string>
     <string name="lyrics_sources_hint" formatted="false">"Aurora controleert ze in deze volgorde. De eerste gesynchroniseerde songtekst wordt gebruikt, anders de eerste die er is."</string>
-    <string name="lyrics_sources_title" formatted="false">"Bronnen voor Songteksten"</string>
-    <string name="merge_comments" formatted="false">"SoundCloud-reacties"</string>
-    <string name="merge_comments_summary" formatted="false">"Toon getimede reacties als er een passend SoundCloud-nummer is gevonden"</string>
-    <string name="merge_lyrics" formatted="false">"Spotify-songteksten"</string>
-    <string name="merge_lyrics_summary" formatted="false">"Gebruik de gesynchroniseerde songteksten van Spotify voor nummers uit andere bronnen"</string>
-    <string name="merge_options" formatted="false">"Samenvoegopties"</string>
+    <string name="lyrics_sources_title_desktop" formatted="false">"Bronnen voor Songteksten"</string>
+    <string name="merge_comments_desktop" formatted="false">"SoundCloud-reacties"</string>
+    <string name="merge_comments_summary_desktop" formatted="false">"Toon getimede reacties als er een passend SoundCloud-nummer is gevonden"</string>
+    <string name="merge_lyrics_desktop" formatted="false">"Spotify-songteksten"</string>
+    <string name="merge_lyrics_summary_desktop" formatted="false">"Gebruik de gesynchroniseerde songteksten van Spotify voor nummers uit andere bronnen"</string>
+    <string name="merge_options_desktop" formatted="false">"Samenvoegopties"</string>
     <string name="merge_options_note" formatted="false">"Als SoundCloud of Spotify deel uitmaakt van je samengevoegde bibliotheek, kan Aurora hun extra\'s naar nummers uit je andere bronnen brengen. Zet elk ervan helemaal uit of alleen voor nummers uit een bepaalde bron."</string>
-    <string name="merge_options_summary" formatted="false">"Wat samengevoegde diensten aan je nummers toevoegen"</string>
+    <string name="merge_options_summary_desktop" formatted="false">"Wat samengevoegde diensten aan je nummers toevoegen"</string>
     <string name="merge_songs_from" formatted="false">"Nummers Uit"</string>
-    <string name="playlist_save_to" formatted="false">"Opslaan In"</string>
+    <string name="playlist_save_to_desktop" formatted="false">"Opslaan In"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"Downloads van YouTube worden opgeslagen in Music/Aurora in je gebruikersmap, die aan je muziekmappen wordt toegevoegd."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Tags schrijven wijzigt het bestand op deze computer. Sluit het eerst in andere apps."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acryl"</string>

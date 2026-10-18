@@ -1120,7 +1120,7 @@ private fun CreatePlaylistDialog(
                     modifier = Modifier.padding(top = 8.dp),
                 )
                 if (targets.size > 1) {
-                    Text(appString(R.string.playlist_save_to), style = MaterialTheme.typography.labelLarge,
+                    Text(appString(R.string.playlist_save_to_desktop), style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(top = 14.dp, bottom = 6.dp))
                     targets.forEach { option ->
                         Row(

@@ -18,22 +18,22 @@
     <string name="location_open_windows_settings" formatted="false">"\u2067مقام کی ترتیبات کھولیں\u2069"</string>
     <string name="location_unsupported" formatted="false">"\u2067اس سسٹم پر مقام دستیاب نہیں ہے۔\u2069"</string>
     <string name="location_windows_off" formatted="false">"\u2067Windows ڈیسک ٹاپ ایپس کے لیے مقام کو روک رہا ہے۔ ڈیسک ٹاپ ایپس سمیت مقام تک رسائی آن کریں، پھر دوبارہ کوشش کریں۔\u2069"</string>
-    <string name="lyrics_settings_summary" formatted="false">"\u2067ہم آہنگی کا انداز اور بول کہاں سے آتے ہیں\u2069"</string>
+    <string name="lyrics_settings_summary_desktop" formatted="false">"\u2067ہم آہنگی کا انداز اور بول کہاں سے آتے ہیں\u2069"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"\u2067مفت کمیونٹی بول ڈیٹا بیس\u2069"</string>
     <string name="lyrics_source_server" formatted="false">"\u2067گانے کا اپنا ذریعہ\u2069"</string>
     <string name="lyrics_source_server_detail" formatted="false">"\u2067آپ کے سرور، اسٹریمنگ سروس یا خود فائل سے بول\u2069"</string>
     <string name="lyrics_source_spotify_detail" formatted="false">"\u2067ضم شدہ Spotify اکاؤنٹ سے ہم آہنگ بول\u2069"</string>
     <string name="lyrics_sources_hint" formatted="false">"\u2067Aurora انہیں اسی ترتیب سے دیکھتا ہے۔ پہلے ملنے والے ہم آہنگ بول استعمال ہوتے ہیں، ورنہ کوئی بھی پہلے بول۔\u2069"</string>
-    <string name="lyrics_sources_title" formatted="false">"\u2067بول کے ذرائع\u2069"</string>
-    <string name="merge_comments" formatted="false">"\u2067SoundCloud تبصرے\u2069"</string>
-    <string name="merge_comments_summary" formatted="false">"\u2067مماثل SoundCloud ٹریک ملنے پر وقت کے ساتھ تبصرے دکھائیں\u2069"</string>
-    <string name="merge_lyrics" formatted="false">"\u2067Spotify بول\u2069"</string>
-    <string name="merge_lyrics_summary" formatted="false">"\u2067دوسرے ذرائع کے گانوں کے لیے Spotify کے ہم آہنگ بول استعمال کریں\u2069"</string>
-    <string name="merge_options" formatted="false">"\u2067ضم کرنے کے اختیارات\u2069"</string>
+    <string name="lyrics_sources_title_desktop" formatted="false">"\u2067بول کے ذرائع\u2069"</string>
+    <string name="merge_comments_desktop" formatted="false">"\u2067SoundCloud تبصرے\u2069"</string>
+    <string name="merge_comments_summary_desktop" formatted="false">"\u2067مماثل SoundCloud ٹریک ملنے پر وقت کے ساتھ تبصرے دکھائیں\u2069"</string>
+    <string name="merge_lyrics_desktop" formatted="false">"\u2067Spotify بول\u2069"</string>
+    <string name="merge_lyrics_summary_desktop" formatted="false">"\u2067دوسرے ذرائع کے گانوں کے لیے Spotify کے ہم آہنگ بول استعمال کریں\u2069"</string>
+    <string name="merge_options_desktop" formatted="false">"\u2067ضم کرنے کے اختیارات\u2069"</string>
     <string name="merge_options_note" formatted="false">"\u2067جب SoundCloud یا Spotify آپ کی متحدہ لائبریری کا حصہ ہو تو Aurora ان کی اضافی خصوصیات آپ کے دوسرے ذرائع کے گانوں تک لا سکتا ہے۔ ہر ایک کو مکمل طور پر یا کسی خاص ذریعے کے گانوں کے لیے بند کریں۔\u2069"</string>
-    <string name="merge_options_summary" formatted="false">"\u2067ضم شدہ سروسز آپ کے گانوں میں کیا شامل کرتی ہیں\u2069"</string>
+    <string name="merge_options_summary_desktop" formatted="false">"\u2067ضم شدہ سروسز آپ کے گانوں میں کیا شامل کرتی ہیں\u2069"</string>
     <string name="merge_songs_from" formatted="false">"\u2067گانے کہاں سے\u2069"</string>
-    <string name="playlist_save_to" formatted="false">"\u2067یہاں محفوظ کریں\u2069"</string>
+    <string name="playlist_save_to_desktop" formatted="false">"\u2067یہاں محفوظ کریں\u2069"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"\u2067YouTube سے ڈاؤن لوڈز آپ کے یوزر فولڈر میں Music/Aurora میں محفوظ ہوتے ہیں، جو آپ کے میوزک فولڈرز میں شامل کر دیا جاتا ہے۔\u2069"</string>
     <string name="tag_edit_desktop_note" formatted="false">"\u2067ٹیگز لکھنے سے اس کمپیوٹر پر فائل بدل جاتی ہے۔ پہلے اسے دوسری ایپس میں بند کریں۔\u2069"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"\u2067ایکریلک\u2069"</string>

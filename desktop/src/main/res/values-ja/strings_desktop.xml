@@ -18,22 +18,22 @@
     <string name="location_open_windows_settings" formatted="false">"位置情報の設定を開く"</string>
     <string name="location_unsupported" formatted="false">"このシステムでは位置情報を利用できません。"</string>
     <string name="location_windows_off" formatted="false">"Windows がデスクトップアプリの位置情報をブロックしています。デスクトップアプリを含めて位置情報へのアクセスをオンにしてから、もう一度お試しください。"</string>
-    <string name="lyrics_settings_summary" formatted="false">"同期スタイルと歌詞の取得元"</string>
+    <string name="lyrics_settings_summary_desktop" formatted="false">"同期スタイルと歌詞の取得元"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"無料のコミュニティ歌詞データベース"</string>
     <string name="lyrics_source_server" formatted="false">"曲の取得元"</string>
     <string name="lyrics_source_server_detail" formatted="false">"サーバー、ストリーミングサービス、またはファイル自体の歌詞"</string>
     <string name="lyrics_source_spotify_detail" formatted="false">"統合した Spotify アカウントの同期歌詞"</string>
     <string name="lyrics_sources_hint" formatted="false">"Aurora はこの順に確認します。最初に見つかった同期歌詞を使い、なければ最初に見つかった歌詞を使います。"</string>
-    <string name="lyrics_sources_title" formatted="false">"歌詞の取得元"</string>
-    <string name="merge_comments" formatted="false">"SoundCloud のコメント"</string>
-    <string name="merge_comments_summary" formatted="false">"一致する SoundCloud のトラックが見つかったとき、タイムスタンプ付きコメントを表示します"</string>
-    <string name="merge_lyrics" formatted="false">"Spotify の歌詞"</string>
-    <string name="merge_lyrics_summary" formatted="false">"他のソースの曲にも Spotify の同期歌詞を使います"</string>
-    <string name="merge_options" formatted="false">"統合オプション"</string>
+    <string name="lyrics_sources_title_desktop" formatted="false">"歌詞の取得元"</string>
+    <string name="merge_comments_desktop" formatted="false">"SoundCloud のコメント"</string>
+    <string name="merge_comments_summary_desktop" formatted="false">"一致する SoundCloud のトラックが見つかったとき、タイムスタンプ付きコメントを表示します"</string>
+    <string name="merge_lyrics_desktop" formatted="false">"Spotify の歌詞"</string>
+    <string name="merge_lyrics_summary_desktop" formatted="false">"他のソースの曲にも Spotify の同期歌詞を使います"</string>
+    <string name="merge_options_desktop" formatted="false">"統合オプション"</string>
     <string name="merge_options_note" formatted="false">"SoundCloud や Spotify を統合ライブラリに含めると、Aurora はそれらの追加機能を他のソースの曲にも反映できます。各機能はまとめて、またはソースごとにオフにできます。"</string>
-    <string name="merge_options_summary" formatted="false">"統合したサービスが曲に追加するもの"</string>
+    <string name="merge_options_summary_desktop" formatted="false">"統合したサービスが曲に追加するもの"</string>
     <string name="merge_songs_from" formatted="false">"曲のソース"</string>
-    <string name="playlist_save_to" formatted="false">"保存先"</string>
+    <string name="playlist_save_to_desktop" formatted="false">"保存先"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"YouTube からのダウンロードはユーザーフォルダー内の Music/Aurora に保存され、音楽フォルダーに追加されます。"</string>
     <string name="tag_edit_desktop_note" formatted="false">"タグを書き込むとこのコンピューター上のファイルが変更されます。先に他のアプリで閉じてください。"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"アクリル"</string>

@@ -53,14 +53,14 @@ fun MergeOptionsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
             }
             item {
-                FeatureGroup(Icons.Filled.ChatBubble, appString(R.string.merge_comments), appString(R.string.merge_comments_summary),
+                FeatureGroup(Icons.Filled.ChatBubble, appString(R.string.merge_comments_desktop), appString(R.string.merge_comments_summary_desktop),
                     features.comments, features.commentsOff, types.filter { it != ServerType.SOUNDCLOUD },
                     onToggle = { save(features.copy(comments = it)) },
                     onSource = { type, on -> save(features.copy(commentsOff = features.commentsOff.toggled(type, on))) })
             }
             item { androidx.compose.foundation.layout.Spacer(Modifier.padding(top = 10.dp)) }
             item {
-                FeatureGroup(Icons.Filled.Lyrics, appString(R.string.merge_lyrics), appString(R.string.merge_lyrics_summary),
+                FeatureGroup(Icons.Filled.Lyrics, appString(R.string.merge_lyrics_desktop), appString(R.string.merge_lyrics_summary_desktop),
                     features.lyrics, features.lyricsOff, types.filter { it != ServerType.SPOTIFY },
                     onToggle = { save(features.copy(lyrics = it)) },
                     onSource = { type, on -> save(features.copy(lyricsOff = features.lyricsOff.toggled(type, on))) })

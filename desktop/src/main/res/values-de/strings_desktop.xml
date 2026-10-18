@@ -18,22 +18,22 @@
     <string name="location_open_windows_settings" formatted="false">"Standorteinstellungen öffnen"</string>
     <string name="location_unsupported" formatted="false">"Standort ist auf diesem System nicht verfügbar."</string>
     <string name="location_windows_off" formatted="false">"Windows blockiert den Standort für Desktop-Apps. Aktiviere den Standortzugriff, auch für Desktop-Apps, und versuche es erneut."</string>
-    <string name="lyrics_settings_summary" formatted="false">"Synchronisierung und Quellen für Songtexte"</string>
+    <string name="lyrics_settings_summary_desktop" formatted="false">"Synchronisierung und Quellen für Songtexte"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Kostenlose Songtext-Datenbank der Community"</string>
     <string name="lyrics_source_server" formatted="false">"Eigene Quelle des Songs"</string>
     <string name="lyrics_source_server_detail" formatted="false">"Songtexte vom Server, Streamingdienst oder aus der Datei"</string>
     <string name="lyrics_source_spotify_detail" formatted="false">"Synchronisierte Songtexte aus einem zusammengeführten Spotify-Konto"</string>
     <string name="lyrics_sources_hint" formatted="false">"Aurora prüft sie in dieser Reihenfolge. Die ersten synchronisierten Songtexte werden verwendet, sonst die ersten überhaupt."</string>
-    <string name="lyrics_sources_title" formatted="false">"Songtext-Quellen"</string>
-    <string name="merge_comments" formatted="false">"SoundCloud-Kommentare"</string>
-    <string name="merge_comments_summary" formatted="false">"Zeitgestempelte Kommentare zeigen, wenn ein passender SoundCloud-Track gefunden wird"</string>
-    <string name="merge_lyrics" formatted="false">"Spotify-Songtexte"</string>
-    <string name="merge_lyrics_summary" formatted="false">"Spotifys synchronisierte Songtexte für Songs aus anderen Quellen verwenden"</string>
-    <string name="merge_options" formatted="false">"Zusammenführungs-Optionen"</string>
+    <string name="lyrics_sources_title_desktop" formatted="false">"Songtext-Quellen"</string>
+    <string name="merge_comments_desktop" formatted="false">"SoundCloud-Kommentare"</string>
+    <string name="merge_comments_summary_desktop" formatted="false">"Zeitgestempelte Kommentare zeigen, wenn ein passender SoundCloud-Track gefunden wird"</string>
+    <string name="merge_lyrics_desktop" formatted="false">"Spotify-Songtexte"</string>
+    <string name="merge_lyrics_summary_desktop" formatted="false">"Spotifys synchronisierte Songtexte für Songs aus anderen Quellen verwenden"</string>
+    <string name="merge_options_desktop" formatted="false">"Zusammenführungs-Optionen"</string>
     <string name="merge_options_note" formatted="false">"Wenn SoundCloud oder Spotify Teil deiner vereinten Bibliothek ist, kann Aurora deren Extras zu Songs aus deinen anderen Quellen bringen. Schalte jedes davon ganz oder für Songs einer bestimmten Quelle aus."</string>
-    <string name="merge_options_summary" formatted="false">"Was zusammengeführte Dienste zu deinen Songs beitragen"</string>
+    <string name="merge_options_summary_desktop" formatted="false">"Was zusammengeführte Dienste zu deinen Songs beitragen"</string>
     <string name="merge_songs_from" formatted="false">"Songs Aus"</string>
-    <string name="playlist_save_to" formatted="false">"Speichern In"</string>
+    <string name="playlist_save_to_desktop" formatted="false">"Speichern In"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"Downloads von YouTube werden in Music/Aurora in deinem Benutzerordner gespeichert, der zu deinen Musikordnern hinzugefügt wird."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Das Schreiben von Tags ändert die Datei auf diesem Computer. Schließe sie zuerst in anderen Apps."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acryl"</string>

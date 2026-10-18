@@ -18,22 +18,22 @@
     <string name="location_open_windows_settings" formatted="false">"打开位置设置"</string>
     <string name="location_unsupported" formatted="false">"此系统不支持位置功能。"</string>
     <string name="location_windows_off" formatted="false">"Windows 正在阻止桌面应用获取位置。请开启位置访问（包括桌面应用），然后重试。"</string>
-    <string name="lyrics_settings_summary" formatted="false">"同步方式和歌词来源"</string>
+    <string name="lyrics_settings_summary_desktop" formatted="false">"同步方式和歌词来源"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"免费的社区歌词数据库"</string>
     <string name="lyrics_source_server" formatted="false">"歌曲自身来源"</string>
     <string name="lyrics_source_server_detail" formatted="false">"来自你的服务器、流媒体服务或文件本身的歌词"</string>
     <string name="lyrics_source_spotify_detail" formatted="false">"来自已合并 Spotify 账户的同步歌词"</string>
     <string name="lyrics_sources_hint" formatted="false">"Aurora 会按此顺序查找。优先使用找到的第一份同步歌词，否则使用第一份任意歌词。"</string>
-    <string name="lyrics_sources_title" formatted="false">"歌词来源"</string>
-    <string name="merge_comments" formatted="false">"SoundCloud 评论"</string>
-    <string name="merge_comments_summary" formatted="false">"找到匹配的 SoundCloud 曲目时显示带时间点的评论"</string>
-    <string name="merge_lyrics" formatted="false">"Spotify 歌词"</string>
-    <string name="merge_lyrics_summary" formatted="false">"为其他来源的歌曲使用 Spotify 同步歌词"</string>
-    <string name="merge_options" formatted="false">"合并选项"</string>
+    <string name="lyrics_sources_title_desktop" formatted="false">"歌词来源"</string>
+    <string name="merge_comments_desktop" formatted="false">"SoundCloud 评论"</string>
+    <string name="merge_comments_summary_desktop" formatted="false">"找到匹配的 SoundCloud 曲目时显示带时间点的评论"</string>
+    <string name="merge_lyrics_desktop" formatted="false">"Spotify 歌词"</string>
+    <string name="merge_lyrics_summary_desktop" formatted="false">"为其他来源的歌曲使用 Spotify 同步歌词"</string>
+    <string name="merge_options_desktop" formatted="false">"合并选项"</string>
     <string name="merge_options_note" formatted="false">"当 SoundCloud 或 Spotify 加入你的统一音乐库后，Aurora 可以把它们的附加功能带到其他来源的歌曲上。你可以整体关闭各项功能，也可以只对某个来源的歌曲关闭。"</string>
-    <string name="merge_options_summary" formatted="false">"合并的服务为你的歌曲添加的内容"</string>
+    <string name="merge_options_summary_desktop" formatted="false">"合并的服务为你的歌曲添加的内容"</string>
     <string name="merge_songs_from" formatted="false">"歌曲来源"</string>
-    <string name="playlist_save_to" formatted="false">"保存到"</string>
+    <string name="playlist_save_to_desktop" formatted="false">"保存到"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"从 YouTube 下载的内容会保存到用户文件夹中的 Music/Aurora，该文件夹会被添加到你的音乐文件夹中。"</string>
     <string name="tag_edit_desktop_note" formatted="false">"写入标签会修改这台电脑上的文件。请先在其他应用中关闭它。"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"亚克力"</string>

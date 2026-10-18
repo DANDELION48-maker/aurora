@@ -18,22 +18,22 @@
     <string name="location_open_windows_settings" formatted="false">"Apri impostazioni posizione"</string>
     <string name="location_unsupported" formatted="false">"La posizione non è disponibile su questo sistema."</string>
     <string name="location_windows_off" formatted="false">"Windows blocca la posizione per le app desktop. Attiva l\'accesso alla posizione, anche per le app desktop, e riprova."</string>
-    <string name="lyrics_settings_summary" formatted="false">"Stile di sincronizzazione e provenienza dei testi"</string>
+    <string name="lyrics_settings_summary_desktop" formatted="false">"Stile di sincronizzazione e provenienza dei testi"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Database di testi gratuito della community"</string>
     <string name="lyrics_source_server" formatted="false">"Fonte del Brano"</string>
     <string name="lyrics_source_server_detail" formatted="false">"Testi dal tuo server, servizio di streaming o dal file stesso"</string>
     <string name="lyrics_source_spotify_detail" formatted="false">"Testi sincronizzati da un account Spotify unito"</string>
     <string name="lyrics_sources_hint" formatted="false">"Aurora le controlla in quest\'ordine. Usa i primi testi sincronizzati che trova, altrimenti i primi di qualsiasi tipo."</string>
-    <string name="lyrics_sources_title" formatted="false">"Fonti dei Testi"</string>
-    <string name="merge_comments" formatted="false">"Commenti di SoundCloud"</string>
-    <string name="merge_comments_summary" formatted="false">"Mostra i commenti a tempo quando viene trovata una traccia SoundCloud corrispondente"</string>
-    <string name="merge_lyrics" formatted="false">"Testi di Spotify"</string>
-    <string name="merge_lyrics_summary" formatted="false">"Usa i testi sincronizzati di Spotify per i brani delle altre fonti"</string>
-    <string name="merge_options" formatted="false">"Opzioni di Unione"</string>
+    <string name="lyrics_sources_title_desktop" formatted="false">"Fonti dei Testi"</string>
+    <string name="merge_comments_desktop" formatted="false">"Commenti di SoundCloud"</string>
+    <string name="merge_comments_summary_desktop" formatted="false">"Mostra i commenti a tempo quando viene trovata una traccia SoundCloud corrispondente"</string>
+    <string name="merge_lyrics_desktop" formatted="false">"Testi di Spotify"</string>
+    <string name="merge_lyrics_summary_desktop" formatted="false">"Usa i testi sincronizzati di Spotify per i brani delle altre fonti"</string>
+    <string name="merge_options_desktop" formatted="false">"Opzioni di Unione"</string>
     <string name="merge_options_note" formatted="false">"Quando SoundCloud o Spotify fanno parte della tua libreria unificata, Aurora può portare i loro extra ai brani delle altre fonti. Disattiva ognuno del tutto o per i brani di una fonte specifica."</string>
-    <string name="merge_options_summary" formatted="false">"Cosa aggiungono i servizi uniti ai tuoi brani"</string>
+    <string name="merge_options_summary_desktop" formatted="false">"Cosa aggiungono i servizi uniti ai tuoi brani"</string>
     <string name="merge_songs_from" formatted="false">"Brani Da"</string>
-    <string name="playlist_save_to" formatted="false">"Salva In"</string>
+    <string name="playlist_save_to_desktop" formatted="false">"Salva In"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"I download da YouTube vengono salvati in Music/Aurora nella tua cartella utente, che viene aggiunta alle tue cartelle musicali."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Scrivere i tag modifica il file su questo computer. Chiudilo prima nelle altre app."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acrilico"</string>

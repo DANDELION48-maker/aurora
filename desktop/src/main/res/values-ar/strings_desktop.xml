@@ -18,22 +18,22 @@
     <string name="location_open_windows_settings" formatted="false">"\u2067فتح إعدادات الموقع\u2069"</string>
     <string name="location_unsupported" formatted="false">"\u2067الموقع غير متاح على هذا النظام.\u2069"</string>
     <string name="location_windows_off" formatted="false">"\u2067يمنع Windows الموقع عن تطبيقات سطح المكتب. فعّل الوصول إلى الموقع، بما في ذلك لتطبيقات سطح المكتب، ثم حاول مرة أخرى.\u2069"</string>
-    <string name="lyrics_settings_summary" formatted="false">"\u2067نمط المزامنة ومصادر الكلمات\u2069"</string>
+    <string name="lyrics_settings_summary_desktop" formatted="false">"\u2067نمط المزامنة ومصادر الكلمات\u2069"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"\u2067قاعدة بيانات كلمات مجانية من المجتمع\u2069"</string>
     <string name="lyrics_source_server" formatted="false">"\u2067مصدر الأغنية نفسه\u2069"</string>
     <string name="lyrics_source_server_detail" formatted="false">"\u2067كلمات من خادمك أو خدمة البث أو الملف نفسه\u2069"</string>
     <string name="lyrics_source_spotify_detail" formatted="false">"\u2067كلمات متزامنة من حساب Spotify مدمج\u2069"</string>
     <string name="lyrics_sources_hint" formatted="false">"\u2067يتحقق Aurora منها بالترتيب. تُستخدم أول كلمات متزامنة يجدها، وإلا فأول كلمات من أي نوع.\u2069"</string>
-    <string name="lyrics_sources_title" formatted="false">"\u2067مصادر الكلمات\u2069"</string>
-    <string name="merge_comments" formatted="false">"\u2067تعليقات SoundCloud\u2069"</string>
-    <string name="merge_comments_summary" formatted="false">"\u2067عرض التعليقات المؤقتة عند العثور على مقطع مطابق في SoundCloud\u2069"</string>
-    <string name="merge_lyrics" formatted="false">"\u2067كلمات Spotify\u2069"</string>
-    <string name="merge_lyrics_summary" formatted="false">"\u2067استخدام كلمات Spotify المتزامنة لأغاني مصادرك الأخرى\u2069"</string>
-    <string name="merge_options" formatted="false">"\u2067خيارات الدمج\u2069"</string>
+    <string name="lyrics_sources_title_desktop" formatted="false">"\u2067مصادر الكلمات\u2069"</string>
+    <string name="merge_comments_desktop" formatted="false">"\u2067تعليقات SoundCloud\u2069"</string>
+    <string name="merge_comments_summary_desktop" formatted="false">"\u2067عرض التعليقات المؤقتة عند العثور على مقطع مطابق في SoundCloud\u2069"</string>
+    <string name="merge_lyrics_desktop" formatted="false">"\u2067كلمات Spotify\u2069"</string>
+    <string name="merge_lyrics_summary_desktop" formatted="false">"\u2067استخدام كلمات Spotify المتزامنة لأغاني مصادرك الأخرى\u2069"</string>
+    <string name="merge_options_desktop" formatted="false">"\u2067خيارات الدمج\u2069"</string>
     <string name="merge_options_note" formatted="false">"\u2067عندما يكون SoundCloud أو Spotify جزءًا من مكتبتك الموحدة، يمكن لـ Aurora إضافة مزاياهما إلى أغاني مصادرك الأخرى. أوقف كل ميزة بالكامل أو لأغاني مصدر معين.\u2069"</string>
-    <string name="merge_options_summary" formatted="false">"\u2067ما تضيفه الخدمات المدمجة إلى أغانيك\u2069"</string>
+    <string name="merge_options_summary_desktop" formatted="false">"\u2067ما تضيفه الخدمات المدمجة إلى أغانيك\u2069"</string>
     <string name="merge_songs_from" formatted="false">"\u2067الأغاني من\u2069"</string>
-    <string name="playlist_save_to" formatted="false">"\u2067حفظ في\u2069"</string>
+    <string name="playlist_save_to_desktop" formatted="false">"\u2067حفظ في\u2069"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"\u2067تُحفظ التنزيلات من YouTube في Music/Aurora داخل مجلد المستخدم، ويُضاف إلى مجلدات الموسيقى لديك.\u2069"</string>
     <string name="tag_edit_desktop_note" formatted="false">"\u2067تعديل الوسوم يغيّر الملف على هذا الكمبيوتر. أغلقه في التطبيقات الأخرى أولاً.\u2069"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"\u2067أكريليك\u2069"</string>

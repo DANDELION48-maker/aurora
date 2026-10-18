@@ -18,22 +18,22 @@
     <string name="location_open_windows_settings" formatted="false">"Open location settings"</string>
     <string name="location_unsupported" formatted="false">"Location isn\'t available on this system."</string>
     <string name="location_windows_off" formatted="false">"Windows is blocking location for desktop apps. Turn on location access, including for desktop apps, then try again."</string>
-    <string name="lyrics_settings_summary" formatted="false">"Sync style and where lyrics come from"</string>
+    <string name="lyrics_settings_summary_desktop" formatted="false">"Sync style and where lyrics come from"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Free community lyrics database"</string>
     <string name="lyrics_source_server" formatted="false">"Song\'s Own Source"</string>
     <string name="lyrics_source_server_detail" formatted="false">"Lyrics from your server, streaming service or the file itself"</string>
     <string name="lyrics_source_spotify_detail" formatted="false">"Synced lyrics from a merged Spotify account"</string>
     <string name="lyrics_sources_hint" formatted="false">"Aurora checks these in order. The first synced lyrics it finds are used, otherwise the first lyrics of any kind."</string>
-    <string name="lyrics_sources_title" formatted="false">"Lyrics Sources"</string>
-    <string name="merge_comments" formatted="false">"SoundCloud Comments"</string>
-    <string name="merge_comments_summary" formatted="false">"Show timed comments when a matching SoundCloud track is found"</string>
-    <string name="merge_lyrics" formatted="false">"Spotify Lyrics"</string>
-    <string name="merge_lyrics_summary" formatted="false">"Use Spotify\'s synced lyrics for songs from your other sources"</string>
-    <string name="merge_options" formatted="false">"Merge Options"</string>
+    <string name="lyrics_sources_title_desktop" formatted="false">"Lyrics Sources"</string>
+    <string name="merge_comments_desktop" formatted="false">"SoundCloud Comments"</string>
+    <string name="merge_comments_summary_desktop" formatted="false">"Show timed comments when a matching SoundCloud track is found"</string>
+    <string name="merge_lyrics_desktop" formatted="false">"Spotify Lyrics"</string>
+    <string name="merge_lyrics_summary_desktop" formatted="false">"Use Spotify\'s synced lyrics for songs from your other sources"</string>
+    <string name="merge_options_desktop" formatted="false">"Merge Options"</string>
     <string name="merge_options_note" formatted="false">"When SoundCloud or Spotify is part of your unified library, Aurora can bring their extras to songs from your other sources. Turn each one off overall or for songs from a particular source."</string>
-    <string name="merge_options_summary" formatted="false">"What merged services add to your songs"</string>
+    <string name="merge_options_summary_desktop" formatted="false">"What merged services add to your songs"</string>
     <string name="merge_songs_from" formatted="false">"Songs From"</string>
-    <string name="playlist_save_to" formatted="false">"Save To"</string>
+    <string name="playlist_save_to_desktop" formatted="false">"Save To"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"Downloads from YouTube are saved to Music/Aurora in your user folder, which is added to your music folders."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Writing tags edits the file on this computer. Close it in other apps first."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acrylic"</string>

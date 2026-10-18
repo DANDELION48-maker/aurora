@@ -18,22 +18,22 @@
     <string name="location_open_windows_settings" formatted="false">"Buka pengaturan lokasi"</string>
     <string name="location_unsupported" formatted="false">"Lokasi tidak tersedia di sistem ini."</string>
     <string name="location_windows_off" formatted="false">"Windows memblokir lokasi untuk aplikasi desktop. Aktifkan akses lokasi, termasuk untuk aplikasi desktop, lalu coba lagi."</string>
-    <string name="lyrics_settings_summary" formatted="false">"Gaya sinkronisasi dan sumber lirik"</string>
+    <string name="lyrics_settings_summary_desktop" formatted="false">"Gaya sinkronisasi dan sumber lirik"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Basis data lirik komunitas gratis"</string>
     <string name="lyrics_source_server" formatted="false">"Sumber Lagu Itu Sendiri"</string>
     <string name="lyrics_source_server_detail" formatted="false">"Lirik dari server, layanan streaming, atau file itu sendiri"</string>
     <string name="lyrics_source_spotify_detail" formatted="false">"Lirik tersinkron dari akun Spotify yang digabungkan"</string>
     <string name="lyrics_sources_hint" formatted="false">"Aurora memeriksanya sesuai urutan ini. Lirik tersinkron pertama yang ditemukan dipakai, jika tidak ada, lirik apa pun yang pertama."</string>
-    <string name="lyrics_sources_title" formatted="false">"Sumber Lirik"</string>
-    <string name="merge_comments" formatted="false">"Komentar SoundCloud"</string>
-    <string name="merge_comments_summary" formatted="false">"Tampilkan komentar berwaktu saat trek SoundCloud yang cocok ditemukan"</string>
-    <string name="merge_lyrics" formatted="false">"Lirik Spotify"</string>
-    <string name="merge_lyrics_summary" formatted="false">"Gunakan lirik tersinkron Spotify untuk lagu dari sumber lain"</string>
-    <string name="merge_options" formatted="false">"Opsi Penggabungan"</string>
+    <string name="lyrics_sources_title_desktop" formatted="false">"Sumber Lirik"</string>
+    <string name="merge_comments_desktop" formatted="false">"Komentar SoundCloud"</string>
+    <string name="merge_comments_summary_desktop" formatted="false">"Tampilkan komentar berwaktu saat trek SoundCloud yang cocok ditemukan"</string>
+    <string name="merge_lyrics_desktop" formatted="false">"Lirik Spotify"</string>
+    <string name="merge_lyrics_summary_desktop" formatted="false">"Gunakan lirik tersinkron Spotify untuk lagu dari sumber lain"</string>
+    <string name="merge_options_desktop" formatted="false">"Opsi Penggabungan"</string>
     <string name="merge_options_note" formatted="false">"Saat SoundCloud atau Spotify menjadi bagian pustaka terpadu Anda, Aurora dapat membawa fitur tambahannya ke lagu dari sumber lain. Matikan masing-masing sepenuhnya atau untuk lagu dari sumber tertentu."</string>
-    <string name="merge_options_summary" formatted="false">"Yang ditambahkan layanan gabungan ke lagu Anda"</string>
+    <string name="merge_options_summary_desktop" formatted="false">"Yang ditambahkan layanan gabungan ke lagu Anda"</string>
     <string name="merge_songs_from" formatted="false">"Lagu Dari"</string>
-    <string name="playlist_save_to" formatted="false">"Simpan Ke"</string>
+    <string name="playlist_save_to_desktop" formatted="false">"Simpan Ke"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"Unduhan dari YouTube disimpan ke Music/Aurora di folder pengguna Anda, yang ditambahkan ke folder musik Anda."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Menulis tag mengubah file di komputer ini. Tutup dulu di aplikasi lain."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Akrilik"</string>

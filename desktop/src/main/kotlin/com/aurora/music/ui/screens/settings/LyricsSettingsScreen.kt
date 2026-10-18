@@ -58,7 +58,7 @@ fun LyricsSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp))
             }
-            item { SettingsSectionTitle(appString(R.string.lyrics_sources_title)) }
+            item { SettingsSectionTitle(appString(R.string.lyrics_sources_title_desktop)) }
             item {
                 Text(appString(R.string.lyrics_sources_hint),
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
