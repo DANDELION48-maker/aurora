@@ -101,4 +101,6 @@
     <string name="update_desktop_install_failed" formatted="false">"Impossibile avviare il programma di installazione. Puoi anche scaricare l\'aggiornamento da GitHub."</string>
     <string name="update_desktop_install_note" formatted="false">"Aurora si chiude mentre il programma di installazione è in esecuzione. Riaprilo al termine dell\'installazione."</string>
     <string name="youtube_download_open_folder" formatted="false">"Apri cartella dei download"</string>
+    <string name="player_fullscreen" formatted="false">"Schermo intero"</string>
+    <string name="player_exit_fullscreen" formatted="false">"Esci da schermo intero"</string>
 </resources>

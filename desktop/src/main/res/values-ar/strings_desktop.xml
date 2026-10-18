@@ -101,4 +101,6 @@
     <string name="update_desktop_install_failed" formatted="false">"\u2067تعذّر تشغيل المثبّت. يمكنك أيضًا تنزيل التحديث من GitHub.\u2069"</string>
     <string name="update_desktop_install_note" formatted="false">"\u2067يُغلق Aurora أثناء تشغيل المثبّت. افتحه مجددًا عند انتهاء الإعداد.\u2069"</string>
     <string name="youtube_download_open_folder" formatted="false">"\u2067فتح مجلد التنزيلات\u2069"</string>
+    <string name="player_fullscreen" formatted="false">"ملء الشاشة"</string>
+    <string name="player_exit_fullscreen" formatted="false">"الخروج من ملء الشاشة"</string>
 </resources>

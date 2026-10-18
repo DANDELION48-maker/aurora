@@ -101,4 +101,6 @@
     <string name="update_desktop_install_failed" formatted="false">"No se pudo iniciar el instalador. También puedes descargar la actualización desde GitHub."</string>
     <string name="update_desktop_install_note" formatted="false">"Aurora se cierra mientras se ejecuta el instalador. Vuelve a abrirlo cuando termine la instalación."</string>
     <string name="youtube_download_open_folder" formatted="false">"Abrir carpeta de descargas"</string>
+    <string name="player_fullscreen" formatted="false">"Pantalla completa"</string>
+    <string name="player_exit_fullscreen" formatted="false">"Salir de pantalla completa"</string>
 </resources>

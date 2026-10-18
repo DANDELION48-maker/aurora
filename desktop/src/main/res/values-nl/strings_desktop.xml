@@ -101,4 +101,6 @@
     <string name="update_desktop_install_failed" formatted="false">"Kan het installatieprogramma niet starten. Je kunt de update ook van GitHub downloaden."</string>
     <string name="update_desktop_install_note" formatted="false">"Aurora sluit terwijl het installatieprogramma draait. Open het opnieuw als de installatie klaar is."</string>
     <string name="youtube_download_open_folder" formatted="false">"Downloadmap openen"</string>
+    <string name="player_fullscreen" formatted="false">"Volledig scherm"</string>
+    <string name="player_exit_fullscreen" formatted="false">"Volledig scherm sluiten"</string>
 </resources>

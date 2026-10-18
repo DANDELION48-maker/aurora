@@ -101,4 +101,6 @@
     <string name="update_desktop_install_failed" formatted="false">"インストーラーを起動できませんでした。アップデートは GitHub からもダウンロードできます。"</string>
     <string name="update_desktop_install_note" formatted="false">"インストーラーの実行中は Aurora が終了します。セットアップが完了したら再度開いてください。"</string>
     <string name="youtube_download_open_folder" formatted="false">"ダウンロードフォルダーを開く"</string>
+    <string name="player_fullscreen" formatted="false">"全画面表示"</string>
+    <string name="player_exit_fullscreen" formatted="false">"全画面表示を終了"</string>
 </resources>

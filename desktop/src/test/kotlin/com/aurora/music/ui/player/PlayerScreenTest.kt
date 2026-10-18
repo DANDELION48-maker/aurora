@@ -80,6 +80,7 @@ class PlayerScreenTest {
                 volume = rec.volume,
                 onVolumeChange = { rec.volume = it },
                 onToggleMute = { rec.events += "mute" },
+                onFullscreenChange = { rec.events += "fullscreen:$it" },
             )
         }
     }
@@ -87,12 +88,15 @@ class PlayerScreenTest {
     @Test fun landscapePlayerRoutesControlsAndSwitchesPanes() {
         val rec = Recorder()
         PlayerScene("player-lyrics", 1440, 900) { Player(PlayerFixtures.playing, rec) }.use { scene ->
+            val closed = scene.shot("-closed")
+            scene.click(LYRICS_BUTTON, 36f)
             val lyrics = scene.shot()
             assertTrue(lyrics.distinctColors(6) > 60)
+            assertTrue(lyrics.differsFrom(closed))
             listOf(900f to 385f, 370f to 780f, 176f to 780f, 265f to 780f, 474f to 780f, 564f to 780f, 563f to 552f,
-                200f to 612f, 205f to 852f, 325f to 852f, 443f to 852f, 1356f to 36f, 44f to 36f).forEach { (x, y) -> scene.click(x, y) }
+                200f to 612f, 205f to 852f, 325f to 852f, 443f to 852f, 1356f to 36f, FULLSCREEN_BUTTON to 36f, 44f to 36f).forEach { (x, y) -> scene.click(x, y) }
             assertEquals(listOf("lyric-seek", "play", "shuffle", "previous", "next", "repeat", "like",
-                "signal", "speed", "sleep", "mute", "output", "collapse"), rec.events)
+                "signal", "speed", "sleep", "mute", "output", "fullscreen:true", "collapse"), rec.events)
             scene.click(585f, 852f)
             assertEquals(1f, rec.volume, 0.01f)
             scene.scroll(530f, 852f, 2f)
@@ -107,23 +111,25 @@ class PlayerScreenTest {
         }
     }
 
-    @Test fun missingLyricsFallBackToTheQueueUntilLyricsArePicked() {
+    @Test fun theQueueButtonOpensAndClosesTheSidePane() {
         val rec = Recorder()
-        PlayerScene("player-no-lyrics", 1440, 900) { Player(PlayerFixtures.playing, rec, lyrics = null) }.use { scene ->
-            val fallback = scene.shot()
+        PlayerScene("player-queue-button", 1440, 900) { Player(PlayerFixtures.playing, rec, lyrics = null) }.use { scene ->
+            val closed = scene.shot()
+            scene.click(1000f, 312f)
+            assertEquals(emptyList<String>(), rec.events)
+            scene.click(QUEUE_BUTTON, 36f)
+            scene.shot("-open")
             scene.click(1000f, 312f)
             assertEquals(listOf("jump:2"), rec.events)
-            scene.click(785f, 94f)
-            val picked = scene.shot("-picked")
-            assertTrue(picked.differsFrom(fallback))
-            scene.click(1000f, 312f)
-            assertEquals(listOf("jump:2"), rec.events)
+            scene.click(QUEUE_BUTTON, 36f)
+            assertEquals(closed.pixel(720, 300), scene.shot("-closed").pixel(720, 300))
         }
     }
 
     @Test fun dividerResizesThePanesWithinRange() {
         val rec = Recorder()
         PlayerScene("player-split", 1440, 900) { Player(PlayerFixtures.playing, rec) }.use { scene ->
+            scene.click(LYRICS_BUTTON, 36f)
             scene.shot()
             scene.drag(720f, 470f, 138f, 0f)
             assertEquals(0.6f, rec.split, 0.01f)
@@ -142,6 +148,7 @@ class PlayerScreenTest {
                 Player(PlayerFixtures.playing, rec) { saved = it }
             }
         }.use { scene ->
+            scene.click(LYRICS_BUTTON, 36f)
             scene.shot()
             scene.drag(720f, 470f, 138f, 0f)
             assertEquals(0.6f, rec.split, 0.01f)
@@ -154,6 +161,7 @@ class PlayerScreenTest {
 
     @Test fun fullscreenLyricsOverlayOpensAndCloses() {
         PlayerScene("player-overlay", 1440, 900) { Player(PlayerFixtures.playing, Recorder()) }.use { scene ->
+            scene.click(LYRICS_BUTTON, 36f)
             val before = scene.shot("-before")
             scene.click(1378f, 94f)
             val overlay = scene.shot()
@@ -172,3 +180,7 @@ class PlayerScreenTest {
         PlayerScene("player-small", 960, 600) { Player(PlayerFixtures.playing, Recorder()) }.use { it.shot() }
     }
 }
+
+private const val FULLSCREEN_BUTTON = 1316f
+private const val QUEUE_BUTTON = 1276f
+private const val LYRICS_BUTTON = 1236f

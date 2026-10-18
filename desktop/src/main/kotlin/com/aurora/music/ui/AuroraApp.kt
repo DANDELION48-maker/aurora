@@ -1464,6 +1464,8 @@ private fun Shell(
                         onPaneRequestHandled = { playerPaneRequest = null },
                         paneActions = nowPlayingPaneActions,
                         onSplitChange = { split -> scope.launch { store.setTabletSetting(TabletSetting.PLAYER_SPLIT, split) } },
+                        fullscreen = fullscreen,
+                        onFullscreenChange = onFullscreenChange,
                         // full-screen lyrics take the whole screen too, and hand it back only if they took it
                         onImmersiveLyrics = { on ->
                             if (on && !fullscreen) {

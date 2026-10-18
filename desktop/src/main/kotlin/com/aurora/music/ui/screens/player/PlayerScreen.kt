@@ -3,8 +3,10 @@ package com.aurora.music.ui.screens.player
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.VideoLibrary
-import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.material.icons.filled.Fullscreen
+import androidx.compose.material.icons.filled.FullscreenExit
+import androidx.compose.material.icons.filled.Lyrics
 import com.aurora.music.localization.appString
 import com.aurora.music.R
 
@@ -160,6 +162,8 @@ fun PlayerScreen(
     paneActions: (@Composable (PlayerPane) -> Unit)? = null,
     onSplitChange: (Float) -> Unit = {},
     onImmersiveLyrics: (Boolean) -> Unit = {},
+    fullscreen: Boolean = false,
+    onFullscreenChange: (Boolean) -> Unit = {},
     volume: Float = LocalPlayer.current.volume.collectAsState().value,
     onVolumeChange: (Float) -> Unit = LocalPlayer.current::setVolume,
     onToggleMute: () -> Unit = LocalPlayer.current::toggleMute,
@@ -169,12 +173,12 @@ fun PlayerScreen(
     val classic = ui.themeStyle == ThemeStyle.AURORA
     var showLyrics by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
     var pickedPane by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf<String?>(null) }
-    var lyricsMissing by remember { mutableStateOf(false) }
-    val sidePane = pickedPane?.let(PlayerPane::valueOf) ?: if (lyricsMissing) PlayerPane.QUEUE else PlayerPane.LYRICS
-    val reportLyrics = remember { { available: Boolean -> lyricsMissing = !available } }
+    var paneOpen by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
+    val sidePane = pickedPane?.let(PlayerPane::valueOf) ?: PlayerPane.LYRICS
     LaunchedEffect(requestedPane) {
         if (requestedPane == null) return@LaunchedEffect
         pickedPane = requestedPane.name
+        paneOpen = true
         onPaneRequestHandled()
     }
     var showMenu by remember { mutableStateOf(false) }
@@ -198,6 +202,17 @@ fun PlayerScreen(
     var requestedVideo by remember(song.id) { mutableStateOf(false) }
     LaunchedEffect(state.hasVideo, requestedVideo) {
         if (requestedVideo && state.hasVideo) { requestedVideo = false; showVideo = true }
+    }
+    val canVideo = state.hasTrack && !state.isMix && (state.supportsMusicVideo || state.hasVideo)
+    fun toggleVideo() {
+        when {
+            showVideo -> showVideo = false
+            state.hasVideo && !state.videoIsCanvas -> showVideo = true
+            else -> { requestedVideo = true; onRequestVideo(false) }
+        }
+    }
+    fun togglePane(pane: PlayerPane) {
+        if (paneOpen && sidePane == pane) paneOpen = false else { pickedPane = pane.name; paneOpen = true }
     }
     DisposableEffect(showVideo) {
         onVideoVisibleChange(showVideo)
@@ -228,15 +243,18 @@ fun PlayerScreen(
                     modifier = Modifier.size(40.dp).clip(CircleShape).clickable(onClick = onCollapse).pointerHoverIcon(PointerIcon.Hand).padding(6.dp),
                 )
                 // balances trailing icons so PLAYING FROM stays centered
-                Spacer(Modifier.width(40.dp))
+                Spacer(Modifier.width(if (canVideo) 200.dp else 160.dp))
                 Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(appString(R.string.text_playing_from_5f4dc3), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f), maxLines = 1)
                     MarqueeTitle(song.album.ifBlank { appString(R.string.text_aurora_eeee9b) })
                 }
-                Icon(
-                    Icons.Filled.Speaker, appString(R.string.text_output_device_709178),
-                    modifier = Modifier.size(40.dp).clip(CircleShape).clickable(onClick = onOpenOutput).pointerHoverIcon(PointerIcon.Hand).padding(8.dp),
-                )
+                HeaderButton(Icons.Filled.Lyrics, appString(R.string.text_lyrics_8670cb), active = paneOpen && sidePane == PlayerPane.LYRICS) { togglePane(PlayerPane.LYRICS) }
+                HeaderButton(Icons.AutoMirrored.Filled.QueueMusic, appString(R.string.text_queue_d325fc), active = paneOpen && sidePane != PlayerPane.LYRICS) { togglePane(PlayerPane.QUEUE) }
+                if (canVideo) HeaderButton(Icons.Filled.VideoLibrary, appString(if (showVideo) R.string.text_audio_acdac2 else R.string.text_video_bc17c1),
+                    active = showVideo, enabled = !state.videoLoading, onClick = ::toggleVideo)
+                HeaderButton(if (fullscreen) Icons.Filled.FullscreenExit else Icons.Filled.Fullscreen,
+                    appString(if (fullscreen) R.string.player_exit_fullscreen else R.string.player_fullscreen)) { onFullscreenChange(!fullscreen) }
+                HeaderButton(Icons.Filled.Speaker, appString(R.string.text_output_device_709178), onClick = onOpenOutput)
                 Box {
                     Icon(
                         Icons.Filled.MoreVert, appString(R.string.text_more_4bab2d),
@@ -245,19 +263,6 @@ fun PlayerScreen(
                     DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                         if (onOpenMix != null) DropdownMenuItem(text = { Text(appString(R.string.text_mix_studio_668363)) },
                             onClick = { showMenu = false; onOpenMix() }, leadingIcon = { Icon(Icons.Filled.GraphicEq, null) })
-                        if (state.hasTrack && !state.isMix && (state.supportsMusicVideo || state.hasVideo)) DropdownMenuItem(
-                            text = { Text(appString(if (showVideo) R.string.text_audio_acdac2 else R.string.text_video_bc17c1)) },
-                            enabled = !state.videoLoading,
-                            onClick = {
-                                showMenu = false
-                                when {
-                                    showVideo -> showVideo = false
-                                    state.hasVideo && !state.videoIsCanvas -> showVideo = true
-                                    else -> { requestedVideo = true; onRequestVideo(false) }
-                                }
-                            },
-                            leadingIcon = { Icon(if (showVideo) Icons.Filled.MusicNote else Icons.Filled.VideoLibrary, null) },
-                        )
                         if (state.hasTrack && state.supportsCanvas && !(showVideo && state.videoIsCanvas)) DropdownMenuItem(
                             text = { Text(appString(R.string.canvas_open)) },
                             enabled = !state.videoLoading,
@@ -300,11 +305,6 @@ fun PlayerScreen(
                             enabled = song.artistId.isNotBlank(),
                             onClick = { showMenu = false; onGoToArtist() },
                             leadingIcon = { Icon(Icons.Filled.Person, null) },
-                        )
-                        DropdownMenuItem(
-                            text = { Text(appString(R.string.text_view_queue_827a90)) },
-                            onClick = { showMenu = false; pickedPane = PlayerPane.QUEUE.name },
-                            leadingIcon = { Icon(Icons.AutoMirrored.Filled.QueueMusic, null) },
                         )
                     }
                 }
@@ -522,7 +522,7 @@ fun PlayerScreen(
                 BoxWithConstraints(Modifier.widthIn(max = BodyMaxWidth).fillMaxSize()) {
                     val total = maxWidth
                     Row(Modifier.fillMaxSize()) {
-                        BoxWithConstraints(Modifier.weight(split).fillMaxHeight()) {
+                        BoxWithConstraints(Modifier.weight(if (paneOpen) split else 1f).fillMaxHeight()) {
                             val gap = if (short) 12.dp else 20.dp
                             var controlsHeight by remember { mutableStateOf(0.dp) }
                             val reserve = if (controlsHeight > 0.dp) controlsHeight else ControlsEstimate
@@ -542,12 +542,12 @@ fun PlayerScreen(
                                 }
                             }
                         }
-                        PaneDivider(
+                        if (paneOpen) PaneDivider(
                             onDrag = { dx -> if (total > 0.dp) split = (split + dx / total).coerceIn(splitRange) },
                             onDragEnd = { onSplitChange(split) },
                             width = 24.dp,
                         )
-                        Column(Modifier.weight(1f - split).fillMaxHeight().then(paneSurface).padding(spacing)) {
+                        if (paneOpen) Column(Modifier.weight(1f - split).fillMaxHeight().then(paneSurface).padding(spacing)) {
                             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                                 PaneSwitcher(sidePane, { pickedPane = it.name })
                                 Spacer(Modifier.weight(1f))
@@ -565,11 +565,7 @@ fun PlayerScreen(
                                 label = "playerPane",
                                 modifier = Modifier.weight(1f).fillMaxWidth(),
                             ) { target ->
-                                Box(Modifier.fillMaxSize()) {
-                                    CompositionLocalProvider(LocalLyricsAvailability provides if (pickedPane == null) reportLyrics else null) {
-                                        paneContent(target, Modifier.fillMaxSize())
-                                    }
-                                }
+                                Box(Modifier.fillMaxSize()) { paneContent(target, Modifier.fillMaxSize()) }
                             }
                         }
                     }
@@ -655,6 +651,15 @@ private fun formatBadge(song: com.aurora.music.model.Song): String {
 
 private fun isLossless(suffix: String): Boolean =
     suffix.lowercase() in setOf("flac", "alac", "wav", "aiff", "aif", "ape", "wv", "dsf", "dff", "m4a")
+
+@Composable
+private fun HeaderButton(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, active: Boolean = false, enabled: Boolean = true, onClick: () -> Unit) {
+    Icon(
+        icon, label,
+        tint = if (active) MaterialTheme.colorScheme.primary else LocalContentColor.current.copy(alpha = if (enabled) 1f else .38f),
+        modifier = Modifier.size(40.dp).clip(CircleShape).clickable(enabled = enabled, onClick = onClick).pointerHoverIcon(PointerIcon.Hand).padding(8.dp),
+    )
+}
 
 @Composable
 private fun BottomUtil(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, onClick: () -> Unit, active: Boolean = false, modifier: Modifier = Modifier) {

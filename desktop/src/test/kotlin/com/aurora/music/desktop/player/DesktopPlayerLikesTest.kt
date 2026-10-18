@@ -30,9 +30,11 @@ class DesktopPlayerLikesTest {
         override val session = Session("http://127.0.0.1:9", "alice", "salt", "token")
         @Volatile var starred = CompletableDeferred<Set<String>>()
         @Volatile var stored = CompletableDeferred<Unit>()
+        @Volatile var refused = false
         override suspend fun starredIds(): Set<String> = starred.await()
         override suspend fun setStarred(id: String, starred: Boolean, kind: String): Boolean {
             stored.await()
+            if (refused) throw java.io.IOException("SoundCloud did not allow this request. Please try again.")
             return true
         }
     }
@@ -78,6 +80,14 @@ class DesktopPlayerLikesTest {
         on { player.refreshLikes() }
         settle()
         assertEquals(setOf("s1", "s2"), liked())
+    }
+
+    @Test fun aRefusedLikeEmptiesTheHeartAgain() {
+        backend.refused = true
+        backend.stored.complete(Unit)
+        on { player.toggleLike("s1", "song") }
+        settle()
+        assertEquals(emptySet<String>(), liked())
     }
 
     @Test fun likesStillBeingSavedSurviveARefreshThatMissesThem() {

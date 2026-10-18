@@ -101,4 +101,6 @@
     <string name="update_desktop_install_failed" formatted="false">"설치 프로그램을 시작할 수 없습니다. GitHub에서 업데이트를 다운로드할 수도 있습니다."</string>
     <string name="update_desktop_install_note" formatted="false">"설치 프로그램이 실행되는 동안 Aurora가 종료됩니다. 설치가 끝나면 다시 여세요."</string>
     <string name="youtube_download_open_folder" formatted="false">"다운로드 폴더 열기"</string>
+    <string name="player_fullscreen" formatted="false">"전체 화면"</string>
+    <string name="player_exit_fullscreen" formatted="false">"전체 화면 종료"</string>
 </resources>

@@ -101,4 +101,6 @@
     <string name="update_desktop_install_failed" formatted="false">"Não foi possível iniciar o instalador. Também podes transferir a atualização do GitHub."</string>
     <string name="update_desktop_install_note" formatted="false">"O Aurora fecha enquanto o instalador é executado. Abre-o novamente quando a instalação terminar."</string>
     <string name="youtube_download_open_folder" formatted="false">"Abrir pasta de transferências"</string>
+    <string name="player_fullscreen" formatted="false">"Tela cheia"</string>
+    <string name="player_exit_fullscreen" formatted="false">"Sair da tela cheia"</string>
 </resources>

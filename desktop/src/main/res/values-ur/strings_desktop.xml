@@ -101,4 +101,6 @@
     <string name="update_desktop_install_failed" formatted="false">"\u2067انسٹالر شروع نہیں ہو سکا۔ آپ اپ ڈیٹ GitHub سے بھی ڈاؤن لوڈ کر سکتے ہیں۔\u2069"</string>
     <string name="update_desktop_install_note" formatted="false">"\u2067انسٹالر چلنے کے دوران Aurora بند ہو جاتا ہے۔ سیٹ اپ مکمل ہونے پر اسے دوبارہ کھولیں۔\u2069"</string>
     <string name="youtube_download_open_folder" formatted="false">"\u2067ڈاؤن لوڈ فولڈر کھولیں\u2069"</string>
+    <string name="player_fullscreen" formatted="false">"پوری اسکرین"</string>
+    <string name="player_exit_fullscreen" formatted="false">"پوری اسکرین سے باہر نکلیں"</string>
 </resources>

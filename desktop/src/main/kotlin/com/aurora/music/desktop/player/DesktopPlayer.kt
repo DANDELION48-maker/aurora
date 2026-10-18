@@ -824,7 +824,11 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
             recomputeLikes()
             runCatching { deps.repository.markDownloadsLiked(listOf(id), nowLiked) }
             scope.launch {
-                runCatching { deps.repository.setStarred(id, nowLiked, kind) }
+                if (runCatching { deps.repository.setStarred(id, nowLiked, kind) }.isFailure && serverLikedIds.contains(id) == nowLiked) {
+                    serverLikedIds = if (nowLiked) serverLikedIds - id else serverLikedIds + id
+                    runCatching { deps.repository.markDownloadsLiked(listOf(id), !nowLiked) }
+                    recomputeLikes()
+                }
                 likeEdits++
                 likesInFlight -= id
             }

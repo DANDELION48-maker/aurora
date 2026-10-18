@@ -101,4 +101,6 @@
     <string name="update_desktop_install_failed" formatted="false">"Tidak dapat memulai penginstal. Anda juga dapat mengunduh pembaruan dari GitHub."</string>
     <string name="update_desktop_install_note" formatted="false">"Aurora ditutup selama penginstal berjalan. Buka lagi setelah penyiapan selesai."</string>
     <string name="youtube_download_open_folder" formatted="false">"Buka folder unduhan"</string>
+    <string name="player_fullscreen" formatted="false">"Layar penuh"</string>
+    <string name="player_exit_fullscreen" formatted="false">"Keluar dari layar penuh"</string>
 </resources>

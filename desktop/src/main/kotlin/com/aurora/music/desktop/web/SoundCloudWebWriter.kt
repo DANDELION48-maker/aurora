@@ -48,7 +48,10 @@ class SoundCloudWebWriter : SoundCloudBrowser {
             val current = open(origin)
             val first = request(current, method, url, token, body, contentType)
             val challenge = captchaUrl(first) ?: return@withLock first
-            if (solve(origin, challenge)) request(current, method, url, token, body, contentType) else first
+            if (!solve(origin, challenge)) return@withLock first
+            // the check was solved in another page; this one's bot-check script still holds the refused session
+            close()
+            request(open(origin), method, url, token, body, contentType)
         } finally {
             idle = scope.launch { delay(IDLE_MS); lock.withLock { close() } }
         }

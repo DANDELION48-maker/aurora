@@ -101,4 +101,6 @@
     <string name="update_desktop_install_failed" formatted="false">"Yükleyici başlatılamadı. Güncellemeyi GitHub\'dan da indirebilirsiniz."</string>
     <string name="update_desktop_install_note" formatted="false">"Yükleyici çalışırken Aurora kapanır. Kurulum bitince yeniden açın."</string>
     <string name="youtube_download_open_folder" formatted="false">"İndirme klasörünü aç"</string>
+    <string name="player_fullscreen" formatted="false">"Tam ekran"</string>
+    <string name="player_exit_fullscreen" formatted="false">"Tam ekrandan çık"</string>
 </resources>

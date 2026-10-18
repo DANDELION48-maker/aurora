@@ -101,4 +101,6 @@
     <string name="update_desktop_install_failed" formatted="false">"इंस्टॉलर शुरू नहीं हो सका। आप अपडेट GitHub से भी डाउनलोड कर सकते हैं।"</string>
     <string name="update_desktop_install_note" formatted="false">"इंस्टॉलर चलने के दौरान Aurora बंद हो जाता है। सेटअप पूरा होने पर इसे फिर से खोलें।"</string>
     <string name="youtube_download_open_folder" formatted="false">"डाउनलोड फ़ोल्डर खोलें"</string>
+    <string name="player_fullscreen" formatted="false">"फ़ुल स्क्रीन"</string>
+    <string name="player_exit_fullscreen" formatted="false">"फ़ुल स्क्रीन से बाहर निकलें"</string>
 </resources>

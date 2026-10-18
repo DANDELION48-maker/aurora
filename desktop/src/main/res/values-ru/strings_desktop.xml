@@ -101,4 +101,6 @@
     <string name="update_desktop_install_failed" formatted="false">"Не удалось запустить установщик. Обновление также можно скачать с GitHub."</string>
     <string name="update_desktop_install_note" formatted="false">"Aurora закроется на время работы установщика. Откройте его снова после завершения установки."</string>
     <string name="youtube_download_open_folder" formatted="false">"Открыть папку загрузок"</string>
+    <string name="player_fullscreen" formatted="false">"Полный экран"</string>
+    <string name="player_exit_fullscreen" formatted="false">"Выйти из полноэкранного режима"</string>
 </resources>
