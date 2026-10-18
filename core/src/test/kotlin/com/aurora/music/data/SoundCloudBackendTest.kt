@@ -159,6 +159,15 @@ class SoundCloudBackendTest {
         assertNull(backend.comments(song.copy(id = "soundcloud:system-playlists:x")))
     }
 
+    @Test fun homeShelvesDropRepeatedItems() = runBlocking {
+        val user = """{"kind":"user","id":7,"username":"uploader"}"""
+        val backend = SoundCloudBackend(session, SoundCloudTransport { path ->
+            if (!path.startsWith("/mixed-selections")) error(path)
+            JsonParser.parseString("""{"collection":[{"id":"artists","title":"Artists","items":{"collection":[$user,$user]}}]}""")
+        })
+        assertEquals(listOf("artist:7"), backend.home().sections.single().items.map { it.key })
+    }
+
     @Test fun nextLinksStayOnTheApiHost() {
         assertEquals("api-v2.soundcloud.com", SoundCloudClient.url("/me").host)
         assertThrows(IllegalArgumentException::class.java) { SoundCloudClient.url("https://evil.example/me") }

@@ -59,7 +59,7 @@ class SoundCloudBackend(
             history.await()?.distinctBy { it.id }?.takeIf { it.isNotEmpty() }?.let { add(HomeFeedSection("history", "Recently played", items = it.map(HomeFeedItem::Track))) }
             stream.await()?.distinctBy { it.id }?.takeIf { it.isNotEmpty() }?.let { add(HomeFeedSection("stream", "From people you follow", items = it.map(HomeFeedItem::Track))) }
             discover.await()?.forEach { selection ->
-                val items = selection.obj("items").items("collection").mapNotNull { collection(it) }
+                val items = selection.obj("items").items("collection").mapNotNull { collection(it) }.distinctBy { it.key }
                 if (items.isNotEmpty()) add(HomeFeedSection(selection.string("id"), selection.string("title"), selection.string("description"), items))
             }
         }
