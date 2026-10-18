@@ -42,6 +42,15 @@ class AppStringsTest {
         english.forEach { (id, text) -> assertEquals(text, formats(text), formats(appString(id))) }
     }
 
+    // desktop copies of android strings that talk about a phone
+    @Test fun desktopStringsOverrideAndroidOnes() {
+        AppStrings.setLocale("en")
+        assertEquals("It stays on this computer", appString(R.string.insights_step_private_title_desktop))
+        AppStrings.setLocale("de")
+        assertEquals("Alles bleibt auf deinem Computer", appString(R.string.insights_step_private_title_desktop))
+        AppStrings.setLocale("en")
+    }
+
     @Test fun regionalTagFallsBackToLanguage() {
         AppStrings.setLocale("ru-RU")
         assertEquals("Как в системе", appString(R.string.language_system))

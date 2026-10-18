@@ -8,6 +8,16 @@
     <string name="discovery_related" formatted="false">"Podobne"</string>
     <string name="discovery_related_empty" formatted="false">"YouTube Music nie ma nic podobnego do tego utworu."</string>
     <string name="discovery_start_radio" formatted="false">"Uruchom radio"</string>
+    <string name="insights_location_history_guide_desktop" formatted="false">"Każde odtworzenie zachowuje dokładne miejsce, w którym grało, aby można je było zobaczyć na mapie. Dane zostają na tym komputerze, nigdy nie są wysyłane i nie trafiają do kopii zapasowych. Możesz je usunąć tutaj lub z mapy w dowolnej chwili."</string>
+    <string name="insights_places_guide_desktop" formatted="false">"Podczas odtwarzania Aurora sprawdza lokalizację najwyżej co 10 minut, porównuje ją z Domem i Pracą i zachowuje tylko etykietę. Same lokalizacje Domu i Pracy zostają na tym komputerze i nie trafiają do żadnej kopii zapasowej."</string>
+    <string name="insights_step_private_title_desktop" formatted="false">"Wszystko zostaje na komputerze"</string>
+    <string name="levels_desktop_exclusive_needed" formatted="false">"Rozpocznij odtwarzanie na wyjściu wyłącznym, aby skalibrować."</string>
+    <string name="levels_desktop_hardware_help" formatted="false">"Wpisz 0=dB: obecna głośność sprzętowa DAC względem pełnego wyjścia."</string>
+    <string name="levels_desktop_hardware_points" formatted="false">"Tłumienie głośności sprzętowej"</string>
+    <string name="levels_desktop_volume" formatted="false">"Głośność Aurora jest mierzona bezpośrednio. Kalibruj przy obecnej głośności sprzętowej DAC."</string>
+    <string name="location_open_windows_settings" formatted="false">"Otwórz ustawienia lokalizacji"</string>
+    <string name="location_unsupported" formatted="false">"Lokalizacja nie jest dostępna w tym systemie."</string>
+    <string name="location_windows_off" formatted="false">"Windows blokuje lokalizację dla aplikacji klasycznych. Włącz dostęp do lokalizacji, również dla aplikacji klasycznych, i spróbuj ponownie."</string>
     <string name="lyrics_settings_summary" formatted="false">"Styl synchronizacji i źródła tekstów"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Darmowa społecznościowa baza tekstów"</string>
     <string name="lyrics_source_server" formatted="false">"Źródło Utworu"</string>
@@ -24,6 +34,8 @@
     <string name="merge_options_summary" formatted="false">"Co połączone serwisy dodają do Twoich utworów"</string>
     <string name="merge_songs_from" formatted="false">"Utwory Z"</string>
     <string name="playlist_save_to" formatted="false">"Zapisz W"</string>
+    <string name="storage_youtube_desktop_note" formatted="false">"Pobrane z YouTube pliki są zapisywane w Music/Aurora w folderze użytkownika, który zostaje dodany do folderów z muzyką."</string>
+    <string name="tag_edit_desktop_note" formatted="false">"Zapisywanie tagów zmienia plik na tym komputerze. Najpierw zamknij go w innych aplikacjach."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Akryl"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"Dodaj folder z muzyką"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Dekodowanie dźwięku. Copyright © twórcy FFmpeg. LGPL-3.0-or-later, linkowane dynamicznie przez JavaCPP Presets. Pełna licencja: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
@@ -86,4 +98,7 @@
     <string name="text_volume_3b18e8" formatted="false">"Głośność"</string>
     <string name="text_windows_capabilities_0f1fa0" formatted="false">"Możliwości Windows"</string>
     <string name="text_windows_java_2566af">"Windows · Java %1$d"</string>
+    <string name="update_desktop_install_failed" formatted="false">"Nie udało się uruchomić instalatora. Aktualizację możesz też pobrać z GitHuba."</string>
+    <string name="update_desktop_install_note" formatted="false">"Aurora zamyka się na czas działania instalatora. Otwórz go ponownie po zakończeniu instalacji."</string>
+    <string name="youtube_download_open_folder" formatted="false">"Otwórz folder pobranych"</string>
 </resources>

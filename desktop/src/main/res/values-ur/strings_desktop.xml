@@ -8,6 +8,16 @@
     <string name="discovery_related" formatted="false">"\u2067متعلقہ\u2069"</string>
     <string name="discovery_related_empty" formatted="false">"\u2067YouTube Music میں اس گانے سے متعلق کچھ نہیں ہے۔\u2069"</string>
     <string name="discovery_start_radio" formatted="false">"\u2067ریڈیو شروع کریں\u2069"</string>
+    <string name="insights_location_history_guide_desktop" formatted="false">"\u2067ہر پلے وہ درست جگہ رکھتا ہے جہاں وہ چلا، تاکہ آپ اسے نقشے پر دیکھ سکیں۔ یہ اسی کمپیوٹر پر رہتا ہے، کبھی اپ لوڈ نہیں ہوتا اور بیک اپ میں شامل نہیں ہوتا۔ آپ اسے کسی بھی وقت یہاں یا نقشے سے حذف کر سکتے ہیں۔\u2069"</string>
+    <string name="insights_places_guide_desktop" formatted="false">"\u2067موسیقی چلتے وقت Aurora زیادہ سے زیادہ ہر 10 منٹ میں ایک بار آپ کا مقام دیکھتا ہے، اسے گھر اور کام سے ملاتا ہے اور صرف لیبل رکھتا ہے۔ گھر اور کام کے مقامات اسی کمپیوٹر پر رہتے ہیں اور کسی بیک اپ میں شامل نہیں ہوتے۔\u2069"</string>
+    <string name="insights_step_private_title_desktop" formatted="false">"\u2067سب کچھ آپ کے کمپیوٹر پر رہتا ہے\u2069"</string>
+    <string name="levels_desktop_exclusive_needed" formatted="false">"\u2067کیلیبریٹ کرنے کے لیے کسی خصوصی آؤٹ پٹ پر پلے بیک شروع کریں۔\u2069"</string>
+    <string name="levels_desktop_hardware_help" formatted="false">"\u20670=dB درج کریں: مکمل آؤٹ پٹ کے مقابلے میں DAC کا موجودہ ہارڈویئر والیوم۔\u2069"</string>
+    <string name="levels_desktop_hardware_points" formatted="false">"\u2067ہارڈویئر والیوم کی کمی\u2069"</string>
+    <string name="levels_desktop_volume" formatted="false">"\u2067Aurora کا اپنا والیوم براہ راست ناپا جاتا ہے۔ DAC کے موجودہ ہارڈویئر والیوم پر کیلیبریٹ کریں۔\u2069"</string>
+    <string name="location_open_windows_settings" formatted="false">"\u2067مقام کی ترتیبات کھولیں\u2069"</string>
+    <string name="location_unsupported" formatted="false">"\u2067اس سسٹم پر مقام دستیاب نہیں ہے۔\u2069"</string>
+    <string name="location_windows_off" formatted="false">"\u2067Windows ڈیسک ٹاپ ایپس کے لیے مقام کو روک رہا ہے۔ ڈیسک ٹاپ ایپس سمیت مقام تک رسائی آن کریں، پھر دوبارہ کوشش کریں۔\u2069"</string>
     <string name="lyrics_settings_summary" formatted="false">"\u2067ہم آہنگی کا انداز اور بول کہاں سے آتے ہیں\u2069"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"\u2067مفت کمیونٹی بول ڈیٹا بیس\u2069"</string>
     <string name="lyrics_source_server" formatted="false">"\u2067گانے کا اپنا ذریعہ\u2069"</string>
@@ -24,6 +34,8 @@
     <string name="merge_options_summary" formatted="false">"\u2067ضم شدہ سروسز آپ کے گانوں میں کیا شامل کرتی ہیں\u2069"</string>
     <string name="merge_songs_from" formatted="false">"\u2067گانے کہاں سے\u2069"</string>
     <string name="playlist_save_to" formatted="false">"\u2067یہاں محفوظ کریں\u2069"</string>
+    <string name="storage_youtube_desktop_note" formatted="false">"\u2067YouTube سے ڈاؤن لوڈز آپ کے یوزر فولڈر میں Music/Aurora میں محفوظ ہوتے ہیں، جو آپ کے میوزک فولڈرز میں شامل کر دیا جاتا ہے۔\u2069"</string>
+    <string name="tag_edit_desktop_note" formatted="false">"\u2067ٹیگز لکھنے سے اس کمپیوٹر پر فائل بدل جاتی ہے۔ پہلے اسے دوسری ایپس میں بند کریں۔\u2069"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"\u2067ایکریلک\u2069"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"\u2067موسیقی کا فولڈر شامل کریں\u2069"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"\u2067آڈیو ڈیکوڈنگ۔ کاپی رائٹ © FFmpeg ڈیولپرز۔ LGPL-3.0-or-later، JavaCPP Presets کے ذریعے ڈائنامک طور پر لنک شدہ۔ مکمل لائسنس: https://www.gnu.org/licenses/lgpl-3.0.html\u2069"</string>
@@ -86,4 +98,7 @@
     <string name="text_volume_3b18e8" formatted="false">"\u2067والیوم\u2069"</string>
     <string name="text_windows_capabilities_0f1fa0" formatted="false">"\u2067Windows کی صلاحیتیں\u2069"</string>
     <string name="text_windows_java_2566af">"Windows · Java %1$d"</string>
+    <string name="update_desktop_install_failed" formatted="false">"\u2067انسٹالر شروع نہیں ہو سکا۔ آپ اپ ڈیٹ GitHub سے بھی ڈاؤن لوڈ کر سکتے ہیں۔\u2069"</string>
+    <string name="update_desktop_install_note" formatted="false">"\u2067انسٹالر چلنے کے دوران Aurora بند ہو جاتا ہے۔ سیٹ اپ مکمل ہونے پر اسے دوبارہ کھولیں۔\u2069"</string>
+    <string name="youtube_download_open_folder" formatted="false">"\u2067ڈاؤن لوڈ فولڈر کھولیں\u2069"</string>
 </resources>

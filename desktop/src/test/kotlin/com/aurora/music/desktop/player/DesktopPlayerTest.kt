@@ -432,4 +432,26 @@ class DesktopPlayerTest {
         settle()
         assertEquals("e", on { player.state.value.current.id })
     }
+
+    // windows will not replace a file the decoder holds, so a tag write on the playing file pauses and resumes around it
+    @Test fun rewritingThePlayingFileLetsGoOfItAndResumesInPlace() {
+        val engine = FakeEngine()
+        val player = player(engine)
+        val file = java.io.File(System.getProperty("java.io.tmpdir"), "aurora-release-${System.nanoTime()}.m4a").apply { writeBytes(ByteArray(4)); deleteOnExit() }
+        val local = song("local").copy(streamUrl = file.toPath().toUri().toString())
+        on { player.playAll(listOf(song("a"), local, song("b")), 1) }
+        settle()
+        engine.at(42_000)
+        var phaseDuringWrite: EnginePhase? = null
+        val result = runBlocking { player.releasingFile(file.path) { phaseDuringWrite = engine.state.value.phase; "written" } }
+        assertEquals("written", result)
+        assertEquals(EnginePhase.IDLE, phaseDuringWrite)
+        assertTrue(engine.calls.contains("stop"))
+        assertEquals("local", engine.state.value.current!!.song.id)
+        assertEquals(42_000, engine.state.value.positionMs)
+        assertTrue(engine.state.value.playWhenReady)
+        engine.calls.clear()
+        runBlocking { player.releasingFile(java.io.File(file.parentFile, "other.m4a").path) { } }
+        assertFalse(engine.calls.contains("stop"))
+    }
 }

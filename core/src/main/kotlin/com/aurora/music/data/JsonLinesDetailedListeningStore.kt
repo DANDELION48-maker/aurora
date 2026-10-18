@@ -50,6 +50,28 @@ class JsonLinesDetailedListeningStore(private val file: File, private val platfo
         }
     }
 
+    suspend fun located(from: Long = 0, to: Long = Long.MAX_VALUE, songId: String? = null): List<DetailedPlay> = withContext(dispatcher) {
+        synchronized(lock) {
+            loaded().values.filter { it.context.latitude != null && it.context.longitude != null && it.startedAt >= from && it.startedAt < to &&
+                (songId == null || it.track.songId == songId) }.sortedBy { it.startedAt }
+        }
+    }
+
+    suspend fun locationCount(): Int = withContext(dispatcher) {
+        synchronized(lock) { loaded().values.count { it.context.latitude != null } }
+    }
+
+    // the plays and their statistics stay, only the coordinates go
+    suspend fun clearLocations() = withContext(dispatcher) {
+        synchronized(lock) {
+            val map = loaded()
+            map.replaceAll { _, play -> if (play.context.latitude == null) play else play.copy(context = play.context.copy(latitude = null, longitude = null, locationAccuracyM = null)) }
+            file.parentFile?.mkdirs()
+            persistBackupFileAtomically(file, map.values.joinToString("") { gson.toJson(it) + "\n" }.toByteArray(Charsets.UTF_8))
+            lines = map.size
+        }
+    }
+
     private fun loaded(): LinkedHashMap<String, DetailedPlay> = rows ?: LinkedHashMap<String, DetailedPlay>().also { map ->
         if (file.exists()) file.forEachLine { line ->
             lines++

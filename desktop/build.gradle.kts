@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.jna.platform)
     implementation(libs.jcefmaven)
     implementation(libs.newpipeextractor)
+    implementation(libs.jaudiotagger)
+    implementation(libs.onnxruntime)
     testImplementation(libs.junit)
     testImplementation(libs.okhttp.mockwebserver)
 }
@@ -144,7 +146,7 @@ compose.desktop {
             description = "Aurora music player"
             vendor = "Aurora"
             appResourcesRootDir.set(appResources)
-            modules("java.instrument", "java.management", "java.naming", "java.net.http", "java.sql", "jdk.crypto.ec", "jdk.dynalink", "jdk.unsupported")
+            modules("java.instrument", "java.management", "java.naming", "java.net.http", "java.sql", "jdk.crypto.ec", "jdk.dynalink", "jdk.httpserver", "jdk.unsupported")
             if (hostLinux) modules("jdk.security.auth")
             windows {
                 menuGroup = "Aurora"

@@ -82,6 +82,12 @@ fun ProcessingPresetsScreen(
     var deleteTarget by remember { mutableStateOf<ProcessingPreset?>(null) }
     var lastAction by remember { mutableStateOf<String?>(null) }
     var actionFailed by remember { mutableStateOf(false) }
+    var showOutputBindings by remember { mutableStateOf(false) }
+
+    if (showOutputBindings) {
+        OutputPresetBindingsScreen(contentPadding) { showOutputBindings = false }
+        return
+    }
 
     fun perform(progressMessage: String = appString(R.string.text_updating_preset_aae445), operation: suspend () -> String) {
         if (busy) return
@@ -133,6 +139,10 @@ fun ProcessingPresetsScreen(
         Column(Modifier.fillMaxSize()) {
             SettingsTopBar(appString(R.string.text_saved_processing_presets_f22d4b), onBack)
             SettingsList(contentPadding, state = listState, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                item {
+                    androidx.compose.material3.OutlinedButton(onClick = { showOutputBindings = true }, enabled = !busy,
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { Text(appString(R.string.text_output_presets_8523fd)) }
+                }
                 item {
                     Text(
                         appString(R.string.text_save_eq_effects_loudness_and_output_settings_cfa9ad),

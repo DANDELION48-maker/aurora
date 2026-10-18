@@ -114,6 +114,8 @@ fun AboutSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
                     Text(appString(if (HostPlatform.isWindows) R.string.text_windows_java_2566af else R.string.text_linux_java_b7923f, Runtime.version().feature()), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
+            AppUpdateCard(container.appUpdater)
+            Spacer(Modifier.height(8.dp))
             SettingsGroup {
                 val source = when (session?.type) {
                     ServerType.JELLYFIN -> "Jellyfin"

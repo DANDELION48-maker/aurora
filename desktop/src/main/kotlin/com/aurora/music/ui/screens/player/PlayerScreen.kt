@@ -1,5 +1,9 @@
 package com.aurora.music.ui.screens.player
 
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Animation
+import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.ChatBubble
 import com.aurora.music.localization.appString
 import com.aurora.music.R
@@ -18,6 +22,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.rememberScrollState
@@ -72,6 +77,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.collectAsState
@@ -107,6 +113,7 @@ import com.aurora.music.desktop.player.PlayerUiState
 import com.aurora.music.desktop.player.RepeatMode
 import com.aurora.music.desktop.ui.LocalPlayer
 import com.aurora.music.ui.components.Artwork
+import com.aurora.music.ui.components.CoverKey
 import com.aurora.music.ui.components.PaneDivider
 import com.aurora.music.ui.components.VolumeControl
 import com.aurora.music.ui.components.Waveform
@@ -124,6 +131,11 @@ import com.aurora.music.ui.theme.themedCorner
 @Composable
 fun PlayerScreen(
     state: PlayerUiState,
+    onOpenMix: (() -> Unit)? = null,
+    video: com.aurora.music.desktop.video.VideoPlayer? = null,
+    onRequestVideo: (canvas: Boolean) -> Unit = {},
+    onVideoVisibleChange: (Boolean) -> Unit = {},
+    onVideoQualityChange: (Int?) -> Unit = {},
     onCollapse: () -> Unit,
     onTogglePlay: () -> Unit,
     onNext: () -> Unit,
@@ -182,6 +194,15 @@ fun PlayerScreen(
     )
 
     // player is outside the scaffold so LocalContentColor defaults to black provide it explicitly
+    var showVideo by androidx.compose.runtime.saveable.rememberSaveable(song.id) { mutableStateOf(false) }
+    var requestedVideo by remember(song.id) { mutableStateOf(false) }
+    LaunchedEffect(state.hasVideo, requestedVideo) {
+        if (requestedVideo && state.hasVideo) { requestedVideo = false; showVideo = true }
+    }
+    DisposableEffect(showVideo) {
+        onVideoVisibleChange(showVideo)
+        onDispose { if (showVideo) onVideoVisibleChange(false) }
+    }
     CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
     BoxWithConstraints(
         Modifier
@@ -222,6 +243,27 @@ fun PlayerScreen(
                         modifier = Modifier.size(40.dp).clip(CircleShape).clickable { showMenu = true }.pointerHoverIcon(PointerIcon.Hand).padding(8.dp),
                     )
                     DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                        if (onOpenMix != null) DropdownMenuItem(text = { Text(appString(R.string.text_mix_studio_668363)) },
+                            onClick = { showMenu = false; onOpenMix() }, leadingIcon = { Icon(Icons.Filled.GraphicEq, null) })
+                        if (state.hasTrack && !state.isMix && (state.supportsMusicVideo || state.hasVideo)) DropdownMenuItem(
+                            text = { Text(appString(if (showVideo) R.string.text_audio_acdac2 else R.string.text_video_bc17c1)) },
+                            enabled = !state.videoLoading,
+                            onClick = {
+                                showMenu = false
+                                when {
+                                    showVideo -> showVideo = false
+                                    state.hasVideo && !state.videoIsCanvas -> showVideo = true
+                                    else -> { requestedVideo = true; onRequestVideo(false) }
+                                }
+                            },
+                            leadingIcon = { Icon(if (showVideo) Icons.Filled.MusicNote else Icons.Filled.VideoLibrary, null) },
+                        )
+                        if (state.hasTrack && state.supportsCanvas && !(showVideo && state.videoIsCanvas)) DropdownMenuItem(
+                            text = { Text(appString(R.string.canvas_open)) },
+                            enabled = !state.videoLoading,
+                            onClick = { showMenu = false; showVideo = false; requestedVideo = true; onRequestVideo(true) },
+                            leadingIcon = { Icon(Icons.Filled.Animation, null) },
+                        )
                         DropdownMenuItem(
                             text = { Text(appString(R.string.text_sonic_radio_9b7bff)) },
                             onClick = { showMenu = false; onSonicRadio() },
@@ -288,11 +330,17 @@ fun PlayerScreen(
                     ),
                 contentAlignment = Alignment.Center,
             ) {
-                if (classic) {
-                    Artwork(song.artworkUrl, song.accent, Modifier.fillMaxSize(), corner = 20.dp)
+                if (showVideo && video != null && state.hasVideo) {
+                    Box(Modifier.fillMaxSize()) {
+                        VideoSurface(video, Modifier.fillMaxSize(), corner = 20.dp, fill = state.videoIsCanvas)
+                        if (!state.videoIsCanvas) VideoQualityControl(state.videoQualityHeight, onVideoQualityChange,
+                            Modifier.align(Alignment.BottomEnd).padding(10.dp))
+                    }
+                } else if (classic) {
+                    Artwork(song.artworkUrl, song.accent, Modifier.fillMaxSize(), corner = 20.dp, animated = CoverKey.of(song))
                 } else {
                     Box(Modifier.fillMaxSize().auroraPanel(MaterialTheme.shapes.large, emphasized = true).padding(6.dp)) {
-                        Artwork(song.artworkUrl, song.accent, Modifier.fillMaxSize(), corner = 20.dp)
+                        Artwork(song.artworkUrl, song.accent, Modifier.fillMaxSize(), corner = 20.dp, animated = CoverKey.of(song))
                     }
                 }
             }
@@ -669,6 +717,37 @@ private fun SeekBar(
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(formatTime(positionSec), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(formatTime(durationSec), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+/** The latest decoded frame, letterboxed for music videos or cropped to fill for canvases. */
+@Composable
+fun VideoSurface(player: com.aurora.music.desktop.video.VideoPlayer, modifier: Modifier = Modifier, corner: Dp = 0.dp, fill: Boolean = false) {
+    val frame by player.frame.collectAsState()
+    Box(modifier.clip(RoundedCornerShape(corner)).background(Color.Black), contentAlignment = Alignment.Center) {
+        frame?.let { image ->
+            androidx.compose.foundation.Image(image, null, Modifier.fillMaxSize(),
+                contentScale = if (fill) androidx.compose.ui.layout.ContentScale.Crop else androidx.compose.ui.layout.ContentScale.Fit)
+        }
+    }
+}
+
+@Composable
+private fun VideoQualityControl(qualityHeight: Int?, onQualityChange: (Int?) -> Unit, modifier: Modifier = Modifier) {
+    var expanded by remember { mutableStateOf(false) }
+    Box(modifier) {
+        androidx.compose.material3.FilledTonalButton(onClick = { expanded = true }, modifier = Modifier.height(36.dp).pointerHoverIcon(PointerIcon.Hand),
+            contentPadding = PaddingValues(horizontal = 12.dp),
+            colors = androidx.compose.material3.ButtonDefaults.filledTonalButtonColors(containerColor = Color.Black.copy(alpha = .5f), contentColor = Color.White)) {
+            Text(qualityHeight?.let { "${it}p" } ?: appString(R.string.video_quality_auto), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            listOf(null, 360, 480, 720, 1080, 1440, 2160).forEach { height ->
+                DropdownMenuItem(text = { Text(height?.let { "${it}p" } ?: appString(R.string.video_quality_auto)) },
+                    leadingIcon = { if (height == qualityHeight) Icon(Icons.Filled.Check, null) },
+                    onClick = { expanded = false; onQualityChange(height) })
+            }
         }
     }
 }

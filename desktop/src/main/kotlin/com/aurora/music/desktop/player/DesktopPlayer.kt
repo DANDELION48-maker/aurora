@@ -46,9 +46,11 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
@@ -73,6 +75,11 @@ data class PlayerDependencies(
     val artwork: suspend (String) -> ByteArray?,
     val listeningDetails: com.aurora.music.data.DetailedPlaySink = com.aurora.music.data.DetailedPlaySink { },
     val platform: String = "desktop",
+    val nowPlaying: (Song, Boolean, Float) -> Unit = { _, _, _ -> },
+    val location: (Boolean, Boolean) -> Pair<String?, com.aurora.music.desktop.platform.LocationFix?> = { _, _ -> null to null },
+    val sonic: com.aurora.music.data.SonicEngine? = null,
+    val listeningLevels: com.aurora.music.data.listening.ListeningLevelStore? = null,
+    val companion: com.aurora.music.desktop.video.CompanionVideo? = null,
 )
 
 fun DesktopContainer.playerDependencies(): PlayerDependencies = PlayerDependencies(
@@ -94,6 +101,11 @@ fun DesktopContainer.playerDependencies(): PlayerDependencies = PlayerDependenci
     artwork = { url -> artworkBytes(url, http, artworkRepository) },
     listeningDetails = { play -> listeningDetails.save(play) },
     platform = com.aurora.music.desktop.platform.HostPlatform.name.lowercase(java.util.Locale.ROOT),
+    nowPlaying = { song, playing, position -> discord.update(song, playing, position) },
+    location = placesStore::sample,
+    sonic = sonicEngine,
+    listeningLevels = listeningLevels,
+    companion = companionVideo,
 )
 
 class DesktopPlayer(private val engine: PlaybackEngine, private val deps: PlayerDependencies) : PlayerController, AutoCloseable {
@@ -123,7 +135,8 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
         deps.reportingAllowed() && !deps.offline() && deps.sessionReady.value == true
     }
     private val history = ListeningHistory(deps.playHistory)
-    private val details = DesktopListeningDetails(deps.listeningDetails, deps.platform)
+    private val rules = RulePublisher(deps.settingsStore)
+    private val details = DesktopListeningDetails(deps.listeningDetails, deps.platform, deps.location)
 
     private var sleepJob: Job? = null
     private var queueFillJob: Job? = null
@@ -158,6 +171,9 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
         engine.visualizer = deps.visualizer
         engine.bindSettings(deps.settingsStore, scope)
         scope.launch { engine.state.collect(::sync) }
+        scope.launch { deps.settingsStore.mergeFeatures.collect { mergeFeatures = it } }
+        deps.companion?.let { video -> scope.launch { video.state.collect { sync(engine.state.value) } } }
+        deps.listeningLevels?.let { levels -> scope.launch(Dispatchers.Default) { observeLevels(levels) } }
         scope.launch { engine.events.collect(::onEvent) }
         scope.launch {
             while (true) {
@@ -267,8 +283,29 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
             syncedQueue = s.entries.map { it.song }
         }
         val cur = s.current?.song ?: EMPTY_SONG
+        rules.publish(s)
+        deps.companion?.let { video ->
+            video.clearIfSongChanged(cur.id)
+            video.sync(s.positionMs, s.effectivelyPlaying, s.speed)
+        }
+        if (cur.id != lastKeyInfoId) {
+            lastKeyInfoId = cur.id
+            lastKeyInfo = runCatching { deps.sonic?.keyInfo(cur.id) }.getOrNull()
+        }
+        val key = lastKeyInfo
+        val video = deps.companion?.state?.value
+        val sourceType = runCatching { deps.repository.sourceType(cur) }.getOrNull()
         _state.update {
             it.copy(
+                hasVideo = video?.ready == true,
+                videoLoading = video?.loading == true,
+                videoQualityHeight = video?.qualityHeight?.takeIf { video.ready && !video.canvas },
+                videoIsCanvas = video?.canvas == true && video.ready,
+                supportsCanvas = deps.companion != null && runCatching { deps.repository.supportsCanvas(cur) }.getOrDefault(false) && mergeFeatures.canvasFor(sourceType),
+                supportsMusicVideo = deps.companion != null && mergeFeatures.videosFor(sourceType),
+                bpm = key?.bpm ?: 0,
+                camelot = key?.camelot ?: "",
+                keyName = key?.name ?: "",
                 current = cur,
                 timelineDurationSec = (s.durationMs.coerceAtLeast(0) / 1000).toInt(),
                 isLive = s.live || cur.isRadio(),
@@ -280,12 +317,69 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
                 currentIndex = s.index.coerceAtLeast(0),
             )
         }
+        deps.nowPlaying(cur, s.effectivelyPlaying && cur.id.isNotBlank() && !privateSession, _state.value.positionSec)
         if (s.effectivelyPlaying) {
             maybeNowPlaying()
             recordIfPlayed(_state.value.positionSec)
         }
         maybePersist(s)
     }
+
+    // the meter reads the final output after aurora's own volume, so only an exclusive stream leaves no unmeasured gain
+    // before the dac; desktop has one fixed volume step and a hardware volume change re-confirms the route instead
+    private suspend fun observeLevels(levels: com.aurora.music.data.listening.ListeningLevelStore) {
+        while (true) {
+            val state = engine.state.value
+            val path = runCatching { engine.signalPath() }.getOrNull()
+            val after = path?.measurements?.after
+            val output = state.output
+            levels.observe(com.aurora.music.data.listening.ListeningObservation(
+                route = deps.settingsStore.processingRoutes.current, playing = state.isPlaying, postDsp = after, downstreamGain = 1.0,
+                volumeIndex = 0, volumeMuted = state.volume <= 0f,
+                pathSupported = output?.exclusive == true && after != null && state.speed == 1f,
+                allowHistory = !privateSession, volumeMaximum = 1))
+            delay(500)
+        }
+    }
+
+    @Volatile private var mergeFeatures = com.aurora.music.data.MergeFeatures()
+
+    override val video: StateFlow<com.aurora.music.desktop.video.VideoPlayer?> =
+        (deps.companion?.state ?: kotlinx.coroutines.flow.MutableStateFlow(com.aurora.music.desktop.video.CompanionVideoState()))
+            .map { it.player?.takeIf { _ -> it.ready } }.stateIn(scope, SharingStarted.Eagerly, null)
+
+    override fun requestMusicVideo(canvas: Boolean, onResult: (String) -> Unit) {
+        deps.companion?.request(_state.value.current, canvas) {
+            onResult(appString(if (canvas) R.string.canvas_not_found else R.string.video_match_not_found))
+        }
+    }
+
+    override fun setVideoVisible(visible: Boolean) { deps.companion?.setVisible(visible) }
+
+    override fun setVideoQuality(height: Int?) { deps.companion?.setQuality(height) }
+
+    override suspend fun <T> releasingFile(path: String, block: suspend () -> T): T {
+        val state = engine.state.value
+        val current = state.current?.song
+        val target = runCatching { java.io.File(path).canonicalFile }.getOrNull()
+        val holds = current != null && target != null &&
+            com.aurora.music.ui.components.CoverKey.localPath(current).takeIf { it.isNotBlank() }?.let { runCatching { java.io.File(it).canonicalFile }.getOrNull() } == target
+        if (!holds) return block()
+        val index = state.index
+        val position = state.positionMs
+        val resume = state.playWhenReady
+        engine.stop()
+        withTimeoutOrNull(2_000) { engine.state.first { it.phase == com.aurora.music.desktop.audio.EnginePhase.IDLE } }
+        try {
+            return block()
+        } finally {
+            engine.seekTo(index, position)
+            if (resume) engine.play()
+        }
+    }
+
+    private var lastKeyInfoId: String? = null
+    private var lastKeyInfo: com.aurora.music.data.SonicEngine.TrackKey? = null
 
     private fun onEvent(event: EngineEvent) {
         when (event) {
@@ -524,19 +618,38 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
         }
     }
 
+    // the server's radio when it knows the song better, otherwise tracks that sound alike from sonic analysis
     override fun startSonicRadio(seed: Song, onResult: (String) -> Unit) {
         if (seed.id.isEmpty() || loadingRadio) return
         loadingRadio = true
         scope.launch {
+            suspend fun serverRadio(): List<Song> = try { deps.repository.radio(seed.id).filter { it.id != seed.id } }
+                catch (e: CancellationException) { throw e }
+                catch (_: Exception) { emptyList() }
             try {
-                val more = try { deps.repository.radio(seed.id).filter { it.id != seed.id } }
+                val preferServer = deps.repository.prefersServerRadio(seed.id)
+                if (preferServer) {
+                    val more = serverRadio()
+                    if (more.isNotEmpty()) {
+                        playAll(listOf(seed) + more, 0)
+                        onResult(appString(R.string.text_radio_started_31fe2c))
+                        return@launch
+                    }
+                }
+                val sonic = try { deps.sonic?.buildRadio(seed).orEmpty() }
                     catch (e: CancellationException) { throw e }
                     catch (_: Exception) { emptyList() }
-                if (more.isNotEmpty()) {
-                    playAll(listOf(seed) + more, 0)
-                    onResult(appString(R.string.text_radio_started_31fe2c))
+                if (sonic.size >= 2) {
+                    playAll(sonic, 0)
+                    onResult(appString(R.string.text_sonic_radio_similar_tracks_653156, sonic.size - 1))
                 } else {
-                    onResult(appString(R.string.text_no_results_b993b0))
+                    val more = if (preferServer) emptyList() else serverRadio()
+                    if (more.isNotEmpty()) {
+                        playAll(listOf(seed) + more, 0)
+                        onResult(appString(R.string.text_radio_started_31fe2c))
+                    } else {
+                        onResult(appString(R.string.text_not_enough_analyzed_tracks_run_sonic_analysis_in_settings_007d98))
+                    }
                 }
             } finally {
                 loadingRadio = false
@@ -544,7 +657,18 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
         }
     }
 
-    override fun startAutoDj(seed: Song, onResult: (String) -> Unit) = startSonicRadio(seed, onResult)
+    override fun startAutoDj(seed: Song, onResult: (String) -> Unit) {
+        if (seed.id.isEmpty() || loadingRadio) return
+        loadingRadio = true
+        scope.launch {
+            val set = runCatching { deps.sonic?.buildAutoDj(seed).orEmpty() }.getOrDefault(emptyList())
+            loadingRadio = false
+            if (set.size >= 2) {
+                playAll(set, 0)
+                onResult(appString(R.string.text_auto_dj_tracks_key_tempo_matched_83c6cc, set.size))
+            } else startSonicRadio(seed, onResult)
+        }
+    }
 
     override fun shufflePlay(songs: List<Song>, collection: PlaybackCollectionIdentity?) {
         if (songs.isEmpty()) return

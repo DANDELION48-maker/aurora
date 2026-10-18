@@ -8,6 +8,16 @@
     <string name="discovery_related" formatted="false">"相关"</string>
     <string name="discovery_related_empty" formatted="false">"YouTube Music 没有与这首歌相关的内容。"</string>
     <string name="discovery_start_radio" formatted="false">"开始电台"</string>
+    <string name="insights_location_history_guide_desktop" formatted="false">"每次播放都会保存播放时的确切位置，方便你在地图上查看。数据只保存在这台电脑上，从不上传，也不会进入备份。你可以随时在这里或地图上删除。"</string>
+    <string name="insights_places_guide_desktop" formatted="false">"播放音乐时，Aurora 最多每 10 分钟检查一次位置，与家和工作地点比较，只保留标签。家和工作地点本身只保存在这台电脑上，不会进入任何备份。"</string>
+    <string name="insights_step_private_title_desktop" formatted="false">"数据留在电脑上"</string>
+    <string name="levels_desktop_exclusive_needed" formatted="false">"请在独占输出上开始播放以进行校准。"</string>
+    <string name="levels_desktop_hardware_help" formatted="false">"输入 0=dB：DAC 当前硬件音量相对满输出的数值。"</string>
+    <string name="levels_desktop_hardware_points" formatted="false">"硬件音量衰减"</string>
+    <string name="levels_desktop_volume" formatted="false">"Aurora 自身的音量会被直接测量。请在 DAC 当前的硬件音量下校准。"</string>
+    <string name="location_open_windows_settings" formatted="false">"打开位置设置"</string>
+    <string name="location_unsupported" formatted="false">"此系统不支持位置功能。"</string>
+    <string name="location_windows_off" formatted="false">"Windows 正在阻止桌面应用获取位置。请开启位置访问（包括桌面应用），然后重试。"</string>
     <string name="lyrics_settings_summary" formatted="false">"同步方式和歌词来源"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"免费的社区歌词数据库"</string>
     <string name="lyrics_source_server" formatted="false">"歌曲自身来源"</string>
@@ -24,6 +34,8 @@
     <string name="merge_options_summary" formatted="false">"合并的服务为你的歌曲添加的内容"</string>
     <string name="merge_songs_from" formatted="false">"歌曲来源"</string>
     <string name="playlist_save_to" formatted="false">"保存到"</string>
+    <string name="storage_youtube_desktop_note" formatted="false">"从 YouTube 下载的内容会保存到用户文件夹中的 Music/Aurora，该文件夹会被添加到你的音乐文件夹中。"</string>
+    <string name="tag_edit_desktop_note" formatted="false">"写入标签会修改这台电脑上的文件。请先在其他应用中关闭它。"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"亚克力"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"添加音乐文件夹"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"音频解码。版权所有 © FFmpeg 开发者。LGPL-3.0-or-later，通过 JavaCPP Presets 动态链接。完整许可：https://www.gnu.org/licenses/lgpl-3.0.html"</string>
@@ -86,4 +98,7 @@
     <string name="text_volume_3b18e8" formatted="false">"音量"</string>
     <string name="text_windows_capabilities_0f1fa0" formatted="false">"Windows 功能"</string>
     <string name="text_windows_java_2566af">"Windows · Java %1$d"</string>
+    <string name="update_desktop_install_failed" formatted="false">"无法启动安装程序。你也可以从 GitHub 下载更新。"</string>
+    <string name="update_desktop_install_note" formatted="false">"安装程序运行时 Aurora 会关闭。安装完成后请重新打开。"</string>
+    <string name="youtube_download_open_folder" formatted="false">"打开下载文件夹"</string>
 </resources>

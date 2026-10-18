@@ -3,9 +3,18 @@ package com.aurora.music.ui.screens.settings
 import com.aurora.music.localization.appString
 import com.aurora.music.R
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Animation
+import androidx.compose.material.icons.outlined.FolderOpen
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -35,8 +44,12 @@ fun IntegrationsSettingsScreen(
     onOpenLastfm: () -> Unit,
     onOpenListenBrainz: () -> Unit,
     onOpenArtistInfo: () -> Unit,
+    onOpenDiscord: () -> Unit = {},
+    onOpenAcoustId: () -> Unit = {},
 ) {
     val store = LocalDesktopContainer.current.settingsStore
+    val acoustId by store.acoustIdKey.collectAsStateWithLifecycle(initialValue = "")
+    val discord by store.discord.collectAsStateWithLifecycle(initialValue = DiscordAccount())
     val lrclib by store.lrclibEnabled.collectAsStateWithLifecycle(initialValue = true)
     val artistInfo by store.artistEnrichment.collectAsStateWithLifecycle(initialValue = true)
     val lastfm by store.lastfm.collectAsStateWithLifecycle(initialValue = LastfmAccount())
@@ -49,6 +62,8 @@ fun IntegrationsSettingsScreen(
                 IntegrationRow(Icons.Filled.Headset, "Last.fm", appString(R.string.text_scrobble_your_listening_history_e444aa), connectionLabel(lastfm.sessionKey, lastfm.enabled, lastfm.username), onOpenLastfm)
                 SettingsRowDivider()
                 IntegrationRow(Icons.Filled.Album, "ListenBrainz", appString(R.string.text_send_listens_to_your_open_music_profile_5a7b48), connectionLabel(listenBrainz.token, listenBrainz.enabled, listenBrainz.username), onOpenListenBrainz)
+                SettingsRowDivider()
+                IntegrationRow(Icons.Filled.Forum, "Discord", appString(R.string.text_share_your_current_track_and_artwork_11d20a), connectionLabel(discord.token, discord.enabled, discord.username), onOpenDiscord)
             }
         }
         item { SettingsSectionTitle(appString(R.string.text_lyrics_metadata_eb9a3c)) }
@@ -57,9 +72,12 @@ fun IntegrationsSettingsScreen(
                 IntegrationRow(Icons.Filled.Lyrics, "LRCLIB", appString(R.string.text_synced_lyrics_when_your_server_has_none_b4054e), if (lrclib) appString(R.string.text_on_e0049a) else appString(R.string.text_off_e3de5a), onOpenLyrics)
                 SettingsRowDivider()
                 IntegrationRow(Icons.Filled.Person, appString(R.string.text_artist_information_d5c3fc), appString(R.string.text_musicbrainz_and_wikipedia_biographies_73227e), if (artistInfo) appString(R.string.text_on_e0049a) else appString(R.string.text_off_e3de5a), onOpenArtistInfo)
+                SettingsRowDivider()
+                IntegrationRow(Icons.Filled.Fingerprint, "AcoustID", appString(R.string.text_identify_tracks_from_their_audio_51a42b), if (acoustId.isBlank()) appString(R.string.text_not_set_93039e) else appString(R.string.text_ready_20c7c5), onOpenAcoustId)
             }
         }
         item { ArtworkLookupGroup() }
+        item { AnimatedCoverSettings() }
         item {
             Text(
                 appString(R.string.text_connections_are_optional_aurora_s_own_library_playback_history_an_d7c6c7),
@@ -67,6 +85,38 @@ fun IntegrationsSettingsScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
             )
+        }
+    }
+}
+
+@Composable
+private fun AnimatedCoverSettings() {
+    val container = LocalDesktopContainer.current
+    val covers = container.animatedCovers
+    val config by covers.config.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    val pickTitle = appString(R.string.animated_covers_folder)
+    Column {
+        SettingsSectionTitle(appString(R.string.animated_covers_title))
+        SettingsGroup {
+            SettingsSwitchRow(Icons.Outlined.Animation, appString(R.string.animated_covers_toggle),
+                appString(R.string.animated_covers_toggle_desc), config.enabled) {
+                scope.launch { container.settingsStore.setAnimatedCoversEnabled(it) }
+            }
+            SettingsRowDivider()
+            SettingsNavRow(Icons.Outlined.FolderOpen, appString(R.string.animated_covers_folder),
+                value = if (config.folder.isBlank()) appString(R.string.animated_covers_folder_none) else com.aurora.music.data.AnimatedCovers.label(config.folder)) {
+                val folder = com.aurora.music.desktop.ui.FilePickers.pickFolder(pickTitle, config.folder.takeIf { it.isNotBlank() }?.let { java.io.File(it) })
+                if (folder != null) scope.launch { covers.setFolder(folder) }
+            }
+            SettingsRowDivider()
+            Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp)) {
+                Text(appString(R.string.animated_covers_help), style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                if (config.folder.isNotBlank()) androidx.compose.material3.TextButton(onClick = { scope.launch { covers.setFolder(null) } }) {
+                    Text(appString(R.string.animated_covers_remove))
+                }
+            }
         }
     }
 }
@@ -275,6 +325,95 @@ fun ListenBrainzIntegrationScreen(contentPadding: PaddingValues, onBack: () -> U
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun AcoustIdIntegrationScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
+    val uri = LocalUriHandler.current
+    val container = LocalDesktopContainer.current
+    val saved by container.settingsStore.acoustIdKey.collectAsStateWithLifecycle(initialValue = "")
+    var key by remember { mutableStateOf<String?>(null) }
+    DebouncedSave(key) { container.settingsStore.setAcoustIdKey(it.trim()) }
+    SettingsPage("AcoustID", contentPadding, onBack) {
+        item {
+            SettingsGroup {
+                OutlinedTextField(
+                    value = key ?: saved,
+                    onValueChange = { key = it },
+                    label = { Text(appString(R.string.text_application_api_key_f3749c)) },
+                    supportingText = { Text(if (saved.isBlank()) appString(R.string.text_required_for_audio_identification_e2b915) else appString(R.string.text_key_saved_163134)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                )
+                SettingsRowDivider()
+                SettingsNavRow(Icons.AutoMirrored.Filled.OpenInNew, appString(R.string.text_create_a_free_acoustid_key_928b23), appString(R.string.text_opens_acoustid_org_in_your_browser_6e6b1f)) { runCatching { uri.openUri("https://acoustid.org/new-application") } }
+            }
+        }
+    }
+}
+
+@Composable
+fun DiscordIntegrationScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenDiscordLogin: () -> Unit) {
+    val container = LocalDesktopContainer.current
+    val acct by container.settingsStore.discord.collectAsStateWithLifecycle(initialValue = DiscordAccount())
+    val scope = rememberCoroutineScope()
+    SettingsPage("Discord", contentPadding, onBack) {
+        item { DiscordPreview(acct) }
+        item { SettingsSectionTitle(appString(R.string.text_presence_89a8a3)) }
+        item {
+            SettingsGroup {
+                if (acct.token.isBlank()) SettingsNavRow(Icons.Filled.Forum, appString(R.string.text_connect_discord_8794ce), appString(R.string.text_authorize_your_discord_account_a1f52f), appString(R.string.text_connect_b65463), onClick = onOpenDiscordLogin)
+                else {
+                    SettingsSwitchRow(Icons.Filled.Forum, appString(R.string.text_discord_presence_81fe83), if (acct.username.isBlank()) appString(R.string.text_connected_c2f9b7) else appString(R.string.text_connected_as_fc3300, (acct.username)), acct.enabled) { scope.launch { container.settingsStore.setDiscordEnabled(it) } }
+                    SettingsRowDivider()
+                    SettingsSwitchRow(Icons.Filled.Album, appString(R.string.text_show_album_b04b79), appString(R.string.text_include_the_album_and_artwork_caption_1d812f), acct.showAlbum) { scope.launch { container.settingsStore.setDiscordShowAlbum(it) } }
+                    SegmentedRow(appString(R.string.text_activity_name_09adc3), listOf(appString(R.string.text_aurora_eeee9b), appString(R.string.text_artist_6c3f3d), appString(R.string.text_song_bd1189)), listOf("aurora", "artist", "song").indexOf(acct.activityName).coerceAtLeast(0)) { scope.launch { container.settingsStore.setDiscordActivityName(listOf("aurora", "artist", "song")[it]) } }
+                }
+            }
+        }
+        if (acct.token.isNotBlank()) {
+            item { SettingsSectionTitle(appString(R.string.text_artwork_bfbeaf)) }
+            item {
+                SettingsGroup {
+                    var appId by remember { mutableStateOf<String?>(null) }
+                    var imgur by remember { mutableStateOf<String?>(null) }
+                    DebouncedSave(appId) { container.settingsStore.setDiscordAppId(it.trim()) }
+                    DebouncedSave(imgur) { container.settingsStore.setDiscordImgur(it.trim()) }
+                    OutlinedTextField(appId ?: acct.appId, { appId = it }, label = { Text(appString(R.string.text_discord_application_id_2ac458)) }, supportingText = { Text(appString(R.string.text_enables_cover_artwork_40a2d2)) }, singleLine = true, modifier = fieldModifier())
+                    OutlinedTextField(imgur ?: acct.imgurClientId, { imgur = it }, label = { Text(appString(R.string.text_imgur_client_id_f5e499)) }, supportingText = { Text(appString(R.string.text_optional_publishes_local_and_private_server_covers_563e93)) }, singleLine = true, modifier = fieldModifier())
+                }
+            }
+            item { SettingsSectionTitle(appString(R.string.text_account_85dfa3)) }
+            item { SettingsGroup { SettingsNavRow(Icons.Filled.LinkOff, appString(R.string.text_disconnect_discord_0939de), value = appString(R.string.text_remove_e96390)) { scope.launch { container.settingsStore.clearDiscord() } } } }
+        }
+    }
+}
+
+@Composable
+private fun DiscordPreview(acct: DiscordAccount) {
+    val activity = when (acct.activityName) { "artist" -> appString(R.string.text_listening_to_aurora_24a92c); "song" -> appString(R.string.text_listening_to_midnight_drive_35328b); else -> appString(R.string.text_aurora_eeee9b) }
+    Surface(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = RoundedCornerShape(20.dp)) {
+        Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.size(42.dp).clip(RoundedCornerShape(14.dp)).background(MaterialTheme.colorScheme.primary.copy(alpha = .18f)), contentAlignment = Alignment.Center) { Icon(Icons.Filled.Forum, null, tint = MaterialTheme.colorScheme.primary) }
+                Spacer(Modifier.width(12.dp))
+                Column { Text(appString(R.string.text_discord_preview_401388), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold); Text(activity, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold) }
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.size(78.dp).clip(RoundedCornerShape(12.dp)).background(Brush.linearGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.tertiary))), contentAlignment = Alignment.Center) { Icon(Icons.Filled.Album, null, Modifier.size(34.dp), tint = MaterialTheme.colorScheme.onPrimary) }
+                Spacer(Modifier.width(14.dp))
+                Column(Modifier.weight(1f)) {
+                    Text("Midnight Drive", fontWeight = FontWeight.Bold)
+                    Text(appString(R.string.text_aurora_eeee9b), style = MaterialTheme.typography.bodyMedium)
+                    if (acct.showAlbum) Text("Afterglow", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Spacer(Modifier.height(8.dp))
+                    LinearProgressIndicator(progress = { .43f }, modifier = Modifier.fillMaxWidth().height(3.dp))
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text("1:42", style = MaterialTheme.typography.labelSmall); Text("3:58", style = MaterialTheme.typography.labelSmall) }
+                }
+            }
+            if (acct.appId.isBlank()) Text(appString(R.string.text_add_an_application_id_to_show_real_cover_artwork_faca69), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

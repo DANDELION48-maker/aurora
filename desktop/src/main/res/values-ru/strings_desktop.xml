@@ -8,6 +8,16 @@
     <string name="discovery_related" formatted="false">"Похожее"</string>
     <string name="discovery_related_empty" formatted="false">"В YouTube Music нет ничего похожего на этот трек."</string>
     <string name="discovery_start_radio" formatted="false">"Запустить радио"</string>
+    <string name="insights_location_history_guide_desktop" formatted="false">"Каждое прослушивание сохраняет точное место, где оно звучало, чтобы его можно было увидеть на карте. Данные остаются на этом компьютере, никуда не отправляются и не попадают в резервные копии. Удалить их можно здесь или на карте в любой момент."</string>
+    <string name="insights_places_guide_desktop" formatted="false">"Пока играет музыка, Aurora проверяет местоположение не чаще раза в 10 минут, сравнивает его с Домом и Работой и сохраняет только метку. Сами точки Дом и Работа остаются на компьютере и не попадают в резервные копии."</string>
+    <string name="insights_step_private_title_desktop" formatted="false">"Всё остаётся на компьютере"</string>
+    <string name="levels_desktop_exclusive_needed" formatted="false">"Для калибровки начните воспроизведение через монопольный выход."</string>
+    <string name="levels_desktop_hardware_help" formatted="false">"Введите 0=dB: текущая аппаратная громкость ЦАП относительно полного выхода."</string>
+    <string name="levels_desktop_hardware_points" formatted="false">"Ослабление аппаратной громкости"</string>
+    <string name="levels_desktop_volume" formatted="false">"Громкость Aurora измеряется напрямую. Калибруйте при текущей аппаратной громкости ЦАП."</string>
+    <string name="location_open_windows_settings" formatted="false">"Открыть настройки местоположения"</string>
+    <string name="location_unsupported" formatted="false">"Определение местоположения недоступно в этой системе."</string>
+    <string name="location_windows_off" formatted="false">"Windows блокирует определение местоположения для классических приложений. Включите доступ к местоположению, в том числе для классических приложений, и повторите попытку."</string>
     <string name="lyrics_settings_summary" formatted="false">"Стиль синхронизации и источники текстов"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Бесплатная база текстов от сообщества"</string>
     <string name="lyrics_source_server" formatted="false">"Собственный источник трека"</string>
@@ -24,6 +34,8 @@
     <string name="merge_options_summary" formatted="false">"Что объединённые сервисы добавляют к вашим трекам"</string>
     <string name="merge_songs_from" formatted="false">"Треки из"</string>
     <string name="playlist_save_to" formatted="false">"Сохранить в"</string>
+    <string name="storage_youtube_desktop_note" formatted="false">"Загрузки с YouTube сохраняются в Music/Aurora в папке пользователя, которая добавляется в ваши папки с музыкой."</string>
+    <string name="tag_edit_desktop_note" formatted="false">"Запись тегов изменяет файл на этом компьютере. Сначала закройте его в других приложениях."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Акрил"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"Добавить папку с музыкой"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Декодирование аудио. Copyright © разработчики FFmpeg. LGPL-3.0-or-later, динамическая компоновка через JavaCPP Presets. Полный текст лицензии: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
@@ -86,4 +98,7 @@
     <string name="text_volume_3b18e8" formatted="false">"Громкость"</string>
     <string name="text_windows_capabilities_0f1fa0" formatted="false">"Возможности Windows"</string>
     <string name="text_windows_java_2566af">"Windows · Java %1$d"</string>
+    <string name="update_desktop_install_failed" formatted="false">"Не удалось запустить установщик. Обновление также можно скачать с GitHub."</string>
+    <string name="update_desktop_install_note" formatted="false">"Aurora закроется на время работы установщика. Откройте его снова после завершения установки."</string>
+    <string name="youtube_download_open_folder" formatted="false">"Открыть папку загрузок"</string>
 </resources>

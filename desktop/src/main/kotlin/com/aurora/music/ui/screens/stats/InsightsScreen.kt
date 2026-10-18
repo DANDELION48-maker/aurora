@@ -79,7 +79,8 @@ private data class HeatSelection(val days: IntRange, val hours: IntRange) {
 }
 
 @Composable
-fun InsightsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onSetup: () -> Unit, initialWindow: RecapWindow? = null) {
+fun InsightsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onSetup: () -> Unit, initialWindow: RecapWindow? = null,
+    onOpenMap: (() -> Unit)? = null) {
     val container = LocalDesktopContainer.current
     val prefs by container.settingsStore.insightsPrefs.collectAsStateWithLifecycle<InsightsPrefs?>(initialValue = null)
     var window by remember(initialWindow) { mutableStateOf(initialWindow ?: RecapWindow.containing(RecapPeriod.MONTH, LocalDate.now())) }
@@ -121,6 +122,11 @@ fun InsightsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onSetup: (
                     val (plays, report) = current
                     item { Overview(report) }
                     if (report.badges.isNotEmpty()) item { Badges(report.badges) }
+                    if (onOpenMap != null && prefs?.locationHistory == true) item {
+                        androidx.compose.material3.OutlinedButton(onClick = onOpenMap, modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)) {
+                            Text(appString(R.string.insights_open_map))
+                        }
+                    }
                     item {
                         Section(appString(R.string.insights_when)) {
                             Heatmap(report.heatmap, selection) { selection = it }
@@ -184,7 +190,7 @@ fun InsightsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onSetup: (
 }
 
 @Composable
-private fun PeriodPicker(window: RecapWindow, onChange: (RecapWindow) -> Unit) {
+internal fun PeriodPicker(window: RecapWindow, onChange: (RecapWindow) -> Unit) {
     Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(12.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         RecapPeriod.entries.forEach { period ->
             FilterChip(selected = window.period == period, onClick = { onChange(RecapWindow.containing(period, if (window.period == RecapPeriod.ALL) LocalDate.now() else window.start)) },

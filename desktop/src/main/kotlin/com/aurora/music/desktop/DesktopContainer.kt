@@ -58,6 +58,7 @@ import com.aurora.music.model.Song
 import com.aurora.music.playback.VisualizerController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -111,8 +112,15 @@ class DesktopContainer(
     val replayGainStore = ReplayGainStore(paths.roaming)
     val artistInfoStore = ArtistInfoStore(paths.roaming)
     val artistInfoClient = ArtistInfoClient()
+    val radioBrowser by lazy { com.aurora.music.data.remote.RadioBrowserClient(http) }
+    val podcastClient by lazy { com.aurora.music.data.remote.PodcastClient(http) }
+    val tagEditor = com.aurora.music.desktop.library.TagEditor()
+    val musicBrainz by lazy { com.aurora.music.data.remote.MusicBrainzClient(http) }
+    @Volatile private var acoustIdKeyValue: String = ""
+    val acoustId by lazy { com.aurora.music.data.remote.AcoustIdClient(apiKeyProvider = { acoustIdKeyValue }, base = http) }
     private val localStore = LocalStore(paths.roaming)
-    val backupManager = BackupManager(settingsStore, localStore, playHistory, paths.roaming, paths.cache)
+    val listeningLevels = com.aurora.music.data.listening.ListeningLevelStore(java.io.File(paths.local, "listening_levels.json"), settingsStore.processingRoutes)
+    val backupManager = BackupManager(settingsStore, localStore, playHistory, paths.roaming, paths.cache, listeningLevels)
 
     val http: OkHttpClient = OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).readTimeout(20, TimeUnit.SECONDS).build()
 
@@ -151,9 +159,17 @@ class DesktopContainer(
         return youtubeResolver.resolveSentinel("aurora-yt://sc$id?q=$query&dur=${song.durationSec}")
     }
 
-    val streamResolver = com.aurora.music.desktop.audio.StreamResolver { song ->
+    private val audioCacheDelegate = lazy { com.aurora.music.desktop.audio.AudioCache(java.io.File(paths.cache, "audio-streams"), http, settingsStore, offline = { offlineFlag }) }
+    val audioCache by audioCacheDelegate
+
+    val streamResolver = com.aurora.music.desktop.audio.StreamResolver { song -> audioCache.resolve(song) { resolveUpstream(song) } }
+
+    // a song's audio for offline work like analysis or comparison: the cached file when there is one, never filling the cache
+    fun sourceFor(song: Song): com.aurora.music.desktop.audio.ResolvedStream = audioCache.local(song) ?: resolveUpstream(song)
+
+    private fun resolveUpstream(song: Song): com.aurora.music.desktop.audio.ResolvedStream {
         val url = song.streamUrl.trim()
-        when {
+        return when {
             url.startsWith("aurora-yt:") -> youtubeResolver.resolveSentinel(url)
                 ?.let { com.aurora.music.desktop.audio.ResolvedStream(it, userAgent = com.aurora.music.desktop.youtube.YoutubeResolver.USER_AGENT) }
                 ?: throw java.io.IOException("No YouTube stream was found for ${song.title}")
@@ -199,6 +215,7 @@ class DesktopContainer(
         playbackSourceProvider = { song -> backend?.playbackSourceIdentity(song) },
         playbackCollectionProvider = { kind, id, name -> repository.playbackCollectionIdentity(kind, id)?.copy(name = name) },
         downloadUrlResolverProvider = { backend?.let { source -> { id, bitrate, lossless -> source.downloadUrl(id, bitrate, lossless) } } },
+        copyCached = { uri, file, progress -> audioCache.copyTo(uri, file, progress) },
     )
 
     @Volatile private var catalogueMatchValue = com.aurora.music.data.CatalogueMatchPrefs()
@@ -214,6 +231,36 @@ class DesktopContainer(
     val listenBrainz = ListenBrainzScrobbler(settingsStore, scope)
 
     val visualizer = VisualizerController(scope)
+    val placesStore = com.aurora.music.desktop.platform.PlacesStore(paths.local)
+    val sonicStore = com.aurora.music.data.SonicStore(paths.local)
+    val autoEqController = com.aurora.music.data.AutoEqController(settingsStore, scope)
+    val mixAnalyzer by lazy {
+        com.aurora.music.mix.MixAnalyzer(paths.local, ::sourceFor) { account, id, vector -> sonicStore.put(id, vector, account) }
+    }
+    val mixController = com.aurora.music.mix.MixController()
+    val animatedCovers = com.aurora.music.data.AnimatedCovers(settingsStore, scope)
+    val youTubeDownloader by lazy {
+        com.aurora.music.desktop.youtube.YouTubeDownloader(youtubeResolver, { settingsStore.youTubeDownloadPrefs.first() }, http,
+            java.io.File(paths.cache, "youtube-downloads"), { youTubeDownloadFolder }, onSaved = { saved ->
+            val folder = saved.parentFile.canonicalFile
+            val folders = desktopSettings.musicFolders.first().map { java.io.File(it).canonicalFile }
+            if (folders.none { folder.startsWith(it) }) desktopSettings.addMusicFolder(folder.path) else folderLibrary.refresh()
+        })
+    }
+    val storage by lazy { com.aurora.music.data.StorageInventory(this) }
+    val youTubeDownloadFolder: java.io.File get() = java.io.File(System.getProperty("user.home"), "Music${java.io.File.separator}Aurora")
+    val appUpdater by lazy { com.aurora.music.desktop.updates.DesktopUpdater(http, java.io.File(paths.cache, "updates"),
+        com.aurora.music.desktop.platform.BuildInfo.VERSION_NAME, com.aurora.music.desktop.platform.HostPlatform.isWindows) }
+    val companionVideo by lazy { com.aurora.music.desktop.video.CompanionVideo(youtubeResolver, { repository.canvasUrl(it) }, ::sourceFor) }
+    val mixStore = com.aurora.music.mix.MixStore(paths.local)
+    val stemSeparator by lazy { com.aurora.music.mix.StemSeparator(paths.local, paths.cache, ::sourceFor) }
+    val mixService by lazy { com.aurora.music.desktop.audio.mix.MixService(mixController, settingsStore, { song -> if (song.streamUrl.startsWith("file:")) com.aurora.music.desktop.audio.ResolvedStream(song.streamUrl) else streamResolver.resolve(song) }, scope) }
+    val sonicEngine by lazy {
+        com.aurora.music.data.SonicEngine(sonicStore, { repository.allLibrarySongs(cap = Int.MAX_VALUE) },
+            { settingsStore.session.first()?.accountKey().orEmpty() }, mixAnalyzer)
+    }
+    val mapTiles by lazy { com.aurora.music.ui.components.MapTiles(java.io.File(paths.cache, "map-tiles"), http) }
+    val discord by lazy { com.aurora.music.data.DiscordRpc(settingsStore, scope) { url -> com.aurora.music.desktop.player.artworkBytes(url, http, artworkRepository) } }
 
     val lyricsRepository = LyricsRepository(backendProvider = { backend }, lrclibEnabledProvider = { lrclibEnabled },
         separatorsProvider = { settingsStore.artistSeparators.first() },
@@ -235,6 +282,7 @@ class DesktopContainer(
         smartPlaylistsProvider = { smartPlaylistsValue },
         smartEngine = smartEngine,
         coverUrl = ArtworkUrls::cover,
+        cachedSongsProvider = { audioCache.songs.value },
     )
 
     private val _sessionReady = MutableStateFlow<Boolean?>(null)
@@ -320,6 +368,9 @@ class DesktopContainer(
             settingsStore.artistSeparators.drop(1).collect { _libraryReload.value++ }
         }
         scope.launch {
+            settingsStore.acoustIdKey.collect { acoustIdKeyValue = it }
+        }
+        scope.launch {
             settingsStore.session.distinctUntilChanged().collect { session ->
                 lastSession = session
                 // keep a disk-restored session in the saved list so it shows up for switching
@@ -331,6 +382,9 @@ class DesktopContainer(
                 if (lastAccountKey != null && lastAccountKey != key) _accountEpoch.value++
                 lastAccountKey = key
                 recomputeOffline()
+                sonicEngine.cancel()
+                withContext(Dispatchers.IO) { sonicStore.selectAccount(key) }
+                if (session != null && settingsStore.sonicAutoAnalyze.first()) sonicEngine.scan()
             }
         }
         scope.launch {
@@ -448,6 +502,8 @@ class DesktopContainer(
         queueStore.flushNow()
         playHistory.flushNow()
         if (imageLoaderDelegate.isInitialized()) imageLoader.shutdown()
+        if (audioCacheDelegate.isInitialized()) audioCache.close()
+        runCatching { mixService.close() }
         scope.cancel()
     }
 }

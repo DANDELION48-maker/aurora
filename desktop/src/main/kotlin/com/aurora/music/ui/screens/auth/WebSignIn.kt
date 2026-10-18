@@ -433,3 +433,42 @@ fun SoundCloudCaptchaWindow(writer: SoundCloudWebWriter) {
         Text(appString(R.string.soundcloud_captcha_hint), style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
     }
 }
+
+private val DISCORD_HOSTS = listOf("discord.com", "www.discord.com")
+private const val DISCORD_ORIGIN = "https://discord.com"
+
+// discord scrubs its token from the top window once the app loads, but a fresh iframe's storage still has it
+private const val DISCORD_TOKEN_JS = "(function(){try{var i=document.createElement('iframe');document.body.appendChild(i);" +
+    "var t=i.contentWindow.localStorage.getItem('token');i.remove();return t;}catch(e){return null;}})()"
+
+/** Discord's own login page; the token it stores is read locally and its web session is cleared straight after. */
+@Composable
+fun DiscordLoginWindow(onClose: () -> Unit, onToken: (String) -> Unit) {
+    val page = rememberPage(setOf(DISCORD_ORIGIN), prepare = { Chromium.clearCookies(DISCORD_HOSTS) }, start = "$DISCORD_ORIGIN/login")
+    val pageLoading by (page?.loading ?: remember { kotlinx.coroutines.flow.MutableStateFlow(true) }).collectAsState()
+    val capture by rememberUpdatedState(onToken)
+    var manual by remember { mutableStateOf("") }
+    LaunchedEffect(page) {
+        val view = page ?: return@LaunchedEffect
+        while (true) {
+            delay(1_500)
+            if (view.origin != DISCORD_ORIGIN) continue
+            val token = runCatching { JsonParser.parseString(view.eval(DISCORD_TOKEN_JS) ?: "null") }.getOrNull()
+                ?.takeIf { it.isJsonPrimitive }?.asString?.trim()?.takeIf { it.isNotBlank() } ?: continue
+            runCatching { view.eval("(function(){ localStorage.clear(); sessionStorage.clear(); return true; })()") }
+            Chromium.clearCookies(DISCORD_HOSTS)
+            capture(token)
+            break
+        }
+    }
+    BrowserWindow(title = "Discord", page = page, loading = pageLoading, error = null, onClose = onClose) {
+        Text(appString(R.string.text_log_in_to_discord_below_aurora_reads_your_token_locally_to_set_ri_8ae4f4), style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
+        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            androidx.compose.material3.OutlinedTextField(manual, { manual = it }, label = { Text(appString(R.string.text_paste_token_3c9cd3)) },
+                singleLine = true, modifier = Modifier.weight(1f))
+            TextButton(onClick = { if (manual.isNotBlank()) capture(manual.trim()) }) { Text(appString(R.string.text_link_d05170)) }
+        }
+    }
+}

@@ -8,6 +8,16 @@
     <string name="discovery_related" formatted="false">"Gerelateerd"</string>
     <string name="discovery_related_empty" formatted="false">"YouTube Music heeft niets gerelateerds bij dit nummer."</string>
     <string name="discovery_start_radio" formatted="false">"Radio starten"</string>
+    <string name="insights_location_history_guide_desktop" formatted="false">"Elke keer luisteren bewaart de exacte plek waar het speelde, zodat je het op een kaart ziet. Het blijft op deze computer, wordt nooit geüpload en gaat niet mee in back-ups. Je kunt het hier of vanaf de kaart altijd verwijderen."</string>
+    <string name="insights_places_guide_desktop" formatted="false">"Terwijl er muziek speelt, controleert Aurora je locatie hooguit elke 10 minuten, vergelijkt die met Thuis en Werk en bewaart alleen het label. Thuis en Werk zelf blijven op deze computer en gaan nooit mee in een back-up."</string>
+    <string name="insights_step_private_title_desktop" formatted="false">"Het blijft op je computer"</string>
+    <string name="levels_desktop_exclusive_needed" formatted="false">"Start het afspelen op een exclusieve uitvoer om te kalibreren."</string>
+    <string name="levels_desktop_hardware_help" formatted="false">"Voer 0=dB in: het huidige hardwarevolume van de DAC ten opzichte van volledige uitvoer."</string>
+    <string name="levels_desktop_hardware_points" formatted="false">"Demping hardwarevolume"</string>
+    <string name="levels_desktop_volume" formatted="false">"Het eigen volume van Aurora wordt direct gemeten. Kalibreer bij het huidige hardwarevolume van de DAC."</string>
+    <string name="location_open_windows_settings" formatted="false">"Locatie-instellingen openen"</string>
+    <string name="location_unsupported" formatted="false">"Locatie is niet beschikbaar op dit systeem."</string>
+    <string name="location_windows_off" formatted="false">"Windows blokkeert locatie voor desktop-apps. Zet locatietoegang aan, ook voor desktop-apps, en probeer het opnieuw."</string>
     <string name="lyrics_settings_summary" formatted="false">"Synchronisatiestijl en bron van songteksten"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Gratis songtekstdatabase van de community"</string>
     <string name="lyrics_source_server" formatted="false">"Eigen Bron van het Nummer"</string>
@@ -24,6 +34,8 @@
     <string name="merge_options_summary" formatted="false">"Wat samengevoegde diensten aan je nummers toevoegen"</string>
     <string name="merge_songs_from" formatted="false">"Nummers Uit"</string>
     <string name="playlist_save_to" formatted="false">"Opslaan In"</string>
+    <string name="storage_youtube_desktop_note" formatted="false">"Downloads van YouTube worden opgeslagen in Music/Aurora in je gebruikersmap, die aan je muziekmappen wordt toegevoegd."</string>
+    <string name="tag_edit_desktop_note" formatted="false">"Tags schrijven wijzigt het bestand op deze computer. Sluit het eerst in andere apps."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acryl"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"Muziekmap toevoegen"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Audiodecodering. Copyright © de FFmpeg-ontwikkelaars. LGPL-3.0-or-later, dynamisch gekoppeld via JavaCPP Presets. Volledige licentie: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
@@ -86,4 +98,7 @@
     <string name="text_volume_3b18e8" formatted="false">"Volume"</string>
     <string name="text_windows_capabilities_0f1fa0" formatted="false">"Windows-mogelijkheden"</string>
     <string name="text_windows_java_2566af">"Windows · Java %1$d"</string>
+    <string name="update_desktop_install_failed" formatted="false">"Kan het installatieprogramma niet starten. Je kunt de update ook van GitHub downloaden."</string>
+    <string name="update_desktop_install_note" formatted="false">"Aurora sluit terwijl het installatieprogramma draait. Open het opnieuw als de installatie klaar is."</string>
+    <string name="youtube_download_open_folder" formatted="false">"Downloadmap openen"</string>
 </resources>

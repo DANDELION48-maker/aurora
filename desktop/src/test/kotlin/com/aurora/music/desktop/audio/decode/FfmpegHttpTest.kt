@@ -41,6 +41,28 @@ class FfmpegHttpTest {
         }
     }
 
+    // bounded ranges keep youtube from throttling video; live streams must keep one open-ended request
+    @Test fun rangedRequestsAreBoundedOnlyWhenAskedFor() {
+        val mp3 = TestAssets.file("gapless.mp3").readBytes()
+        val ranges = CopyOnWriteArrayList<String>()
+        TestServer { exchange ->
+            val range = exchange.requestHeaders.getFirst("Range").orEmpty().also { ranges += it }
+            val match = Regex("bytes=(\\d+)-(\\d*)").find(range)
+            val start = match?.groupValues?.get(1)?.toInt() ?: 0
+            val end = match?.groupValues?.get(2)?.takeIf { it.isNotEmpty() }?.toInt()?.coerceAtMost(mp3.size - 1) ?: (mp3.size - 1)
+            exchange.responseHeaders.add("Accept-Ranges", "bytes")
+            if (match != null) exchange.responseHeaders.add("Content-Range", "bytes $start-$end/${mp3.size}")
+            exchange.sendResponseHeaders(if (match != null) 206 else 200, (end - start + 1).toLong())
+            exchange.responseBody.write(mp3, start, end - start + 1)
+        }.use { server ->
+            FfmpegDecoder.open("${server.base}/a.mp3", HttpOptions(rangedRequests = true)).use { decodeAll(it) }
+            assertTrue(ranges.toString(), ranges.isNotEmpty() && ranges.all { Regex("bytes=\\d+-\\d+").matches(it) })
+            ranges.clear()
+            FfmpegDecoder.open("${server.base}/a.mp3", HttpOptions()).use { decodeAll(it) }
+            assertTrue(ranges.toString(), ranges.none { Regex("bytes=\\d+-\\d+").matches(it) })
+        }
+    }
+
     @Test fun interruptCancelsAStalledNetworkRead() {
         val wav = wavBytes(48_000, 2, 16, 960_000) { f, c -> (f + c) % 1000 }
         val sent = CountDownLatch(1)

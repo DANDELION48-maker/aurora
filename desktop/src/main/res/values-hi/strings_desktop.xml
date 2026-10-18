@@ -8,6 +8,16 @@
     <string name="discovery_related" formatted="false">"मिलते-जुलते"</string>
     <string name="discovery_related_empty" formatted="false">"YouTube Music में इस गाने से मिलता-जुलता कुछ नहीं है।"</string>
     <string name="discovery_start_radio" formatted="false">"रेडियो शुरू करें"</string>
+    <string name="insights_location_history_guide_desktop" formatted="false">"हर प्ले वह सटीक जगह रखता है जहाँ वह चला, ताकि आप उसे नक्शे पर देख सकें। यह इसी कंप्यूटर पर रहता है, कभी अपलोड नहीं होता और बैकअप में शामिल नहीं होता। आप इसे कभी भी यहाँ या नक्शे से हटा सकते हैं।"</string>
+    <string name="insights_places_guide_desktop" formatted="false">"संगीत चलते समय Aurora हर 10 मिनट में अधिकतम एक बार आपकी लोकेशन जाँचता है, उसे घर और काम से मिलाता है और केवल लेबल रखता है। घर और काम की जगहें इसी कंप्यूटर पर रहती हैं और किसी भी बैकअप में शामिल नहीं होतीं।"</string>
+    <string name="insights_step_private_title_desktop" formatted="false">"सब कुछ आपके कंप्यूटर पर रहता है"</string>
+    <string name="levels_desktop_exclusive_needed" formatted="false">"कैलिब्रेट करने के लिए किसी एक्सक्लूसिव आउटपुट पर प्लेबैक शुरू करें।"</string>
+    <string name="levels_desktop_hardware_help" formatted="false">"0=dB दर्ज करें: पूरे आउटपुट की तुलना में DAC का मौजूदा हार्डवेयर वॉल्यूम।"</string>
+    <string name="levels_desktop_hardware_points" formatted="false">"हार्डवेयर वॉल्यूम क्षीणन"</string>
+    <string name="levels_desktop_volume" formatted="false">"Aurora का अपना वॉल्यूम सीधे मापा जाता है। DAC के मौजूदा हार्डवेयर वॉल्यूम पर कैलिब्रेट करें।"</string>
+    <string name="location_open_windows_settings" formatted="false">"स्थान सेटिंग खोलें"</string>
+    <string name="location_unsupported" formatted="false">"इस सिस्टम पर स्थान उपलब्ध नहीं है।"</string>
+    <string name="location_windows_off" formatted="false">"Windows डेस्कटॉप ऐप्स के लिए स्थान रोक रहा है। डेस्कटॉप ऐप्स सहित स्थान एक्सेस चालू करें, फिर दोबारा कोशिश करें।"</string>
     <string name="lyrics_settings_summary" formatted="false">"सिंक शैली और बोल कहाँ से आते हैं"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"मुफ़्त सामुदायिक बोल डेटाबेस"</string>
     <string name="lyrics_source_server" formatted="false">"गाने का अपना स्रोत"</string>
@@ -24,6 +34,8 @@
     <string name="merge_options_summary" formatted="false">"मर्ज की गई सेवाएँ आपके गानों में क्या जोड़ती हैं"</string>
     <string name="merge_songs_from" formatted="false">"गाने कहाँ से"</string>
     <string name="playlist_save_to" formatted="false">"यहाँ सहेजें"</string>
+    <string name="storage_youtube_desktop_note" formatted="false">"YouTube से डाउनलोड आपके यूज़र फ़ोल्डर में Music/Aurora में सेव होते हैं, जिसे आपके संगीत फ़ोल्डरों में जोड़ा जाता है।"</string>
+    <string name="tag_edit_desktop_note" formatted="false">"टैग लिखने से इस कंप्यूटर पर फ़ाइल बदल जाती है। पहले इसे दूसरे ऐप्स में बंद करें।"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"ऐक्रेलिक"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"संगीत फ़ोल्डर जोड़ें"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"ऑडियो डिकोडिंग। कॉपीराइट © FFmpeg डेवलपर। LGPL-3.0-or-later, JavaCPP Presets के ज़रिए डायनेमिक रूप से लिंक किया गया। पूरा लाइसेंस: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
@@ -86,4 +98,7 @@
     <string name="text_volume_3b18e8" formatted="false">"वॉल्यूम"</string>
     <string name="text_windows_capabilities_0f1fa0" formatted="false">"Windows क्षमताएँ"</string>
     <string name="text_windows_java_2566af">"Windows · Java %1$d"</string>
+    <string name="update_desktop_install_failed" formatted="false">"इंस्टॉलर शुरू नहीं हो सका। आप अपडेट GitHub से भी डाउनलोड कर सकते हैं।"</string>
+    <string name="update_desktop_install_note" formatted="false">"इंस्टॉलर चलने के दौरान Aurora बंद हो जाता है। सेटअप पूरा होने पर इसे फिर से खोलें।"</string>
+    <string name="youtube_download_open_folder" formatted="false">"डाउनलोड फ़ोल्डर खोलें"</string>
 </resources>

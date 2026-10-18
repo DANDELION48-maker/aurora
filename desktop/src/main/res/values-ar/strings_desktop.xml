@@ -8,6 +8,16 @@
     <string name="discovery_related" formatted="false">"\u2067ذات صلة\u2069"</string>
     <string name="discovery_related_empty" formatted="false">"\u2067لا يوجد في YouTube Music شيء ذو صلة بهذه الأغنية.\u2069"</string>
     <string name="discovery_start_radio" formatted="false">"\u2067بدء راديو\u2069"</string>
+    <string name="insights_location_history_guide_desktop" formatted="false">"\u2067يحتفظ كل تشغيل بالمكان الدقيق الذي شُغّل فيه لتراه على الخريطة. تبقى البيانات على هذا الكمبيوتر ولا تُرفع أبدًا ولا تدخل في النسخ الاحتياطية. يمكنك حذفها من هنا أو من الخريطة في أي وقت.\u2069"</string>
+    <string name="insights_places_guide_desktop" formatted="false">"\u2067أثناء تشغيل الموسيقى يتحقق Aurora من موقعك مرة كل 10 دقائق على الأكثر، ويقارنه بالمنزل والعمل، ويحتفظ بالوسم فقط. يبقى موقعا المنزل والعمل على هذا الكمبيوتر ولا يدخلان في أي نسخة احتياطية.\u2069"</string>
+    <string name="insights_step_private_title_desktop" formatted="false">"\u2067تبقى البيانات على جهاز الكمبيوتر\u2069"</string>
+    <string name="levels_desktop_exclusive_needed" formatted="false">"\u2067ابدأ التشغيل على مخرج حصري للمعايرة.\u2069"</string>
+    <string name="levels_desktop_hardware_help" formatted="false">"\u2067أدخل 0=dB: مستوى صوت DAC الحالي مقارنة بالحد الأقصى.\u2069"</string>
+    <string name="levels_desktop_hardware_points" formatted="false">"\u2067توهين مستوى صوت الجهاز\u2069"</string>
+    <string name="levels_desktop_volume" formatted="false">"\u2067يُقاس مستوى صوت Aurora مباشرة. عايِر عند مستوى صوت DAC الحالي.\u2069"</string>
+    <string name="location_open_windows_settings" formatted="false">"\u2067فتح إعدادات الموقع\u2069"</string>
+    <string name="location_unsupported" formatted="false">"\u2067الموقع غير متاح على هذا النظام.\u2069"</string>
+    <string name="location_windows_off" formatted="false">"\u2067يمنع Windows الموقع عن تطبيقات سطح المكتب. فعّل الوصول إلى الموقع، بما في ذلك لتطبيقات سطح المكتب، ثم حاول مرة أخرى.\u2069"</string>
     <string name="lyrics_settings_summary" formatted="false">"\u2067نمط المزامنة ومصادر الكلمات\u2069"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"\u2067قاعدة بيانات كلمات مجانية من المجتمع\u2069"</string>
     <string name="lyrics_source_server" formatted="false">"\u2067مصدر الأغنية نفسه\u2069"</string>
@@ -24,6 +34,8 @@
     <string name="merge_options_summary" formatted="false">"\u2067ما تضيفه الخدمات المدمجة إلى أغانيك\u2069"</string>
     <string name="merge_songs_from" formatted="false">"\u2067الأغاني من\u2069"</string>
     <string name="playlist_save_to" formatted="false">"\u2067حفظ في\u2069"</string>
+    <string name="storage_youtube_desktop_note" formatted="false">"\u2067تُحفظ التنزيلات من YouTube في Music/Aurora داخل مجلد المستخدم، ويُضاف إلى مجلدات الموسيقى لديك.\u2069"</string>
+    <string name="tag_edit_desktop_note" formatted="false">"\u2067تعديل الوسوم يغيّر الملف على هذا الكمبيوتر. أغلقه في التطبيقات الأخرى أولاً.\u2069"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"\u2067أكريليك\u2069"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"\u2067إضافة مجلد موسيقى\u2069"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"\u2067فك ترميز الصوت. حقوق النشر © مطورو FFmpeg. LGPL-3.0-or-later، مرتبط ديناميكيًا عبر JavaCPP Presets. الترخيص الكامل: https://www.gnu.org/licenses/lgpl-3.0.html\u2069"</string>
@@ -86,4 +98,7 @@
     <string name="text_volume_3b18e8" formatted="false">"\u2067مستوى الصوت\u2069"</string>
     <string name="text_windows_capabilities_0f1fa0" formatted="false">"\u2067إمكانات Windows\u2069"</string>
     <string name="text_windows_java_2566af">"Windows · Java %1$d"</string>
+    <string name="update_desktop_install_failed" formatted="false">"\u2067تعذّر تشغيل المثبّت. يمكنك أيضًا تنزيل التحديث من GitHub.\u2069"</string>
+    <string name="update_desktop_install_note" formatted="false">"\u2067يُغلق Aurora أثناء تشغيل المثبّت. افتحه مجددًا عند انتهاء الإعداد.\u2069"</string>
+    <string name="youtube_download_open_folder" formatted="false">"\u2067فتح مجلد التنزيلات\u2069"</string>
 </resources>

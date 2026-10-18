@@ -12,7 +12,8 @@ import com.aurora.music.desktop.audio.EngineState
 import com.aurora.music.desktop.audio.OutputInfo
 import java.util.Locale
 
-internal class DesktopListeningDetails(sink: DetailedPlaySink, platform: String) {
+internal class DesktopListeningDetails(sink: DetailedPlaySink, platform: String,
+    private val location: (zone: Boolean, point: Boolean) -> Pair<String?, com.aurora.music.desktop.platform.LocationFix?> = { _, _ -> null to null }) {
     @Volatile var crossfadeMs = 0L
     private val recorder = DetailedListeningRecorder(sink, platform, crossfadeMs = { crossfadeMs })
     @Volatile var prefs = InsightsPrefs()
@@ -44,6 +45,7 @@ internal class DesktopListeningDetails(sink: DetailedPlaySink, platform: String)
         val audio = audio
         val custom = audio?.dspMode == DspMode.CUSTOM
         val source = state.source
+        val (zone, fix) = if (p.places || p.locationHistory) location(p.places, p.locationHistory) else null to null
         return PlayContext(
             genre = song?.genre?.takeIf(String::isNotBlank),
             source = song?.playbackSource?.source?.name,
@@ -63,6 +65,10 @@ internal class DesktopListeningDetails(sink: DetailedPlaySink, platform: String)
             crossfeed = if (path && audio != null) custom && audio.dspCrossfeed > 0f else null,
             rack = if (path && audio != null) custom && rack?.enabled == true else null,
             bitPerfect = if (path && state.output != null) state.processing.bitPerfect else null,
+            zone = zone,
+            latitude = fix?.latitude,
+            longitude = fix?.longitude,
+            locationAccuracyM = fix?.accuracyM,
         )
     }
 

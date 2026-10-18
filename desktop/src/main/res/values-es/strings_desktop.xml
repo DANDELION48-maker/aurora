@@ -8,6 +8,16 @@
     <string name="discovery_related" formatted="false">"Relacionado"</string>
     <string name="discovery_related_empty" formatted="false">"YouTube Music no tiene nada relacionado con esta canción."</string>
     <string name="discovery_start_radio" formatted="false">"Iniciar radio"</string>
+    <string name="insights_location_history_guide_desktop" formatted="false">"Cada reproducción guarda el lugar exacto donde sonó para que puedas verlo en un mapa. Se queda en este ordenador, nunca se sube y no entra en las copias de seguridad. Puedes borrarlo aquí o desde el mapa cuando quieras."</string>
+    <string name="insights_places_guide_desktop" formatted="false">"Mientras suena música, Aurora comprueba tu ubicación como mucho cada 10 minutos, la compara con Casa y Trabajo y solo guarda la etiqueta. Casa y Trabajo se quedan en este ordenador y no entran en ninguna copia de seguridad."</string>
+    <string name="insights_step_private_title_desktop" formatted="false">"Se queda en tu ordenador"</string>
+    <string name="levels_desktop_exclusive_needed" formatted="false">"Inicia la reproducción en una salida exclusiva para calibrar."</string>
+    <string name="levels_desktop_hardware_help" formatted="false">"Introduce 0=dB: el volumen de hardware actual del DAC respecto a la salida completa."</string>
+    <string name="levels_desktop_hardware_points" formatted="false">"Atenuación del volumen de hardware"</string>
+    <string name="levels_desktop_volume" formatted="false">"El volumen propio de Aurora se mide directamente. Calibra con el volumen de hardware actual del DAC."</string>
+    <string name="location_open_windows_settings" formatted="false">"Abrir ajustes de ubicación"</string>
+    <string name="location_unsupported" formatted="false">"La ubicación no está disponible en este sistema."</string>
+    <string name="location_windows_off" formatted="false">"Windows está bloqueando la ubicación para las apps de escritorio. Activa el acceso a la ubicación, también para apps de escritorio, y vuelve a intentarlo."</string>
     <string name="lyrics_settings_summary" formatted="false">"Estilo de sincronización y origen de las letras"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Base de datos de letras gratuita y comunitaria"</string>
     <string name="lyrics_source_server" formatted="false">"Origen de la Canción"</string>
@@ -24,6 +34,8 @@
     <string name="merge_options_summary" formatted="false">"Lo que los servicios combinados añaden a tus canciones"</string>
     <string name="merge_songs_from" formatted="false">"Canciones De"</string>
     <string name="playlist_save_to" formatted="false">"Guardar En"</string>
+    <string name="storage_youtube_desktop_note" formatted="false">"Las descargas de YouTube se guardan en Music/Aurora dentro de tu carpeta de usuario, que se añade a tus carpetas de música."</string>
+    <string name="tag_edit_desktop_note" formatted="false">"Escribir etiquetas modifica el archivo en este ordenador. Ciérralo antes en otras apps."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acrílico"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"Añadir carpeta de música"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Decodificación de audio. Copyright © los desarrolladores de FFmpeg. LGPL-3.0-or-later, enlazado dinámicamente mediante JavaCPP Presets. Licencia completa: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
@@ -86,4 +98,7 @@
     <string name="text_volume_3b18e8" formatted="false">"Volumen"</string>
     <string name="text_windows_capabilities_0f1fa0" formatted="false">"Funciones de Windows"</string>
     <string name="text_windows_java_2566af">"Windows · Java %1$d"</string>
+    <string name="update_desktop_install_failed" formatted="false">"No se pudo iniciar el instalador. También puedes descargar la actualización desde GitHub."</string>
+    <string name="update_desktop_install_note" formatted="false">"Aurora se cierra mientras se ejecuta el instalador. Vuelve a abrirlo cuando termine la instalación."</string>
+    <string name="youtube_download_open_folder" formatted="false">"Abrir carpeta de descargas"</string>
 </resources>

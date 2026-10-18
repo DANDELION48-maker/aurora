@@ -50,6 +50,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.Apps
@@ -68,6 +69,7 @@ import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Podcasts
+import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material.icons.filled.Radio
@@ -236,6 +238,7 @@ fun LibraryScreen(
     onDownload: (Song) -> Unit,
     onRemoveDownload: (String) -> Unit,
     onOpenSearch: () -> Unit,
+    onOpenMix: (() -> Unit)? = null,
     onCreatePlaylist: suspend (name: String, description: String, target: String?) -> Boolean,
     playlistTargets: () -> List<com.aurora.music.data.PlaylistTarget> = { emptyList() },
     onSelectView: (String) -> Unit = {},
@@ -247,6 +250,7 @@ fun LibraryScreen(
     onOpenFolders: () -> Unit,
     onOpenRadio: (() -> Unit)? = null,
     onOpenPodcasts: (() -> Unit)? = null,
+    onOpenYouTubeDownload: (() -> Unit)? = null,
     onPlayCollection: (String, String) -> Unit,
     onShuffleCollection: (String, String) -> Unit,
     onQueueCollection: (String, String) -> Unit,
@@ -304,6 +308,7 @@ fun LibraryScreen(
             subtitle = stats,
         ) {
             HeaderAction(Icons.Filled.Search, appString(R.string.text_search_bce064), onOpenSearch)
+            onOpenMix?.let { HeaderAction(Icons.Filled.GraphicEq, appString(R.string.text_mix_studio_668363), it) }
             HeaderAction(Icons.Filled.Add, appString(R.string.text_create_playlist_62c988)) { showCreate = true }
         }
 
@@ -333,7 +338,7 @@ fun LibraryScreen(
             LibraryFilter.ALL -> AllOverview(
                 state = state, pins = pins, canDownload = canDownload, compact = compact, bottom = bottom, cardMin = cardMin, actions = actions,
                 onFilter = onFilter, onOpen = open,
-                onOpenFolders = onOpenFolders, onOpenRadio = onOpenRadio, onOpenPodcasts = onOpenPodcasts,
+                onOpenFolders = onOpenFolders, onOpenRadio = onOpenRadio, onOpenPodcasts = onOpenPodcasts, onOpenYouTubeDownload = onOpenYouTubeDownload,
             )
             LibraryFilter.SONGS -> SongsTab(
                 state = state, sort = sort, likedIds = likedIds, currentSongId = currentSongId, isPlaying = isPlaying,
@@ -557,6 +562,7 @@ private fun AllOverview(
     onOpenFolders: () -> Unit,
     onOpenRadio: (() -> Unit)?,
     onOpenPodcasts: (() -> Unit)?,
+    onOpenYouTubeDownload: (() -> Unit)?,
 ) {
     val insets = LocalLibInsets.current
     val listState = rememberLazyListState()
@@ -587,6 +593,7 @@ private fun AllOverview(
                 if (state.supportsFolders) add(QuickTile(appString(R.string.text_folders_19adc4), appString(R.string.text_browse_files_524932), Icons.Filled.Folder, "") { onOpenFolders() })
                 if (onOpenRadio != null) add(QuickTile(appString(R.string.text_radio_b11bf1), appString(R.string.text_live_stations_f40694), Icons.Filled.Radio, "") { onOpenRadio() })
                 if (onOpenPodcasts != null) add(QuickTile(appString(R.string.text_podcasts_fd52b4), appString(R.string.text_shows_episodes_526d46), Icons.Filled.Podcasts, "") { onOpenPodcasts() })
+                if (onOpenYouTubeDownload != null) add(QuickTile(appString(R.string.youtube_download_title), appString(R.string.youtube_download_tile_detail), Icons.Filled.CloudDownload, "") { onOpenYouTubeDownload() })
                 pinRows.forEach { r -> add(QuickTile(r.title, r.subtitle, null, r.art, row = r, pinned = true) { onOpen(r) }) }
             }
             QuickTiles(tiles, compact, actions)

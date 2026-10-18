@@ -20,6 +20,8 @@ import com.aurora.music.desktop.ui.LocalDesktopContainer
 import com.aurora.music.desktop.ui.LocalTrayAvailable
 import com.aurora.music.localization.AppStrings
 import com.aurora.music.ui.screens.settings.AboutSettingsScreen
+import com.aurora.music.ui.screens.settings.AcoustIdIntegrationScreen
+import com.aurora.music.ui.screens.settings.DiscordIntegrationScreen
 import com.aurora.music.ui.screens.settings.AccountsScreen
 import com.aurora.music.ui.screens.settings.AppearanceScreen
 import com.aurora.music.ui.screens.settings.AudioOutputSettingsScreen
@@ -182,9 +184,9 @@ class GeneralSettingsTest {
     @Test fun navigationMenuReordersAndPins() {
         GeneralSettingsScene("nav-menu", height = 1300) { NavigationMenuScreen(padding, onBack = {}) }.use { scene ->
             assertTrue(scene.shot().distinctColors() > 20)
-            scene.click(691f, 590f)
-            scene.await(read = { settingsStore.uiPrefs.first().navLayout }) { it.contains("more=stats,history,duplicates") }
-            scene.click(697f, 772f)
+            scene.click(691f, 722f)
+            scene.await(read = { settingsStore.uiPrefs.first().navLayout }) { it.contains("more=radio,podcasts,stats,history,duplicates") }
+            scene.click(697f, 904f)
             scene.await(read = { settingsStore.uiPrefs.first().navLayout }) { it.startsWith("main=home,search,library,explore,playback;") }
         }
     }
@@ -197,17 +199,22 @@ class GeneralSettingsTest {
         val opened = mutableListOf<String>()
         GeneralSettingsScene("integrations") {
             IntegrationsSettingsScreen(padding, onBack = {}, onOpenLyrics = { opened += "lyrics" }, onOpenLastfm = { opened += "lastfm" },
-                onOpenListenBrainz = { opened += "listenbrainz" }, onOpenArtistInfo = { opened += "artist" })
+                onOpenListenBrainz = { opened += "listenbrainz" }, onOpenArtistInfo = { opened += "artist" },
+                onOpenDiscord = { opened += "discord" }, onOpenAcoustId = { opened += "acoustid" })
         }.use { scene ->
             assertTrue(scene.shot().distinctColors() > 20)
-            scene.click(400f, 131f)
-            scene.click(400f, 308f)
-            scene.click(400f, 490f)
+            scene.click(400f, 161f)
+            scene.click(400f, 295f)
+            scene.click(400f, 405f)
+            scene.click(400f, 539f)
+            scene.click(400f, 654f)
             assertFalse(scene.await(read = { settingsStore.artworkLookupEnabled.first() }) { !it })
         }
-        assertEquals(listOf("lastfm", "lyrics"), opened)
+        assertEquals(listOf("lastfm", "discord", "lyrics", "acoustid"), opened)
         GeneralSettingsScene("integrations-lastfm") { LastfmIntegrationScreen(padding, onBack = {}) }.use { assertTrue(it.shot().distinctColors() > 10) }
         GeneralSettingsScene("integrations-listenbrainz") { ListenBrainzIntegrationScreen(padding, onBack = {}) }.use { assertTrue(it.shot().distinctColors() > 10) }
+        GeneralSettingsScene("integrations-discord") { DiscordIntegrationScreen(padding, onBack = {}, onOpenDiscordLogin = {}) }.use { assertTrue(it.shot().distinctColors() > 20) }
+        GeneralSettingsScene("integrations-acoustid") { AcoustIdIntegrationScreen(padding, onBack = {}) }.use { assertTrue(it.shot().distinctColors() > 10) }
     }
 
     @Test fun sourcesManageFoldersAndMergedServers() {

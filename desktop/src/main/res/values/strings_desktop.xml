@@ -8,6 +8,16 @@
     <string name="discovery_related" formatted="false">"Related"</string>
     <string name="discovery_related_empty" formatted="false">"YouTube Music has nothing related to this song."</string>
     <string name="discovery_start_radio" formatted="false">"Start radio"</string>
+    <string name="insights_location_history_guide_desktop" formatted="false">"Each play keeps the exact spot where it was playing, so you can see it on a map. It stays on this computer, is never uploaded and is left out of backups. You can delete it here or from the map at any time."</string>
+    <string name="insights_places_guide_desktop" formatted="false">"Aurora checks your location at most every 10 minutes while music plays, compares it with Home and Work, and keeps only the label. Home and Work themselves stay on this computer and are left out of every backup."</string>
+    <string name="insights_step_private_title_desktop" formatted="false">"It stays on this computer"</string>
+    <string name="levels_desktop_exclusive_needed" formatted="false">"Start playback on an exclusive output to calibrate."</string>
+    <string name="levels_desktop_hardware_help" formatted="false">"Enter 0=dB: the DAC\'s current hardware volume relative to full output."</string>
+    <string name="levels_desktop_hardware_points" formatted="false">"Hardware volume attenuation"</string>
+    <string name="levels_desktop_volume" formatted="false">"Aurora\'s own volume is measured directly. Calibrate at the DAC\'s current hardware volume."</string>
+    <string name="location_open_windows_settings" formatted="false">"Open location settings"</string>
+    <string name="location_unsupported" formatted="false">"Location isn\'t available on this system."</string>
+    <string name="location_windows_off" formatted="false">"Windows is blocking location for desktop apps. Turn on location access, including for desktop apps, then try again."</string>
     <string name="lyrics_settings_summary" formatted="false">"Sync style and where lyrics come from"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Free community lyrics database"</string>
     <string name="lyrics_source_server" formatted="false">"Song\'s Own Source"</string>
@@ -24,6 +34,8 @@
     <string name="merge_options_summary" formatted="false">"What merged services add to your songs"</string>
     <string name="merge_songs_from" formatted="false">"Songs From"</string>
     <string name="playlist_save_to" formatted="false">"Save To"</string>
+    <string name="storage_youtube_desktop_note" formatted="false">"Downloads from YouTube are saved to Music/Aurora in your user folder, which is added to your music folders."</string>
+    <string name="tag_edit_desktop_note" formatted="false">"Writing tags edits the file on this computer. Close it in other apps first."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acrylic"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"Add music folder"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Audio decoding. Copyright © the FFmpeg developers. LGPL-3.0-or-later, dynamically linked through JavaCPP Presets. Full licence: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
@@ -86,4 +98,7 @@
     <string name="text_volume_3b18e8" formatted="false">"Volume"</string>
     <string name="text_windows_capabilities_0f1fa0" formatted="false">"Windows capabilities"</string>
     <string name="text_windows_java_2566af">"Windows · Java %1$d"</string>
+    <string name="update_desktop_install_failed" formatted="false">"Couldn\'t start the installer. You can also download the update from GitHub."</string>
+    <string name="update_desktop_install_note" formatted="false">"Aurora closes while the installer runs. Open it again when setup finishes."</string>
+    <string name="youtube_download_open_folder" formatted="false">"Open download folder"</string>
 </resources>

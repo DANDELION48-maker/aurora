@@ -197,13 +197,17 @@ fun QueueContent(
 }
 
 @Composable
-fun QueueActions(queue: List<Song>, currentIndex: Int, editable: Boolean, onClear: () -> Unit, onSaveAsPlaylist: (String) -> Unit) {
+fun QueueActions(queue: List<Song>, currentIndex: Int, editable: Boolean, onClear: () -> Unit, onSaveAsPlaylist: (String) -> Unit,
+    onOpenMix: (() -> Unit)? = null) {
     var showSaveDialog by remember { mutableStateOf(false) }
     val hasUpcoming = currentIndex + 1 < queue.size
     val colors = MaterialTheme.colorScheme
     androidx.compose.material3.IconButton(onClick = { showSaveDialog = true }, enabled = queue.isNotEmpty()) {
         Icon(Icons.AutoMirrored.Filled.PlaylistAdd, appString(R.string.text_save_queue_as_playlist_7f09d8),
             tint = if (queue.isEmpty()) colors.onSurfaceVariant.copy(alpha = 0.35f) else colors.onSurfaceVariant, modifier = Modifier.size(22.dp))
+    }
+    if (onOpenMix != null) androidx.compose.material3.IconButton(onClick = onOpenMix) {
+        Icon(Icons.Filled.GraphicEq, appString(R.string.text_open_mix_studio_9ddf16), tint = colors.onSurfaceVariant, modifier = Modifier.size(22.dp))
     }
     androidx.compose.material3.IconButton(onClick = onClear, enabled = hasUpcoming && editable) {
         Icon(Icons.Filled.DeleteSweep, appString(R.string.text_clear_queue_984301),

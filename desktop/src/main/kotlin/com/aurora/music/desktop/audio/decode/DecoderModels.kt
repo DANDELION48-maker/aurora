@@ -42,6 +42,8 @@ data class HttpOptions(
     val userAgent: String? = null,
     val timeoutMs: Int = 15_000,
     val reconnect: Boolean = true,
+    // youtube throttles one long download of a file but serves ranged requests at full speed; never for live streams
+    val rangedRequests: Boolean = false,
 ) {
     init {
         require(timeoutMs > 0)

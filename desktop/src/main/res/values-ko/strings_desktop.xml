@@ -8,6 +8,16 @@
     <string name="discovery_related" formatted="false">"관련"</string>
     <string name="discovery_related_empty" formatted="false">"YouTube Music에 이 곡과 관련된 항목이 없습니다."</string>
     <string name="discovery_start_radio" formatted="false">"라디오 시작"</string>
+    <string name="insights_location_history_guide_desktop" formatted="false">"각 재생은 재생된 정확한 위치를 저장해 지도에서 볼 수 있습니다. 이 컴퓨터에만 저장되며 업로드되지 않고 백업에서도 제외됩니다. 언제든지 여기나 지도에서 삭제할 수 있습니다."</string>
+    <string name="insights_places_guide_desktop" formatted="false">"음악이 재생되는 동안 Aurora는 최대 10분에 한 번 위치를 확인해 집과 직장과 비교하고 라벨만 남깁니다. 집과 직장 위치 자체는 이 컴퓨터에만 저장되며 어떤 백업에도 포함되지 않습니다."</string>
+    <string name="insights_step_private_title_desktop" formatted="false">"이 컴퓨터에만 남습니다"</string>
+    <string name="levels_desktop_exclusive_needed" formatted="false">"보정하려면 단독 출력에서 재생을 시작하세요."</string>
+    <string name="levels_desktop_hardware_help" formatted="false">"0=dB 입력: 최대 출력 대비 DAC의 현재 하드웨어 볼륨."</string>
+    <string name="levels_desktop_hardware_points" formatted="false">"하드웨어 볼륨 감쇠"</string>
+    <string name="levels_desktop_volume" formatted="false">"Aurora 자체 볼륨은 직접 측정됩니다. DAC의 현재 하드웨어 볼륨에서 보정하세요."</string>
+    <string name="location_open_windows_settings" formatted="false">"위치 설정 열기"</string>
+    <string name="location_unsupported" formatted="false">"이 시스템에서는 위치를 사용할 수 없습니다."</string>
+    <string name="location_windows_off" formatted="false">"Windows가 데스크톱 앱의 위치 접근을 차단하고 있습니다. 데스크톱 앱을 포함해 위치 접근을 켠 다음 다시 시도하세요."</string>
     <string name="lyrics_settings_summary" formatted="false">"동기화 방식과 가사 출처"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"무료 커뮤니티 가사 데이터베이스"</string>
     <string name="lyrics_source_server" formatted="false">"곡 자체의 출처"</string>
@@ -24,6 +34,8 @@
     <string name="merge_options_summary" formatted="false">"병합된 서비스가 곡에 더하는 것"</string>
     <string name="merge_songs_from" formatted="false">"곡 출처"</string>
     <string name="playlist_save_to" formatted="false">"저장 위치"</string>
+    <string name="storage_youtube_desktop_note" formatted="false">"YouTube에서 다운로드한 파일은 사용자 폴더의 Music/Aurora에 저장되며, 이 폴더는 음악 폴더에 추가됩니다."</string>
+    <string name="tag_edit_desktop_note" formatted="false">"태그를 쓰면 이 컴퓨터의 파일이 수정됩니다. 먼저 다른 앱에서 파일을 닫으세요."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"아크릴"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"음악 폴더 추가"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"오디오 디코딩. Copyright © FFmpeg 개발자. LGPL-3.0-or-later, JavaCPP Presets를 통해 동적으로 링크됨. 전체 라이선스: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
@@ -86,4 +98,7 @@
     <string name="text_volume_3b18e8" formatted="false">"볼륨"</string>
     <string name="text_windows_capabilities_0f1fa0" formatted="false">"Windows 기능"</string>
     <string name="text_windows_java_2566af">"Windows · Java %1$d"</string>
+    <string name="update_desktop_install_failed" formatted="false">"설치 프로그램을 시작할 수 없습니다. GitHub에서 업데이트를 다운로드할 수도 있습니다."</string>
+    <string name="update_desktop_install_note" formatted="false">"설치 프로그램이 실행되는 동안 Aurora가 종료됩니다. 설치가 끝나면 다시 여세요."</string>
+    <string name="youtube_download_open_folder" formatted="false">"다운로드 폴더 열기"</string>
 </resources>

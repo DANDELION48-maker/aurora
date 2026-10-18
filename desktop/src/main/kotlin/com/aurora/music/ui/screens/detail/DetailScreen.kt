@@ -1,5 +1,6 @@
 package com.aurora.music.ui.screens.detail
 
+import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.Radio
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -90,6 +91,7 @@ import com.aurora.music.model.accent
 import com.aurora.music.ui.components.AdaptiveShelf
 import com.aurora.music.ui.components.AlbumCard
 import com.aurora.music.ui.components.Artwork
+import com.aurora.music.ui.components.CoverKey
 import com.aurora.music.ui.components.Eyebrow
 import com.aurora.music.ui.components.LottieLoader
 import com.aurora.music.ui.components.PageSection
@@ -118,6 +120,7 @@ private val SectionHeaderHeight = 32.dp
 @Composable
 fun DetailScreen(
     contentPadding: PaddingValues,
+    onMix: (() -> Unit)? = null,
     state: DetailUiState,
     likedIds: Set<String>,
     currentSongId: String,
@@ -175,6 +178,8 @@ fun DetailScreen(
     val info = data.info
     val tracks = data.tracks
     val effectiveArt = artistInfo?.imageUrl?.takeIf { info.isArtist && it.isNotBlank() } ?: info.artUrl
+    val albumCover = if (itemKind == "album") CoverKey(info.title, info.subtitle,
+        tracks.firstNotNullOfOrNull { CoverKey.localPath(it).takeIf(String::isNotBlank) }.orEmpty()) else null
     val accent by rememberDominantColor(effectiveArt, info.accent)
     val baseScheme = MaterialTheme.colorScheme
     val accentInk = readableAccent(accent, baseScheme.onBackground.luminance() > 0.5f)
@@ -245,6 +250,9 @@ fun DetailScreen(
             Spacer(Modifier.width(10.dp))
             HeaderIcon(Icons.Filled.Shuffle, appString(R.string.text_shuffle_5b772b), MaterialTheme.colorScheme.onSurface, enabled = tracks.isNotEmpty()) {
                 onShufflePlay(tracks)
+            }
+            onMix?.let { mix ->
+                HeaderIcon(Icons.Filled.GraphicEq, appString(R.string.text_mix_fd7391), MaterialTheme.colorScheme.onSurface, enabled = tracks.size >= 2) { mix() }
             }
             if (!wrap) Spacer(Modifier.weight(1f))
             if (itemKind == "album" || itemKind == "playlist" || itemKind == "artist") {
@@ -366,7 +374,7 @@ fun DetailScreen(
                     menuButton(MaterialTheme.colorScheme.onSurface, Modifier.offset(x = 12.dp))
                 }
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
-                    Artwork(effectiveArt, info.accent, Modifier.size(headerArt), corner = if (info.isArtist) headerArt / 2 else 20.dp)
+                    Artwork(effectiveArt, info.accent, Modifier.size(headerArt), corner = if (info.isArtist) headerArt / 2 else 20.dp, animated = albumCover)
                     Spacer(Modifier.width(if (pageWidth >= 800.dp) 32.dp else 24.dp))
                     Column(Modifier.weight(1f)) {
                         Eyebrow(info.typeLabel.localizedMediaType().uppercase(java.util.Locale.getDefault()), accentInk)
@@ -389,7 +397,7 @@ fun DetailScreen(
         if (!wideHeader) item(key = "header") {
             Column(Modifier.bleed(gutter)) {
                 Box(Modifier.fillMaxWidth().height(minOf(420.dp, pageHeight * 0.55f))) {
-                    Artwork(effectiveArt, info.accent, Modifier.matchParentSize(), corner = 0.dp)
+                    Artwork(effectiveArt, info.accent, Modifier.matchParentSize(), corner = 0.dp, animated = albumCover)
                     Box(
                         Modifier.matchParentSize().background(
                             Brush.verticalGradient(

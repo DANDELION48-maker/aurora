@@ -37,6 +37,12 @@ data class PlayerUiState(
     val isMix: Boolean = false,
     val timelineDurationSec: Int = 0,
     val isLive: Boolean = false,
+    val hasVideo: Boolean = false,
+    val videoLoading: Boolean = false,
+    val videoQualityHeight: Int? = null,
+    val videoIsCanvas: Boolean = false,
+    val supportsCanvas: Boolean = false,
+    val supportsMusicVideo: Boolean = false,
 ) {
     val durationSec: Int get() = if (isLive) 0 else timelineDurationSec.takeIf { it > 0 } ?: current.durationSec
     val progress: Float get() = if (durationSec == 0) 0f else (positionSec / durationSec).coerceIn(0f, 1f)
@@ -53,6 +59,14 @@ interface PlayerController {
     val volume: StateFlow<Float>
     val signalPath: StateFlow<SignalPath> get() = IdleSignalPath
     val messages: Flow<String> get() = emptyFlow()
+    val video: StateFlow<com.aurora.music.desktop.video.VideoPlayer?> get() = kotlinx.coroutines.flow.MutableStateFlow(null)
+
+    fun requestMusicVideo(canvas: Boolean, onResult: (String) -> Unit) {}
+    fun setVideoVisible(visible: Boolean) {}
+    fun setVideoQuality(height: Int?) {}
+
+    // windows will not replace a file that is open, so a file being rewritten is let go of for the duration
+    suspend fun <T> releasingFile(path: String, block: suspend () -> T): T = block()
 
     fun playAll(songs: List<Song>, startIndex: Int = 0, collection: PlaybackCollectionIdentity? = null)
     fun play(song: Song)

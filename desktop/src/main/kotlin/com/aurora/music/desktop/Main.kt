@@ -75,6 +75,7 @@ fun main() {
     val glassAtStart = initialTranslucent && WindowBackdrop.supported
     AppStrings.setLocale(language)
     val player = DesktopPlayer(DesktopPlaybackEngine(resolver = container.streamResolver), container.playerDependencies())
+    container.mixService.attach(player, container.scope)
     val shortcuts = MutableSharedFlow<Shortcut>(extraBufferCapacity = 8)
     val raises = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     Runtime.getRuntime().addShutdownHook(Thread { container.folderLibrary.close(); container.queueStore.flushNow(); container.playHistory.flushNow() })
@@ -151,6 +152,8 @@ fun main() {
             instance.close()
             exitApplication()
         }
+
+        LaunchedEffect(Unit) { container.appUpdater.quitRequests.collect { quit() } }
 
         LaunchedEffect(windowState) {
             snapshotFlow { Triple(windowState.placement, windowState.position, windowState.size) }.collectLatest {

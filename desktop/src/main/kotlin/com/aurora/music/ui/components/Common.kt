@@ -59,6 +59,7 @@ fun Artwork(
     modifier: Modifier = Modifier,
     corner: Dp = 12.dp,
     contentScale: ContentScale = ContentScale.Crop,
+    animated: CoverKey? = null,
 ) {
     val ui = LocalUiPrefs.current
     val artCorner = when {
@@ -87,6 +88,7 @@ fun Artwork(
             loading = { Box(Modifier.fillMaxSize().background(placeholder)) },
             error = { Box(Modifier.fillMaxSize().background(placeholder)) },
         )
+        if (animated != null) AnimatedCoverLayer(animated, Modifier.fillMaxSize())
     }
 }
 

@@ -5,6 +5,8 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Devices
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.Podcasts
+import androidx.compose.material.icons.filled.Radio
 import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
@@ -83,6 +85,8 @@ object NavMenu {
         NavMenuItem("search", Routes.SEARCH, Icons.Outlined.Search, R.string.text_search_bce064, locked = true),
         NavMenuItem("library", Routes.LIBRARY, Icons.Outlined.LibraryMusic, R.string.text_your_library_fd740f, locked = true),
         NavMenuItem("explore", Routes.EXPLORE, Icons.Outlined.Explore, R.string.discovery_explore, discovery = true),
+        NavMenuItem("radio", Routes.RADIO, Icons.Filled.Radio, R.string.text_radio_b11bf1),
+        NavMenuItem("podcasts", Routes.PODCASTS, Icons.Filled.Podcasts, R.string.text_podcasts_fd52b4),
         NavMenuItem("history", Routes.HISTORY, Icons.Filled.History, R.string.text_listening_history_bd9991),
         NavMenuItem("stats", Routes.STATS, Icons.Filled.Workspaces, R.string.text_listening_stats_a760b2),
         NavMenuItem("duplicates", Routes.DUPLICATES, Icons.Filled.ContentCopy, R.string.text_find_duplicates_586f31),
@@ -94,8 +98,9 @@ object NavMenu {
         NavMenuItem("signal_path", Routes.SIGNAL_PATH, Icons.Filled.Route, destination = SettingsDestinations.signalPath, audio = true, advancedAudio = true),
     )
 
+    private val ADDED_LATER = listOf("radio", "podcasts")
     private val defaultMain = listOf("home", "search", "library", "explore")
-    private val defaultMore = listOf("history", "stats", "duplicates")
+    private val defaultMore = listOf("radio", "podcasts", "history", "stats", "duplicates")
 
     fun byId(id: String): NavMenuItem? = items.firstOrNull { it.id == id }
 
@@ -112,6 +117,11 @@ object NavMenu {
         // layouts saved before explore existed get it next to the library; a newer layout that hid it keeps it hidden
         if (parts["hidden"] == null && "explore" !in mainIds && "explore" !in moreIds) {
             mainIds.add((mainIds.indexOf("library") + 1).coerceIn(0, mainIds.size), "explore")
+        }
+        // items added since the layout was saved land in more instead of disappearing into hidden
+        if (savedMain != null || savedMore != null) {
+            val known = mainIds + moreIds + parts["hidden"].orEmpty()
+            ADDED_LATER.filter { it !in known }.forEach(moreIds::add)
         }
         moreIds.removeAll { byId(it)?.locked == true }
         val main = mainIds.mapNotNull(::byId)

@@ -8,6 +8,16 @@
     <string name="discovery_related" formatted="false">"Relacionado"</string>
     <string name="discovery_related_empty" formatted="false">"O YouTube Music não tem nada relacionado com esta música."</string>
     <string name="discovery_start_radio" formatted="false">"Iniciar rádio"</string>
+    <string name="insights_location_history_guide_desktop" formatted="false">"Cada reprodução guarda o local exato onde tocou, para você ver no mapa. Fica neste computador, nunca é enviado e fica fora dos backups. Você pode apagar aqui ou pelo mapa a qualquer momento."</string>
+    <string name="insights_places_guide_desktop" formatted="false">"Enquanto a música toca, o Aurora verifica sua localização no máximo a cada 10 minutos, compara com Casa e Trabalho e guarda só o rótulo. Casa e Trabalho ficam neste computador e ficam fora de todos os backups."</string>
+    <string name="insights_step_private_title_desktop" formatted="false">"Fica no seu computador"</string>
+    <string name="levels_desktop_exclusive_needed" formatted="false">"Inicia a reprodução numa saída exclusiva para calibrar."</string>
+    <string name="levels_desktop_hardware_help" formatted="false">"Introduz 0=dB: o volume de hardware atual do DAC em relação à saída máxima."</string>
+    <string name="levels_desktop_hardware_points" formatted="false">"Atenuação do volume de hardware"</string>
+    <string name="levels_desktop_volume" formatted="false">"O volume do Aurora é medido diretamente. Calibra com o volume de hardware atual do DAC."</string>
+    <string name="location_open_windows_settings" formatted="false">"Abrir definições de localização"</string>
+    <string name="location_unsupported" formatted="false">"A localização não está disponível neste sistema."</string>
+    <string name="location_windows_off" formatted="false">"O Windows está a bloquear a localização para apps de ambiente de trabalho. Ativa o acesso à localização, incluindo para essas apps, e tenta novamente."</string>
     <string name="lyrics_settings_summary" formatted="false">"Estilo de sincronização e origem das letras"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Base de dados de letras gratuita da comunidade"</string>
     <string name="lyrics_source_server" formatted="false">"Origem da Música"</string>
@@ -24,6 +34,8 @@
     <string name="merge_options_summary" formatted="false">"O que os serviços combinados acrescentam às tuas músicas"</string>
     <string name="merge_songs_from" formatted="false">"Músicas De"</string>
     <string name="playlist_save_to" formatted="false">"Guardar Em"</string>
+    <string name="storage_youtube_desktop_note" formatted="false">"As transferências do YouTube são guardadas em Music/Aurora na tua pasta de utilizador, que é adicionada às tuas pastas de música."</string>
+    <string name="tag_edit_desktop_note" formatted="false">"Escrever etiquetas altera o ficheiro neste computador. Fecha-o primeiro noutras apps."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acrílico"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"Adicionar pasta de músicas"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Decodificação de áudio. Copyright © os desenvolvedores do FFmpeg. LGPL-3.0-or-later, vinculado dinamicamente por meio do JavaCPP Presets. Licença completa: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
@@ -86,4 +98,7 @@
     <string name="text_volume_3b18e8" formatted="false">"Volume"</string>
     <string name="text_windows_capabilities_0f1fa0" formatted="false">"Recursos do Windows"</string>
     <string name="text_windows_java_2566af">"Windows · Java %1$d"</string>
+    <string name="update_desktop_install_failed" formatted="false">"Não foi possível iniciar o instalador. Também podes transferir a atualização do GitHub."</string>
+    <string name="update_desktop_install_note" formatted="false">"O Aurora fecha enquanto o instalador é executado. Abre-o novamente quando a instalação terminar."</string>
+    <string name="youtube_download_open_folder" formatted="false">"Abrir pasta de transferências"</string>
 </resources>

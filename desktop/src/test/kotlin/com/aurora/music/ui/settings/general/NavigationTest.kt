@@ -26,18 +26,24 @@ class NavigationTest {
     @Test fun defaultLayoutKeepsAndroidOnlyItemsOut() {
         val layout = NavMenu.parse("")
         assertEquals(listOf("home", "search", "library", "explore"), layout.main.map { it.id })
-        assertEquals(listOf("history", "stats", "duplicates"), layout.more.map { it.id })
+        assertEquals(listOf("radio", "podcasts", "history", "stats", "duplicates"), layout.more.map { it.id })
         assertEquals(listOf("playback", "output", "equalizer", "loudness", "advanced_audio", "signal_path"), layout.hidden.map { it.id })
         assertNull(NavMenu.byId("network"))
-        assertNull(NavMenu.byId("radio"))
-        assertNull(NavMenu.byId("podcasts"))
         assertTrue(NavMenu.items.all { it.label.isNotBlank() })
+    }
+
+    @Test fun itemsAddedLaterJoinMoreUnlessTheyWereHidden() {
+        val older = NavMenu.parse("main=home,search,library,explore;more=history;hidden=stats,duplicates")
+        assertEquals(listOf("history", "radio", "podcasts"), older.more.map { it.id })
+        val chosen = NavMenu.parse("main=home,search,library,explore;more=history;hidden=radio,podcasts,stats")
+        assertEquals(listOf("history"), chosen.more.map { it.id })
+        assertEquals(NavPlacement.HIDDEN, chosen.placementOf("radio"))
     }
 
     @Test fun savedLayoutsSurviveUnknownIdsAndKeepLockedItems() {
         val layout = NavMenu.parse("main=output,network,radio;more=home,podcasts,stats,network")
-        assertEquals(setOf("home", "search", "library", "explore", "output"), layout.main.map { it.id }.toSet())
-        assertEquals(listOf("stats"), layout.more.map { it.id })
+        assertEquals(setOf("home", "search", "library", "explore", "output", "radio"), layout.main.map { it.id }.toSet())
+        assertEquals(listOf("podcasts", "stats"), layout.more.map { it.id })
         assertEquals(NavPlacement.HIDDEN, layout.placementOf("history"))
 
         val edited = layout.move("history", NavPlacement.MAIN).move("output", NavPlacement.MORE).shift("history", -1).move("home", NavPlacement.HIDDEN)
@@ -51,7 +57,7 @@ class NavigationTest {
         assertEquals(listOf("home", "search", "library"), advanced.visible(simpleMode = true, discovery = false).main.map { it.id })
         val hiddenExplore = NavMenu.parse(advanced.move("explore", NavPlacement.HIDDEN).encode())
         assertEquals(NavPlacement.HIDDEN, hiddenExplore.placementOf("explore"))
-        assertEquals(listOf("stats"), advanced.visible(simpleMode = true).more.map { it.id })
+        assertEquals(listOf("stats", "radio", "podcasts"), advanced.visible(simpleMode = true).more.map { it.id })
     }
 
     @Test fun settingsDestinationsAreUniqueAndDesktopOnly() {

@@ -1,5 +1,6 @@
 package com.aurora.music.ui.screens.stats
 
+import androidx.compose.material.icons.filled.Place
 import com.aurora.music.localization.appString
 import com.aurora.music.R
 
@@ -49,9 +50,15 @@ import java.util.Locale
 import com.aurora.music.ui.theme.themedCorner
 
 @Composable
-fun ListeningHistoryScreen(contentPadding: PaddingValues, onBack: () -> Unit, onPlay: (String) -> Unit) {
+fun ListeningHistoryScreen(contentPadding: PaddingValues, onBack: () -> Unit, onPlay: (String) -> Unit, onShowOnMap: ((String, Long) -> Unit)? = null) {
     val container = LocalDesktopContainer.current
     val history by container.playHistory.history.collectAsStateWithLifecycle()
+    val insights by container.settingsStore.insightsPrefs.collectAsStateWithLifecycle(initialValue = com.aurora.music.data.InsightsPrefs())
+    // an entry gets a map button when it falls inside a located play of the same song
+    val located by androidx.compose.runtime.produceState(emptyMap<String, List<LongRange>>(), history.size, insights.enabled) {
+        value = if (!insights.enabled || onShowOnMap == null) emptyMap()
+            else container.listeningDetails.located().groupBy { it.track.songId }.mapValues { (_, plays) -> plays.map { (it.startedAt - 60_000)..(it.endedAt + 60_000) } }
+    }
     val timeFmt = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
 
     Column(Modifier.fillMaxWidth()) {
@@ -87,6 +94,10 @@ fun ListeningHistoryScreen(contentPadding: PaddingValues, onBack: () -> Unit, on
                         Column(Modifier.weight(1f)) {
                             Text(e.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                             Text(e.artist, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        }
+                        if (onShowOnMap != null && located[e.songId]?.any { e.timestamp in it } == true) {
+                            Icon(androidx.compose.material.icons.Icons.Filled.Place, appString(R.string.map_show_on_map), tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(36.dp).clip(androidx.compose.foundation.shape.CircleShape).clickable { onShowOnMap(e.songId, e.timestamp) }.padding(8.dp))
                         }
                         Text(timeFmt.format(Date(e.timestamp)), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }

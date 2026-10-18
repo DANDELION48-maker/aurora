@@ -1,0 +1,101 @@
+package com.aurora.music.viewmodel
+
+import com.aurora.music.localization.appString
+import com.aurora.music.R
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.aurora.music.desktop.DesktopContainer
+import com.aurora.music.data.RadioStation
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+data class RadioUiState(
+    val loading: Boolean = false,
+    val popular: List<RadioStation> = emptyList(),
+    val results: List<RadioStation> = emptyList(),
+    val query: String = "",
+    val activeTag: String = "",
+    val failed: Boolean = false,
+)
+
+class RadioViewModel(private val container: DesktopContainer) : ViewModel() {
+
+    private val _state = MutableStateFlow(RadioUiState())
+    val state: StateFlow<RadioUiState> = _state.asStateFlow()
+
+    private var searchJob: Job? = null
+
+    val favorites: StateFlow<List<RadioStation>> =
+        container.settingsStore.radioFavorites.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    init { loadPopular() }
+
+    fun loadPopular() {
+        _state.update { it.copy(loading = true, failed = false, query = "", activeTag = "") }
+        viewModelScope.launch {
+            val list = container.radioBrowser.topStations()
+            _state.update { it.copy(popular = list.orEmpty(), results = emptyList(), loading = false, failed = list == null) }
+        }
+    }
+
+    fun search(query: String) {
+        val q = query.trim()
+        searchJob?.cancel()
+        if (q.isBlank()) { clearSearch(); return }
+        _state.update { it.copy(loading = true, failed = false, query = q, activeTag = "") }
+        searchJob = viewModelScope.launch {
+            delay(350)
+            val list = container.radioBrowser.search(q)
+            _state.update { it.copy(results = list.orEmpty(), loading = false, failed = list == null) }
+        }
+    }
+
+    fun byTag(tag: String) {
+        _state.update { it.copy(loading = true, failed = false, query = "", activeTag = tag) }
+        viewModelScope.launch {
+            val list = container.radioBrowser.byTag(tag)
+            _state.update { it.copy(results = list.orEmpty(), loading = false, failed = list == null) }
+        }
+    }
+
+    fun clearSearch() {
+        _state.update { it.copy(query = "", activeTag = "", results = emptyList(), failed = false) }
+    }
+
+    fun isFavorite(uuid: String): Boolean = favorites.value.any { it.uuid == uuid }
+
+    fun toggleFavorite(station: RadioStation) {
+        viewModelScope.launch {
+            if (isFavorite(station.uuid)) container.settingsStore.deleteRadioStation(station.uuid)
+            else container.settingsStore.saveRadioStation(station)
+        }
+    }
+
+    fun addCustom(name: String, url: String) {
+        val clean = url.trim()
+        if (clean.isBlank()) return
+        val station = RadioStation(
+            uuid = "custom:${clean.hashCode()}",
+            name = name.trim().ifBlank { clean.toHttpHostOrUrl() },
+            streamUrl = clean,
+            tags = appString(R.string.text_custom_081ae3),
+            custom = true,
+        )
+        viewModelScope.launch { container.settingsStore.saveRadioStation(station) }
+    }
+
+    fun registerPlay(station: RadioStation) {
+        viewModelScope.launch { runCatching { container.radioBrowser.registerClick(station.uuid) } }
+    }
+
+    private fun String.toHttpHostOrUrl(): String =
+        runCatching { java.net.URI(this).host ?: this }.getOrDefault(this)
+}

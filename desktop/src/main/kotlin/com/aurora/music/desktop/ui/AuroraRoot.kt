@@ -41,7 +41,8 @@ fun AuroraRoot(
         .collectAsState(null)
     val playingAccent = cover?.takeIf { followPlaying && uiPrefs.themeStyle == ThemeStyle.AURORA && it.artworkUrl.isNotBlank() }
         ?.let { rememberDominantColor(it.artworkUrl, it.accent).value }
-    CompositionLocalProvider(LocalDesktopContainer provides container, LocalPlayer provides player) {
+    CompositionLocalProvider(LocalDesktopContainer provides container, LocalPlayer provides player,
+        com.aurora.music.ui.components.LocalAnimatedCovers provides container.animatedCovers) {
         AuroraTheme(uiPrefs, systemAccent, playingAccent, translucent, glassLook) {
             BoxWithConstraints(Modifier.fillMaxSize()) {
                 val window = WindowLayout(maxWidth.value.toInt(), maxHeight.value.toInt())

@@ -207,9 +207,7 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import com.aurora.music.ui.theme.themedCorner
 
-private val unportedRoutes = setOf(
-    Routes.RADIO, Routes.PODCASTS, Routes.SETTINGS_TUNING, Routes.SETTINGS_COMPARISON, Routes.SETTINGS_PRESET_RULES, Routes.SETTINGS_LISTENING,
-)
+private val unportedRoutes = emptySet<String>()
 private val splitKinds = listOf("album", "artist", "playlist", "liked", "smart")
 private val mouseGestures = GesturePrefs(swipeArtwork = false)
 private const val LIKES_REFRESH_INTERVAL_NS = 30_000_000_000L
@@ -269,6 +267,23 @@ private fun Shell(
     val pins = allPins.filter { it.serverId == currentServer }
     val offlineMode by container.offline.collectAsStateWithLifecycle()
     val accountEpoch by container.accountEpoch.collectAsStateWithLifecycle()
+    val serverTagEditing = session?.let { repository.supportsServerTagEdit } ?: false
+    var showMix by remember { mutableStateOf(false) }
+    var mixQueue by remember { mutableStateOf<List<Song>>(emptyList()) }
+    val mixVM = viewModel(viewModelStoreOwner = rootOwner, key = "mix-${session?.server}-${session?.username}") { com.aurora.music.viewmodel.MixViewModel(container) }
+    val openMix: () -> Unit = {
+        player.setExpanded(false)
+        mixQueue = player.state.value.queue.filterNot { it.id.startsWith("aurora-mix:") }
+        showMix = true
+    }
+    // a collection mix is built from the whole tracklist and plays straight away in the studio
+    val mixCollection: (String, String, String) -> Unit = { kind, id, name ->
+        player.setExpanded(false)
+        mixQueue = emptyList()
+        showMix = true
+        mixVM.mixCollection(kind, id, name) { }
+    }
+    val editTags: (Song) -> Unit = { song -> navController.navigate(Routes.tagEdit(song.id)) }
     val libraryReload by container.libraryReload.collectAsStateWithLifecycle()
     val downloadedIds = remember(downloadsMap, session, sessionReady, offlineMode, accountEpoch, libraryReload) {
         repository.downloadedIds()
@@ -524,6 +539,7 @@ private fun Shell(
             currentIndex = playerState.currentIndex,
             editable = !playerState.isMix,
             onClear = { player.clearQueue() },
+            onOpenMix = openMix,
             onSaveAsPlaylist = { name ->
                 player.saveQueueAsPlaylist(name) {
                     confirm(it)
@@ -542,7 +558,10 @@ private fun Shell(
             }
             DetailScreen(
                 contentPadding = padding,
+                onMix = { mixCollection(kind, id, detailState.data?.info?.title ?: appString(R.string.text_collection_30c54a)) },
                 state = detailState,
+                onEditTags = editTags,
+                serverTagEditing = serverTagEditing,
                 likedIds = playerState.likedIds,
                 currentSongId = playerState.current.id,
                 isPlaying = playerState.isPlaying,
@@ -652,16 +671,23 @@ private fun Shell(
             BackupScreen(padding, container.backupManager, onBack = pop, confirm = { confirm(it) })
         }
         composable(Routes.SETTINGS_INSIGHTS) {
-            com.aurora.music.ui.screens.settings.DetailedStatsScreen(padding, onBack = pop, onOpenInsights = { nav.navigate(Routes.INSIGHTS) })
+            com.aurora.music.ui.screens.settings.DetailedStatsScreen(padding, onBack = pop, onOpenInsights = { nav.navigate(Routes.INSIGHTS) },
+                onOpenMap = { nav.navigate(Routes.LISTENING_MAP) })
+        }
+        composable(Routes.LISTENING_MAP) { com.aurora.music.ui.screens.stats.ListeningMapScreen(padding, onBack = pop) }
+        composable(Routes.LISTENING_MAP + "/{songId}/{at}") { entry ->
+            com.aurora.music.ui.screens.stats.ListeningMapScreen(padding, onBack = pop, songId = entry.arg("songId").ifBlank { null },
+                at = entry.arg("at").toLongOrNull())
         }
         composable(Routes.INSIGHTS) {
-            com.aurora.music.ui.screens.stats.InsightsScreen(padding, onBack = pop, onSetup = { nav.navigate(Routes.SETTINGS_INSIGHTS) })
+            com.aurora.music.ui.screens.stats.InsightsScreen(padding, onBack = pop, onSetup = { nav.navigate(Routes.SETTINGS_INSIGHTS) },
+                onOpenMap = { nav.navigate(Routes.LISTENING_MAP) })
         }
         composable(Routes.INSIGHTS + "/{period}/{date}") { entry ->
             val period = runCatching { RecapPeriod.valueOf(entry.arg("period")) }.getOrDefault(RecapPeriod.MONTH)
             val date = runCatching { LocalDate.parse(entry.arg("date")) }.getOrDefault(LocalDate.now())
             com.aurora.music.ui.screens.stats.InsightsScreen(padding, onBack = pop, onSetup = { nav.navigate(Routes.SETTINGS_INSIGHTS) },
-                initialWindow = RecapWindow.containing(period, date))
+                initialWindow = RecapWindow.containing(period, date), onOpenMap = { nav.navigate(Routes.LISTENING_MAP) })
         }
         composable(Routes.SETTINGS_INTEGRATIONS) {
             IntegrationsSettingsScreen(
@@ -671,7 +697,32 @@ private fun Shell(
                 onOpenLastfm = { nav.navigate(Routes.SETTINGS_INTEGRATION_LASTFM) },
                 onOpenListenBrainz = { nav.navigate(Routes.SETTINGS_INTEGRATION_LISTENBRAINZ) },
                 onOpenArtistInfo = { nav.navigate(Routes.SETTINGS_INTEGRATION_ARTIST_INFO) },
+                onOpenDiscord = { nav.navigate(Routes.SETTINGS_INTEGRATION_DISCORD) },
+                onOpenAcoustId = { nav.navigate(Routes.SETTINGS_INTEGRATION_ACOUSTID) },
             )
+        }
+        composable(Routes.SETTINGS_COMPARISON) {
+            val comparisonVM = viewModel { com.aurora.music.viewmodel.ComparisonViewModel(container, player) }
+            com.aurora.music.ui.screens.settings.ComparisonScreen(padding, onBack = pop, onOpenPresets = { nav.navigate(Routes.SETTINGS_PROCESSING_PRESETS) },
+                currentSong = player.state.value.current, model = comparisonVM)
+        }
+        composable(Routes.SETTINGS_LISTENING) { com.aurora.music.ui.screens.settings.ListeningLevelsScreen(padding, onBack = pop) }
+        composable(Routes.SETTINGS_TUNING) {
+            com.aurora.music.ui.screens.settings.TuningProjectsScreen(contentPadding = padding, onBack = pop,
+                onOpenRack = { nav.navigate(Routes.SETTINGS_PROCESSING_RACK) })
+        }
+        composable(Routes.SETTINGS_PRESET_RULES) { com.aurora.music.ui.screens.settings.PresetRulesScreen(padding, onBack = pop) }
+        composable(Routes.SETTINGS_SONIC) { com.aurora.music.ui.screens.settings.SonicSettingsScreen(padding, onBack = pop) }
+        composable(Routes.SETTINGS_INTEGRATION_ACOUSTID) { com.aurora.music.ui.screens.settings.AcoustIdIntegrationScreen(padding, pop) }
+        composable(Routes.SETTINGS_INTEGRATION_DISCORD) {
+            val settings = LocalDesktopContainer.current.settingsStore
+            val discordScope = rememberCoroutineScope()
+            var signingIn by remember { mutableStateOf(false) }
+            com.aurora.music.ui.screens.settings.DiscordIntegrationScreen(padding, onBack = pop, onOpenDiscordLogin = { signingIn = true })
+            if (signingIn) com.aurora.music.ui.screens.auth.DiscordLoginWindow(onClose = { signingIn = false }) { token ->
+                signingIn = false
+                discordScope.launch { settings.saveDiscord(token, "") }
+            }
         }
         composable(Routes.SETTINGS_INTEGRATION_LYRICS) { LyricsIntegrationScreen(padding, pop) }
         composable(Routes.SETTINGS_INTEGRATION_LASTFM) { LastfmIntegrationScreen(padding, pop) }
@@ -708,8 +759,13 @@ private fun Shell(
         }
         composable(Routes.SETTINGS_IMPULSES) { ConvolutionLibraryScreen(padding, player.signalPath, pop) }
         composable(Routes.SETTINGS_VISUALIZER) { VisualizerSettingsScreen(padding, pop) }
-        composable(Routes.SETTINGS_SOURCES) { SourcesSettingsScreen(padding, onBack = pop, onArtistSeparators = null) }
-        composable(Routes.SETTINGS_STORAGE) { StorageSettingsScreen(padding, pop) }
+        composable(Routes.SETTINGS_SOURCES) { SourcesSettingsScreen(padding, onBack = pop, onArtistSeparators = { nav.navigate(Routes.SETTINGS_ARTIST_SEPARATORS) }) }
+        composable(Routes.SETTINGS_ARTIST_SEPARATORS) { com.aurora.music.ui.screens.settings.ArtistSeparatorsScreen(padding, onBack = pop) }
+        composable(Routes.SETTINGS_STORAGE) { StorageSettingsScreen(padding, pop, onOpenYouTubeDownload = { nav.navigate(Routes.YOUTUBE_DOWNLOAD) }) }
+        composable(Routes.YOUTUBE_DOWNLOAD) {
+            com.aurora.music.ui.screens.youtube.YouTubeDownloadScreen(padding, onBack = pop,
+                onOpenSettings = { nav.navigate(Routes.SETTINGS_STORAGE) { launchSingleTop = true } })
+        }
         composable(Routes.SETTINGS_ABOUT) { AboutSettingsScreen(padding, pop) }
         composable(Routes.SETTINGS_LANGUAGE) { LanguageSettingsScreen(padding, pop) }
     }
@@ -897,6 +953,27 @@ private fun Shell(
                                     onOpenCategory = { navController.navigate(Routes.exploreCategory(it.params, it.title)) },
                                 )
                             }
+                            composable(Routes.TAG_EDIT, arguments = listOf(navArgument("songId") { defaultValue = "" })) { entry ->
+                                val songId = entry.arg("songId")
+                                val tagVM = viewModel(key = "tag-edit-$songId") { com.aurora.music.viewmodel.TagEditViewModel(container) }
+                                LaunchedEffect(songId) { tagVM.load(songId) }
+                                val tagState by tagVM.state.collectAsStateWithLifecycle()
+                                com.aurora.music.ui.screens.detail.TagEditScreen(contentPadding = inner, state = tagState, onEdit = tagVM::edit, onMatch = tagVM::matchOnline,
+                                    onApplyMatch = tagVM::applyMatch, onIdentify = if (container.acoustId.available && tagState.localFile) ({ tagVM.identify() }) else null,
+                                    identifying = tagState.identifying, onBack = { navController.popBackStack() }, confirm = { confirm(it) })
+                            }
+                            composable(Routes.RADIO) {
+                                com.aurora.music.ui.screens.radio.RadioScreen(contentPadding = inner, onBack = { navController.popBackStack() }, onPlay = { player.play(it) })
+                            }
+                            composable(Routes.PODCASTS) {
+                                com.aurora.music.ui.screens.podcasts.PodcastsScreen(contentPadding = inner, onBack = { navController.popBackStack() },
+                                    onOpenPodcast = { p -> navController.navigate(Routes.podcastDetail(p.feedUrl, p.displayTitle, p.imageUrl.orEmpty(), p.author.orEmpty())) })
+                            }
+                            composable(Routes.PODCAST_DETAIL, arguments = listOf(navArgument("feed") { defaultValue = "" }, navArgument("title") { defaultValue = "" },
+                                navArgument("image") { defaultValue = "" }, navArgument("author") { defaultValue = "" })) { entry ->
+                                com.aurora.music.ui.screens.podcasts.PodcastDetailScreen(contentPadding = inner, feedUrl = entry.arg("feed"), title = entry.arg("title"),
+                                    imageUrl = entry.arg("image"), author = entry.arg("author"), onBack = { navController.popBackStack() }, onPlay = { player.play(it) })
+                            }
                             composable(Routes.EXPLORE_CATEGORY,
                                 arguments = listOf(navArgument("params") { defaultValue = "" }, navArgument("title") { defaultValue = "" })) { entry ->
                                 com.aurora.music.ui.screens.explore.ExploreCategoryScreen(
@@ -957,7 +1034,10 @@ private fun Shell(
                                         Box(if (selected != null) Modifier.width(listWidth).fillMaxHeight() else Modifier.weight(1f).fillMaxHeight()) {
                                             LibraryScreen(
                                                 contentPadding = inner,
+                                                onOpenMix = openMix,
                                                 state = libraryState,
+                                                onEditTags = editTags,
+                                                serverTagEditing = serverTagEditing,
                                                 username = profileAppearance.name,
                                                 likedIds = playerState.likedIds,
                                                 currentSongId = playerState.current.id,
@@ -1022,6 +1102,9 @@ private fun Shell(
                                                     }
                                                 },
                                                 onOpenFolders = { navController.navigate(Routes.folders()) },
+                                                onOpenRadio = { navController.navigate(Routes.RADIO) },
+                                                onOpenPodcasts = { navController.navigate(Routes.PODCASTS) },
+                                                onOpenYouTubeDownload = { navController.navigate(Routes.YOUTUBE_DOWNLOAD) },
                                                 onPlayCollection = { id, kind ->
                                                     scope.launch {
                                                         repository.detail(kind, id)?.let { d -> if (d.tracks.isNotEmpty()) player.playCollection(kind, id, d.tracks, 0, d.info.songCount) }
@@ -1103,6 +1186,8 @@ private fun Shell(
                                 FolderScreen(
                                     contentPadding = inner,
                                     title = entry.arg("title"),
+                                    onEditTags = editTags,
+                                    serverTagEditing = serverTagEditing,
                                     loading = folderState.loading,
                                     content = folderState.content,
                                     likedIds = playerState.likedIds,
@@ -1215,7 +1300,7 @@ private fun Shell(
                                                     onOpenSignalPath = { open(Routes.SIGNAL_PATH) },
                                                     onOpenEq = { open(Routes.SETTINGS_EQ) },
                                                     onOpenVisualizer = { open(Routes.SETTINGS_VISUALIZER) },
-                                                    onOpenSonic = null,
+                                                    onOpenSonic = { open(Routes.SETTINGS_SONIC) },
                                                     onOpenSources = { open(Routes.SETTINGS_SOURCES) },
                                                     onOpenDownloads = { open(Routes.SETTINGS_STORAGE) },
                                                     onOpenAppearance = { open(Routes.SETTINGS_APPEARANCE) },
@@ -1261,7 +1346,8 @@ private fun Shell(
                             }
                             settingsGraph(navController, inner)
                             composable(Routes.HISTORY) {
-                                ListeningHistoryScreen(contentPadding = inner, onBack = { navController.popBackStack() }, onPlay = { playById(it) })
+                                ListeningHistoryScreen(contentPadding = inner, onBack = { navController.popBackStack() }, onPlay = { playById(it) },
+                                    onShowOnMap = { id, at -> navController.navigate(Routes.listeningMap(id, at)) })
                             }
                             composable(Routes.DUPLICATES) {
                                 val dupVM = viewModel { DuplicatesViewModel(container) }
@@ -1338,6 +1424,11 @@ private fun Shell(
                 ) {
                     PlayerScreen(
                         state = playerState,
+                        onOpenMix = openMix,
+                        video = player.video.collectAsStateWithLifecycle().value,
+                        onRequestVideo = { canvas -> player.requestMusicVideo(canvas) { confirm(it) } },
+                        onVideoVisibleChange = { player.setVideoVisible(it) },
+                        onVideoQualityChange = { player.setVideoQuality(it) },
                         onCollapse = { player.setExpanded(false) },
                         onTogglePlay = { player.togglePlay() },
                         onNext = { player.next() },
@@ -1389,6 +1480,11 @@ private fun Shell(
 
             AnimatedVisibility(visible = showVisualizer, enter = fadeIn(tween(220)), exit = fadeOut(tween(180))) {
                 VisualizerScreen(state = playerState, onClose = { showVisualizer = false })
+            }
+            if (showMix) {
+                Box(Modifier.fillMaxSize().background(com.aurora.music.ui.theme.solidColors().background)) {
+                    com.aurora.music.ui.screens.player.MixScreen(mixVM, mixQueue, onClose = { showMix = false })
+                }
             }
         }
     }

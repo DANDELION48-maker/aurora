@@ -8,6 +8,16 @@
     <string name="discovery_related" formatted="false">"関連"</string>
     <string name="discovery_related_empty" formatted="false">"YouTube Music にこの曲の関連コンテンツはありません。"</string>
     <string name="discovery_start_radio" formatted="false">"ラジオを開始"</string>
+    <string name="insights_location_history_guide_desktop" formatted="false">"各再生は再生された正確な場所を保存し、地図で確認できます。データはこのコンピューターにのみ保存され、アップロードされることはなく、バックアップにも含まれません。ここまたは地図からいつでも削除できます。"</string>
+    <string name="insights_places_guide_desktop" formatted="false">"音楽の再生中、Aurora は最大 10 分に 1 回位置を確認し、自宅と職場と比べてラベルだけを残します。自宅と職場の位置そのものはこのコンピューターにのみ保存され、どのバックアップにも含まれません。"</string>
+    <string name="insights_step_private_title_desktop" formatted="false">"データはこのコンピューターの中だけ"</string>
+    <string name="levels_desktop_exclusive_needed" formatted="false">"キャリブレーションするには排他出力で再生を開始してください。"</string>
+    <string name="levels_desktop_hardware_help" formatted="false">"0=dB を入力：最大出力に対する DAC の現在のハードウェア音量。"</string>
+    <string name="levels_desktop_hardware_points" formatted="false">"ハードウェア音量の減衰"</string>
+    <string name="levels_desktop_volume" formatted="false">"Aurora 自体の音量は直接測定されます。DAC の現在のハードウェア音量でキャリブレーションしてください。"</string>
+    <string name="location_open_windows_settings" formatted="false">"位置情報の設定を開く"</string>
+    <string name="location_unsupported" formatted="false">"このシステムでは位置情報を利用できません。"</string>
+    <string name="location_windows_off" formatted="false">"Windows がデスクトップアプリの位置情報をブロックしています。デスクトップアプリを含めて位置情報へのアクセスをオンにしてから、もう一度お試しください。"</string>
     <string name="lyrics_settings_summary" formatted="false">"同期スタイルと歌詞の取得元"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"無料のコミュニティ歌詞データベース"</string>
     <string name="lyrics_source_server" formatted="false">"曲の取得元"</string>
@@ -24,6 +34,8 @@
     <string name="merge_options_summary" formatted="false">"統合したサービスが曲に追加するもの"</string>
     <string name="merge_songs_from" formatted="false">"曲のソース"</string>
     <string name="playlist_save_to" formatted="false">"保存先"</string>
+    <string name="storage_youtube_desktop_note" formatted="false">"YouTube からのダウンロードはユーザーフォルダー内の Music/Aurora に保存され、音楽フォルダーに追加されます。"</string>
+    <string name="tag_edit_desktop_note" formatted="false">"タグを書き込むとこのコンピューター上のファイルが変更されます。先に他のアプリで閉じてください。"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"アクリル"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"音楽フォルダを追加"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"音声デコード。Copyright © FFmpeg developers。LGPL-3.0-or-later、JavaCPP Presets を通じて動的リンク。ライセンス全文：https://www.gnu.org/licenses/lgpl-3.0.html"</string>
@@ -86,4 +98,7 @@
     <string name="text_volume_3b18e8" formatted="false">"音量"</string>
     <string name="text_windows_capabilities_0f1fa0" formatted="false">"Windows の機能"</string>
     <string name="text_windows_java_2566af">"Windows · Java %1$d"</string>
+    <string name="update_desktop_install_failed" formatted="false">"インストーラーを起動できませんでした。アップデートは GitHub からもダウンロードできます。"</string>
+    <string name="update_desktop_install_note" formatted="false">"インストーラーの実行中は Aurora が終了します。セットアップが完了したら再度開いてください。"</string>
+    <string name="youtube_download_open_folder" formatted="false">"ダウンロードフォルダーを開く"</string>
 </resources>

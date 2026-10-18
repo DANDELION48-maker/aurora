@@ -192,6 +192,7 @@ internal fun httpOptions(http: HttpOptions): List<Pair<String, String>> = buildL
     if (http.headers.isNotEmpty()) add("headers" to http.headers.entries.joinToString("") { "${it.key}: ${it.value}\r\n" })
     http.userAgent?.let { add("user_agent" to it) }
     add("rw_timeout" to (http.timeoutMs * 1000L).toString())
+    if (http.rangedRequests) add("request_size" to (4L shl 20).toString())
     if (http.reconnect) {
         add("reconnect" to "1")
         add("reconnect_on_network_error" to "1")

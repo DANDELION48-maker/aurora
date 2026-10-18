@@ -8,6 +8,16 @@
     <string name="discovery_related" formatted="false">"Similaires"</string>
     <string name="discovery_related_empty" formatted="false">"YouTube Music n\'a rien de similaire à ce morceau."</string>
     <string name="discovery_start_radio" formatted="false">"Lancer la radio"</string>
+    <string name="insights_location_history_guide_desktop" formatted="false">"Chaque écoute conserve l’endroit exact où elle a été jouée, pour la voir sur une carte. Les données restent sur cet ordinateur, ne sont jamais envoyées et sont exclues des sauvegardes. Vous pouvez les supprimer ici ou depuis la carte à tout moment."</string>
+    <string name="insights_places_guide_desktop" formatted="false">"Pendant la lecture, Aurora vérifie votre position au plus toutes les 10 minutes, la compare à Domicile et Travail et ne garde que l’étiquette. Domicile et Travail restent sur cet ordinateur et sont exclus de toutes les sauvegardes."</string>
+    <string name="insights_step_private_title_desktop" formatted="false">"Tout reste sur votre ordinateur"</string>
+    <string name="levels_desktop_exclusive_needed" formatted="false">"Lance la lecture sur une sortie exclusive pour calibrer."</string>
+    <string name="levels_desktop_hardware_help" formatted="false">"Saisis 0=dB : le volume matériel actuel du DAC par rapport à la sortie maximale."</string>
+    <string name="levels_desktop_hardware_points" formatted="false">"Atténuation du volume matériel"</string>
+    <string name="levels_desktop_volume" formatted="false">"Le volume propre d\'Aurora est mesuré directement. Calibre au volume matériel actuel du DAC."</string>
+    <string name="location_open_windows_settings" formatted="false">"Ouvrir les paramètres de localisation"</string>
+    <string name="location_unsupported" formatted="false">"La localisation n\'est pas disponible sur ce système."</string>
+    <string name="location_windows_off" formatted="false">"Windows bloque la localisation pour les applis de bureau. Active l\'accès à la localisation, y compris pour les applis de bureau, puis réessaie."</string>
     <string name="lyrics_settings_summary" formatted="false">"Style de synchronisation et provenance des paroles"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Base de paroles gratuite et communautaire"</string>
     <string name="lyrics_source_server" formatted="false">"Source du Morceau"</string>
@@ -24,6 +34,8 @@
     <string name="merge_options_summary" formatted="false">"Ce que les services fusionnés ajoutent à tes morceaux"</string>
     <string name="merge_songs_from" formatted="false">"Morceaux De"</string>
     <string name="playlist_save_to" formatted="false">"Enregistrer Dans"</string>
+    <string name="storage_youtube_desktop_note" formatted="false">"Les téléchargements YouTube sont enregistrés dans Music/Aurora de ton dossier utilisateur, qui est ajouté à tes dossiers de musique."</string>
+    <string name="tag_edit_desktop_note" formatted="false">"Écrire les tags modifie le fichier sur cet ordinateur. Ferme-le d\'abord dans les autres applis."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acrylique"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"Ajouter un dossier de musique"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Décodage audio. Copyright © les développeurs de FFmpeg. LGPL-3.0-or-later, lié dynamiquement via JavaCPP Presets. Licence complète : https://www.gnu.org/licenses/lgpl-3.0.html"</string>
@@ -86,4 +98,7 @@
     <string name="text_volume_3b18e8" formatted="false">"Volume"</string>
     <string name="text_windows_capabilities_0f1fa0" formatted="false">"Fonctionnalités Windows"</string>
     <string name="text_windows_java_2566af">"Windows · Java %1$d"</string>
+    <string name="update_desktop_install_failed" formatted="false">"Impossible de lancer le programme d\'installation. Tu peux aussi télécharger la mise à jour sur GitHub."</string>
+    <string name="update_desktop_install_note" formatted="false">"Aurora se ferme pendant l\'installation. Rouvre-le une fois l\'installation terminée."</string>
+    <string name="youtube_download_open_folder" formatted="false">"Ouvrir le dossier de téléchargement"</string>
 </resources>

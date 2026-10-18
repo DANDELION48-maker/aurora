@@ -8,6 +8,16 @@
     <string name="discovery_related" formatted="false">"Benzer"</string>
     <string name="discovery_related_empty" formatted="false">"YouTube Music\'te bu şarkıyla ilgili bir şey yok."</string>
     <string name="discovery_start_radio" formatted="false">"Radyo başlat"</string>
+    <string name="insights_location_history_guide_desktop" formatted="false">"Her dinleme çaldığı tam konumu saklar, böylece haritada görebilirsiniz. Bu bilgisayarda kalır, hiçbir yere yüklenmez ve yedeklere dahil edilmez. İstediğiniz zaman buradan veya haritadan silebilirsiniz."</string>
+    <string name="insights_places_guide_desktop" formatted="false">"Müzik çalarken Aurora konumunuzu en fazla 10 dakikada bir kontrol eder, Ev ve İş ile karşılaştırır ve yalnızca etiketi saklar. Ev ve İş konumlarının kendisi bu bilgisayarda kalır ve hiçbir yedeğe dahil edilmez."</string>
+    <string name="insights_step_private_title_desktop" formatted="false">"Bilgisayarınızda kalır"</string>
+    <string name="levels_desktop_exclusive_needed" formatted="false">"Kalibre etmek için özel bir çıkışta oynatmayı başlatın."</string>
+    <string name="levels_desktop_hardware_help" formatted="false">"0=dB girin: DAC\'nin mevcut donanım ses düzeyi, tam çıkışa göre."</string>
+    <string name="levels_desktop_hardware_points" formatted="false">"Donanım ses düzeyi zayıflaması"</string>
+    <string name="levels_desktop_volume" formatted="false">"Aurora\'nın kendi ses düzeyi doğrudan ölçülür. DAC\'nin mevcut donanım ses düzeyinde kalibre edin."</string>
+    <string name="location_open_windows_settings" formatted="false">"Konum ayarlarını aç"</string>
+    <string name="location_unsupported" formatted="false">"Konum bu sistemde kullanılamıyor."</string>
+    <string name="location_windows_off" formatted="false">"Windows masaüstü uygulamaları için konumu engelliyor. Masaüstü uygulamaları dahil konum erişimini açıp tekrar deneyin."</string>
     <string name="lyrics_settings_summary" formatted="false">"Senkron stili ve şarkı sözlerinin kaynağı"</string>
     <string name="lyrics_source_lrclib_detail" formatted="false">"Ücretsiz topluluk şarkı sözü veritabanı"</string>
     <string name="lyrics_source_server" formatted="false">"Şarkının Kendi Kaynağı"</string>
@@ -24,6 +34,8 @@
     <string name="merge_options_summary" formatted="false">"Birleştirilen hizmetlerin şarkılarınıza kattıkları"</string>
     <string name="merge_songs_from" formatted="false">"Şarkıların Kaynağı"</string>
     <string name="playlist_save_to" formatted="false">"Kaydedileceği Yer"</string>
+    <string name="storage_youtube_desktop_note" formatted="false">"YouTube\'dan indirilenler kullanıcı klasörünüzdeki Music/Aurora\'ya kaydedilir ve bu klasör müzik klasörlerinize eklenir."</string>
+    <string name="tag_edit_desktop_note" formatted="false">"Etiket yazmak bu bilgisayardaki dosyayı değiştirir. Önce diğer uygulamalarda kapatın."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Akrilik"</string>
     <string name="text_add_music_folder_a083d8" formatted="false">"Müzik klasörü ekle"</string>
     <string name="text_audio_decoding_copyright_the_ffmpeg_developers_lgpl_3_0_or_later_6338f2" formatted="false">"Ses kod çözme. Telif hakkı © FFmpeg geliştiricileri. LGPL-3.0-or-later, JavaCPP Presets aracılığıyla dinamik olarak bağlanmıştır. Lisansın tamamı: https://www.gnu.org/licenses/lgpl-3.0.html"</string>
@@ -86,4 +98,7 @@
     <string name="text_volume_3b18e8" formatted="false">"Ses düzeyi"</string>
     <string name="text_windows_capabilities_0f1fa0" formatted="false">"Windows yetenekleri"</string>
     <string name="text_windows_java_2566af">"Windows · Java %1$d"</string>
+    <string name="update_desktop_install_failed" formatted="false">"Yükleyici başlatılamadı. Güncellemeyi GitHub\'dan da indirebilirsiniz."</string>
+    <string name="update_desktop_install_note" formatted="false">"Yükleyici çalışırken Aurora kapanır. Kurulum bitince yeniden açın."</string>
+    <string name="youtube_download_open_folder" formatted="false">"İndirme klasörünü aç"</string>
 </resources>
