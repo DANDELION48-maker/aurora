@@ -11,7 +11,7 @@ import java.net.URLEncoder
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-// token in X-Emby-Authorization header on api calls but as api_key query param on stream/image urls so exoplayer and coil can fetch directly
+// token in the Authorization header on api calls, ApiKey query param on stream/image urls; 12.0+ rejects X-Emby-Authorization/api_key by default
 class JellyfinClient(val session: Session, clientInfo: ClientInfo) {
 
     private val baseUrl: String = session.server.trimEnd('/')
@@ -26,16 +26,16 @@ class JellyfinClient(val session: Session, clientInfo: ClientInfo) {
 
     fun coverArtUrl(itemId: String?, size: Int = 600): String {
         if (itemId.isNullOrBlank()) return ""
-        return "$baseUrl/Items/${enc(itemId)}/Images/Primary?fillHeight=$size&fillWidth=$size&quality=90&api_key=${enc(token)}"
+        return "$baseUrl/Items/${enc(itemId)}/Images/Primary?fillHeight=$size&fillWidth=$size&quality=90&ApiKey=${enc(token)}"
     }
 
     // lossless or no bitrate cap streams the original file untouched
     fun streamUrl(songId: String, maxBitrate: Int, lossless: Boolean): String =
         if (lossless || maxBitrate <= 0) {
-            "$baseUrl/Audio/${enc(songId)}/stream?static=true&DeviceId=${enc(deviceId)}&api_key=${enc(token)}"
+            "$baseUrl/Audio/${enc(songId)}/stream?static=true&DeviceId=${enc(deviceId)}&ApiKey=${enc(token)}"
         } else {
             "$baseUrl/Audio/${enc(songId)}/universal?UserId=${enc(userId)}&DeviceId=${enc(deviceId)}" +
-                "&MaxStreamingBitrate=${maxBitrate * 1000}&Container=mp3&AudioCodec=mp3&api_key=${enc(token)}"
+                "&MaxStreamingBitrate=${maxBitrate * 1000}&Container=mp3&AudioCodec=mp3&ApiKey=${enc(token)}"
         }
 
     companion object {
@@ -49,7 +49,7 @@ class JellyfinClient(val session: Session, clientInfo: ClientInfo) {
         private fun buildApi(server: String, token: String, deviceId: String, clientInfo: ClientInfo): JellyfinApi {
             val interceptor = Interceptor { chain ->
                 val req = chain.request().newBuilder()
-                    .header("X-Emby-Authorization", authHeader(token, deviceId, clientInfo))
+                    .header("Authorization", authHeader(token, deviceId, clientInfo))
                     .build()
                 chain.proceed(req)
             }

@@ -79,7 +79,7 @@ class AccountAuthenticatorTest {
         val request = server.takeRequest()
         assertEquals("POST", request.method)
         assertEquals("/Users/AuthenticateByName", request.path)
-        val header = request.getHeader("X-Emby-Authorization").orEmpty()
+        val header = request.getHeader("Authorization").orEmpty()
         assertTrue(header, header.contains("Client=\"Aurora\""))
         assertTrue(header, header.contains("Device=\"${HostPlatform.name}\""))
         assertTrue(header, header.contains("Version=\"${BuildInfo.VERSION_NAME}\""))
