@@ -20,6 +20,7 @@ import com.aurora.music.AuroraApplication
 import com.aurora.music.playback.network.NetworkOutputManager
 import com.aurora.music.playback.network.NetworkTarget
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun NetworkOutputScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
@@ -28,6 +29,10 @@ fun NetworkOutputScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
     val clipboard = LocalClipboardManager.current
     var address by remember { mutableStateOf("") }
     var code by remember { mutableStateOf("") }
+    var host by remember { mutableStateOf("") }
+    val store = (LocalContext.current.applicationContext as AuroraApplication).container.settingsStore
+    val switch by store.connectSwitch.collectAsStateWithLifecycle(initialValue = com.aurora.music.playback.network.endpoint.ConnectSwitch.KEEP)
+    val scope = rememberCoroutineScope()
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
     LaunchedEffect(state.pairing) {
         while (state.pairing != null && System.currentTimeMillis() < state.pairing!!.expiresAtMs) {
@@ -42,6 +47,23 @@ fun NetworkOutputScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
             Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding() + 24.dp),
         ) {
+            item {
+                SettingsSectionTitle(appString(R.string.connect_settings_title))
+                SettingsGroup {
+                    SegmentedRow(appString(R.string.connect_switch_title), listOf(appString(R.string.connect_switch_keep),
+                        appString(R.string.connect_switch_pause), appString(R.string.connect_switch_move)), switch) {
+                        scope.launch { store.setConnectSwitch(it) }
+                    }
+                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        OutlinedTextField(host, { host = it.take(256) }, label = { Text(appString(R.string.connect_add_by_address)) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri), modifier = Modifier.fillMaxWidth(), singleLine = true)
+                        Text(appString(R.string.connect_address_help), style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        if (state.probed?.known == true) Text(appString(R.string.connect_already_paired), style = MaterialTheme.typography.bodySmall)
+                        Button(onClick = { manager.probe(host) }, enabled = host.isNotBlank() && !state.preparing) { Text(appString(R.string.connect_continue)) }
+                    }
+                }
+            }
             item { NetworkOutputControls(manager, showForget = true) }
             item {
                 SettingsSectionTitle(appString(R.string.text_pair_an_aurora_player_de78d4))
@@ -75,7 +97,13 @@ fun NetworkOutputScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
                     if (state.receiverEnabled) {
                         Column(Modifier.padding(horizontal = 20.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             state.receiverAddress?.let { endpoint ->
-                                Text(endpoint.address, style = MaterialTheme.typography.bodyMedium)
+                                Text(appString(R.string.connect_this_key, com.aurora.music.playback.network.endpoint.EndpointTls.shortKey(endpoint.fingerprint)),
+                                    style = MaterialTheme.typography.titleSmall)
+                                Text(appString(R.string.connect_reachable_at), style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                state.receiverAddresses.ifEmpty { listOf(endpoint.address) }.forEach {
+                                    Text(it.removePrefix("https://"), style = MaterialTheme.typography.bodyMedium)
+                                }
                                 TextButton(onClick = { clipboard.setText(AnnotatedString(endpoint.pairingAddress)) }) {
                                     Text(appString(R.string.text_copy_pairing_address_fc506d))
                                 }
@@ -101,6 +129,11 @@ fun NetworkOutputScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
                 }
             }
         }
+    }
+    state.probed?.takeIf { !it.known }?.let { probed ->
+        com.aurora.music.ui.screens.player.ConnectPairDialog(probed.address.removePrefix("https://"),
+            com.aurora.music.playback.network.endpoint.EndpointTls.shortKey(probed.fingerprint),
+            onPair = manager::pairProbed, onDismiss = manager::dismissProbe)
     }
 }
 

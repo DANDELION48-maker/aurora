@@ -1,5 +1,6 @@
 package com.aurora.music.desktop.ui
 
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.aurora.music.desktop.DesktopContainer
 import com.aurora.music.desktop.player.PlayerController
@@ -11,3 +12,5 @@ val LocalPlayer = staticCompositionLocalOf<PlayerController> { error("no player"
 val LocalTrayAvailable = staticCompositionLocalOf { true }
 
 val LocalBackdropAvailable = staticCompositionLocalOf { false }
+
+val LocalWindowShown = compositionLocalOf { true }

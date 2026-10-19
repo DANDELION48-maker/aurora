@@ -69,6 +69,9 @@ class VideoPlayer(private val url: String, private val http: HttpOptions = HttpO
         private set
     @Volatile var height = 0
         private set
+    // the frame's average colour, eased over a few frames, for backdrops that extend the picture
+    @Volatile var tone = 0xFF000000.toInt()
+        private set
     private val interrupt = AtomicBoolean()
     private val lock = Object()
     @Volatile private var playing = false
@@ -125,7 +128,7 @@ class VideoPlayer(private val url: String, private val http: HttpOptions = HttpO
             val context = codec
             var seekTarget = 0L
             // a loop keeps one running timeline: each pass is shifted to start where the previous one ended
-            var base = 0L
+            var shift = 0L
             var first: Long? = null
             var end = 0L
             fun present() {
@@ -133,7 +136,7 @@ class VideoPlayer(private val url: String, private val http: HttpOptions = HttpO
                     val pts = frame.best_effort_timestamp().takeIf { it != AV_NOPTS_VALUE } ?: frame.pts()
                     val raw = if (pts == AV_NOPTS_VALUE) null else (pts * tick).toLong()
                     if (first == null && raw != null) first = raw
-                    val ms = raw?.plus(base) ?: positionMs
+                    val ms = raw?.plus(shift) ?: positionMs
                     val length = (frame.duration() * tick).toLong().takeIf { it > 0 } ?: 33L
                     end = ms + length
                     // after a seek, frames that end before the target are decoded but never shown
@@ -146,6 +149,7 @@ class VideoPlayer(private val url: String, private val http: HttpOptions = HttpO
                     sws = sws_getCachedContext(sws, srcW, srcH, frame.format(), dstW, dstH, AV_PIX_FMT_RGBA, SWS_BILINEAR, null, null, null as DoublePointer?)
                     sws_scale(sws, frame.data(), frame.linesize(), 0, srcH, planes, strides)
                     pixels.get(bytes)
+                    sampleTone(bytes, ease = !preview)
                     mutableFrame.value = Image.makeRaster(info, bytes, dstW * 4).toComposeImageBitmap()
                     mutableReady.value = true
                     preview = false
@@ -158,7 +162,7 @@ class VideoPlayer(private val url: String, private val http: HttpOptions = HttpO
                     av_seek_frame(format, index, (ms / tick).toLong(), AVSEEK_FLAG_BACKWARD)
                     avcodec_flush_buffers(context)
                     seekTarget = ms
-                    base = 0L
+                    shift = 0L
                 }
                 synchronized(lock) { while (!playing && !preview && pendingSeek == null && !closed) lock.wait(250) }
                 if (closed) break
@@ -171,7 +175,7 @@ class VideoPlayer(private val url: String, private val http: HttpOptions = HttpO
                     if (pendingSeek != null) continue
                     av_seek_frame(format, index, 0, AVSEEK_FLAG_BACKWARD)
                     avcodec_flush_buffers(context)
-                    base = end - start
+                    shift = end - start
                     continue
                 }
                 if (packet.stream_index() != index) { av_packet_unref(packet); continue }
@@ -190,6 +194,21 @@ class VideoPlayer(private val url: String, private val http: HttpOptions = HttpO
             codec?.let { avcodec_free_context(it) }
             if (opened) avformat_close_input(format)
         }
+    }
+
+    private fun sampleTone(bytes: ByteArray, ease: Boolean) {
+        var r = 0L; var g = 0L; var b = 0L; var n = 0L
+        var i = 0
+        while (i + 2 < bytes.size) {
+            r += bytes[i].toInt() and 255; g += bytes[i + 1].toInt() and 255; b += bytes[i + 2].toInt() and 255
+            n++
+            i += 4 * 61
+        }
+        if (n == 0L) return
+        val weight = if (ease) 0.15f else 1f
+        fun mix(old: Int, new: Long) = (old + ((new / n).toInt() - old) * weight).toInt()
+        val old = tone
+        tone = (0xFF shl 24) or (mix(old shr 16 and 255, r) shl 16) or (mix(old shr 8 and 255, g) shl 8) or mix(old and 255, b)
     }
 
     private fun fail() { mutableFailed.value = true }

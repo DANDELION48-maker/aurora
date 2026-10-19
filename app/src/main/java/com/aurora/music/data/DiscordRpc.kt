@@ -120,8 +120,7 @@ class DiscordRpc(
     private fun buildActivity(song: Song, isPlaying: Boolean, positionSec: Float): JsonObject? {
         if (song.title.isBlank()) return null
         val a = discordActivity(song, showAlbum, activityName, positionSec)
-        // discord must fetch the art so without imgur skip private server urls it cant reach
-        val canHost = imgurId().isNotBlank() || isLikelyPublic(song.artworkUrl)
+        val canHost = imgurId().isNotBlank() || isPublicArt(song.artworkUrl)
         if (imagesPossible && song.artworkUrl.isNotBlank() && canHost) {
             val mp = imageCache[imageKey(song.artworkUrl)]
             val assets = JsonObject()
@@ -140,9 +139,10 @@ class DiscordRpc(
         val uploadId = imgurId(); val applicationId = appId; val authorization = token
         scope.launch(Dispatchers.IO) {
             try {
-                val link = if (uploadId.isBlank()) artUrl else {
-                    val bytes = loadDiscordArtwork(context, loader, artUrl)
-                    bytes?.let { imgur.uploadBytes(it, uploadId) }
+                val link = when {
+                    isPublicArt(artUrl) -> artUrl
+                    uploadId.isBlank() -> null
+                    else -> loadDiscordArtwork(context, loader, artUrl)?.let { imgur.uploadBytes(it, uploadId) }
                 }
                 val mp = link?.let { externalAsset(it, applicationId, authorization) }
                 synchronized(this@DiscordRpc) {
@@ -176,27 +176,19 @@ class DiscordRpc(
         }
     }.getOrNull()
 
-    private fun isLikelyPublic(url: String): Boolean {
-        val host = runCatching { java.net.URI(url).host }.getOrNull()?.lowercase() ?: return false
-        if (host == "localhost") return false
-        val o = host.split(".").mapNotNull { it.toIntOrNull() }
-        if (o.size != 4) return !host.contains(":")
-        val a = o[0]; val b = o[1]
-        return when {
-            a == 10 -> false
-            a == 127 -> false
-            a == 169 && b == 254 -> false
-            a == 172 && b in 16..31 -> false
-            a == 192 && b == 168 -> false
-            a == 100 && b in 64..127 -> false
-            else -> true
-        }
-    }
-
     private companion object {
         const val TAG = "DiscordRpc"
         const val IDLE_DISCONNECT_MS = 120_000L
     }
+}
+
+// discord embeds the cover url in a public mp:external path, so only cdns that never carry a server token qualify
+private val PUBLIC_ART_HOSTS = listOf("ytimg.com", "googleusercontent.com", "ggpht.com", "scdn.co", "spotifycdn.com", "sndcdn.com", "mzstatic.com", "imgur.com")
+
+internal fun isPublicArt(url: String): Boolean {
+    val uri = runCatching { java.net.URI(url) }.getOrNull() ?: return false
+    val host = uri.host?.lowercase() ?: return false
+    return uri.scheme == "https" && uri.userInfo == null && url.length <= 256 && PUBLIC_ART_HOSTS.any { host == it || host.endsWith(".$it") }
 }
 
 internal fun discordActivity(song: Song, showAlbum: Boolean, activityName: String, positionSec: Float, now: Long = System.currentTimeMillis()): JsonObject {

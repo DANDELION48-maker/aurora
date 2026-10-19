@@ -9,8 +9,6 @@ import kotlinx.coroutines.flow.asStateFlow
 
 private const val SERVICE_TYPE = "_aurora-music._tcp."
 
-data class DiscoveredRenderer(val id: String, val name: String, val address: String, val connect: Boolean = false)
-
 internal class RendererAdvertisement(context: Context) : EndpointAdvertiser {
     private val nsd = context.getSystemService(NsdManager::class.java)
     private var listener: NsdManager.RegistrationListener? = null

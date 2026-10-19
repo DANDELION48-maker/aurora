@@ -40,8 +40,11 @@ class RendererTrustStore(context: Context) {
             val address = EndpointAddress.parse(value.get("address").asString + "#" + value.get("fingerprint").asString)
             val token = value.get("token").asString
             require(token.matches(Regex("[A-Za-z0-9_-]{43}")))
+            val addresses = value.get("addresses")?.takeIf { it.isJsonArray }?.asJsonArray?.mapNotNull { item ->
+                runCatching { EndpointAddress.parse(item.asString + "#" + address.fingerprint).address }.getOrNull()
+            }.orEmpty().take(8)
             PairedRenderer(value.get("id").asString.take(64), value.get("name").asString.take(64),
-                address.address, address.fingerprint, value.get("clientId").asString.take(64), token)
+                address.address, address.fingerprint, value.get("clientId").asString.take(64), token, addresses)
         }.getOrNull()
     }.orEmpty().take(16) }
 
@@ -62,6 +65,7 @@ class RendererTrustStore(context: Context) {
                 addProperty("fingerprint", item.fingerprint)
                 addProperty("clientId", item.clientId)
                 addProperty("token", item.token)
+                add("addresses", JsonArray().apply { item.addresses.forEach(::add) })
             }) }
         })
         write(content)

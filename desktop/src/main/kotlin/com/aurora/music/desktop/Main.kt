@@ -36,6 +36,7 @@ import com.aurora.music.desktop.ui.AppTray
 import com.aurora.music.desktop.ui.AuroraRoot
 import com.aurora.music.desktop.ui.LocalBackdropAvailable
 import com.aurora.music.desktop.ui.LocalTrayAvailable
+import com.aurora.music.desktop.ui.LocalWindowShown
 import com.aurora.music.desktop.ui.Shortcut
 import com.aurora.music.desktop.ui.TitleBar
 import com.aurora.music.desktop.ui.WindowChrome
@@ -212,7 +213,8 @@ fun main() {
                     window.requestFocus()
                 }
             }
-            CompositionLocalProvider(LocalTrayAvailable provides trayAvailable, LocalBackdropAvailable provides WindowBackdrop.supported) {
+            CompositionLocalProvider(LocalTrayAvailable provides trayAvailable, LocalBackdropAvailable provides WindowBackdrop.supported,
+                LocalWindowShown provides (visible && !windowState.isMinimized)) {
                 AuroraRoot(container, player, initialPrefs, systemAccent, translucent, glassLook) {
                     val fullscreen = borderless || windowState.placement == WindowPlacement.Fullscreen
                     val undecorated = customTitleBar && HostPlatform.isLinux

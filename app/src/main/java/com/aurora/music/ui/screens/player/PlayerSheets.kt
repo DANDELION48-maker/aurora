@@ -40,6 +40,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -165,15 +166,18 @@ fun OutputDeviceSheet(currentId: Int, onSelect: (Int) -> Unit, onDismiss: () -> 
         val am = context.getSystemService(android.content.Context.AUDIO_SERVICE) as AudioManager
         val list = mutableListOf(OutputDevice(0, appString(R.string.text_automatic_ac9041), Icons.Filled.Check))
         am.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
-            .filter { it.type in USEFUL_TYPES }
-            .forEach { list.add(OutputDevice(it.id, deviceLabel(it), deviceIcon(it.type))) }
+            .filter { it.type in USEFUL_OUTPUT_TYPES }
+            .forEach { list.add(OutputDevice(it.id, outputLabel(it), deviceIcon(it.type))) }
         list
     }
+    val controlling = (context.applicationContext as com.aurora.music.AuroraApplication).container.networkOutput.state
+        .collectAsStateWithLifecycle().value.controlling != null
     ModalBottomSheet(onDismissRequest = onDismiss, containerColor = MaterialTheme.colorScheme.surface) {
-        Column(Modifier.fillMaxWidth().padding(horizontal = 8.dp).padding(bottom = 28.dp)) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 8.dp).padding(bottom = 28.dp)) {
             Text(appString(R.string.text_play_on_4bd6fc), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black, modifier = Modifier.padding(start = 16.dp, bottom = 8.dp))
-            CastRow()
-            devices.forEach { d ->
+            ConnectDevicesSection(onDismiss)
+            if (!controlling) CastRow()
+            if (!controlling) devices.forEach { d ->
                 val selected = d.id == currentId
                 Row(
                     Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).clickable { onSelect(d.id); onDismiss() }.padding(horizontal = 16.dp, vertical = 14.dp),
@@ -234,7 +238,7 @@ fun SleepTimerSheet(
     }
 }
 
-private val USEFUL_TYPES = setOf(
+internal val USEFUL_OUTPUT_TYPES = setOf(
     AudioDeviceInfo.TYPE_BUILTIN_SPEAKER,
     AudioDeviceInfo.TYPE_WIRED_HEADPHONES,
     AudioDeviceInfo.TYPE_WIRED_HEADSET,
@@ -247,7 +251,7 @@ private val USEFUL_TYPES = setOf(
     AudioDeviceInfo.TYPE_DOCK,
 )
 
-private fun deviceLabel(d: AudioDeviceInfo): String {
+internal fun outputLabel(d: AudioDeviceInfo): String {
     val product = d.productName?.toString()?.trim().orEmpty()
     return when (d.type) {
         AudioDeviceInfo.TYPE_BUILTIN_SPEAKER -> appString(R.string.text_phone_speaker_ae9329)

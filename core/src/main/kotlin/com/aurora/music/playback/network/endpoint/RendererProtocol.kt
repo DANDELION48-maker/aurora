@@ -96,6 +96,8 @@ data class EndpointAddress(val address: String, val fingerprint: String) {
     }
 }
 
+data class DiscoveredRenderer(val id: String, val name: String, val address: String, val connect: Boolean = false)
+
 data class PairingWindow(val code: String, val expiresAtMs: Long) {
     override fun toString(): String = "PairingWindow(expiresAtMs=$expiresAtMs)"
 }

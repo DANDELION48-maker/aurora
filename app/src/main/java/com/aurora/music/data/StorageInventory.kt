@@ -144,6 +144,6 @@ class StorageInventory(private val context: Context, private val container: AppC
         const val MAP_TILES = "osmdroid"
         // these have their own rows or are in use by playback and clean themselves up
         val MANAGED_CACHE = setOf("audio-streams", "metadata-artwork", "image_cache", "vocal-activity", "separated-stems-v1",
-            "network-audio", "renderer-media", "local-profile", MAP_TILES)
+            "network-audio", "renderer-media", "local-profile", "connect-art", MAP_TILES)
     }
 }

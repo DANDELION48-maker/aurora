@@ -21,6 +21,8 @@ class NetworkPlaybackBridge(
     private val select: (NetworkTarget?) -> Unit,
     private val localRoute: () -> EndpointRoute,
     private val foreground: (Boolean) -> Unit,
+    private val connectHost: ConnectHost? = null,
+    private val control: (PairedRenderer?) -> Unit = {},
 ) : NetworkOutputHost, RendererPlayback, Closeable {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val mediaCache = RendererMediaCache(context)
@@ -43,6 +45,7 @@ class NetworkPlaybackBridge(
         select(target)
     }
     override fun disconnect() = select(null)
+    override fun control(peer: PairedRenderer?) = control.invoke(peer)
     override fun enableReceiver(enabled: Boolean) {
         if (closed || (desiredReceiver == enabled && (endpoint != null || endpointJob?.isActive == true))) return
         if (enabled && manager.state.value.receiverName != null) {
@@ -66,7 +69,7 @@ class NetworkPlaybackBridge(
                 receivedFiles = emptyMap()
             }
             volumeBefore?.let { audio.setStreamVolume(AudioManager.STREAM_MUSIC, it, 0) }; volumeBefore = null
-            manager.update { it.copy(receiverEnabled = false, receiverAddress = null, pairing = null, controllers = emptyList()) }
+            manager.update { it.copy(receiverEnabled = false, receiverAddress = null, receiverAddresses = emptyList(), pairing = null, controllers = emptyList()) }
             foreground(false)
             endpointJob = scope.launch(Dispatchers.IO) {
                 withContext(NonCancellable) { old?.stop() }
@@ -79,14 +82,14 @@ class NetworkPlaybackBridge(
             var candidate: RendererEndpoint? = null
             try {
                 foreground(true)
-                candidate = RendererEndpoint(context, this@NetworkPlaybackBridge, "Aurora · ${android.os.Build.MODEL}")
+                candidate = RendererEndpoint(context, this@NetworkPlaybackBridge, "Aurora · ${android.os.Build.MODEL}", connectHost)
                 val address = withContext(Dispatchers.IO) { candidate.start() }
                 if (closed || generation != receiverGeneration || !desiredReceiver) {
                     withContext(NonCancellable + Dispatchers.IO) { candidate.stop() }
                     return@launch
                 }
                 endpoint = candidate
-                manager.update { it.copy(receiverEnabled = true, receiverAddress = address, error = null) }
+                manager.update { it.copy(receiverEnabled = true, receiverAddress = address, receiverAddresses = candidate.addresses(), error = null) }
                 clientsJob = scope.launch { candidate.clients.collect { clients -> manager.update { it.copy(controllers = clients) } } }
                 pairingJob = scope.launch { candidate.pairing.collect { pairing -> manager.update { it.copy(pairing = pairing) } } }
             } catch (e: CancellationException) { withContext(NonCancellable + Dispatchers.IO) { candidate?.stop() }; throw e }

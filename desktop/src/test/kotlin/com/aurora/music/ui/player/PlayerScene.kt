@@ -74,6 +74,18 @@ internal object PlayerFixtures {
         file.absolutePath
     }
 
+    // a near-white canvas, the hardest case for white type over its glow
+    val brightCanvas: String by lazy {
+        val surface = Surface.makeRasterN32Premul(360, 640)
+        val c = surface.canvas
+        c.drawRect(Rect.makeWH(360f, 640f), Paint().apply { color = 0xFFFFF8E6.toInt() })
+        c.drawCircle(180f, 300f, 120f, Paint().apply { color = 0xFFFFD84D.toInt() })
+        c.drawRect(Rect.makeXYWH(150f, 380f, 60f, 200f), Paint().apply { color = 0xFF2B2B2B.toInt() })
+        val file = File(dir, "bright-canvas.png").apply { deleteOnExit() }
+        file.writeBytes(surface.makeImageSnapshot().encodeToData(EncodedImageFormat.PNG)!!.bytes)
+        file.absolutePath
+    }
+
     val queue = listOf(
         Song("q0", "Paper Planes", "The Foxgloves", "Wildflower", art("q0", 0xFF3B82F6.toInt(), 0xFF1E1B4B.toInt()), 241, accentArgb = 0xFF3B82F6),
         Song("q1", "Midnight Bloom", "Lunar Tide", "Nocturne", art("q1", 0xFFFF2E7E.toInt(), 0xFF3B0764.toInt()), 214,

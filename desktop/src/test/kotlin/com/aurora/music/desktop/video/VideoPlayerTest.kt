@@ -67,6 +67,18 @@ class VideoPlayerTest {
         }
     }
 
+    @Test fun loopsOnOneRunningClock() {
+        VideoPlayer(desktopFileUri(gif().path), loop = true).use { player ->
+            assertTrue("ready", await { player.ready.value })
+            player.play()
+            val seen = mutableListOf<Int>()
+            await(3_000) { player.color().let { if (seen.lastOrNull() != it) seen += it }; seen.size >= 14 }
+            val wrap = seen.indexOf(colors[9])
+            assertTrue("seen ${seen.map { "%06x".format(it) }}", wrap >= 0 && seen.getOrNull(wrap + 1) == colors[0] && seen.getOrNull(wrap + 2) == colors[1])
+            assertTrue("clock ${player.positionMs}", player.positionMs > 1_100)
+        }
+    }
+
     @Test fun reportsSourcesWithoutVideo() {
         val wav = temp.newFile("silence.wav")
         wav.writeBytes(com.aurora.music.desktop.audio.decode.wavBytes(8_000, 1, 16, 8_000) { _, _ -> 0 })

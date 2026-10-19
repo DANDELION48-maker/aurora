@@ -21,9 +21,14 @@ data class NetworkOutputState(
     val paired: List<PairedRenderer> = emptyList(),
     val receiverEnabled: Boolean = false,
     val receiverAddress: EndpointAddress? = null,
+    val receiverAddresses: List<String> = emptyList(),
     val pairing: PairingWindow? = null,
     val controllers: List<PairedController> = emptyList(),
+    val controlling: PairedRenderer? = null,
+    val probed: ProbedDevice? = null,
 )
+
+data class ProbedDevice(val address: String, val fingerprint: String, val known: Boolean)
 
 sealed interface NetworkTarget {
     data class Dlna(val renderer: DlnaRenderer) : NetworkTarget
@@ -37,6 +42,7 @@ interface NetworkOutputHost {
     fun enableReceiver(enabled: Boolean)
     fun pairReceiver()
     fun revokeController(id: String)
+    fun control(peer: PairedRenderer?)
 }
 
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
@@ -49,6 +55,8 @@ class NetworkOutputManager(private val context: Context) {
     val state = mutable.asStateFlow()
     private var host: NetworkOutputHost? = null
     private var pending: ((NetworkOutputHost) -> Unit)? = null
+    private val mutableSession = MutableStateFlow<ConnectSession?>(null)
+    val session = mutableSession.asStateFlow()
     private var scanJob: Job? = null
     private var scanGeneration = 0L
 
@@ -124,5 +132,66 @@ class NetworkOutputManager(private val context: Context) {
         }
     }
 
-    fun forget(id: String) { trust.forgetRenderer(id); update { it.copy(paired = trust.renderers()) } }
+    fun forget(id: String) {
+        if (mutable.value.controlling?.id == id) control(null)
+        trust.forgetRenderer(id); update { it.copy(paired = trust.renderers()) }
+    }
+
+    fun control(peer: PairedRenderer?) {
+        if (peer?.id == mutable.value.controlling?.id) return
+        dispatch { it.control(peer) }
+    }
+
+    fun openSession(peer: PairedRenderer): ConnectSession {
+        mutableSession.value?.close()
+        val fresh = trust.renderers().firstOrNull { it.id == peer.id } ?: peer
+        return ConnectSession(fresh, scope).also {
+            mutableSession.value = it
+            update { state -> state.copy(controlling = fresh, error = null) }
+        }
+    }
+
+    fun closeSession() {
+        mutableSession.value?.close()
+        mutableSession.value = null
+        update { it.copy(controlling = null) }
+    }
+
+    fun command(command: ConnectCommand) { mutableSession.value?.post(command) }
+
+    fun probe(input: String) {
+        scope.launch {
+            update { it.copy(preparing = true, error = null, probed = null) }
+            try {
+                val address = withContext(Dispatchers.IO) { ConnectPairing.probe(input) }
+                val known = trust.renderers().firstOrNull { it.fingerprint == address.fingerprint }
+                known?.let { trust.saveRenderer(ConnectPairing.withAddress(it, address.address)) }
+                update { it.copy(probed = ProbedDevice(address.address, address.fingerprint, known != null), paired = trust.renderers()) }
+            } catch (e: CancellationException) { throw e }
+            catch (e: Exception) { update { it.copy(error = (e as? RendererException)?.message ?: "Cannot reach that device.") } }
+            finally { update { it.copy(preparing = false) } }
+        }
+    }
+
+    fun pairDiscovered(found: DiscoveredRenderer, code: String) {
+        scope.launch {
+            update { it.copy(preparing = true, error = null) }
+            try {
+                val paired = withContext(Dispatchers.IO) { ConnectPairing.pairDiscovered(found, code, android.os.Build.MODEL) }
+                trust.saveRenderer(paired)
+                update { it.copy(paired = trust.renderers()) }
+                control(paired)
+            } catch (e: CancellationException) { throw e }
+            catch (e: Exception) { update { it.copy(error = if (e is RendererException) e.message else "Pairing failed. Check the code.") } }
+            finally { update { it.copy(preparing = false) } }
+        }
+    }
+
+    fun pairProbed(code: String) {
+        val probed = mutable.value.probed ?: return
+        pair(EndpointAddress(probed.address, probed.fingerprint).pairingAddress, code)
+        update { it.copy(probed = null) }
+    }
+
+    fun dismissProbe() = update { it.copy(probed = null) }
 }

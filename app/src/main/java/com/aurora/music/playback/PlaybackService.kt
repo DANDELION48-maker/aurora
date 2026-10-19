@@ -68,6 +68,11 @@ import kotlinx.coroutines.withContext
 import com.aurora.music.playback.network.*
 import com.aurora.music.playback.network.audio.ProcessedNetworkRenderer
 import com.aurora.music.playback.network.endpoint.EndpointRoute
+import com.aurora.music.playback.network.endpoint.ConnectCommand
+import com.aurora.music.playback.network.endpoint.ConnectSwitch
+import com.aurora.music.playback.network.endpoint.ConnectTrack
+import com.aurora.music.playback.network.endpoint.PairedRenderer
+import com.aurora.music.playback.network.endpoint.resolveConnectTracks
 
 @UnstableApi
 class PlaybackService : MediaLibraryService() {
@@ -81,6 +86,8 @@ class PlaybackService : MediaLibraryService() {
     private var castPlayer: androidx.media3.cast.CastPlayer? = null
     private var networkPlayer: NetworkQueuePlayer? = null
     private var networkBridge: NetworkPlaybackBridge? = null
+    private var remotePlayer: com.aurora.music.playback.network.RemoteSessionPlayer? = null
+    private var connectHost: com.aurora.music.playback.network.AndroidConnectHost? = null
     private var networkServer: ScopedMediaServer? = null
     private lateinit var networkDataSource: androidx.media3.datasource.DataSource.Factory
     private var receiverForeground = false
@@ -386,8 +393,10 @@ class PlaybackService : MediaLibraryService() {
         playbackReporting.observe(player)
 
         setupCast()
+        connectHost = com.aurora.music.playback.network.AndroidConnectHost(this, player, ::rendererRoute,
+            { player.shuffleModeEnabled }, { on -> shuffleQueue.setShuffle(if (on) 1 else 0, null) })
         networkBridge = NetworkPlaybackBridge(this, player, container.networkOutput,
-            ::selectNetworkOutput, ::rendererRoute, ::setReceiverForeground)
+            ::selectNetworkOutput, ::rendererRoute, ::setReceiverForeground, connectHost, ::selectRemote)
 
         startAudioObservers(audioAttributes)
         (getSystemService(AUDIO_SERVICE) as android.media.AudioManager)
@@ -885,6 +894,12 @@ class PlaybackService : MediaLibraryService() {
                 confirmedDevice = route.category))
             container.signalPath.value = if (path.active) path.copy(processing = com.aurora.music.data.SignalStage("Processing",
                 mixPlayer!!.processingDescription, "Active deck processing state; summed output and downstream hardware are not measured")) else path
+            return
+        }
+        remotePlayer?.takeIf { active === it }?.let { remote ->
+            requestBitPerfect(null, null, false)
+            container.signalPath.value = SignalPath(active = false, output = "Aurora · ${remote.name}",
+                note = "Playing on ${remote.name}; that device owns its audio path.")
             return
         }
         if (networkPlayer != null && active === networkPlayer) {
@@ -1444,6 +1459,7 @@ class PlaybackService : MediaLibraryService() {
                     val items = runCatching { bundles?.map(MediaItem::fromBundle) }.getOrNull()
                     val reason = when {
                         mixPlayer != null -> "mix is active"
+                        remotePlayer != null -> "controlling another device"
                         token.isNullOrBlank() || count <= 0 -> "invalid queue identity"
                         items.isNullOrEmpty() || items.size > 120 -> "invalid batch size"
                         items.any { it.localConfiguration == null } -> "missing playback URI"
@@ -1460,7 +1476,8 @@ class PlaybackService : MediaLibraryService() {
                 }
                 CMD_EXIT_MIX -> stopMix()
                 // target 1=on 0=off -1=toggle order = pre-shuffle order when caller already shuffled
-                CMD_SHUFFLE -> if (networkPlayer != null) {
+                CMD_SHUFFLE -> if (remotePlayer != null) remotePlayer!!.setShuffle(customCommand.customExtras.getInt("target", -1))
+                else if (networkPlayer != null) {
                     networkPlayer!!.shuffle(customCommand.customExtras.getInt("target", -1),
                         customCommand.customExtras.getStringArrayList("order"))
                 } else if (mixPlayer != null) {
@@ -1469,7 +1486,7 @@ class PlaybackService : MediaLibraryService() {
                     customCommand.customExtras.getInt("target", -1),
                     customCommand.customExtras.getStringArrayList("order"),
                 )
-                CMD_REPEAT -> networkPlayer?.let { remote ->
+                CMD_REPEAT -> remotePlayer?.cycleRepeat() ?: networkPlayer?.let { remote ->
                     remote.repeatMode = when (remote.repeatMode) {
                         Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ALL
                         Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_ONE
@@ -1483,7 +1500,7 @@ class PlaybackService : MediaLibraryService() {
                     }
                 } ?: cycleRepeat()
                 CMD_SLEEP_FADE -> {
-                    if (networkPlayer != null) return Futures.immediateFuture(SessionResult(androidx.media3.session.SessionError.ERROR_NOT_SUPPORTED))
+                    if (networkPlayer != null || remotePlayer != null) return Futures.immediateFuture(SessionResult(androidx.media3.session.SessionError.ERROR_NOT_SUPPORTED))
                     val ms = customCommand.customExtras.getInt("fadeMs", 0)
                     mixPlayer?.let { it.sleepFade(ms); return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS)) }
                     if (ms > 0) { sleepFadeMs = ms; sleepFadeStartMs = android.os.SystemClock.elapsedRealtime(); sleepFadeActive = true }
@@ -1626,6 +1643,65 @@ class PlaybackService : MediaLibraryService() {
         })
     }
 
+    private fun selectRemote(peer: PairedRenderer?) {
+        val old = remotePlayer
+        val behaviour = kotlinx.coroutines.runBlocking { container.settingsStore.connectSwitch.first() }
+        if (peer == null) {
+            if (old == null) return
+            remotePlayer = null
+            mediaSession?.player = player
+            val remote = old.session.status.value
+            val position = old.session.positionMs()
+            scope.launch {
+                if (behaviour == ConnectSwitch.MOVE && remote != null && remote.queue.isNotEmpty()) {
+                    val songs = container.repository.resolveConnectTracks(remote.queue)
+                    val start = songs.indexOfFirst { it.id == remote.current?.id }.coerceAtLeast(0)
+                    if (songs.isNotEmpty() && remotePlayer == null) {
+                        player.setMediaItems(songs.map { songMediaItem(it, container.repository) }, start,
+                            if (songs[start].id == remote.current?.id) position else 0)
+                        player.prepare()
+                        player.playWhenReady = remote.playing
+                        old.session.send(ConnectCommand.Playing(false))
+                    }
+                }
+                old.release()
+                if (remotePlayer == null) container.networkOutput.closeSession()
+            }
+            updateCustomLayout(); updateSignalPath(); publishNowPlaying()
+            return
+        }
+        if (networkPlayer != null) {
+            container.networkOutput.update { it.copy(error = "Disconnect network output before controlling another device.") }
+            return
+        }
+        if (mixPlayer != null) stopMix()
+        old?.release()
+        val session = container.networkOutput.openSession(peer)
+        val remote = com.aurora.music.playback.network.RemoteSessionPlayer(this, session)
+        if (behaviour == ConnectSwitch.MOVE && player.mediaItemCount > 0) {
+            val tracks = (0 until player.mediaItemCount).map { player.getMediaItemAt(it) }.map { item ->
+                ConnectTrack(item.mediaId, item.mediaMetadata.title?.toString().orEmpty().take(512),
+                    item.mediaMetadata.artist?.toString().orEmpty().take(512), item.mediaMetadata.albumTitle?.toString().orEmpty().take(512),
+                    item.mediaMetadata.extras?.getInt("aurora.durationSec") ?: 0)
+            }
+            val index = player.currentMediaItemIndex.coerceIn(0, tracks.lastIndex)
+            val from = (index - 100).coerceIn(0, (tracks.size - 500).coerceAtLeast(0))
+            session.post(ConnectCommand.Play(tracks.subList(from, minOf(tracks.size, from + 500)),
+                index - from, player.currentPosition.coerceAtLeast(0), player.playWhenReady))
+        }
+        if (behaviour != ConnectSwitch.KEEP) player.pause()
+        remotePlayer = remote
+        mediaSession?.player = remote
+        remote.addListener(object : Player.Listener {
+            override fun onEvents(player: Player, events: Player.Events) {
+                if (remotePlayer !== remote) return
+                if (events.contains(Player.EVENT_SHUFFLE_MODE_ENABLED_CHANGED) || events.contains(Player.EVENT_REPEAT_MODE_CHANGED)) updateCustomLayout()
+                updateSignalPath(); publishNowPlaying()
+            }
+        })
+        updateCustomLayout(); updateSignalPath(); publishNowPlaying()
+    }
+
     private fun selectNetworkOutput(target: NetworkTarget?) {
         networkSwitchJob?.cancel()
         val remote = networkPlayer
@@ -1643,6 +1719,10 @@ class PlaybackService : MediaLibraryService() {
     }
 
     private fun completeNetworkOutputSwitch(target: NetworkTarget?, requestedPlay: Boolean? = null) {
+        remotePlayer?.takeIf { target != null }?.let { remote ->
+            container.networkOutput.update { it.copy(error = "Stop controlling ${remote.name} first.") }
+            return
+        }
         if (target != null && container.networkOutput.state.value.receiverEnabled) {
             container.networkOutput.update { it.copy(error = "Turn off receiver mode before sending audio.") }
             return
@@ -1987,6 +2067,9 @@ class PlaybackService : MediaLibraryService() {
         listeningDetails.finish()
         networkDisposed = true
         networkBridge?.close(); networkBridge = null
+        connectHost?.close(); connectHost = null
+        remotePlayer?.release(); remotePlayer = null
+        container.networkOutput.closeSession()
         networkPlayer?.release(); networkPlayer = null
         networkServer?.close(); networkServer = null
         scope.cancel()

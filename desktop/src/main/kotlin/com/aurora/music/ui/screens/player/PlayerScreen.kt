@@ -99,14 +99,20 @@ import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.toRect
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.window.LocalWindow
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.draw.drawWithContent
@@ -130,6 +136,7 @@ import com.aurora.music.data.rules.RuleSource
 import com.aurora.music.desktop.player.PlayerUiState
 import com.aurora.music.desktop.player.RepeatMode
 import com.aurora.music.desktop.ui.LocalPlayer
+import com.aurora.music.desktop.ui.LocalWindowShown
 import com.aurora.music.ui.components.Artwork
 import com.aurora.music.ui.components.HoverTooltip
 import com.aurora.music.ui.components.CoverKey
@@ -148,10 +155,7 @@ import com.aurora.music.ui.theme.themedCorner
 import com.aurora.music.ui.theme.playerColorScheme
 import com.aurora.music.ui.theme.readableAccent
 import com.aurora.music.ui.theme.styleColorScheme
-import java.awt.Frame
-import java.awt.event.ComponentAdapter
-import java.awt.event.ComponentEvent
-import java.awt.event.WindowStateListener
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
@@ -228,9 +232,10 @@ fun PlayerScreen(
         if (paneOpen && sidePane == pane) paneOpen = false else { pickedPane = pane.name; paneOpen = true }
     }
     val canvasPlayer = video?.takeIf { showVideo && state.hasVideo && state.videoIsCanvas }
-    val windowShown = rememberWindowShown()
-    DisposableEffect(showVideo, windowShown) {
-        val visible = showVideo && windowShown
+    val stageBounds = remember { mutableStateOf(Rect.Zero) }
+    val windowShown = LocalWindowShown.current
+    DisposableEffect(showVideo, windowShown, showLyrics) {
+        val visible = showVideo && windowShown && !showLyrics
         onVideoVisibleChange(visible)
         onDispose { if (visible) onVideoVisibleChange(false) }
     }
@@ -360,6 +365,7 @@ fun PlayerScreen(
                             )
                         } else Modifier
                     )
+                    .then(if (canvasPlayer != null) Modifier.onGloballyPositioned { stageBounds.value = it.boundsInWindow() } else Modifier)
                     .then(
                         if (gestures.doubleTapPause) Modifier.pointerInput(Unit) {
                             detectTapGestures(onDoubleTap = { onTogglePlay() })
@@ -554,7 +560,7 @@ fun PlayerScreen(
         val splitRange = com.aurora.music.data.TabletSetting.PLAYER_SPLIT.range
         val density = androidx.compose.ui.platform.LocalDensity.current
         androidx.compose.animation.AnimatedVisibility(canvasPlayer != null, Modifier.matchParentSize(), enter = fadeIn(tween(500)), exit = fadeOut(tween(300))) {
-            (canvasPlayer ?: video)?.let { CanvasAmbient(it, Modifier.fillMaxSize()) }
+            (canvasPlayer ?: video)?.let { CanvasAmbient(it, stageBounds, Modifier.fillMaxSize()) }
         }
         Column(Modifier.fillMaxSize()) {
             header()
@@ -575,7 +581,7 @@ fun PlayerScreen(
                             val controlsWidth = artSide.coerceAtLeast(420.dp).coerceAtMost(maxWidth)
                             // a portrait canvas stands beside the controls; only a cramped column crops it into the artwork square
                             val stageGap = if (short) 28.dp else 48.dp
-                            val stageControls = (maxWidth * 0.4f).coerceIn(360.dp, 520.dp)
+                            val stageControls = (maxWidth * 0.4f).coerceIn(400.dp, 520.dp)
                             val aspect = canvasPlayer?.let { it.width.toFloat() / it.height }?.takeIf { it.isFinite() && it > 0f }?.coerceIn(0.5f, 1f) ?: (9f / 16f)
                             val stageHeight = minOf(maxHeight, (maxWidth - stageControls - stageGap) / aspect)
                             if (canvasPlayer != null && stageHeight * aspect >= MinCanvasWidth) Row(
@@ -720,27 +726,6 @@ private fun HeaderButton(icon: androidx.compose.ui.graphics.vector.ImageVector, 
     )
 }
 
-@Composable
-private fun rememberWindowShown(): Boolean {
-    val window = LocalWindow.current ?: return true
-    fun isShown() = window.isShowing && ((window as? Frame)?.extendedState ?: 0) and Frame.ICONIFIED == 0
-    var shown by remember(window) { mutableStateOf(isShown()) }
-    DisposableEffect(window) {
-        val states = WindowStateListener { shown = isShown() }
-        val visibility = object : ComponentAdapter() {
-            override fun componentShown(e: ComponentEvent) { shown = isShown() }
-            override fun componentHidden(e: ComponentEvent) { shown = isShown() }
-        }
-        window.addWindowStateListener(states)
-        window.addComponentListener(visibility)
-        onDispose {
-            window.removeWindowStateListener(states)
-            window.removeComponentListener(visibility)
-        }
-    }
-    return shown
-}
-
 // canvas mode is always dark: white type over a moving picture stays legible whatever the theme
 @Composable
 private fun canvasColors(): ColorScheme {
@@ -751,25 +736,48 @@ private fun canvasColors(): ColorScheme {
     else styleColorScheme(style, dark = true)
 }
 
+// the canvas's own colour fills the player and a blurred copy glows out from behind the card
 @Composable
-private fun CanvasAmbient(player: com.aurora.music.desktop.video.VideoPlayer, modifier: Modifier) {
+private fun CanvasAmbient(player: com.aurora.music.desktop.video.VideoPlayer, stage: State<Rect>, modifier: Modifier) {
     val frame = player.frame.collectAsState()
-    Box(modifier.background(Color.Black)) {
-        Box(Modifier.fillMaxSize().blur(72.dp, BlurredEdgeTreatment.Rectangle).drawBehind { frame.value?.let { drawFrame(it, crop = true) } })
-        Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Black.copy(alpha = .38f), Color.Black.copy(alpha = .58f)))))
+    var origin by remember { mutableStateOf(Offset.Zero) }
+    Box(modifier.onGloballyPositioned { origin = it.positionInWindow() }.drawBehind {
+        frame.value
+        drawRect(dimmed(Color(player.tone), 0.06f))
+    }) {
+        Box(Modifier.fillMaxSize().blur(64.dp, BlurredEdgeTreatment.Rectangle).drawBehind {
+            val image = frame.value ?: return@drawBehind
+            val card = stage.value.translate(-origin)
+            val glow = if (card.isEmpty) size.toRect()
+                else Rect(card.center - Offset(card.width * .75f, card.height * .75f), card.center + Offset(card.width * .75f, card.height * .75f))
+            drawFrame(image, crop = true, area = glow, alpha = .9f)
+        })
+        Box(Modifier.fillMaxSize().drawBehind {
+            frame.value
+            val light = Color(player.tone).luminance()
+            drawRect(Brush.verticalGradient(listOf(Color.Black.copy(alpha = .2f + light * .4f), Color.Black.copy(alpha = .45f + light * .4f))))
+        })
     }
 }
 
-private fun DrawScope.drawFrame(image: ImageBitmap, crop: Boolean) {
-    val scale = if (crop) maxOf(size.width / image.width, size.height / image.height) else minOf(size.width / image.width, size.height / image.height)
-    val shown = Size(minOf(size.width / scale, image.width.toFloat()), minOf(size.height / scale, image.height.toFloat()))
+private fun dimmed(color: Color, target: Float): Color {
+    val light = color.luminance()
+    if (light <= target) return color
+    val keep = (target / light).pow(1 / 2.2f)
+    return Color(color.red * keep, color.green * keep, color.blue * keep)
+}
+
+private fun DrawScope.drawFrame(image: ImageBitmap, crop: Boolean, area: Rect = size.toRect(), alpha: Float = 1f) {
+    val scale = if (crop) maxOf(area.width / image.width, area.height / image.height) else minOf(area.width / image.width, area.height / image.height)
+    val shown = Size(minOf(area.width / scale, image.width.toFloat()), minOf(area.height / scale, image.height.toFloat()))
     val target = Size(shown.width * scale, shown.height * scale)
     drawImage(
         image,
         srcOffset = IntOffset(((image.width - shown.width) / 2).roundToInt(), ((image.height - shown.height) / 2).roundToInt()),
         srcSize = IntSize(shown.width.roundToInt(), shown.height.roundToInt()),
-        dstOffset = IntOffset(((size.width - target.width) / 2).roundToInt(), ((size.height - target.height) / 2).roundToInt()),
+        dstOffset = IntOffset((area.left + (area.width - target.width) / 2).roundToInt(), (area.top + (area.height - target.height) / 2).roundToInt()),
         dstSize = IntSize(target.width.roundToInt(), target.height.roundToInt()),
+        alpha = alpha,
         filterQuality = FilterQuality.Medium,
     )
 }

@@ -40,6 +40,7 @@ class DesktopSettings(private val dataStore: DataStore<Preferences>) {
     val languageTag: Flow<String> = dataStore.data.map { it[LANGUAGE] ?: "" }.distinctUntilChanged()
     val musicFolders: Flow<List<String>> = dataStore.data.map { parseFolders(it[MUSIC_FOLDERS]) }.distinctUntilChanged()
     val closeToTray: Flow<Boolean> = dataStore.data.map { it[CLOSE_TO_TRAY] ?: false }.distinctUntilChanged()
+    val allowRemoteControl: Flow<Boolean> = dataStore.data.map { it[REMOTE_CONTROL] ?: false }.distinctUntilChanged()
     val accentFollowsPlaying: Flow<Boolean> = dataStore.data.map { it[ACCENT_FOLLOWS_PLAYING] ?: false }.distinctUntilChanged()
     val translucentWindow: Flow<Boolean> = dataStore.data.map { it[TRANSLUCENT_WINDOW] ?: true }.distinctUntilChanged()
     val micaBackdrop: Flow<Boolean> = dataStore.data.map { it[MICA_BACKDROP] ?: false }.distinctUntilChanged()
@@ -67,6 +68,7 @@ class DesktopSettings(private val dataStore: DataStore<Preferences>) {
     }
     suspend fun setLanguageTag(tag: String) = dataStore.edit { it[LANGUAGE] = tag.trim() }
     suspend fun setCloseToTray(enabled: Boolean) = dataStore.edit { it[CLOSE_TO_TRAY] = enabled }
+    suspend fun setAllowRemoteControl(enabled: Boolean) = dataStore.edit { it[REMOTE_CONTROL] = enabled }
     suspend fun setAccentFollowsPlaying(enabled: Boolean) = dataStore.edit { it[ACCENT_FOLLOWS_PLAYING] = enabled }
     suspend fun setTranslucentWindow(enabled: Boolean) = dataStore.edit { it[TRANSLUCENT_WINDOW] = enabled }
     suspend fun setMicaBackdrop(enabled: Boolean) = dataStore.edit { it[MICA_BACKDROP] = enabled }
@@ -121,6 +123,7 @@ class DesktopSettings(private val dataStore: DataStore<Preferences>) {
         private val LANGUAGE = stringPreferencesKey("language_tag")
         private val MUSIC_FOLDERS = stringPreferencesKey("music_folders")
         private val CLOSE_TO_TRAY = booleanPreferencesKey("close_to_tray")
+        private val REMOTE_CONTROL = booleanPreferencesKey("allow_remote_control")
         private val ACCENT_FOLLOWS_PLAYING = booleanPreferencesKey("accent_follows_playing")
         private val TRANSLUCENT_WINDOW = booleanPreferencesKey("translucent_window")
         private val MICA_BACKDROP = booleanPreferencesKey("mica_backdrop")

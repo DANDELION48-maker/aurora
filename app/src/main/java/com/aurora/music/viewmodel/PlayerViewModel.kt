@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.C
@@ -27,7 +26,6 @@ import com.aurora.music.data.isRadio
 import com.aurora.music.data.toSavedTrack
 import com.aurora.music.model.Song
 import com.aurora.music.playback.PlaybackService
-import com.aurora.music.playback.PresetContextPublisher
 import com.aurora.music.playback.MediaSearchRequest
 import com.aurora.music.data.PlaybackCollectionIdentity
 import kotlinx.coroutines.Dispatchers
@@ -129,6 +127,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     private val initialQueueReady = CompletableDeferred<Unit>()
     private var queueToken: String? = null
     private var songById: Map<String, Song> = emptyMap()
+    private val remoteSession get() = container.networkOutput.session.value
 
     @Volatile private var autoplayEnabled = false
     @Volatile private var privateSession = false
@@ -158,6 +157,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     private val listener = object : Player.Listener {
         override fun onEvents(player: Player, events: Player.Events) {
             if (events.contains(Player.EVENT_TIMELINE_CHANGED)) savedTracksDirty = true
+            if (events.contains(Player.EVENT_TIMELINE_CHANGED) || events.contains(Player.EVENT_MEDIA_METADATA_CHANGED)) fillFromController()
             syncFromController()
             if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) companionVideo.sync(forceSeek = true)
             if (events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED) && player.playbackState == Player.STATE_ENDED) {
@@ -178,6 +178,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private fun maybeNowPlaying() {
+        if (remoteSession != null) return
         val cur = _state.value.current
         if (cur.id.isEmpty() || cur.id == lastNowPlayingId) return
         lastNowPlayingId = cur.id
@@ -188,6 +189,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private fun recordIfPlayed(posSec: Float) {
+        if (remoteSession != null) return
         val cur = _state.value.current
         if (cur.id.isEmpty() || posSec < 30f || cur.id == lastRecordedId) return
         lastRecordedId = cur.id
@@ -199,7 +201,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private fun maybeAutoplay() {
-        if (!autoplayEnabled || loadingRadio) return
+        if (!autoplayEnabled || loadingRadio || remoteSession != null) return
         val c = controller ?: return
         val seed = _state.value.current.id.ifEmpty { return }
         if (seed.startsWith("aurora-mix:")) return
@@ -229,6 +231,10 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
             startTicker()
         }, ContextCompat.getMainExecutor(app))
 
+        viewModelScope.launch {
+            container.networkOutput.session.collectLatest { session -> session?.status?.collect { it?.let(::syncRemote) } }
+        }
+
         // restore a saved queue only if the service came up empty otherwise keep its queue
         viewModelScope.launch {
             container.sessionReady.collect { ready ->
@@ -238,7 +244,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
                 val c = controller ?: return@collect
                 playingAccountKey = container.currentAccountKey()
                 val saved = playingAccountKey.takeIf { it.isNotBlank() }?.let { container.queueStore.get(it) }
-                if (c.mediaItemCount == 0 && saved != null) restoreQueue(saved)
+                if (c.mediaItemCount == 0 && saved != null && remoteSession == null) restoreQueue(saved)
                 initialQueueReady.complete(Unit)
             }
         }
@@ -300,6 +306,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun stopPlayback() {
+        if (remoteSession != null) { container.networkOutput.control(null); return }
         companionVideo.clear()
         cancelMediaSearch()
         cancelQueueFill()
@@ -319,7 +326,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     private fun persistQueue(force: Boolean = false) {
         // The editable mix is persisted by MixStore; do not restore it as an ordinary queue.
         if (container.mixController.activeProject != null) return
-        if (suppressPersist) return
+        if (suppressPersist || remoteSession != null) return
         val c = controller ?: return
         val key = playingAccountKey.ifBlank { container.currentAccountKey() }
         if (key.isBlank()) return
@@ -379,26 +386,43 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
 
     private fun rehydrateFromController() {
         val c = controller ?: return
-        val songs = (0 until c.mediaItemCount).map { i ->
-            val mi = c.getMediaItemAt(i)
-            val md = mi.mediaMetadata
-            Song(
-                id = mi.mediaId,
-                title = md.title?.toString() ?: "",
-                artist = md.artist?.toString() ?: "",
-                album = md.albumTitle?.toString() ?: "",
-                artworkUrl = md.artworkUri?.toString() ?: "",
-                durationSec = md.extras?.getInt("aurora.durationSec") ?: 0,
-                accentArgb = com.aurora.music.util.accentArgbFor(mi.mediaId),
-                streamUrl = md.extras?.getString("aurora.preferred.original") ?: mi.localConfiguration?.uri?.toString() ?: "",
-                replayGainTrack = md.extras?.getFloat("rgTrack", 0f) ?: 0f,
-                replayGainAlbum = md.extras?.getFloat("rgAlbum", 0f) ?: 0f,
-            )
-        }
-        songById = songs.associateBy { it.id }
+        songById = (0 until c.mediaItemCount).map { songOf(c.getMediaItemAt(it)) }.associateBy { it.id }
+    }
+
+    // another device's queue arrives as bare media items, so build songs from them
+    private fun fillFromController() {
+        val c = controller ?: return
+        val replace = remoteSession != null
+        val missing = (0 until c.mediaItemCount).map(c::getMediaItemAt).filter { replace || it.mediaId !in songById }
+        if (missing.isNotEmpty()) songById = songById + missing.associate { it.mediaId to songOf(it) }
+    }
+
+    private fun songOf(mi: MediaItem): Song {
+        val md = mi.mediaMetadata
+        return Song(
+            id = mi.mediaId,
+            title = md.title?.toString() ?: "",
+            artist = md.artist?.toString() ?: "",
+            album = md.albumTitle?.toString() ?: "",
+            artworkUrl = md.artworkUri?.toString() ?: "",
+            durationSec = md.extras?.getInt("aurora.durationSec") ?: 0,
+            accentArgb = com.aurora.music.util.accentArgbFor(mi.mediaId),
+            streamUrl = md.extras?.getString("aurora.preferred.original") ?: mi.localConfiguration?.uri?.toString() ?: "",
+            albumId = md.extras?.getString("aurora.albumId").orEmpty(),
+            artistId = md.extras?.getString("aurora.artistId").orEmpty(),
+            replayGainTrack = md.extras?.getFloat("rgTrack", 0f) ?: 0f,
+            replayGainAlbum = md.extras?.getFloat("rgAlbum", 0f) ?: 0f,
+        )
+    }
+
+    private fun syncRemote(remote: com.aurora.music.playback.network.endpoint.ConnectStatus) = _state.update {
+        val id = remote.current?.id ?: return@update it
+        it.copy(speed = remote.speed, sleepTimerMinutes = remote.sleepMinutes, sleepEndOfTrack = remote.sleepEndOfTrack,
+            likedIds = if (remote.liked) it.likedIds + id else it.likedIds - id)
     }
 
     fun setSleepTimer(minutes: Int) {
+        if (remoteSession != null) { container.networkOutput.command(com.aurora.music.playback.network.endpoint.ConnectCommand.Sleep(minutes, false)); return }
         sleepJob?.cancel()
         sendSleepFade(start = false)
         _state.update { it.copy(sleepTimerMinutes = minutes, sleepEndOfTrack = false) }
@@ -412,6 +436,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun setSleepEndOfTrack() {
+        if (remoteSession != null) { container.networkOutput.command(com.aurora.music.playback.network.endpoint.ConnectCommand.Sleep(0, true)); return }
         sleepJob?.cancel()
         sendSleepFade(start = false)
         _state.update { it.copy(sleepTimerMinutes = 0, sleepEndOfTrack = true) }
@@ -562,19 +587,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    private fun toMediaItem(song: Song): MediaItem = MediaItem.Builder()
-        .setMediaId(song.id)
-        .setUri(song.streamUrl)
-        .setMediaMetadata(
-            MediaMetadata.Builder()
-                .setTitle(song.title)
-                .setArtist(song.artist)
-                .setAlbumTitle(song.album)
-                .apply { if (song.artworkUrl.isNotBlank()) setArtworkUri(Uri.parse(song.artworkUrl)) }
-                .setExtras(PresetContextPublisher.extras(song, container.repository.playbackSourceIdentity(song)))
-                .build()
-        )
-        .build()
+    private fun toMediaItem(song: Song): MediaItem = com.aurora.music.playback.songMediaItem(song, container.repository)
 
     private fun leaveMixThen(action: () -> Unit): Boolean {
         val c = controller ?: return false
@@ -1020,7 +1033,11 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun toggleLikeCurrent() = toggleLike(_state.value.current.id)
+    fun toggleLikeCurrent() {
+        val remote = remoteSession?.status?.value
+        if (remote != null) container.networkOutput.command(com.aurora.music.playback.network.endpoint.ConnectCommand.Like(!remote.liked))
+        else toggleLike(_state.value.current.id)
+    }
 
     private var commentsFor: String? = null
     private var commentsJob: Job? = null

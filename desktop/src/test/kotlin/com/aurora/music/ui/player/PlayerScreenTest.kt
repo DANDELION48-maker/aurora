@@ -9,12 +9,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
 import com.aurora.music.data.Lyrics
 import com.aurora.music.data.ThemeMode
 import com.aurora.music.data.ThemeStyle
 import com.aurora.music.data.UiPrefs
+import com.aurora.music.desktop.platform.desktopFileUri
 import com.aurora.music.desktop.player.PlayerUiState
+import com.aurora.music.desktop.video.VideoPlayer
 import com.aurora.music.model.accent
 import com.aurora.music.ui.screens.player.LyricsPane
 import com.aurora.music.ui.screens.player.PlayerPane
@@ -38,10 +42,12 @@ class PlayerScreenTest {
     }
 
     @Composable
-    private fun Player(state: PlayerUiState, rec: Recorder, lyrics: Lyrics? = PlayerFixtures.lyrics, onSaved: (Float) -> Unit = {}) {
+    private fun Player(state: PlayerUiState, rec: Recorder, lyrics: Lyrics? = PlayerFixtures.lyrics, video: VideoPlayer? = null, onSaved: (Float) -> Unit = {}) {
         MaterialTheme(colorScheme = rememberPlayerColorScheme(state.current.artworkUrl, state.current.accent)) {
             PlayerScreen(
                 state = state,
+                video = video,
+                onRequestVideo = { rec.events += "video:$it" },
                 onCollapse = { rec.events += "collapse" },
                 onTogglePlay = { rec.events += "play" },
                 onNext = { rec.events += "next" },
@@ -179,8 +185,60 @@ class PlayerScreenTest {
         }.use { assertTrue(it.shot().distinctColors(6) > 40) }
         PlayerScene("player-small", 960, 600) { Player(PlayerFixtures.playing, Recorder()) }.use { it.shot() }
     }
+
+    @Test fun videoButtonClickAsksForTheVideoAndDoubleClickForTheCanvas() {
+        val rec = Recorder()
+        val state = PlayerFixtures.playing.copy(supportsMusicVideo = true, supportsCanvas = true)
+        PlayerScene("player-video-button", 1440, 900) { Player(state, rec) }.use { scene ->
+            scene.click(VIDEO_BUTTON, 36f)
+            scene.frames(4, realMillis = 150)
+            assertEquals(listOf("video:false"), rec.events)
+            scene.doubleClick(VIDEO_BUTTON, 36f)
+            scene.frames(4, realMillis = 150)
+            assertEquals(listOf("video:false", "video:true"), rec.events)
+        }
+    }
+
+    private fun ready(path: String) = VideoPlayer(desktopFileUri(path)).also { video ->
+        val deadline = System.currentTimeMillis() + 5_000
+        while (!video.ready.value && System.currentTimeMillis() < deadline) Thread.sleep(10)
+        assertTrue(video.ready.value)
+    }
+
+    @Test fun canvasStandsBesideTheControlsOverItsOwnGlow() {
+        val dark = UiPrefs(themeMode = ThemeMode.DARK)
+        val state = PlayerFixtures.playing.copy(supportsMusicVideo = true, supportsCanvas = true, hasVideo = true, videoIsCanvas = true)
+        ready(PlayerFixtures.canvas).use { dusk ->
+        ready(PlayerFixtures.brightCanvas).use { bright ->
+            listOf(
+                Triple(1280, 800, dark) to dusk, Triple(1920, 1080, dark) to dusk, Triple(960, 600, dark) to dusk,
+                Triple(1440, 900, UiPrefs(themeMode = ThemeMode.LIGHT)) to dusk,
+                Triple(1440, 900, UiPrefs(themeMode = ThemeMode.LIGHT, themeStyle = ThemeStyle.GLASS)) to dusk,
+                Triple(1440, 900, UiPrefs(themeMode = ThemeMode.DARK, themeStyle = ThemeStyle.RETRO)) to dusk,
+                Triple(1280, 800, UiPrefs(themeMode = ThemeMode.LIGHT)) to bright,
+            ).forEach { (size, video) ->
+                val (w, h, prefs) = size
+                val rec = Recorder()
+                val name = "player-canvas-${w}x$h-${prefs.themeStyle}-${prefs.themeMode}${if (video === bright) "-bright" else ""}"
+                PlayerScene(name, w, h, prefs) { Player(state, rec, video = video) }.use { scene ->
+                    val artwork = scene.shot("-artwork")
+                    scene.doubleClick(w - 164f, 36f)
+                    val stage = scene.shot()
+                    assertTrue(stage.differsFrom(artwork))
+                    assertEquals(emptyList<String>(), rec.events)
+                    (100 until h - 100 step 50).forEach { y ->
+                        assertTrue("glow at $y is too bright for white type", Color(stage.pixel(w - 40, y)).luminance() < 0.3f)
+                    }
+                    scene.click(w - 244f, 36f)
+                    scene.shot("-lyrics")
+                }
+            }
+        }
+        }
+    }
 }
 
+private const val VIDEO_BUTTON = 1276f
 private const val FULLSCREEN_BUTTON = 1316f
 private const val QUEUE_BUTTON = 1276f
 private const val LYRICS_BUTTON = 1236f
