@@ -25,13 +25,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
@@ -51,6 +57,19 @@ import com.aurora.music.ui.layout.PageMetrics
 import com.aurora.music.ui.theme.LocalUiPrefs
 import com.aurora.music.ui.theme.cornerDp
 import com.aurora.music.ui.theme.auroraBackdrop
+
+val LocalCoverHover = staticCompositionLocalOf { mutableStateOf<String?>(null) }
+
+// the hovered cover lends its colour to the app accent (see AuroraRoot)
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun Modifier.coverHover(url: String): Modifier {
+    if (url.isBlank()) return this
+    val hover = LocalCoverHover.current
+    DisposableEffect(hover, url) { onDispose { if (hover.value == url) hover.value = null } }
+    return onPointerEvent(PointerEventType.Enter) { hover.value = url }
+        .onPointerEvent(PointerEventType.Exit) { if (hover.value == url) hover.value = null }
+}
 
 @Composable
 fun Artwork(

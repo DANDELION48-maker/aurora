@@ -79,6 +79,7 @@ import com.aurora.music.ui.components.AdaptiveShelf
 import com.aurora.music.ui.components.AlbumCard
 import com.aurora.music.ui.components.ArtistCircle
 import com.aurora.music.ui.components.Artwork
+import com.aurora.music.ui.components.coverHover
 import com.aurora.music.ui.components.Eyebrow
 import com.aurora.music.ui.components.LottieLoader
 import com.aurora.music.ui.components.PageHeader
@@ -377,7 +378,8 @@ private fun HeroCard(album: Album, height: Dp, onOpenDetail: (String, String) ->
             .height(height)
             .clip(RoundedCornerShape(themedCorner(24.dp)))
             .clickable { onOpenDetail("album", album.id) }
-            .pointerHoverIcon(PointerIcon.Hand),
+            .pointerHoverIcon(PointerIcon.Hand)
+            .coverHover(album.artworkUrl),
     ) {
         Artwork(album.artworkUrl, accent, Modifier.matchParentSize(), corner = 24.dp)
         Box(
@@ -496,7 +498,8 @@ private fun LikedRow(song: Song, onClick: () -> Unit) {
 @Composable
 private fun OverlayTile(album: Album, width: Dp, onClick: () -> Unit) {
     Box(
-        Modifier.size(width).clip(RoundedCornerShape(themedCorner(18.dp))).clickable(onClick = onClick).pointerHoverIcon(PointerIcon.Hand),
+        Modifier.size(width).clip(RoundedCornerShape(themedCorner(18.dp))).clickable(onClick = onClick).pointerHoverIcon(PointerIcon.Hand)
+            .coverHover(album.artworkUrl),
     ) {
         Artwork(album.artworkUrl, accentFor(album.id), Modifier.matchParentSize(), corner = 18.dp)
         Box(

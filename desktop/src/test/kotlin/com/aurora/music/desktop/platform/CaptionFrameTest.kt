@@ -62,6 +62,7 @@ class CaptionFrameTest {
                 val outer = frame.client(hwnd)
                 caption!!.bar = CaptionFrame.Bar(bar, outer.width - 3 * button until outer.width, outer.width - 2 * button until outer.width - button)
                 assertEquals("no system caption above compose", 0, frame.insets.top)
+                assertEquals("dwm draws no caption buttons of its own", 0, User32.INSTANCE.GetWindowLong(hwnd, WinUser.GWL_STYLE) and 0x00080000)
                 assertEquals(outer.height / scale, frame.contentPane.height.toDouble(), 1.0)
                 assertEquals(HTTOP, hit(hwnd, outer, outer.width / 2, 1))
                 assertEquals(HTCAPTION, hit(hwnd, outer, outer.width / 2, bar / 2))

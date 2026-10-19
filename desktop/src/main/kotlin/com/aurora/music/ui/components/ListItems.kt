@@ -364,7 +364,7 @@ private fun RowAction(icon: ImageVector, label: String, tint: Color, visible: Bo
 private fun rowShape(): Shape = if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(themedCorner(12.dp)) else MaterialTheme.shapes.small
 
 @Composable
-private fun MediaCard(width: Dp, onClick: () -> Unit, modifier: Modifier, content: @Composable ColumnScope.(art: Dp) -> Unit) {
+private fun MediaCard(width: Dp, cover: String, onClick: () -> Unit, modifier: Modifier, content: @Composable ColumnScope.(art: Dp) -> Unit) {
     val aurora = LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA
     val shape = if (aurora) RoundedCornerShape(themedCorner(16.dp)) else MaterialTheme.shapes.medium
     Column(
@@ -374,6 +374,7 @@ private fun MediaCard(width: Dp, onClick: () -> Unit, modifier: Modifier, conten
             .then(if (aurora) Modifier else Modifier.auroraPanel(shape))
             .clickable(onClick = onClick)
             .pointerHoverIcon(PointerIcon.Hand)
+            .coverHover(cover)
             .padding(if (aurora) 0.dp else CardPanelPadding),
     ) {
         content(if (aurora) width else width - CardPanelPadding * 2)
@@ -388,7 +389,7 @@ fun PlaylistCard(
     modifier: Modifier = Modifier,
     width: Dp = PageMetrics.CardWidth,
 ) {
-    MediaCard(width, onClick, modifier) { art ->
+    MediaCard(width, playlist.coverUrl, onClick, modifier) { art ->
         Artwork(playlist.coverUrl, playlist.accent, Modifier.size(art), corner = 14.dp)
         Spacer(Modifier.height(8.dp))
         Text(playlist.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -404,7 +405,7 @@ fun PlaylistCard(
 
 @Composable
 fun AlbumCard(album: Album, onClick: () -> Unit, modifier: Modifier = Modifier, width: Dp = PageMetrics.CardWidth) {
-    MediaCard(width, onClick, modifier) { art ->
+    MediaCard(width, album.artworkUrl, onClick, modifier) { art ->
         Box {
             Artwork(album.artworkUrl, MaterialTheme.colorScheme.secondary, Modifier.size(art), corner = 14.dp)
             val label = album.typeLabel.localizedMediaType()

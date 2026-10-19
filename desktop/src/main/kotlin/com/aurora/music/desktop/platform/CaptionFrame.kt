@@ -33,6 +33,7 @@ class CaptionFrame private constructor(private val hwnd: HWND) {
         private set
 
     @Volatile private var border = 0
+    private var menu: Pointer? = null
     private val procs = mutableListOf<WinUser.WindowProc>()
 
     private fun subclass(target: HWND, handler: (Pointer, Int, WPARAM, LPARAM) -> LRESULT?) {
@@ -80,7 +81,25 @@ class CaptionFrame private constructor(private val hwnd: HWND) {
             maximizePressed = false
             LRESULT(0)
         }
+        WM_NCRBUTTONUP -> if (w.toInt() != HTCAPTION) null else {
+            showSystemMenu(l.toInt().toShort().toInt(), (l.toInt() shr 16).toShort().toInt())
+            LRESULT(0)
+        }
+        WinUser.WM_SYSCOMMAND -> if (w.toInt() and 0xFFF0 != SC_KEYMENU || l.toInt() != ' '.code) null else {
+            val window = RECT().also { User32.INSTANCE.GetWindowRect(hwnd, it) }
+            showSystemMenu(window.left + border, window.top + bar.height)
+            LRESULT(0)
+        }
         else -> null
+    }
+
+    private fun showSystemMenu(x: Int, y: Int) {
+        val menu = menu ?: return
+        val zoomed = Api.user.IsZoomed(hwnd)
+        mapOf(SC_RESTORE to zoomed, SC_MOVE to !zoomed, SC_SIZE to !zoomed, SC_MINIMIZE to true, SC_MAXIMIZE to !zoomed, SC_CLOSE to true)
+            .forEach { (command, enabled) -> Api.user.EnableMenuItem(menu, command, if (enabled) MF_ENABLED else MF_GRAYED) }
+        val command = Api.user.TrackPopupMenu(menu, TPM_RETURNCMD or TPM_RIGHTBUTTON, x, y, 0, hwnd, null)
+        if (command != 0) User32.INSTANCE.PostMessage(hwnd, WinUser.WM_SYSCOMMAND, WPARAM(command.toLong()), LPARAM(0))
     }
 
     // compose's canvas covers the client area, so it passes caption hits through to the frame
@@ -128,6 +147,9 @@ class CaptionFrame private constructor(private val hwnd: HWND) {
         fun ScreenToClient(hwnd: HWND, point: POINT): Boolean
         fun IsZoomed(hwnd: HWND): Boolean
         fun TrackMouseEvent(track: TrackMouse): Boolean
+        fun GetSystemMenu(hwnd: HWND, revert: Boolean): Pointer?
+        fun EnableMenuItem(menu: Pointer, item: Int, flags: Int): Int
+        fun TrackPopupMenu(menu: Pointer, flags: Int, x: Int, y: Int, reserved: Int, hwnd: HWND, rect: Pointer?): Int
     }
 
     private object Api {
@@ -144,6 +166,7 @@ class CaptionFrame private constructor(private val hwnd: HWND) {
         private const val WM_NCLBUTTONDOWN = 0x00A1
         private const val WM_NCLBUTTONUP = 0x00A2
         private const val WM_NCLBUTTONDBLCLK = 0x00A3
+        private const val WM_NCRBUTTONUP = 0x00A5
         private const val WM_NCMOUSELEAVE = 0x02A2
         private const val HTTRANSPARENT = -1
         private const val HTCLIENT = 1
@@ -152,8 +175,18 @@ class CaptionFrame private constructor(private val hwnd: HWND) {
         private const val HTTOP = 12
         private const val HTTOPLEFT = 13
         private const val HTTOPRIGHT = 14
+        private const val SC_SIZE = 0xF000
+        private const val SC_MOVE = 0xF010
+        private const val SC_MINIMIZE = 0xF020
         private const val SC_MAXIMIZE = 0xF030
+        private const val SC_CLOSE = 0xF060
+        private const val SC_KEYMENU = 0xF100
         private const val SC_RESTORE = 0xF120
+        private const val WS_SYSMENU = 0x00080000
+        private const val MF_ENABLED = 0
+        private const val MF_GRAYED = 1
+        private const val TPM_RIGHTBUTTON = 0x0002
+        private const val TPM_RETURNCMD = 0x0100
         private const val TME_LEAVE = 0x2
         private const val TME_NONCLIENT = 0x10
         private const val SWP_FRAME = 0x0001 or 0x0002 or 0x0004 or 0x0010 or 0x0020 or 0x0200
@@ -167,6 +200,9 @@ class CaptionFrame private constructor(private val hwnd: HWND) {
                 val hwnd = HWND(User32.INSTANCE.GetAncestor(HWND(handle), GA_ROOT)?.pointer ?: handle)
                 val frame = CaptionFrame(hwnd)
                 frame.subclass(hwnd, frame::onFrame)
+                frame.menu = Api.user.GetSystemMenu(hwnd, false)
+                // with WS_SYSMENU dwm draws its own caption buttons under a translucent bar and takes their hover
+                User32.INSTANCE.SetWindowLong(hwnd, WinUser.GWL_STYLE, User32.INSTANCE.GetWindowLong(hwnd, WinUser.GWL_STYLE) and WS_SYSMENU.inv())
                 window.canvases().forEach { canvas -> frame.subclass(HWND(Native.getComponentPointer(canvas))) { _, msg, _, l -> frame.onCanvas(msg, l) } }
                 User32.INSTANCE.SetWindowPos(hwnd, null, 0, 0, 0, 0, SWP_FRAME)
                 frame
