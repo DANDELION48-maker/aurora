@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_section">"दूसरे डिवाइस को नियंत्रित करें"</string>
+    <string name="connect_this_device">"यह डिवाइस"</string>
+    <string name="connect_pair_title">"%1$s से पेयर करें"</string>
+    <string name="connect_enter_code">"%1$s पर दिखाया गया कोड डालें।"</string>
+    <string name="connect_add_by_address">"पते से जोड़ें"</string>
+    <string name="connect_address_help">"Tailscale या किसी दूसरे नेटवर्क के लिए डिवाइस का IP या नाम डालें, जैसे 100.101.102.103।"</string>
+    <string name="connect_device_key">"डिवाइस कुंजी %1$s"</string>
+    <string name="connect_device_key_help">"जाँचें कि दूसरा डिवाइस यही कुंजी दिखा रहा है, फिर उसका कोड डालें।"</string>
+    <string name="connect_already_paired">"पहले से पेयर है। नया पता सहेज लिया गया।"</string>
+    <string name="connect_switch_title">"डिवाइस बदलते समय"</string>
+    <string name="connect_switch_keep">"दोनों पर चलता रहे"</string>
+    <string name="connect_switch_pause">"यहाँ रोकें"</string>
+    <string name="connect_switch_move">"प्लेबैक ले जाएँ"</string>
+    <string name="connect_output">"आउटपुट"</string>
+    <string name="connect_preset">"प्रीसेट"</string>
+    <string name="connect_sources_note">"गाने उस डिवाइस के अपने स्रोतों से चलते हैं।"</string>
+    <string name="connect_reachable_at">"यहाँ उपलब्ध"</string>
+    <string name="connect_none_found">"कोई दूसरा Aurora डिवाइस नहीं मिला। वहाँ रिमोट कंट्रोल चालू करें, फिर दोबारा खोजें।"</string>
+    <string name="connect_settings_title">"Aurora Connect"</string>
+    <string name="connect_settings_summary">"दूसरे Aurora डिवाइस नियंत्रित करें या उन्हें इसे नियंत्रित करने दें"</string>
+    <string name="connect_continue">"जारी रखें"</string>
+    <string name="connect_this_key">"इस डिवाइस की कुंजी: %1$s"</string>
+</resources>

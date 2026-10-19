@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_section">"Ander apparaat bedienen"</string>
+    <string name="connect_this_device">"Dit apparaat"</string>
+    <string name="connect_pair_title">"Koppelen met %1$s"</string>
+    <string name="connect_enter_code">"Voer de code in die op %1$s staat."</string>
+    <string name="connect_add_by_address">"Toevoegen via adres"</string>
+    <string name="connect_address_help">"Voor Tailscale of een ander netwerk: voer het IP-adres of de naam van het apparaat in, bijv. 100.101.102.103."</string>
+    <string name="connect_device_key">"Apparaatsleutel %1$s"</string>
+    <string name="connect_device_key_help">"Controleer of het andere apparaat dezelfde sleutel toont en voer dan de code in."</string>
+    <string name="connect_already_paired">"Al gekoppeld. Het nieuwe adres is opgeslagen."</string>
+    <string name="connect_switch_title">"Bij wisselen van apparaat"</string>
+    <string name="connect_switch_keep">"Op beide door laten spelen"</string>
+    <string name="connect_switch_pause">"Hier pauzeren"</string>
+    <string name="connect_switch_move">"Afspelen verplaatsen"</string>
+    <string name="connect_output">"Uitvoer"</string>
+    <string name="connect_preset">"Preset"</string>
+    <string name="connect_sources_note">"Nummers spelen af vanuit de bronnen van dat apparaat."</string>
+    <string name="connect_reachable_at">"Bereikbaar op"</string>
+    <string name="connect_none_found">"Geen andere Aurora-apparaten gevonden. Zet daar bediening op afstand aan en zoek opnieuw."</string>
+    <string name="connect_settings_title">"Aurora Connect"</string>
+    <string name="connect_settings_summary">"Bedien andere Aurora-apparaten of laat ze dit apparaat bedienen"</string>
+    <string name="connect_continue">"Doorgaan"</string>
+    <string name="connect_this_key">"Sleutel van dit apparaat: %1$s"</string>
+</resources>

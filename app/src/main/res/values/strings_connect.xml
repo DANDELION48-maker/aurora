@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_section">"Control another device"</string>
+    <string name="connect_this_device">"This device"</string>
+    <string name="connect_pair_title">"Pair with %1$s"</string>
+    <string name="connect_enter_code">"Enter the code shown on %1$s."</string>
+    <string name="connect_add_by_address">"Add by address"</string>
+    <string name="connect_address_help">"For Tailscale or another network, enter the device's IP or name, like 100.101.102.103."</string>
+    <string name="connect_device_key">"Device key %1$s"</string>
+    <string name="connect_device_key_help">"Check that the other device shows the same key, then enter its code."</string>
+    <string name="connect_already_paired">"Already paired. The new address was saved."</string>
+    <string name="connect_switch_title">"When switching devices"</string>
+    <string name="connect_switch_keep">"Keep both playing"</string>
+    <string name="connect_switch_pause">"Pause here"</string>
+    <string name="connect_switch_move">"Move playback"</string>
+    <string name="connect_output">"Output"</string>
+    <string name="connect_preset">"Preset"</string>
+    <string name="connect_sources_note">"Songs play from that device's own sources."</string>
+    <string name="connect_reachable_at">"Reachable at"</string>
+    <string name="connect_none_found">"No other Aurora devices found. Turn on remote control there, then search again."</string>
+    <string name="connect_settings_title">"Aurora Connect"</string>
+    <string name="connect_settings_summary">"Control other Aurora devices or let them control this one"</string>
+    <string name="connect_continue">"Continue"</string>
+    <string name="connect_this_key">"This device's key: %1$s"</string>
+</resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_section">"다른 기기 제어"</string>
+    <string name="connect_this_device">"이 기기"</string>
+    <string name="connect_pair_title">"%1$s와(과) 페어링"</string>
+    <string name="connect_enter_code">"%1$s에 표시된 코드를 입력하세요."</string>
+    <string name="connect_add_by_address">"주소로 추가"</string>
+    <string name="connect_address_help">"Tailscale이나 다른 네트워크에서는 기기의 IP 또는 이름을 입력하세요(예: 100.101.102.103)."</string>
+    <string name="connect_device_key">"기기 키 %1$s"</string>
+    <string name="connect_device_key_help">"다른 기기에 같은 키가 표시되는지 확인한 다음 코드를 입력하세요."</string>
+    <string name="connect_already_paired">"이미 페어링되어 있습니다. 새 주소를 저장했습니다."</string>
+    <string name="connect_switch_title">"기기를 전환할 때"</string>
+    <string name="connect_switch_keep">"두 기기 모두 계속 재생"</string>
+    <string name="connect_switch_pause">"여기서 일시정지"</string>
+    <string name="connect_switch_move">"재생 옮기기"</string>
+    <string name="connect_output">"출력"</string>
+    <string name="connect_preset">"프리셋"</string>
+    <string name="connect_sources_note">"노래는 그 기기의 자체 소스에서 재생됩니다."</string>
+    <string name="connect_reachable_at">"접속 주소"</string>
+    <string name="connect_none_found">"다른 Aurora 기기를 찾지 못했습니다. 그 기기에서 원격 제어를 켠 다음 다시 검색하세요."</string>
+    <string name="connect_settings_title">"Aurora Connect"</string>
+    <string name="connect_settings_summary">"다른 Aurora 기기를 제어하거나 이 기기를 제어하도록 허용합니다"</string>
+    <string name="connect_continue">"계속"</string>
+    <string name="connect_this_key">"이 기기의 키: %1$s"</string>
+</resources>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="canvas_double_click" formatted="false">"더블클릭하여 Canvas 보기"</string>
+</resources>

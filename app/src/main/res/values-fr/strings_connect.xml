@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_section">"Contrôler un autre appareil"</string>
+    <string name="connect_this_device">"Cet appareil"</string>
+    <string name="connect_pair_title">"Associer à %1$s"</string>
+    <string name="connect_enter_code">"Saisissez le code affiché sur %1$s."</string>
+    <string name="connect_add_by_address">"Ajouter par adresse"</string>
+    <string name="connect_address_help">"Pour Tailscale ou un autre réseau, saisissez l'IP ou le nom de l'appareil, par ex. 100.101.102.103."</string>
+    <string name="connect_device_key">"Clé de l'appareil %1$s"</string>
+    <string name="connect_device_key_help">"Vérifiez que l'autre appareil affiche la même clé, puis saisissez son code."</string>
+    <string name="connect_already_paired">"Déjà associé. La nouvelle adresse a été enregistrée."</string>
+    <string name="connect_switch_title">"Lors du changement d'appareil"</string>
+    <string name="connect_switch_keep">"Continuer sur les deux"</string>
+    <string name="connect_switch_pause">"Mettre en pause ici"</string>
+    <string name="connect_switch_move">"Transférer la lecture"</string>
+    <string name="connect_output">"Sortie"</string>
+    <string name="connect_preset">"Préréglage"</string>
+    <string name="connect_sources_note">"Les titres sont lus depuis les sources de cet appareil."</string>
+    <string name="connect_reachable_at">"Accessible à"</string>
+    <string name="connect_none_found">"Aucun autre appareil Aurora trouvé. Activez-y le contrôle à distance, puis relancez la recherche."</string>
+    <string name="connect_settings_title">"Aurora Connect"</string>
+    <string name="connect_settings_summary">"Contrôlez d'autres appareils Aurora ou laissez-les contrôler celui-ci"</string>
+    <string name="connect_continue">"Continuer"</string>
+    <string name="connect_this_key">"Clé de cet appareil : %1$s"</string>
+</resources>

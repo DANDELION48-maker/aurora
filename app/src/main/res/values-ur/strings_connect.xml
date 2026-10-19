@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_section">"⁧دوسرے آلے کو کنٹرول کریں⁩"</string>
+    <string name="connect_this_device">"⁧یہ آلہ⁩"</string>
+    <string name="connect_pair_title">"⁧%1$s کے ساتھ جوڑیں⁩"</string>
+    <string name="connect_enter_code">"⁧%1$s پر دکھایا گیا کوڈ درج کریں۔⁩"</string>
+    <string name="connect_add_by_address">"⁧پتے سے شامل کریں⁩"</string>
+    <string name="connect_address_help">"⁧Tailscale یا کسی اور نیٹ ورک کے لیے آلے کا IP یا نام درج کریں، جیسے 100.101.102.103۔⁩"</string>
+    <string name="connect_device_key">"⁧آلے کی کلید %1$s⁩"</string>
+    <string name="connect_device_key_help">"⁧تصدیق کریں کہ دوسرا آلہ یہی کلید دکھا رہا ہے، پھر اس کا کوڈ درج کریں۔⁩"</string>
+    <string name="connect_already_paired">"⁧پہلے سے جڑا ہوا ہے۔ نیا پتہ محفوظ ہو گیا۔⁩"</string>
+    <string name="connect_switch_title">"⁧آلہ بدلتے وقت⁩"</string>
+    <string name="connect_switch_keep">"⁧دونوں پر چلتا رہے⁩"</string>
+    <string name="connect_switch_pause">"⁧یہاں روکیں⁩"</string>
+    <string name="connect_switch_move">"⁧پلے بیک منتقل کریں⁩"</string>
+    <string name="connect_output">"⁧آؤٹ پٹ⁩"</string>
+    <string name="connect_preset">"⁧پری سیٹ⁩"</string>
+    <string name="connect_sources_note">"⁧گانے اس آلے کے اپنے ذرائع سے چلتے ہیں۔⁩"</string>
+    <string name="connect_reachable_at">"⁧یہاں دستیاب⁩"</string>
+    <string name="connect_none_found">"⁧کوئی دوسرا Aurora آلہ نہیں ملا۔ وہاں ریموٹ کنٹرول آن کریں، پھر دوبارہ تلاش کریں۔⁩"</string>
+    <string name="connect_settings_title">"⁧Aurora Connect⁩"</string>
+    <string name="connect_settings_summary">"⁧دوسرے Aurora آلات کو کنٹرول کریں یا انہیں اس آلے کو کنٹرول کرنے دیں⁩"</string>
+    <string name="connect_continue">"⁧جاری رکھیں⁩"</string>
+    <string name="connect_this_key">"⁧اس آلے کی کلید: %1$s⁩"</string>
+</resources>

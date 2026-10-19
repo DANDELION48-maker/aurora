@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_section">"Управлять другим устройством"</string>
+    <string name="connect_this_device">"Это устройство"</string>
+    <string name="connect_pair_title">"Сопряжение с %1$s"</string>
+    <string name="connect_enter_code">"Введите код, показанный на %1$s."</string>
+    <string name="connect_add_by_address">"Добавить по адресу"</string>
+    <string name="connect_address_help">"Для Tailscale или другой сети введите IP или имя устройства, например 100.101.102.103."</string>
+    <string name="connect_device_key">"Ключ устройства %1$s"</string>
+    <string name="connect_device_key_help">"Убедитесь, что на другом устройстве тот же ключ, затем введите его код."</string>
+    <string name="connect_already_paired">"Уже сопряжено. Новый адрес сохранён."</string>
+    <string name="connect_switch_title">"При переключении устройств"</string>
+    <string name="connect_switch_keep">"Играть на обоих"</string>
+    <string name="connect_switch_pause">"Пауза здесь"</string>
+    <string name="connect_switch_move">"Перенести воспроизведение"</string>
+    <string name="connect_output">"Выход"</string>
+    <string name="connect_preset">"Пресет"</string>
+    <string name="connect_sources_note">"Песни воспроизводятся из источников того устройства."</string>
+    <string name="connect_reachable_at">"Доступно по адресу"</string>
+    <string name="connect_none_found">"Другие устройства Aurora не найдены. Включите там удалённое управление и повторите поиск."</string>
+    <string name="connect_settings_title">"Aurora Connect"</string>
+    <string name="connect_settings_summary">"Управляйте другими устройствами Aurora или позвольте им управлять этим"</string>
+    <string name="connect_continue">"Продолжить"</string>
+    <string name="connect_this_key">"Ключ этого устройства: %1$s"</string>
+</resources>

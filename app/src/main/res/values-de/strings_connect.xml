@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_section">"Anderes Gerät steuern"</string>
+    <string name="connect_this_device">"Dieses Gerät"</string>
+    <string name="connect_pair_title">"Mit %1$s koppeln"</string>
+    <string name="connect_enter_code">"Gib den Code ein, der auf %1$s angezeigt wird."</string>
+    <string name="connect_add_by_address">"Per Adresse hinzufügen"</string>
+    <string name="connect_address_help">"Für Tailscale oder ein anderes Netzwerk die IP oder den Namen des Geräts eingeben, z. B. 100.101.102.103."</string>
+    <string name="connect_device_key">"Geräteschlüssel %1$s"</string>
+    <string name="connect_device_key_help">"Prüfe, ob das andere Gerät denselben Schlüssel zeigt, und gib dann dessen Code ein."</string>
+    <string name="connect_already_paired">"Bereits gekoppelt. Die neue Adresse wurde gespeichert."</string>
+    <string name="connect_switch_title">"Beim Gerätewechsel"</string>
+    <string name="connect_switch_keep">"Auf beiden weiterspielen"</string>
+    <string name="connect_switch_pause">"Hier pausieren"</string>
+    <string name="connect_switch_move">"Wiedergabe übertragen"</string>
+    <string name="connect_output">"Ausgabe"</string>
+    <string name="connect_preset">"Preset"</string>
+    <string name="connect_sources_note">"Songs werden aus den Quellen dieses Geräts abgespielt."</string>
+    <string name="connect_reachable_at">"Erreichbar unter"</string>
+    <string name="connect_none_found">"Keine anderen Aurora-Geräte gefunden. Aktiviere dort die Fernsteuerung und suche erneut."</string>
+    <string name="connect_settings_title">"Aurora Connect"</string>
+    <string name="connect_settings_summary">"Andere Aurora-Geräte steuern oder sie dieses steuern lassen"</string>
+    <string name="connect_continue">"Weiter"</string>
+    <string name="connect_this_key">"Schlüssel dieses Geräts: %1$s"</string>
+</resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_section">"他のデバイスを操作"</string>
+    <string name="connect_this_device">"このデバイス"</string>
+    <string name="connect_pair_title">"%1$s とペアリング"</string>
+    <string name="connect_enter_code">"%1$s に表示されているコードを入力してください。"</string>
+    <string name="connect_add_by_address">"アドレスで追加"</string>
+    <string name="connect_address_help">"Tailscale や別のネットワークでは、デバイスの IP または名前を入力します（例: 100.101.102.103）。"</string>
+    <string name="connect_device_key">"デバイスキー %1$s"</string>
+    <string name="connect_device_key_help">"相手のデバイスに同じキーが表示されていることを確認してから、コードを入力してください。"</string>
+    <string name="connect_already_paired">"ペアリング済みです。新しいアドレスを保存しました。"</string>
+    <string name="connect_switch_title">"デバイスを切り替えるとき"</string>
+    <string name="connect_switch_keep">"両方で再生を続ける"</string>
+    <string name="connect_switch_pause">"ここで一時停止"</string>
+    <string name="connect_switch_move">"再生を移動"</string>
+    <string name="connect_output">"出力"</string>
+    <string name="connect_preset">"プリセット"</string>
+    <string name="connect_sources_note">"曲はそのデバイス自身のソースから再生されます。"</string>
+    <string name="connect_reachable_at">"接続先"</string>
+    <string name="connect_none_found">"他の Aurora デバイスが見つかりません。相手側でリモート操作をオンにして、もう一度検索してください。"</string>
+    <string name="connect_settings_title">"Aurora Connect"</string>
+    <string name="connect_settings_summary">"他の Aurora デバイスを操作したり、このデバイスを操作させたりします"</string>
+    <string name="connect_continue">"続行"</string>
+    <string name="connect_this_key">"このデバイスのキー: %1$s"</string>
+</resources>

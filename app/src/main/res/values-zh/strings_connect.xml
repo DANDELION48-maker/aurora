@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_section">"控制其他设备"</string>
+    <string name="connect_this_device">"本设备"</string>
+    <string name="connect_pair_title">"与 %1$s 配对"</string>
+    <string name="connect_enter_code">"输入 %1$s 上显示的代码。"</string>
+    <string name="connect_add_by_address">"按地址添加"</string>
+    <string name="connect_address_help">"对于 Tailscale 或其他网络，请输入设备的 IP 或名称，例如 100.101.102.103。"</string>
+    <string name="connect_device_key">"设备密钥 %1$s"</string>
+    <string name="connect_device_key_help">"确认另一台设备显示相同的密钥，然后输入其代码。"</string>
+    <string name="connect_already_paired">"已配对。新地址已保存。"</string>
+    <string name="connect_switch_title">"切换设备时"</string>
+    <string name="connect_switch_keep">"两边都继续播放"</string>
+    <string name="connect_switch_pause">"在此暂停"</string>
+    <string name="connect_switch_move">"转移播放"</string>
+    <string name="connect_output">"输出"</string>
+    <string name="connect_preset">"预设"</string>
+    <string name="connect_sources_note">"歌曲从该设备自己的音源播放。"</string>
+    <string name="connect_reachable_at">"访问地址"</string>
+    <string name="connect_none_found">"未找到其他 Aurora 设备。请在那台设备上开启远程控制，然后重新搜索。"</string>
+    <string name="connect_settings_title">"Aurora Connect"</string>
+    <string name="connect_settings_summary">"控制其他 Aurora 设备，或让它们控制本设备"</string>
+    <string name="connect_continue">"继续"</string>
+    <string name="connect_this_key">"本设备密钥：%1$s"</string>
+</resources>

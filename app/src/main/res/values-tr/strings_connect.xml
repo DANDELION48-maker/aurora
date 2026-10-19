@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_section">"Başka bir cihazı kontrol et"</string>
+    <string name="connect_this_device">"Bu cihaz"</string>
+    <string name="connect_pair_title">"%1$s ile eşleştir"</string>
+    <string name="connect_enter_code">"%1$s üzerinde gösterilen kodu girin."</string>
+    <string name="connect_add_by_address">"Adresle ekle"</string>
+    <string name="connect_address_help">"Tailscale veya başka bir ağ için cihazın IP adresini ya da adını girin, örn. 100.101.102.103."</string>
+    <string name="connect_device_key">"Cihaz anahtarı %1$s"</string>
+    <string name="connect_device_key_help">"Diğer cihazın aynı anahtarı gösterdiğini kontrol edin, ardından kodunu girin."</string>
+    <string name="connect_already_paired">"Zaten eşleştirildi. Yeni adres kaydedildi."</string>
+    <string name="connect_switch_title">"Cihaz değiştirirken"</string>
+    <string name="connect_switch_keep">"İkisi de çalmaya devam etsin"</string>
+    <string name="connect_switch_pause">"Burada duraklat"</string>
+    <string name="connect_switch_move">"Çalmayı taşı"</string>
+    <string name="connect_output">"Çıkış"</string>
+    <string name="connect_preset">"Ön ayar"</string>
+    <string name="connect_sources_note">"Şarkılar o cihazın kendi kaynaklarından çalınır."</string>
+    <string name="connect_reachable_at">"Erişim adresi"</string>
+    <string name="connect_none_found">"Başka Aurora cihazı bulunamadı. Orada uzaktan kontrolü açın ve tekrar arayın."</string>
+    <string name="connect_settings_title">"Aurora Connect"</string>
+    <string name="connect_settings_summary">"Diğer Aurora cihazlarını kontrol edin veya onların bu cihazı kontrol etmesine izin verin"</string>
+    <string name="connect_continue">"Devam"</string>
+    <string name="connect_this_key">"Bu cihazın anahtarı: %1$s"</string>
+</resources>

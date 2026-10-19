@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_section">"Kontrol perangkat lain"</string>
+    <string name="connect_this_device">"Perangkat ini"</string>
+    <string name="connect_pair_title">"Sambungkan dengan %1$s"</string>
+    <string name="connect_enter_code">"Masukkan kode yang ditampilkan di %1$s."</string>
+    <string name="connect_add_by_address">"Tambahkan lewat alamat"</string>
+    <string name="connect_address_help">"Untuk Tailscale atau jaringan lain, masukkan IP atau nama perangkat, mis. 100.101.102.103."</string>
+    <string name="connect_device_key">"Kunci perangkat %1$s"</string>
+    <string name="connect_device_key_help">"Pastikan perangkat lain menampilkan kunci yang sama, lalu masukkan kodenya."</string>
+    <string name="connect_already_paired">"Sudah tersambung. Alamat baru disimpan."</string>
+    <string name="connect_switch_title">"Saat berpindah perangkat"</string>
+    <string name="connect_switch_keep">"Tetap putar di keduanya"</string>
+    <string name="connect_switch_pause">"Jeda di sini"</string>
+    <string name="connect_switch_move">"Pindahkan pemutaran"</string>
+    <string name="connect_output">"Output"</string>
+    <string name="connect_preset">"Preset"</string>
+    <string name="connect_sources_note">"Lagu diputar dari sumber milik perangkat itu."</string>
+    <string name="connect_reachable_at">"Dapat dijangkau di"</string>
+    <string name="connect_none_found">"Tidak ada perangkat Aurora lain. Aktifkan kontrol jarak jauh di sana, lalu cari lagi."</string>
+    <string name="connect_settings_title">"Aurora Connect"</string>
+    <string name="connect_settings_summary">"Kontrol perangkat Aurora lain atau biarkan mereka mengontrol perangkat ini"</string>
+    <string name="connect_continue">"Lanjut"</string>
+    <string name="connect_this_key">"Kunci perangkat ini: %1$s"</string>
+</resources>

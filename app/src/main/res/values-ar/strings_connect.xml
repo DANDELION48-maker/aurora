@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_section">"⁧التحكم في جهاز آخر⁩"</string>
+    <string name="connect_this_device">"⁧هذا الجهاز⁩"</string>
+    <string name="connect_pair_title">"⁧الاقتران مع %1$s⁩"</string>
+    <string name="connect_enter_code">"⁧أدخل الرمز الظاهر على %1$s.⁩"</string>
+    <string name="connect_add_by_address">"⁧الإضافة بالعنوان⁩"</string>
+    <string name="connect_address_help">"⁧لشبكة Tailscale أو شبكة أخرى، أدخل عنوان IP للجهاز أو اسمه، مثل 100.101.102.103.⁩"</string>
+    <string name="connect_device_key">"⁧مفتاح الجهاز %1$s⁩"</string>
+    <string name="connect_device_key_help">"⁧تأكد من أن الجهاز الآخر يعرض المفتاح نفسه، ثم أدخل رمزه.⁩"</string>
+    <string name="connect_already_paired">"⁧مقترن بالفعل. تم حفظ العنوان الجديد.⁩"</string>
+    <string name="connect_switch_title">"⁧عند تبديل الأجهزة⁩"</string>
+    <string name="connect_switch_keep">"⁧متابعة التشغيل على الجهازين⁩"</string>
+    <string name="connect_switch_pause">"⁧إيقاف مؤقت هنا⁩"</string>
+    <string name="connect_switch_move">"⁧نقل التشغيل⁩"</string>
+    <string name="connect_output">"⁧الإخراج⁩"</string>
+    <string name="connect_preset">"⁧الإعداد المسبق⁩"</string>
+    <string name="connect_sources_note">"⁧تُشغَّل الأغاني من مصادر ذلك الجهاز.⁩"</string>
+    <string name="connect_reachable_at">"⁧متاح على⁩"</string>
+    <string name="connect_none_found">"⁧لم يتم العثور على أجهزة Aurora أخرى. فعّل التحكم عن بُعد هناك ثم ابحث مجددًا.⁩"</string>
+    <string name="connect_settings_title">"⁧Aurora Connect⁩"</string>
+    <string name="connect_settings_summary">"⁧تحكم في أجهزة Aurora الأخرى أو اسمح لها بالتحكم في هذا الجهاز⁩"</string>
+    <string name="connect_continue">"⁧متابعة⁩"</string>
+    <string name="connect_this_key">"⁧مفتاح هذا الجهاز: %1$s⁩"</string>
+</resources>

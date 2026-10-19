@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_section">"Controlar outro dispositivo"</string>
+    <string name="connect_this_device">"Este dispositivo"</string>
+    <string name="connect_pair_title">"Parear com %1$s"</string>
+    <string name="connect_enter_code">"Digite o código exibido em %1$s."</string>
+    <string name="connect_add_by_address">"Adicionar por endereço"</string>
+    <string name="connect_address_help">"Para Tailscale ou outra rede, digite o IP ou o nome do dispositivo, ex.: 100.101.102.103."</string>
+    <string name="connect_device_key">"Chave do dispositivo %1$s"</string>
+    <string name="connect_device_key_help">"Confira se o outro dispositivo mostra a mesma chave e depois digite o código dele."</string>
+    <string name="connect_already_paired">"Já pareado. O novo endereço foi salvo."</string>
+    <string name="connect_switch_title">"Ao trocar de dispositivo"</string>
+    <string name="connect_switch_keep">"Continuar tocando nos dois"</string>
+    <string name="connect_switch_pause">"Pausar aqui"</string>
+    <string name="connect_switch_move">"Transferir reprodução"</string>
+    <string name="connect_output">"Saída"</string>
+    <string name="connect_preset">"Predefinição"</string>
+    <string name="connect_sources_note">"As músicas tocam pelas fontes daquele dispositivo."</string>
+    <string name="connect_reachable_at">"Acessível em"</string>
+    <string name="connect_none_found">"Nenhum outro dispositivo Aurora encontrado. Ative o controle remoto nele e pesquise de novo."</string>
+    <string name="connect_settings_title">"Aurora Connect"</string>
+    <string name="connect_settings_summary">"Controle outros dispositivos Aurora ou deixe que eles controlem este"</string>
+    <string name="connect_continue">"Continuar"</string>
+    <string name="connect_this_key">"Chave deste dispositivo: %1$s"</string>
+</resources>
