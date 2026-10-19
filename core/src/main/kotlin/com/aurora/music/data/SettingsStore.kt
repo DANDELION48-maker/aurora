@@ -1213,6 +1213,9 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     val squigTarget: Flow<String> = dataStore.data.map { it[Keys.SQUIG_TARGET]?.takeIf { t -> t.isNotBlank() } ?: DEFAULT_SQUIG_TARGET }.distinctUntilChanged()
     suspend fun setSquigTarget(v: String) = dataStore.edit { it[Keys.SQUIG_TARGET] = v.trim() }
 
+    val connectSwitch: Flow<Int> = dataStore.data.map { it[Keys.CONNECT_SWITCH]?.coerceIn(0, 2) ?: com.aurora.music.playback.network.endpoint.ConnectSwitch.KEEP }.distinctUntilChanged()
+    suspend fun setConnectSwitch(v: Int) = dataStore.edit { it[Keys.CONNECT_SWITCH] = v.coerceIn(0, 2) }
+
     suspend fun setVisualizer(v: VisualizerPrefs) = dataStore.edit { p ->
         p[Keys.VIZ_STYLE] = v.style
         p[Keys.VIZ_COLOR_SOURCE] = v.colorSource

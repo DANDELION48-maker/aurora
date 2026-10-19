@@ -143,6 +143,7 @@ internal object SettingsKeys {
     val SAVE_SEARCHES = booleanPreferencesKey("save_recent_searches")
     val SQUIG_BASE = stringPreferencesKey("squig_base_url")
     val SQUIG_TARGET = stringPreferencesKey("squig_target")
+    val CONNECT_SWITCH = intPreferencesKey("connect_switch")
     val SAVED_SESSIONS = stringPreferencesKey("saved_sessions")
     val SPOTIFY_CLIENT_ID = stringPreferencesKey("spotify_client_id")
     val ACOUSTID_KEY = stringPreferencesKey("acoustid_key")

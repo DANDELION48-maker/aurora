@@ -107,6 +107,7 @@ data class PairedRenderer(
     val fingerprint: String,
     val clientId: String,
     val token: String,
+    val addresses: List<String> = emptyList(),
 ) {
     override fun toString(): String = "PairedRenderer(id=$id, name=$name, address=$address)"
 }

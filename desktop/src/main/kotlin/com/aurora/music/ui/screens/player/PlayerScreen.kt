@@ -18,6 +18,9 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -92,6 +95,19 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.window.LocalWindow
+import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
@@ -115,6 +131,7 @@ import com.aurora.music.desktop.player.PlayerUiState
 import com.aurora.music.desktop.player.RepeatMode
 import com.aurora.music.desktop.ui.LocalPlayer
 import com.aurora.music.ui.components.Artwork
+import com.aurora.music.ui.components.HoverTooltip
 import com.aurora.music.ui.components.CoverKey
 import com.aurora.music.ui.components.PaneDivider
 import com.aurora.music.ui.components.VolumeControl
@@ -128,8 +145,16 @@ import com.aurora.music.ui.theme.glassEdge
 import com.aurora.music.ui.theme.glassSheen
 import com.aurora.music.model.accent
 import com.aurora.music.ui.theme.themedCorner
+import com.aurora.music.ui.theme.playerColorScheme
+import com.aurora.music.ui.theme.readableAccent
+import com.aurora.music.ui.theme.styleColorScheme
+import java.awt.Frame
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
+import java.awt.event.WindowStateListener
+import kotlin.math.roundToInt
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun PlayerScreen(
     state: PlayerUiState,
@@ -185,6 +210,31 @@ fun PlayerScreen(
     val comments = rememberTrackComments(song)
     var showComments by remember { mutableStateOf(false) }
     var focusComment by remember { mutableStateOf<String?>(null) }
+
+    var showVideo by androidx.compose.runtime.saveable.rememberSaveable(song.id) { mutableStateOf(false) }
+    var requestedCanvas by remember(song.id) { mutableStateOf<Boolean?>(null) }
+    LaunchedEffect(state.hasVideo, state.videoIsCanvas, requestedCanvas) {
+        if (requestedCanvas != null && state.hasVideo && state.videoIsCanvas == requestedCanvas) { requestedCanvas = null; showVideo = true }
+    }
+    val canVideo = state.hasTrack && !state.isMix && (state.supportsMusicVideo || state.supportsCanvas || state.hasVideo)
+    fun openVideo(canvas: Boolean) {
+        when {
+            state.hasVideo && state.videoIsCanvas == canvas -> showVideo = true
+            canvas && !state.supportsCanvas -> onRequestVideo(true)
+            else -> { showVideo = false; requestedCanvas = canvas; onRequestVideo(canvas) }
+        }
+    }
+    fun togglePane(pane: PlayerPane) {
+        if (paneOpen && sidePane == pane) paneOpen = false else { pickedPane = pane.name; paneOpen = true }
+    }
+    val canvasPlayer = video?.takeIf { showVideo && state.hasVideo && state.videoIsCanvas }
+    val windowShown = rememberWindowShown()
+    DisposableEffect(showVideo, windowShown) {
+        val visible = showVideo && windowShown
+        onVideoVisibleChange(visible)
+        onDispose { if (visible) onVideoVisibleChange(false) }
+    }
+    MaterialTheme(colorScheme = if (canvasPlayer != null) canvasColors() else MaterialTheme.colorScheme) {
     val playerAccent = MaterialTheme.colorScheme.primary
     val onPlayerAccent = MaterialTheme.colorScheme.onPrimary
     val g = ui.playerGradient
@@ -196,28 +246,7 @@ fun PlayerScreen(
             MaterialTheme.colorScheme.background,
         )
     )
-
     // player is outside the scaffold so LocalContentColor defaults to black provide it explicitly
-    var showVideo by androidx.compose.runtime.saveable.rememberSaveable(song.id) { mutableStateOf(false) }
-    var requestedVideo by remember(song.id) { mutableStateOf(false) }
-    LaunchedEffect(state.hasVideo, requestedVideo) {
-        if (requestedVideo && state.hasVideo) { requestedVideo = false; showVideo = true }
-    }
-    val canVideo = state.hasTrack && !state.isMix && (state.supportsMusicVideo || state.hasVideo)
-    fun toggleVideo() {
-        when {
-            showVideo -> showVideo = false
-            state.hasVideo && !state.videoIsCanvas -> showVideo = true
-            else -> { requestedVideo = true; onRequestVideo(false) }
-        }
-    }
-    fun togglePane(pane: PlayerPane) {
-        if (paneOpen && sidePane == pane) paneOpen = false else { pickedPane = pane.name; paneOpen = true }
-    }
-    DisposableEffect(showVideo) {
-        onVideoVisibleChange(showVideo)
-        onDispose { if (showVideo) onVideoVisibleChange(false) }
-    }
     CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
     BoxWithConstraints(
         Modifier
@@ -250,8 +279,16 @@ fun PlayerScreen(
                 }
                 HeaderButton(Icons.Filled.Lyrics, appString(R.string.text_lyrics_8670cb), active = paneOpen && sidePane == PlayerPane.LYRICS) { togglePane(PlayerPane.LYRICS) }
                 HeaderButton(Icons.AutoMirrored.Filled.QueueMusic, appString(R.string.text_queue_d325fc), active = paneOpen && sidePane != PlayerPane.LYRICS) { togglePane(PlayerPane.QUEUE) }
-                if (canVideo) HeaderButton(Icons.Filled.VideoLibrary, appString(if (showVideo) R.string.text_audio_acdac2 else R.string.text_video_bc17c1),
-                    active = showVideo, enabled = !state.videoLoading, onClick = ::toggleVideo)
+                if (canVideo) {
+                    val videoButton = @Composable {
+                        HeaderButton(Icons.Filled.VideoLibrary, appString(if (showVideo) R.string.text_audio_acdac2 else R.string.text_video_bc17c1),
+                            active = showVideo, enabled = !state.videoLoading,
+                            onDoubleClick = { if (canvasPlayer != null) showVideo = false else openVideo(canvas = true) },
+                        ) { if (showVideo) showVideo = false else openVideo(canvas = !state.supportsMusicVideo) }
+                    }
+                    if (state.supportsCanvas) TooltipArea(tooltip = { HoverTooltip(appString(R.string.canvas_double_click)) }, delayMillis = 600) { videoButton() }
+                    else videoButton()
+                }
                 HeaderButton(if (fullscreen) Icons.Filled.FullscreenExit else Icons.Filled.Fullscreen,
                     appString(if (fullscreen) R.string.player_exit_fullscreen else R.string.player_fullscreen)) { onFullscreenChange(!fullscreen) }
                 HeaderButton(Icons.Filled.Speaker, appString(R.string.text_output_device_709178), onClick = onOpenOutput)
@@ -263,10 +300,10 @@ fun PlayerScreen(
                     DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                         if (onOpenMix != null) DropdownMenuItem(text = { Text(appString(R.string.text_mix_studio_668363)) },
                             onClick = { showMenu = false; onOpenMix() }, leadingIcon = { Icon(Icons.Filled.GraphicEq, null) })
-                        if (state.hasTrack && state.supportsCanvas && !(showVideo && state.videoIsCanvas)) DropdownMenuItem(
+                        if (state.hasTrack && state.supportsCanvas && canvasPlayer == null) DropdownMenuItem(
                             text = { Text(appString(R.string.canvas_open)) },
                             enabled = !state.videoLoading,
-                            onClick = { showMenu = false; showVideo = false; requestedVideo = true; onRequestVideo(true) },
+                            onClick = { showMenu = false; openVideo(canvas = true) },
                             leadingIcon = { Icon(Icons.Filled.Animation, null) },
                         )
                         DropdownMenuItem(
@@ -347,7 +384,10 @@ fun PlayerScreen(
         }
         val controls: @Composable (Dp) -> Unit = { volumeWidth ->
             Row(verticalAlignment = Alignment.CenterVertically) {
-                if (state.isPlaying) {
+                if (canvasPlayer != null) {
+                    Artwork(song.artworkUrl, song.accent, Modifier.size(56.dp), corner = themedCorner(10.dp))
+                    Spacer(Modifier.width(14.dp))
+                } else if (state.isPlaying) {
                     com.aurora.music.ui.components.LottieEqualizer(
                         modifier = Modifier.size(28.dp)
                             .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
@@ -513,6 +553,9 @@ fun PlayerScreen(
         var split by remember(ui.tabletPlayerSplit) { mutableFloatStateOf(ui.tabletPlayerSplit) }
         val splitRange = com.aurora.music.data.TabletSetting.PLAYER_SPLIT.range
         val density = androidx.compose.ui.platform.LocalDensity.current
+        androidx.compose.animation.AnimatedVisibility(canvasPlayer != null, Modifier.matchParentSize(), enter = fadeIn(tween(500)), exit = fadeOut(tween(300))) {
+            (canvasPlayer ?: video)?.let { CanvasAmbient(it, Modifier.fillMaxSize()) }
+        }
         Column(Modifier.fillMaxSize()) {
             header()
             Box(
@@ -530,7 +573,19 @@ fun PlayerScreen(
                             val fit = (maxHeight - reserve - gap).coerceAtMost(maxWidth - 32.dp)
                             val artSide = minOf(fit * artScale.coerceAtMost(1f), MaxArt * artScale).coerceAtLeast(MinArt).coerceAtMost(maxWidth)
                             val controlsWidth = artSide.coerceAtLeast(420.dp).coerceAtMost(maxWidth)
-                            Column(
+                            // a portrait canvas stands beside the controls; only a cramped column crops it into the artwork square
+                            val stageGap = if (short) 28.dp else 48.dp
+                            val stageControls = (maxWidth * 0.4f).coerceIn(360.dp, 520.dp)
+                            val aspect = canvasPlayer?.let { it.width.toFloat() / it.height }?.takeIf { it.isFinite() && it > 0f }?.coerceIn(0.5f, 1f) ?: (9f / 16f)
+                            val stageHeight = minOf(maxHeight, (maxWidth - stageControls - stageGap) / aspect)
+                            if (canvasPlayer != null && stageHeight * aspect >= MinCanvasWidth) Row(
+                                Modifier.fillMaxSize(),
+                                horizontalArrangement = Arrangement.spacedBy(stageGap, Alignment.CenterHorizontally),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                artwork(Modifier.width(stageHeight * aspect).height(stageHeight).shadow(32.dp, RoundedCornerShape(20.dp)))
+                                Column(Modifier.width(stageControls)) { controls((stageControls - 300.dp).coerceIn(104.dp, 160.dp)) }
+                            } else Column(
                                 Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).heightIn(min = maxHeight),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center,
@@ -579,11 +634,13 @@ fun PlayerScreen(
             onSeek = onSeek, onDismiss = { showComments = false; focusComment = null })
     }
     }
+    }
 }
 
 private const val DefaultArtSize = 0.86f
 private val MaxArt = 640.dp
 private val MinArt = 160.dp
+private val MinCanvasWidth = 200.dp
 private val ControlsEstimate = 330.dp
 private val BodyMaxWidth = 1680.dp
 
@@ -653,11 +710,67 @@ private fun isLossless(suffix: String): Boolean =
     suffix.lowercase() in setOf("flac", "alac", "wav", "aiff", "aif", "ape", "wv", "dsf", "dff", "m4a")
 
 @Composable
-private fun HeaderButton(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, active: Boolean = false, enabled: Boolean = true, onClick: () -> Unit) {
+private fun HeaderButton(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, active: Boolean = false, enabled: Boolean = true,
+    onDoubleClick: (() -> Unit)? = null, onClick: () -> Unit) {
     Icon(
         icon, label,
         tint = if (active) MaterialTheme.colorScheme.primary else LocalContentColor.current.copy(alpha = if (enabled) 1f else .38f),
-        modifier = Modifier.size(40.dp).clip(CircleShape).clickable(enabled = enabled, onClick = onClick).pointerHoverIcon(PointerIcon.Hand).padding(8.dp),
+        modifier = Modifier.size(40.dp).clip(CircleShape).combinedClickable(enabled = enabled, role = Role.Button, onDoubleClick = onDoubleClick, onClick = onClick)
+            .pointerHoverIcon(PointerIcon.Hand).padding(8.dp),
+    )
+}
+
+@Composable
+private fun rememberWindowShown(): Boolean {
+    val window = LocalWindow.current ?: return true
+    fun isShown() = window.isShowing && ((window as? Frame)?.extendedState ?: 0) and Frame.ICONIFIED == 0
+    var shown by remember(window) { mutableStateOf(isShown()) }
+    DisposableEffect(window) {
+        val states = WindowStateListener { shown = isShown() }
+        val visibility = object : ComponentAdapter() {
+            override fun componentShown(e: ComponentEvent) { shown = isShown() }
+            override fun componentHidden(e: ComponentEvent) { shown = isShown() }
+        }
+        window.addWindowStateListener(states)
+        window.addComponentListener(visibility)
+        onDispose {
+            window.removeWindowStateListener(states)
+            window.removeComponentListener(visibility)
+        }
+    }
+    return shown
+}
+
+// canvas mode is always dark: white type over a moving picture stays legible whatever the theme
+@Composable
+private fun canvasColors(): ColorScheme {
+    val colors = MaterialTheme.colorScheme
+    if (colors.onBackground.luminance() > 0.5f) return colors
+    val style = LocalUiPrefs.current.themeStyle
+    return if (style == ThemeStyle.AURORA) playerColorScheme(readableAccent(colors.primary, darkBackground = true), dark = true)
+    else styleColorScheme(style, dark = true)
+}
+
+@Composable
+private fun CanvasAmbient(player: com.aurora.music.desktop.video.VideoPlayer, modifier: Modifier) {
+    val frame = player.frame.collectAsState()
+    Box(modifier.background(Color.Black)) {
+        Box(Modifier.fillMaxSize().blur(72.dp, BlurredEdgeTreatment.Rectangle).drawBehind { frame.value?.let { drawFrame(it, crop = true) } })
+        Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Black.copy(alpha = .38f), Color.Black.copy(alpha = .58f)))))
+    }
+}
+
+private fun DrawScope.drawFrame(image: ImageBitmap, crop: Boolean) {
+    val scale = if (crop) maxOf(size.width / image.width, size.height / image.height) else minOf(size.width / image.width, size.height / image.height)
+    val shown = Size(minOf(size.width / scale, image.width.toFloat()), minOf(size.height / scale, image.height.toFloat()))
+    val target = Size(shown.width * scale, shown.height * scale)
+    drawImage(
+        image,
+        srcOffset = IntOffset(((image.width - shown.width) / 2).roundToInt(), ((image.height - shown.height) / 2).roundToInt()),
+        srcSize = IntSize(shown.width.roundToInt(), shown.height.roundToInt()),
+        dstOffset = IntOffset(((size.width - target.width) / 2).roundToInt(), ((size.height - target.height) / 2).roundToInt()),
+        dstSize = IntSize(target.width.roundToInt(), target.height.roundToInt()),
+        filterQuality = FilterQuality.Medium,
     )
 }
 
@@ -729,13 +842,8 @@ private fun SeekBar(
 /** The latest decoded frame, letterboxed for music videos or cropped to fill for canvases. */
 @Composable
 fun VideoSurface(player: com.aurora.music.desktop.video.VideoPlayer, modifier: Modifier = Modifier, corner: Dp = 0.dp, fill: Boolean = false) {
-    val frame by player.frame.collectAsState()
-    Box(modifier.clip(RoundedCornerShape(corner)).background(Color.Black), contentAlignment = Alignment.Center) {
-        frame?.let { image ->
-            androidx.compose.foundation.Image(image, null, Modifier.fillMaxSize(),
-                contentScale = if (fill) androidx.compose.ui.layout.ContentScale.Crop else androidx.compose.ui.layout.ContentScale.Fit)
-        }
-    }
+    val frame = player.frame.collectAsState()
+    Box(modifier.clip(RoundedCornerShape(corner)).background(Color.Black).drawBehind { frame.value?.let { drawFrame(it, crop = fill) } })
 }
 
 @Composable

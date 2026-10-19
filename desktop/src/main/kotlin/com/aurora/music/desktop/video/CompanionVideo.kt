@@ -2,8 +2,10 @@ package com.aurora.music.desktop.video
 
 import com.aurora.music.desktop.audio.ResolvedStream
 import com.aurora.music.desktop.audio.decode.HttpOptions
+import com.aurora.music.desktop.platform.desktopFileUri
 import com.aurora.music.desktop.youtube.YoutubeResolver
 import com.aurora.music.model.Song
+import com.aurora.music.util.writeAtomically
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -15,6 +17,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.io.File
 import kotlin.math.abs
 
 data class CompanionVideoState(val ready: Boolean = false, val loading: Boolean = false, val qualityHeight: Int? = null,
@@ -25,6 +30,8 @@ class CompanionVideo(
     private val resolver: YoutubeResolver,
     private val canvasFor: suspend (Song) -> String?,
     private val sourceFor: (Song) -> ResolvedStream,
+    private val http: OkHttpClient,
+    private val canvasDir: File,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val mutable = MutableStateFlow(CompanionVideoState())
@@ -52,7 +59,9 @@ class CompanionVideo(
                 val url = runCatching { canvasFor(song) }.getOrNull()
                 ensureActive()
                 if (url == null || songId != song.id) { clear(); onUnavailable(); return@launch }
-                start(url, canvas = true, quality = null, onUnavailable)
+                val local = withContext(Dispatchers.IO) { localCopy(url) }
+                ensureActive()
+                start(local, canvas = true, quality = null, onUnavailable)
                 return@launch
             }
             if (song.artist.isBlank()) { clear(); onUnavailable(); return@launch }
@@ -86,6 +95,21 @@ class CompanionVideo(
         if (!ready) { player.close(); clear(); onUnavailable(); return }
         mutable.value = CompanionVideoState(ready = true, qualityHeight = quality, canvas = canvas, player = player)
         sync(lastAudio.first, lastAudio.second, lastAudio.third, forceSeek = true)
+    }
+
+    // a canvas loops for as long as it shows, so it plays from a local copy instead of fetching the clip every pass
+    private fun localCopy(url: String): String {
+        val file = File(canvasDir, "${url.hashCode().toUInt()}.mp4")
+        if (file.isFile) return desktopFileUri(file.path)
+        return runCatching {
+            canvasDir.mkdirs()
+            canvasDir.listFiles()?.forEach { it.delete() }
+            http.newCall(Request.Builder().url(url).header("User-Agent", YoutubeResolver.USER_AGENT).build()).execute().use { response ->
+                val body = response.body?.takeIf { response.isSuccessful } ?: return url
+                file.writeAtomically { body.byteStream().copyTo(it) }
+            }
+            desktopFileUri(file.path)
+        }.getOrDefault(url)
     }
 
     fun clearIfSongChanged(currentSongId: String) {

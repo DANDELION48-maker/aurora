@@ -22,4 +22,5 @@ dependencies {
     api(libs.androidx.datastore.preferences.core)
     testImplementation(libs.junit)
     testImplementation(libs.okhttp.mockwebserver)
+    testImplementation(libs.okhttp.tls)
 }

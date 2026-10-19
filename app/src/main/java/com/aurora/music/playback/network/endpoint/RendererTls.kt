@@ -8,7 +8,6 @@ import java.net.Socket
 import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.KeyFactory
-import java.security.MessageDigest
 import java.security.Principal
 import java.security.PrivateKey
 import java.security.SecureRandom
@@ -18,7 +17,6 @@ import java.util.Date
 import javax.net.ssl.SSLEngine
 import javax.net.ssl.SSLContext
 import javax.net.ssl.X509ExtendedKeyManager
-import javax.net.ssl.X509TrustManager
 import javax.security.auth.x500.X500Principal
 
 internal object RendererTls {
@@ -59,24 +57,6 @@ internal object RendererTls {
             override fun getPrivateKey(alias: String?): PrivateKey? = if (alias == ALIAS) key else null
         }
         val context = SSLContext.getInstance("TLSv1.2").apply { init(arrayOf(manager), null, SecureRandom()) }
-        return context to fingerprint(chain.first())
-    }
-
-    fun fingerprint(certificate: X509Certificate): String = MessageDigest.getInstance("SHA-256")
-        .digest(certificate.encoded).joinToString("") { "%02x".format(it) }
-
-    fun pinnedTrust(fingerprint: String): X509TrustManager = object : X509TrustManager {
-        override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
-        override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {
-            throw java.security.cert.CertificateException("Client certificate authentication is unsupported.")
-        }
-        override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {
-            val certificate = chain?.firstOrNull()
-                ?: throw java.security.cert.CertificateException("Missing renderer certificate.")
-            certificate.checkValidity()
-            if (!MessageDigest.isEqual(fingerprint.toByteArray(), fingerprint(certificate).toByteArray())) {
-                throw java.security.cert.CertificateException("Renderer certificate changed. Pair again.")
-            }
-        }
+        return context to EndpointTls.fingerprint(chain.first())
     }
 }

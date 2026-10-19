@@ -56,6 +56,24 @@ internal object PlayerFixtures {
         return file.absolutePath
     }
 
+    // a portrait dusk scene standing in for a spotify canvas frame
+    val canvas: String by lazy {
+        val surface = Surface.makeRasterN32Premul(360, 640)
+        val c = surface.canvas
+        c.drawRect(Rect.makeWH(360f, 640f), Paint().apply {
+            shader = Shader.makeLinearGradient(0f, 0f, 0f, 640f, intArrayOf(0xFF2A1B5C.toInt(), 0xFFE0567A.toInt(), 0xFFFFB36B.toInt()), null, GradientStyle.DEFAULT)
+        })
+        c.drawCircle(180f, 330f, 70f, Paint().apply { color = 0xFFFFE3A3.toInt() })
+        c.drawRect(Rect.makeXYWH(0f, 420f, 360f, 220f), Paint().apply { color = 0xFF1B1035.toInt() })
+        c.drawCircle(120f, 470f, 90f, Paint().apply { color = 0xFF1B1035.toInt() })
+        c.drawCircle(280f, 450f, 110f, Paint().apply { color = 0xFF24154A.toInt() })
+        c.drawRect(Rect.makeXYWH(160f, 360f, 40f, 120f), Paint().apply { color = 0xFF0E0820.toInt() })
+        c.drawCircle(180f, 345f, 22f, Paint().apply { color = 0xFF0E0820.toInt() })
+        val file = File(dir, "canvas.png").apply { deleteOnExit() }
+        file.writeBytes(surface.makeImageSnapshot().encodeToData(EncodedImageFormat.PNG)!!.bytes)
+        file.absolutePath
+    }
+
     val queue = listOf(
         Song("q0", "Paper Planes", "The Foxgloves", "Wildflower", art("q0", 0xFF3B82F6.toInt(), 0xFF1E1B4B.toInt()), 241, accentArgb = 0xFF3B82F6),
         Song("q1", "Midnight Bloom", "Lunar Tide", "Nocturne", art("q1", 0xFFFF2E7E.toInt(), 0xFF3B0764.toInt()), 214,
@@ -153,6 +171,13 @@ internal class PlayerScene(
     }
 
     fun click(x: Float, y: Float) {
+        ui.click(x, y)
+        frames(4)
+    }
+
+    fun doubleClick(x: Float, y: Float) {
+        ui.click(x, y)
+        ui.millis += 80
         ui.click(x, y)
         frames(4)
     }

@@ -141,10 +141,14 @@ fun rememberPlayerColorScheme(artworkUrl: String, fallback: Color): ColorScheme 
     if (prefs.themeStyle != ThemeStyle.AURORA) return appColors
 
     val accent by rememberDominantColor(artworkUrl, fallback)
-    val dark = appColors.onBackground.luminance() > 0.5f
+    val colors = playerColorScheme(accent, appColors.onBackground.luminance() > 0.5f)
+    return if (prefs.themeMode == ThemeMode.AMOLED) colors.toAmoled() else colors
+}
+
+fun playerColorScheme(accent: Color, dark: Boolean): ColorScheme {
     val base = (if (dark) DarkColors else LightColors).withAccent(accent, dark)
     fun foreground(color: Color) = if (color.luminance() > 0.179f) Color.Black else Color.White
-    val colors = base.copy(
+    return base.copy(
         onPrimary = foreground(base.primary),
         onPrimaryContainer = foreground(base.primaryContainer),
         onSecondary = foreground(base.secondary),
@@ -156,7 +160,6 @@ fun rememberPlayerColorScheme(artworkUrl: String, fallback: Color): ColorScheme 
         surfaceTint = accent,
         inversePrimary = accent,
     )
-    return if (prefs.themeMode == ThemeMode.AMOLED) colors.toAmoled() else colors
 }
 
 fun UiPrefs.accentSeed(systemAccent: Color?): Color = when {

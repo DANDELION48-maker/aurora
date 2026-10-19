@@ -349,6 +349,7 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
             .map { it.player?.takeIf { _ -> it.ready } }.stateIn(scope, SharingStarted.Eagerly, null)
 
     override fun requestMusicVideo(canvas: Boolean, onResult: (String) -> Unit) {
+        if (canvas && !_state.value.supportsCanvas) { onResult(appString(R.string.canvas_not_found)); return }
         deps.companion?.request(_state.value.current, canvas) {
             onResult(appString(if (canvas) R.string.canvas_not_found else R.string.video_match_not_found))
         }

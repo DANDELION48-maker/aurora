@@ -251,7 +251,8 @@ class DesktopContainer(
     val youTubeDownloadFolder: java.io.File get() = java.io.File(System.getProperty("user.home"), "Music${java.io.File.separator}Aurora")
     val appUpdater by lazy { com.aurora.music.desktop.updates.DesktopUpdater(http, java.io.File(paths.cache, "updates"),
         com.aurora.music.desktop.platform.BuildInfo.VERSION_NAME, com.aurora.music.desktop.platform.HostPlatform.isWindows) }
-    val companionVideo by lazy { com.aurora.music.desktop.video.CompanionVideo(youtubeResolver, { repository.canvasUrl(it) }, ::sourceFor) }
+    val companionVideo by lazy { com.aurora.music.desktop.video.CompanionVideo(youtubeResolver, { repository.canvasUrl(it) }, ::sourceFor,
+        http, java.io.File(paths.cache, "canvas")) }
     val mixStore = com.aurora.music.mix.MixStore(paths.local)
     val stemSeparator by lazy { com.aurora.music.mix.StemSeparator(paths.local, paths.cache, ::sourceFor) }
     val mixService by lazy { com.aurora.music.desktop.audio.mix.MixService(mixController, settingsStore, { song -> if (song.streamUrl.startsWith("file:")) com.aurora.music.desktop.audio.ResolvedStream(song.streamUrl) else streamResolver.resolve(song) }, scope) }

@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.asStateFlow
 
 private const val SERVICE_TYPE = "_aurora-music._tcp."
 
-data class DiscoveredRenderer(val id: String, val name: String, val address: String)
+data class DiscoveredRenderer(val id: String, val name: String, val address: String, val connect: Boolean = false)
 
-internal class RendererAdvertisement(context: Context) {
+internal class RendererAdvertisement(context: Context) : EndpointAdvertiser {
     private val nsd = context.getSystemService(NsdManager::class.java)
     private var listener: NsdManager.RegistrationListener? = null
 
-    fun start(name: String, rendererId: String, port: Int) {
+    @Synchronized override fun start(name: String, rendererId: String, port: Int, connect: Boolean) {
         stop()
         val registration = object : NsdManager.RegistrationListener {
             override fun onServiceRegistered(service: NsdServiceInfo) = Unit
@@ -31,11 +31,12 @@ internal class RendererAdvertisement(context: Context) {
             setAttribute("id", rendererId)
             setAttribute("name", name.take(64))
             setAttribute("role", "renderer")
+            setAttribute("connect", if (connect) "1" else "0")
         }
         if (runCatching { nsd.registerService(info, NsdManager.PROTOCOL_DNS_SD, registration) }.isSuccess) listener = registration
     }
 
-    fun stop() {
+    @Synchronized override fun stop() {
         listener?.let { runCatching { nsd.unregisterService(it) } }
         listener = null
     }
@@ -96,10 +97,11 @@ class RendererDiscovery(context: Context) {
                     val version = info?.attributes?.get("v")?.toString(Charsets.UTF_8)
                     val id = info?.attributes?.get("id")?.toString(Charsets.UTF_8).orEmpty()
                     val name = info?.attributes?.get("name")?.toString(Charsets.UTF_8).orEmpty().take(64)
+                    val connect = info?.attributes?.get("connect")?.toString(Charsets.UTF_8) == "1"
                     if (host != null && info.port in 1..65535 && version == "1" && id.matches(Regex("[a-f0-9]{32}"))) {
                         val urlHost = if (':' in host) "[$host]" else host
                         if (resolved.size < 32 || resolved.containsKey(info.serviceName)) {
-                            resolved[info.serviceName] = DiscoveredRenderer(id, name, "https://$urlHost:${info.port}")
+                            resolved[info.serviceName] = DiscoveredRenderer(id, name, "https://$urlHost:${info.port}", connect)
                             mutableRenderers.value = resolved.values.toList()
                         }
                     }

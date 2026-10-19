@@ -66,6 +66,8 @@ dependencies {
     implementation(libs.newpipeextractor)
     implementation(libs.jaudiotagger)
     implementation(libs.onnxruntime)
+    implementation(libs.okhttp.tls)
+    implementation(libs.jmdns)
     testImplementation(libs.junit)
     testImplementation(libs.okhttp.mockwebserver)
 }
