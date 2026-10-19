@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"डाउनलोड फ़ोल्डर खोलें"</string>
     <string name="player_fullscreen" formatted="false">"फ़ुल स्क्रीन"</string>
     <string name="player_exit_fullscreen" formatted="false">"फ़ुल स्क्रीन से बाहर निकलें"</string>
+    <string name="window_minimize" formatted="false">"छोटा करें"</string>
+    <string name="window_maximize" formatted="false">"बड़ा करें"</string>
+    <string name="window_restore" formatted="false">"पहले जैसा करें"</string>
+    <string name="window_system_title_bar" formatted="false">"सिस्टम टाइटल बार"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Aurora के बजाय अपने डेस्कटॉप का विंडो फ़्रेम इस्तेमाल करें। Aurora को फिर से शुरू करने के बाद लागू होता है।"</string>
 </resources>

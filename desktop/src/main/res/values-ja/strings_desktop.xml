@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"ダウンロードフォルダーを開く"</string>
     <string name="player_fullscreen" formatted="false">"全画面表示"</string>
     <string name="player_exit_fullscreen" formatted="false">"全画面表示を終了"</string>
+    <string name="window_minimize" formatted="false">"最小化"</string>
+    <string name="window_maximize" formatted="false">"最大化"</string>
+    <string name="window_restore" formatted="false">"元に戻す"</string>
+    <string name="window_system_title_bar" formatted="false">"システムのタイトルバー"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Aurora の代わりにデスクトップ標準のウィンドウ枠を使います。Aurora の再起動後に適用されます。"</string>
 </resources>

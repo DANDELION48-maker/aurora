@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"打开下载文件夹"</string>
     <string name="player_fullscreen" formatted="false">"全屏"</string>
     <string name="player_exit_fullscreen" formatted="false">"退出全屏"</string>
+    <string name="window_minimize" formatted="false">"最小化"</string>
+    <string name="window_maximize" formatted="false">"最大化"</string>
+    <string name="window_restore" formatted="false">"还原"</string>
+    <string name="window_system_title_bar" formatted="false">"系统标题栏"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"使用桌面自带的窗口边框，而不是 Aurora 的。重启 Aurora 后生效。"</string>
 </resources>

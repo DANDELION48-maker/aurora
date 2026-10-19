@@ -219,12 +219,22 @@ fun AuroraApp(
     shortcuts: Flow<Shortcut> = emptyFlow(),
     fullscreen: Boolean = false,
     onFullscreenChange: (Boolean) -> Unit = {},
+    titleBar: @Composable () -> Unit = {},
 ) {
     val owner = LocalViewModelStoreOwner.current ?: rememberRootOwner()
     val backDispatcher = remember { BackDispatcher() }
     val language by AppStrings.languageTag.collectAsState()
     CompositionLocalProvider(LocalViewModelStoreOwner provides owner, LocalBackGestureDispatcher provides backDispatcher) {
-        key(language) { Shell(navController, owner, backDispatcher::back, shortcuts, fullscreen, onFullscreenChange) }
+        // the backdrop runs under the title bar so its glow isn't cut off at the top of the page
+        Box(Modifier.fillMaxSize()) {
+            AmbientBackground()
+            Column(Modifier.fillMaxSize()) {
+                titleBar()
+                Box(Modifier.weight(1f)) {
+                    key(language) { Shell(navController, owner, backDispatcher::back, shortcuts, fullscreen, onFullscreenChange) }
+                }
+            }
+        }
     }
 }
 
@@ -808,7 +818,6 @@ private fun Shell(
                 }
             },
         ) {
-            AmbientBackground()
             if (rail) {
                 Box(Modifier.fillMaxHeight().graphicsLayer { alpha = shellAlpha }
                     .then(if (dockVisible) Modifier.padding(bottom = dockHeight + 12.dp) else Modifier)) {

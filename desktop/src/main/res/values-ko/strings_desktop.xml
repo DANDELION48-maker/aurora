@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"다운로드 폴더 열기"</string>
     <string name="player_fullscreen" formatted="false">"전체 화면"</string>
     <string name="player_exit_fullscreen" formatted="false">"전체 화면 종료"</string>
+    <string name="window_minimize" formatted="false">"최소화"</string>
+    <string name="window_maximize" formatted="false">"최대화"</string>
+    <string name="window_restore" formatted="false">"이전 크기로 복원"</string>
+    <string name="window_system_title_bar" formatted="false">"시스템 제목 표시줄"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Aurora 대신 데스크톱 기본 창 테두리를 사용합니다. Aurora를 다시 시작하면 적용됩니다."</string>
 </resources>

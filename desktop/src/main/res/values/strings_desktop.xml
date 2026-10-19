@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"Open download folder"</string>
     <string name="player_fullscreen" formatted="false">"Full screen"</string>
     <string name="player_exit_fullscreen" formatted="false">"Exit full screen"</string>
+    <string name="window_minimize" formatted="false">"Minimize"</string>
+    <string name="window_maximize" formatted="false">"Maximize"</string>
+    <string name="window_restore" formatted="false">"Restore"</string>
+    <string name="window_system_title_bar" formatted="false">"System title bar"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Use your desktop's own window frame instead of Aurora's. Applies after restarting Aurora."</string>
 </resources>

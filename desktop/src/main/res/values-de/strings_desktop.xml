@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"Download-Ordner öffnen"</string>
     <string name="player_fullscreen" formatted="false">"Vollbild"</string>
     <string name="player_exit_fullscreen" formatted="false">"Vollbild beenden"</string>
+    <string name="window_minimize" formatted="false">"Minimieren"</string>
+    <string name="window_maximize" formatted="false">"Maximieren"</string>
+    <string name="window_restore" formatted="false">"Wiederherstellen"</string>
+    <string name="window_system_title_bar" formatted="false">"System-Titelleiste"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Den Fensterrahmen deines Desktops statt des Aurora-Rahmens verwenden. Gilt nach einem Neustart von Aurora."</string>
 </resources>

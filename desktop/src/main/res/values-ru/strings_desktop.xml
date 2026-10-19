@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"Открыть папку загрузок"</string>
     <string name="player_fullscreen" formatted="false">"Полный экран"</string>
     <string name="player_exit_fullscreen" formatted="false">"Выйти из полноэкранного режима"</string>
+    <string name="window_minimize" formatted="false">"Свернуть"</string>
+    <string name="window_maximize" formatted="false">"Развернуть"</string>
+    <string name="window_restore" formatted="false">"Восстановить"</string>
+    <string name="window_system_title_bar" formatted="false">"Системный заголовок окна"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Использовать рамку окна вашего рабочего стола вместо рамки Aurora. Применяется после перезапуска Aurora."</string>
 </resources>

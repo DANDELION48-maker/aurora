@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"Otwórz folder pobranych"</string>
     <string name="player_fullscreen" formatted="false">"Pełny ekran"</string>
     <string name="player_exit_fullscreen" formatted="false">"Zamknij pełny ekran"</string>
+    <string name="window_minimize" formatted="false">"Minimalizuj"</string>
+    <string name="window_maximize" formatted="false">"Maksymalizuj"</string>
+    <string name="window_restore" formatted="false">"Przywróć"</string>
+    <string name="window_system_title_bar" formatted="false">"Systemowy pasek tytułu"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Używaj ramki okna pulpitu zamiast ramki Aurory. Zmiana zadziała po ponownym uruchomieniu Aurory."</string>
 </resources>

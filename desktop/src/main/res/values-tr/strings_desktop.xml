@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"İndirme klasörünü aç"</string>
     <string name="player_fullscreen" formatted="false">"Tam ekran"</string>
     <string name="player_exit_fullscreen" formatted="false">"Tam ekrandan çık"</string>
+    <string name="window_minimize" formatted="false">"Simge durumuna küçült"</string>
+    <string name="window_maximize" formatted="false">"Ekranı kapla"</string>
+    <string name="window_restore" formatted="false">"Önceki boyutuna getir"</string>
+    <string name="window_system_title_bar" formatted="false">"Sistem başlık çubuğu"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Aurora'nınki yerine masaüstünüzün pencere çerçevesini kullanın. Aurora yeniden başlatıldıktan sonra uygulanır."</string>
 </resources>

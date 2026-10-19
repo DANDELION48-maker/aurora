@@ -82,6 +82,7 @@ fun AppearanceScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenNa
     val translucentWindow by desktopSettings.translucentWindow.collectAsStateWithLifecycle(initialValue = true)
     val backdropAvailable = LocalBackdropAvailable.current
     val micaBackdrop by desktopSettings.micaBackdrop.collectAsStateWithLifecycle(initialValue = false)
+    val systemTitleBar by desktopSettings.systemTitleBar.collectAsStateWithLifecycle(initialValue = false)
     val glassLook by desktopSettings.glassLook.collectAsStateWithLifecycle(initialValue = GlassLook())
     val scope = rememberCoroutineScope()
     fun tablet(setting: TabletSetting, value: Float) { scope.launch { store.setTabletSetting(setting, value) } }
@@ -137,6 +138,14 @@ fun AppearanceScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenNa
                         scope.launch { desktopSettings.setGlassEdges(v) }
                     }
                 }
+            }
+
+            item {
+                SettingsSwitchRow(
+                    title = appString(R.string.window_system_title_bar),
+                    subtitle = appString(R.string.window_system_title_bar_summary),
+                    checked = systemTitleBar,
+                ) { v -> scope.launch { desktopSettings.setSystemTitleBar(v) } }
             }
 
             if (prefs.themeStyle == ThemeStyle.AURORA) {

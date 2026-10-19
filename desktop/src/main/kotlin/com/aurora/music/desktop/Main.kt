@@ -23,6 +23,7 @@ import coil3.SingletonImageLoader
 import com.aurora.music.desktop.audio.DesktopPlaybackEngine
 import com.aurora.music.desktop.linux.LinuxDesktop
 import com.aurora.music.desktop.platform.BuildInfo
+import com.aurora.music.desktop.platform.CaptionFrame
 import com.aurora.music.desktop.platform.DesktopPaths
 import com.aurora.music.desktop.platform.DesktopRuntime
 import com.aurora.music.desktop.platform.HostPlatform
@@ -36,7 +37,9 @@ import com.aurora.music.desktop.ui.AuroraRoot
 import com.aurora.music.desktop.ui.LocalBackdropAvailable
 import com.aurora.music.desktop.ui.LocalTrayAvailable
 import com.aurora.music.desktop.ui.Shortcut
+import com.aurora.music.desktop.ui.TitleBar
 import com.aurora.music.desktop.ui.WindowChrome
+import com.aurora.music.desktop.ui.WindowResizeEdges
 import com.aurora.music.ui.theme.GlassLook
 import com.aurora.music.desktop.ui.claimsSpace
 import com.aurora.music.desktop.ui.shortcut
@@ -73,6 +76,7 @@ fun main() {
     }
     val initialTranslucent = runBlocking { settings.translucentWindow.first() }
     val glassAtStart = initialTranslucent && WindowBackdrop.supported
+    val customTitleBar = !runBlocking { settings.systemTitleBar.first() }
     AppStrings.setLocale(language)
     val player = DesktopPlayer(DesktopPlaybackEngine(resolver = container.streamResolver), container.playerDependencies())
     container.mixService.attach(player, container.scope)
@@ -91,7 +95,8 @@ fun main() {
         var composeWindow by remember { mutableStateOf<androidx.compose.ui.awt.ComposeWindow?>(null) }
         var borderless by remember { mutableStateOf(false) }
         var visible by remember { mutableStateOf(true) }
-        var revealed by remember { mutableStateOf(!glassAtStart) }
+        var revealed by remember { mutableStateOf(!glassAtStart && !(customTitleBar && HostPlatform.isWindows)) }
+        var caption by remember { mutableStateOf<CaptionFrame?>(null) }
         var quitting by remember { mutableStateOf(false) }
         val closeToTray by settings.closeToTray.collectAsState(false)
         val translucentWindow by settings.translucentWindow.collectAsState(initialTranslucent)
@@ -155,6 +160,10 @@ fun main() {
             exitApplication()
         }
 
+        fun close() {
+            if (closeToTray && trayAvailable) visible = false else quit()
+        }
+
         LaunchedEffect(Unit) { container.appUpdater.quitRequests.collect { quit() } }
 
         LaunchedEffect(windowState) {
@@ -167,11 +176,12 @@ fun main() {
         if (trayAvailable) AppTray(icon, player, onShow = ::show, onQuit = ::quit)
 
         Window(
-            onCloseRequest = { if (closeToTray && trayAvailable) visible = false else quit() },
+            onCloseRequest = ::close,
             state = windowState,
             visible = visible && revealed,
             title = "Aurora",
             icon = icon,
+            undecorated = customTitleBar && HostPlatform.isLinux,
             onPreviewKeyEvent = { it.claimsSpace() },
             onKeyEvent = { event -> event.shortcut()?.let(shortcuts::tryEmit) == true },
         ) {
@@ -181,7 +191,8 @@ fun main() {
                 composeWindow = window
                 window.minimumSize = Dimension(960, 600)
                 if (!revealed) {
-                    WindowBackdrop.prepare(window)
+                    if (glassAtStart) WindowBackdrop.prepare(window)
+                    if (customTitleBar) caption = CaptionFrame.install(window)
                     revealed = true
                 }
                 while (!window.isDisplayable) delay(16)
@@ -203,12 +214,16 @@ fun main() {
             }
             CompositionLocalProvider(LocalTrayAvailable provides trayAvailable, LocalBackdropAvailable provides WindowBackdrop.supported) {
                 AuroraRoot(container, player, initialPrefs, systemAccent, translucent, glassLook) {
+                    val fullscreen = borderless || windowState.placement == WindowPlacement.Fullscreen
+                    val undecorated = customTitleBar && HostPlatform.isLinux
                     WindowChrome(windowHandle, translucent)
                     AuroraApp(
                         shortcuts = shortcuts,
-                        fullscreen = borderless || windowState.placement == WindowPlacement.Fullscreen,
+                        fullscreen = fullscreen,
                         onFullscreenChange = ::setFullscreen,
+                        titleBar = { if ((caption != null || undecorated) && !fullscreen) TitleBar(window, windowState, caption, ::close) },
                     )
+                    if (undecorated && windowState.placement == WindowPlacement.Floating) WindowResizeEdges(window)
                     com.aurora.music.ui.screens.auth.SoundCloudCaptchaWindow(container.soundcloudWriter)
                 }
             }

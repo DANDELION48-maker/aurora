@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"\u2067فتح مجلد التنزيلات\u2069"</string>
     <string name="player_fullscreen" formatted="false">"ملء الشاشة"</string>
     <string name="player_exit_fullscreen" formatted="false">"الخروج من ملء الشاشة"</string>
+    <string name="window_minimize" formatted="false">"تصغير"</string>
+    <string name="window_maximize" formatted="false">"تكبير"</string>
+    <string name="window_restore" formatted="false">"استعادة"</string>
+    <string name="window_system_title_bar" formatted="false">"شريط عنوان النظام"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"استخدام إطار النافذة الخاص بسطح المكتب بدلاً من إطار Aurora. يُطبَّق بعد إعادة تشغيل Aurora."</string>
 </resources>

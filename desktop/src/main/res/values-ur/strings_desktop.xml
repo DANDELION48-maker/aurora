@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"\u2067ڈاؤن لوڈ فولڈر کھولیں\u2069"</string>
     <string name="player_fullscreen" formatted="false">"پوری اسکرین"</string>
     <string name="player_exit_fullscreen" formatted="false">"پوری اسکرین سے باہر نکلیں"</string>
+    <string name="window_minimize" formatted="false">"چھوٹا کریں"</string>
+    <string name="window_maximize" formatted="false">"بڑا کریں"</string>
+    <string name="window_restore" formatted="false">"بحال کریں"</string>
+    <string name="window_system_title_bar" formatted="false">"سسٹم ٹائٹل بار"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Aurora کے بجائے اپنے ڈیسک ٹاپ کا ونڈو فریم استعمال کریں۔ Aurora دوبارہ شروع کرنے کے بعد لاگو ہوتا ہے۔"</string>
 </resources>

@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"Abrir carpeta de descargas"</string>
     <string name="player_fullscreen" formatted="false">"Pantalla completa"</string>
     <string name="player_exit_fullscreen" formatted="false">"Salir de pantalla completa"</string>
+    <string name="window_minimize" formatted="false">"Minimizar"</string>
+    <string name="window_maximize" formatted="false">"Maximizar"</string>
+    <string name="window_restore" formatted="false">"Restaurar"</string>
+    <string name="window_system_title_bar" formatted="false">"Barra de título del sistema"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Usa el marco de ventana de tu escritorio en lugar del de Aurora. Se aplica al reiniciar Aurora."</string>
 </resources>

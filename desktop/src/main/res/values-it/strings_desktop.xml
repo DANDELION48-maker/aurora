@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"Apri cartella dei download"</string>
     <string name="player_fullscreen" formatted="false">"Schermo intero"</string>
     <string name="player_exit_fullscreen" formatted="false">"Esci da schermo intero"</string>
+    <string name="window_minimize" formatted="false">"Riduci a icona"</string>
+    <string name="window_maximize" formatted="false">"Ingrandisci"</string>
+    <string name="window_restore" formatted="false">"Ripristina"</string>
+    <string name="window_system_title_bar" formatted="false">"Barra del titolo di sistema"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Usa la cornice della finestra del desktop invece di quella di Aurora. Si applica al riavvio di Aurora."</string>
 </resources>

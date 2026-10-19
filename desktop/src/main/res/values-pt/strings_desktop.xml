@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"Abrir pasta de transferências"</string>
     <string name="player_fullscreen" formatted="false">"Tela cheia"</string>
     <string name="player_exit_fullscreen" formatted="false">"Sair da tela cheia"</string>
+    <string name="window_minimize" formatted="false">"Minimizar"</string>
+    <string name="window_maximize" formatted="false">"Maximizar"</string>
+    <string name="window_restore" formatted="false">"Restaurar"</string>
+    <string name="window_system_title_bar" formatted="false">"Barra de título do sistema"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Usa a moldura de janela do seu desktop em vez da do Aurora. Aplica-se após reiniciar o Aurora."</string>
 </resources>

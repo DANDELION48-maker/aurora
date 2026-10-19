@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"Ouvrir le dossier de téléchargement"</string>
     <string name="player_fullscreen" formatted="false">"Plein écran"</string>
     <string name="player_exit_fullscreen" formatted="false">"Quitter le plein écran"</string>
+    <string name="window_minimize" formatted="false">"Réduire"</string>
+    <string name="window_maximize" formatted="false">"Agrandir"</string>
+    <string name="window_restore" formatted="false">"Restaurer"</string>
+    <string name="window_system_title_bar" formatted="false">"Barre de titre du système"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Utilise le cadre de fenêtre de votre bureau au lieu de celui d'Aurora. S'applique après le redémarrage d'Aurora."</string>
 </resources>

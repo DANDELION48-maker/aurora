@@ -43,6 +43,7 @@ class DesktopSettings(private val dataStore: DataStore<Preferences>) {
     val accentFollowsPlaying: Flow<Boolean> = dataStore.data.map { it[ACCENT_FOLLOWS_PLAYING] ?: false }.distinctUntilChanged()
     val translucentWindow: Flow<Boolean> = dataStore.data.map { it[TRANSLUCENT_WINDOW] ?: true }.distinctUntilChanged()
     val micaBackdrop: Flow<Boolean> = dataStore.data.map { it[MICA_BACKDROP] ?: false }.distinctUntilChanged()
+    val systemTitleBar: Flow<Boolean> = dataStore.data.map { it[SYSTEM_TITLE_BAR] ?: false }.distinctUntilChanged()
     val glassLook: Flow<GlassLook> = dataStore.data.map {
         GlassLook(it[GLASS_TINT] ?: GlassLook().tint, it[GLASS_FROST] ?: GlassLook().frost, it[GLASS_EDGES] ?: true)
     }.distinctUntilChanged()
@@ -69,6 +70,7 @@ class DesktopSettings(private val dataStore: DataStore<Preferences>) {
     suspend fun setAccentFollowsPlaying(enabled: Boolean) = dataStore.edit { it[ACCENT_FOLLOWS_PLAYING] = enabled }
     suspend fun setTranslucentWindow(enabled: Boolean) = dataStore.edit { it[TRANSLUCENT_WINDOW] = enabled }
     suspend fun setMicaBackdrop(enabled: Boolean) = dataStore.edit { it[MICA_BACKDROP] = enabled }
+    suspend fun setSystemTitleBar(enabled: Boolean) = dataStore.edit { it[SYSTEM_TITLE_BAR] = enabled }
     suspend fun setGlassTint(value: Float) = dataStore.edit { it[GLASS_TINT] = value.coerceIn(0f, 0.8f) }
     suspend fun setGlassFrost(value: Float) = dataStore.edit { it[GLASS_FROST] = value.coerceIn(0f, 0.3f) }
     suspend fun setGlassEdges(enabled: Boolean) = dataStore.edit { it[GLASS_EDGES] = enabled }
@@ -122,6 +124,7 @@ class DesktopSettings(private val dataStore: DataStore<Preferences>) {
         private val ACCENT_FOLLOWS_PLAYING = booleanPreferencesKey("accent_follows_playing")
         private val TRANSLUCENT_WINDOW = booleanPreferencesKey("translucent_window")
         private val MICA_BACKDROP = booleanPreferencesKey("mica_backdrop")
+        private val SYSTEM_TITLE_BAR = booleanPreferencesKey("system_title_bar")
         private val GLASS_TINT = floatPreferencesKey("glass_tint")
         private val GLASS_FROST = floatPreferencesKey("glass_frost")
         private val GLASS_EDGES = booleanPreferencesKey("glass_edges")

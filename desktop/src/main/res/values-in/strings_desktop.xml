@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"Buka folder unduhan"</string>
     <string name="player_fullscreen" formatted="false">"Layar penuh"</string>
     <string name="player_exit_fullscreen" formatted="false">"Keluar dari layar penuh"</string>
+    <string name="window_minimize" formatted="false">"Minimalkan"</string>
+    <string name="window_maximize" formatted="false">"Maksimalkan"</string>
+    <string name="window_restore" formatted="false">"Pulihkan"</string>
+    <string name="window_system_title_bar" formatted="false">"Bilah judul sistem"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Gunakan bingkai jendela desktop Anda, bukan milik Aurora. Berlaku setelah Aurora dimulai ulang."</string>
 </resources>

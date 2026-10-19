@@ -103,4 +103,9 @@
     <string name="youtube_download_open_folder" formatted="false">"Downloadmap openen"</string>
     <string name="player_fullscreen" formatted="false">"Volledig scherm"</string>
     <string name="player_exit_fullscreen" formatted="false">"Volledig scherm sluiten"</string>
+    <string name="window_minimize" formatted="false">"Minimaliseren"</string>
+    <string name="window_maximize" formatted="false">"Maximaliseren"</string>
+    <string name="window_restore" formatted="false">"Vorige grootte"</string>
+    <string name="window_system_title_bar" formatted="false">"Systeemtitelbalk"</string>
+    <string name="window_system_title_bar_summary" formatted="false">"Gebruik het vensterkader van je bureaublad in plaats van dat van Aurora. Wordt toegepast na het herstarten van Aurora."</string>
 </resources>
