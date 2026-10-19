@@ -260,7 +260,10 @@ class DesktopContainer(
             { settingsStore.session.first()?.accountKey().orEmpty() }, mixAnalyzer)
     }
     val mapTiles by lazy { com.aurora.music.ui.components.MapTiles(java.io.File(paths.cache, "map-tiles"), http) }
-    val discord by lazy { com.aurora.music.data.DiscordRpc(settingsStore, scope) { url -> com.aurora.music.desktop.player.artworkBytes(url, http, artworkRepository) } }
+    // the local discord account, null while the discord app isn't running
+    val discordUser = MutableStateFlow<String?>(null)
+    private val discordDelegate = lazy { com.aurora.music.data.DiscordRpc(settingsStore, scope, discordUser) { url -> com.aurora.music.desktop.player.artworkBytes(url, http, artworkRepository) } }
+    val discord by discordDelegate
 
     val lyricsRepository = LyricsRepository(backendProvider = { backend }, lrclibEnabledProvider = { lrclibEnabled },
         separatorsProvider = { settingsStore.artistSeparators.first() },
@@ -503,6 +506,7 @@ class DesktopContainer(
         playHistory.flushNow()
         if (imageLoaderDelegate.isInitialized()) imageLoader.shutdown()
         if (audioCacheDelegate.isInitialized()) audioCache.close()
+        if (discordDelegate.isInitialized()) discord.close()
         runCatching { mixService.close() }
         scope.cancel()
     }

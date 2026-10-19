@@ -108,4 +108,7 @@
     <string name="window_restore" formatted="false">"Restaurar"</string>
     <string name="window_system_title_bar" formatted="false">"Barra de título del sistema"</string>
     <string name="window_system_title_bar_summary" formatted="false">"Usa el marco de ventana de tu escritorio en lugar del de Aurora. Se aplica al reiniciar Aurora."</string>
+    <string name="discord_not_running_desktop" formatted="false">"Discord no se está ejecutando"</string>
+    <string name="discord_without_app_desktop" formatted="false">"Sin la app de Discord"</string>
+    <string name="discord_without_app_summary_desktop" formatted="false">"Solo hace falta si la app de Discord no se está ejecutando en este ordenador"</string>
 </resources>

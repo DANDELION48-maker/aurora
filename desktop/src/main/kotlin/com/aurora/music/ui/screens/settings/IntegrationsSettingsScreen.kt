@@ -50,6 +50,7 @@ fun IntegrationsSettingsScreen(
     val store = LocalDesktopContainer.current.settingsStore
     val acoustId by store.acoustIdKey.collectAsStateWithLifecycle(initialValue = "")
     val discord by store.discord.collectAsStateWithLifecycle(initialValue = DiscordAccount())
+    val discordUser by LocalDesktopContainer.current.discordUser.collectAsStateWithLifecycle()
     val lrclib by store.lrclibEnabled.collectAsStateWithLifecycle(initialValue = true)
     val artistInfo by store.artistEnrichment.collectAsStateWithLifecycle(initialValue = true)
     val lastfm by store.lastfm.collectAsStateWithLifecycle(initialValue = LastfmAccount())
@@ -63,7 +64,7 @@ fun IntegrationsSettingsScreen(
                 SettingsRowDivider()
                 IntegrationRow(Icons.Filled.Album, "ListenBrainz", appString(R.string.text_send_listens_to_your_open_music_profile_5a7b48), connectionLabel(listenBrainz.token, listenBrainz.enabled, listenBrainz.username), onOpenListenBrainz)
                 SettingsRowDivider()
-                IntegrationRow(Icons.Filled.Forum, "Discord", appString(R.string.text_share_your_current_track_and_artwork_11d20a), connectionLabel(discord.token, discord.enabled, discord.username), onOpenDiscord)
+                IntegrationRow(Icons.Filled.Forum, "Discord", appString(R.string.text_share_your_current_track_and_artwork_11d20a), discordLabel(discord, discordUser), onOpenDiscord)
             }
         }
         item { SettingsSectionTitle(appString(R.string.text_lyrics_metadata_eb9a3c)) }
@@ -164,6 +165,25 @@ private fun ArtworkLookupGroup() {
 @Composable
 private fun IntegrationRow(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String, subtitle: String, status: String, onClick: () -> Unit) {
     SettingsNavRow(icon, title, subtitle, status, onClick = onClick)
+}
+
+private fun discordLabel(acct: DiscordAccount, localUser: String?): String {
+    val name = localUser ?: acct.username.takeIf { acct.token.isNotBlank() }
+    return when {
+        !acct.enabled -> appString(R.string.text_off_e3de5a)
+        name == null -> appString(R.string.discord_not_running_desktop)
+        else -> name.ifBlank { appString(R.string.text_connected_c2f9b7) }
+    }
+}
+
+private fun discordStatus(acct: DiscordAccount, localUser: String?): String {
+    val name = localUser ?: acct.username.takeIf { acct.token.isNotBlank() }
+    return when {
+        !acct.enabled -> appString(R.string.text_share_your_current_track_and_artwork_11d20a)
+        name == null -> appString(R.string.discord_not_running_desktop)
+        name.isBlank() -> appString(R.string.text_connected_c2f9b7)
+        else -> appString(R.string.text_connected_as_fc3300, name)
+    }
 }
 
 private fun connectionLabel(token: String, enabled: Boolean, username: String): String = when {
@@ -358,35 +378,38 @@ fun AcoustIdIntegrationScreen(contentPadding: PaddingValues, onBack: () -> Unit)
 fun DiscordIntegrationScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenDiscordLogin: () -> Unit) {
     val container = LocalDesktopContainer.current
     val acct by container.settingsStore.discord.collectAsStateWithLifecycle(initialValue = DiscordAccount())
+    val localUser by container.discordUser.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     SettingsPage("Discord", contentPadding, onBack) {
         item { DiscordPreview(acct) }
         item { SettingsSectionTitle(appString(R.string.text_presence_89a8a3)) }
         item {
             SettingsGroup {
-                if (acct.token.isBlank()) SettingsNavRow(Icons.Filled.Forum, appString(R.string.text_connect_discord_8794ce), appString(R.string.text_authorize_your_discord_account_a1f52f), appString(R.string.text_connect_b65463), onClick = onOpenDiscordLogin)
-                else {
-                    SettingsSwitchRow(Icons.Filled.Forum, appString(R.string.text_discord_presence_81fe83), if (acct.username.isBlank()) appString(R.string.text_connected_c2f9b7) else appString(R.string.text_connected_as_fc3300, (acct.username)), acct.enabled) { scope.launch { container.settingsStore.setDiscordEnabled(it) } }
-                    SettingsRowDivider()
-                    SettingsSwitchRow(Icons.Filled.Album, appString(R.string.text_show_album_b04b79), appString(R.string.text_include_the_album_and_artwork_caption_1d812f), acct.showAlbum) { scope.launch { container.settingsStore.setDiscordShowAlbum(it) } }
-                    SegmentedRow(appString(R.string.text_activity_name_09adc3), listOf(appString(R.string.text_aurora_eeee9b), appString(R.string.text_artist_6c3f3d), appString(R.string.text_song_bd1189)), listOf("aurora", "artist", "song").indexOf(acct.activityName).coerceAtLeast(0)) { scope.launch { container.settingsStore.setDiscordActivityName(listOf("aurora", "artist", "song")[it]) } }
-                }
+                SettingsSwitchRow(Icons.Filled.Forum, appString(R.string.text_discord_presence_81fe83), discordStatus(acct, localUser), acct.enabled) { scope.launch { container.settingsStore.setDiscordEnabled(it) } }
+                SettingsRowDivider()
+                SettingsSwitchRow(Icons.Filled.Album, appString(R.string.text_show_album_b04b79), appString(R.string.text_include_the_album_and_artwork_caption_1d812f), acct.showAlbum) { scope.launch { container.settingsStore.setDiscordShowAlbum(it) } }
+                SegmentedRow(appString(R.string.text_activity_name_09adc3), listOf(appString(R.string.text_aurora_eeee9b), appString(R.string.text_artist_6c3f3d), appString(R.string.text_song_bd1189)), listOf("aurora", "artist", "song").indexOf(acct.activityName).coerceAtLeast(0)) { scope.launch { container.settingsStore.setDiscordActivityName(listOf("aurora", "artist", "song")[it]) } }
             }
         }
-        if (acct.token.isNotBlank()) {
-            item { SettingsSectionTitle(appString(R.string.text_artwork_bfbeaf)) }
-            item {
-                SettingsGroup {
+        item { SettingsSectionTitle(appString(R.string.text_artwork_bfbeaf)) }
+        item {
+            SettingsGroup {
+                var imgur by remember { mutableStateOf<String?>(null) }
+                DebouncedSave(imgur) { container.settingsStore.setDiscordImgur(it.trim()) }
+                OutlinedTextField(imgur ?: acct.imgurClientId, { imgur = it }, label = { Text(appString(R.string.text_imgur_client_id_f5e499)) }, supportingText = { Text(appString(R.string.text_optional_publishes_local_and_private_server_covers_563e93)) }, singleLine = true, modifier = fieldModifier())
+            }
+        }
+        item { SettingsSectionTitle(appString(R.string.discord_without_app_desktop)) }
+        item {
+            SettingsGroup {
+                if (acct.token.isBlank()) SettingsNavRow(Icons.Filled.Forum, appString(R.string.text_connect_discord_8794ce), appString(R.string.discord_without_app_summary_desktop), appString(R.string.text_connect_b65463), onClick = onOpenDiscordLogin)
+                else {
                     var appId by remember { mutableStateOf<String?>(null) }
-                    var imgur by remember { mutableStateOf<String?>(null) }
                     DebouncedSave(appId) { container.settingsStore.setDiscordAppId(it.trim()) }
-                    DebouncedSave(imgur) { container.settingsStore.setDiscordImgur(it.trim()) }
                     OutlinedTextField(appId ?: acct.appId, { appId = it }, label = { Text(appString(R.string.text_discord_application_id_2ac458)) }, supportingText = { Text(appString(R.string.text_enables_cover_artwork_40a2d2)) }, singleLine = true, modifier = fieldModifier())
-                    OutlinedTextField(imgur ?: acct.imgurClientId, { imgur = it }, label = { Text(appString(R.string.text_imgur_client_id_f5e499)) }, supportingText = { Text(appString(R.string.text_optional_publishes_local_and_private_server_covers_563e93)) }, singleLine = true, modifier = fieldModifier())
+                    SettingsNavRow(Icons.Filled.LinkOff, appString(R.string.text_disconnect_discord_0939de), value = appString(R.string.text_remove_e96390)) { scope.launch { container.settingsStore.clearDiscord() } }
                 }
             }
-            item { SettingsSectionTitle(appString(R.string.text_account_85dfa3)) }
-            item { SettingsGroup { SettingsNavRow(Icons.Filled.LinkOff, appString(R.string.text_disconnect_discord_0939de), value = appString(R.string.text_remove_e96390)) { scope.launch { container.settingsStore.clearDiscord() } } } }
         }
     }
 }
@@ -413,7 +436,7 @@ private fun DiscordPreview(acct: DiscordAccount) {
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text("1:42", style = MaterialTheme.typography.labelSmall); Text("3:58", style = MaterialTheme.typography.labelSmall) }
                 }
             }
-            if (acct.appId.isBlank()) Text(appString(R.string.text_add_an_application_id_to_show_real_cover_artwork_faca69), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (acct.token.isNotBlank() && acct.appId.isBlank()) Text(appString(R.string.text_add_an_application_id_to_show_real_cover_artwork_faca69), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

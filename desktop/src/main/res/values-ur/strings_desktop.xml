@@ -108,4 +108,7 @@
     <string name="window_restore" formatted="false">"بحال کریں"</string>
     <string name="window_system_title_bar" formatted="false">"سسٹم ٹائٹل بار"</string>
     <string name="window_system_title_bar_summary" formatted="false">"Aurora کے بجائے اپنے ڈیسک ٹاپ کا ونڈو فریم استعمال کریں۔ Aurora دوبارہ شروع کرنے کے بعد لاگو ہوتا ہے۔"</string>
+    <string name="discord_not_running_desktop" formatted="false">"Discord نہیں چل رہا"</string>
+    <string name="discord_without_app_desktop" formatted="false">"Discord ایپ کے بغیر"</string>
+    <string name="discord_without_app_summary_desktop" formatted="false">"صرف تب ضروری ہے جب اس کمپیوٹر پر Discord ایپ نہ چل رہی ہو"</string>
 </resources>

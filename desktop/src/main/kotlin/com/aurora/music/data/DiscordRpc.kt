@@ -8,6 +8,7 @@ import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
@@ -20,10 +21,16 @@ import java.util.concurrent.ConcurrentHashMap
 class DiscordRpc(
     private val store: SettingsStore,
     private val scope: CoroutineScope,
+    private val localUser: MutableStateFlow<String?>,
     private val artwork: suspend (String) -> ByteArray?,
-) {
+) : AutoCloseable {
     private val imgur = ImgurUploader()
     private val http = OkHttpClient()
+    private val ipc = DiscordIpc(onUser = { name ->
+        localUser.value = name
+        synchronized(this@DiscordRpc) { reconcile() }
+    })
+    // the token gateway is only a fallback for when the local discord client isn't running
     private val gateway = DiscordGateway(
         onUsername = { name -> if (token.isNotBlank()) scope.launch { store.saveDiscord(token, name) } },
         onConnected = { },
@@ -41,6 +48,7 @@ class DiscordRpc(
     private var positionAt = 0L
 
     private val imageCache = ConcurrentHashMap<String, String>()
+    private val uploads = ConcurrentHashMap<String, String>()
     @Volatile private var lastSong: Song? = null
     @Volatile private var lastPlaying = false
     @Volatile private var lastPositionSec = 0f
@@ -61,6 +69,8 @@ class DiscordRpc(
                     appId = acct.appId
                     showAlbum = acct.showAlbum
                     activityName = acct.activityName
+                    if (enabled) ipc.start(appId.ifBlank { DEFAULT_APP_ID }) else ipc.stop()
+                    ipc.update(lastSong?.takeIf { lastPlaying }?.let { ipcActivity(it, currentPosition()) })
                     if (gateway.clearFatal()) connectedToken = null
                     // a fresh login connects once so ready can fill in the username
                     if (token.isNotBlank() && enabled && acct.username.isBlank() && !active) { active = true; scheduleIdle() }
@@ -72,7 +82,7 @@ class DiscordRpc(
     }
 
     private fun reconcile() {
-        if (token.isBlank() || !enabled || !active) {
+        if (token.isBlank() || !enabled || !active || localUser.value != null) {
             if (connectedToken != null) { gateway.disconnect(); connectedToken = null }
             return
         }
@@ -93,9 +103,15 @@ class DiscordRpc(
             idleJob?.cancel(); idleJob = null
             active = true
         } else if (active) scheduleIdle()
+        ipc.update(if (isPlaying) ipcActivity(song, positionSec) else null)
         if (token.isBlank() || !enabled) return
         reconcile()
         gateway.updateActivity(if (isPlaying) buildActivity(song, true, positionSec) else null)
+    }
+
+    override fun close() {
+        synchronized(this) { enabled = false; reconcile() }
+        ipc.close()
     }
 
     private fun scheduleIdle() {
@@ -113,11 +129,56 @@ class DiscordRpc(
     private fun currentPosition() = lastPositionSec + if (lastPlaying) ((System.nanoTime() / 1_000_000L) - positionAt).coerceAtLeast(0) / 1000f else 0f
     private fun imageKey(url: String) = "$appId|$imgurClientId|$url"
 
+    // the local client fetches https art itself, so only private covers need imgur
+    private fun ipcActivity(song: Song, positionSec: Float): JsonObject? {
+        if (song.title.isBlank()) return null
+        val a = discordActivity(song, showAlbum, activityName, positionSec)
+        val art = song.artworkUrl
+        val image = when {
+            art.isBlank() -> null
+            isPublicArt(art) -> art
+            else -> uploads["$imgurClientId|$art"].also { if (it == null) uploadForIpc(art) }
+        }
+        if (image != null) a.add("assets", JsonObject().apply {
+            addProperty("large_image", image)
+            if (showAlbum && song.album.isNotBlank()) addProperty("large_text", song.album.take(128))
+        })
+        return a
+    }
+
+    private fun uploadForIpc(art: String) {
+        val uploadId = imgurId()
+        val key = "ipc|$uploadId|$art"
+        if (uploadId.isBlank() || (failedImages[key] ?: 0) > System.currentTimeMillis() - 60_000 || !inFlight.add(key)) return
+        scope.launch(Dispatchers.IO) {
+            try {
+                val link = publicLink(art, uploadId)
+                synchronized(this@DiscordRpc) {
+                    if (link == null) failedImages[key] = System.currentTimeMillis()
+                    val current = lastSong
+                    if (link != null && current != null && lastPlaying && current.artworkUrl == art) ipc.update(ipcActivity(current, currentPosition()))
+                }
+            } catch (e: kotlinx.coroutines.CancellationException) { throw e }
+              catch (_: Exception) { failedImages[key] = System.currentTimeMillis() }
+            finally { inFlight.remove(key) }
+        }
+    }
+
+    private suspend fun publicLink(art: String, uploadId: String): String? {
+        if (isPublicArt(art)) return art
+        if (uploadId.isBlank()) return null
+        val key = "$uploadId|$art"
+        uploads[key]?.let { return it }
+        val link = loadDiscordArtwork(artwork, art)?.let { imgur.uploadBytes(it, uploadId) } ?: return null
+        if (uploads.size >= 128) uploads.clear()
+        uploads[key] = link
+        return link
+    }
+
     private fun buildActivity(song: Song, isPlaying: Boolean, positionSec: Float): JsonObject? {
         if (song.title.isBlank()) return null
         val a = discordActivity(song, showAlbum, activityName, positionSec)
-        // discord must fetch the art so without imgur skip private server urls it cant reach
-        val canHost = imgurId().isNotBlank() || isLikelyPublic(song.artworkUrl)
+        val canHost = imgurId().isNotBlank() || isPublicArt(song.artworkUrl)
         if (imagesPossible && song.artworkUrl.isNotBlank() && canHost) {
             val mp = imageCache[imageKey(song.artworkUrl)]
             val assets = JsonObject()
@@ -136,11 +197,7 @@ class DiscordRpc(
         val uploadId = imgurId(); val applicationId = appId; val authorization = token
         scope.launch(Dispatchers.IO) {
             try {
-                val link = if (uploadId.isBlank()) artUrl else {
-                    val bytes = loadDiscordArtwork(artwork, artUrl)
-                    bytes?.let { imgur.uploadBytes(it, uploadId) }
-                }
-                val mp = link?.let { externalAsset(it, applicationId, authorization) }
+                val mp = publicLink(artUrl, uploadId)?.let { externalAsset(it, applicationId, authorization) }
                 synchronized(this@DiscordRpc) {
                     if (mp != null) { if (imageCache.size >= 128) imageCache.clear(); imageCache[key] = mp }
                     else failedImages[key] = System.currentTimeMillis()
@@ -172,27 +229,20 @@ class DiscordRpc(
         }
     }.getOrNull()
 
-    private fun isLikelyPublic(url: String): Boolean {
-        val host = runCatching { java.net.URI(url).host }.getOrNull()?.lowercase() ?: return false
-        if (host == "localhost") return false
-        val o = host.split(".").mapNotNull { it.toIntOrNull() }
-        if (o.size != 4) return !host.contains(":")
-        val a = o[0]; val b = o[1]
-        return when {
-            a == 10 -> false
-            a == 127 -> false
-            a == 169 && b == 254 -> false
-            a == 172 && b in 16..31 -> false
-            a == 192 && b == 168 -> false
-            a == 100 && b in 64..127 -> false
-            else -> true
-        }
-    }
-
     private companion object {
         const val TAG = "DiscordRpc"
         const val IDLE_DISCONNECT_MS = 120_000L
+        const val DEFAULT_APP_ID = "1513658991513964826"
     }
+}
+
+// discord embeds the cover url in a public mp:external path, so only cdns that never carry a server token qualify
+private val PUBLIC_ART_HOSTS = listOf("ytimg.com", "googleusercontent.com", "ggpht.com", "scdn.co", "spotifycdn.com", "sndcdn.com", "mzstatic.com", "imgur.com")
+
+internal fun isPublicArt(url: String): Boolean {
+    val uri = runCatching { java.net.URI(url) }.getOrNull() ?: return false
+    val host = uri.host?.lowercase() ?: return false
+    return uri.scheme == "https" && uri.userInfo == null && url.length <= 256 && PUBLIC_ART_HOSTS.any { host == it || host.endsWith(".$it") }
 }
 
 internal fun discordActivity(song: Song, showAlbum: Boolean, activityName: String, positionSec: Float, now: Long = System.currentTimeMillis()): JsonObject {

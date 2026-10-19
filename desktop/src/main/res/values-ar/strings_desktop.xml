@@ -108,4 +108,7 @@
     <string name="window_restore" formatted="false">"استعادة"</string>
     <string name="window_system_title_bar" formatted="false">"شريط عنوان النظام"</string>
     <string name="window_system_title_bar_summary" formatted="false">"استخدام إطار النافذة الخاص بسطح المكتب بدلاً من إطار Aurora. يُطبَّق بعد إعادة تشغيل Aurora."</string>
+    <string name="discord_not_running_desktop" formatted="false">"Discord لا يعمل"</string>
+    <string name="discord_without_app_desktop" formatted="false">"بدون تطبيق Discord"</string>
+    <string name="discord_without_app_summary_desktop" formatted="false">"مطلوب فقط عندما لا يعمل تطبيق Discord على هذا الكمبيوتر"</string>
 </resources>

@@ -108,4 +108,7 @@
     <string name="window_restore" formatted="false">"이전 크기로 복원"</string>
     <string name="window_system_title_bar" formatted="false">"시스템 제목 표시줄"</string>
     <string name="window_system_title_bar_summary" formatted="false">"Aurora 대신 데스크톱 기본 창 테두리를 사용합니다. Aurora를 다시 시작하면 적용됩니다."</string>
+    <string name="discord_not_running_desktop" formatted="false">"Discord가 실행 중이 아닙니다"</string>
+    <string name="discord_without_app_desktop" formatted="false">"Discord 앱 없이"</string>
+    <string name="discord_without_app_summary_desktop" formatted="false">"이 컴퓨터에서 Discord 앱이 실행 중이 아닐 때만 필요합니다"</string>
 </resources>
