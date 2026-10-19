@@ -489,7 +489,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
             val metadata = c.currentMediaItem!!.mediaMetadata
             Song(mediaId!!, metadata.title?.toString().orEmpty(), metadata.artist?.toString().orEmpty(), "",
                 metadata.artworkUri?.toString().orEmpty(), (c.duration.coerceAtLeast(0) / 1000).toInt())
-        } else mediaId?.let { songById[it] } ?: _state.value.current
+        } else mediaId?.let { songById[it] } ?: if (remoteSession != null) EMPTY_SONG else _state.value.current
         val cur = com.aurora.music.playback.PreferredPlayback.applyTo(queued, c.currentMediaItem)
         companionVideo.clearIfSongChanged(cur.id)
         val sourceType = container.repository.sourceType(cur)
@@ -520,7 +520,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
                     Player.REPEAT_MODE_ALL -> RepeatMode.ALL
                     else -> RepeatMode.OFF
                 },
-                queue = if (q.isNotEmpty()) q else it.queue,
+                queue = if (q.isNotEmpty() || remoteSession != null) q else it.queue,
                 currentIndex = c.currentMediaItemIndex.coerceAtLeast(0),
                 bpm = ki?.bpm ?: 0,
                 camelot = ki?.camelot ?: "",

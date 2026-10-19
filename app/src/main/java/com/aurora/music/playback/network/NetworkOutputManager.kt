@@ -7,6 +7,7 @@ import com.aurora.music.playback.network.endpoint.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 
 data class NetworkOutputState(
     val processedCast: Boolean = false,
@@ -85,7 +86,15 @@ class NetworkOutputManager(private val context: Context) {
     }
     fun connect(target: NetworkTarget) = dispatch { it.connect(target) }
     fun disconnect() = dispatch { it.disconnect() }
-    fun enableReceiver(enabled: Boolean) = dispatch(enabled) { it.enableReceiver(enabled) }
+    fun enableReceiver(enabled: Boolean) {
+        preferences.edit().putBoolean("receiver", enabled).apply()
+        dispatch(enabled) { it.enableReceiver(enabled) }
+    }
+
+    // receiver mode survives restarts, but only starts while aurora is in front, so the foreground service is allowed
+    fun restoreReceiver() {
+        if (preferences.getBoolean("receiver", false) && !mutable.value.receiverEnabled) dispatch(true) { it.enableReceiver(true) }
+    }
     fun beginPairing() = dispatch { it.pairReceiver() }
     fun revokeController(id: String) = dispatch { it.revokeController(id) }
     fun dismissError() = update { it.copy(error = null) }
@@ -145,9 +154,17 @@ class NetworkOutputManager(private val context: Context) {
     fun openSession(peer: PairedRenderer): ConnectSession {
         mutableSession.value?.close()
         val fresh = trust.renderers().firstOrNull { it.id == peer.id } ?: peer
-        return ConnectSession(fresh, scope).also {
-            mutableSession.value = it
+        return ConnectSession(fresh, scope).also { session ->
+            mutableSession.value = session
             update { state -> state.copy(controlling = fresh, error = null) }
+            scope.launch {
+                session.lost.first { it }
+                if (mutableSession.value !== session) return@launch
+                val message = session.error.value ?: "Lost connection to ${fresh.name}."
+                control(null)
+                update { it.copy(error = message) }
+                android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
+            }
         }
     }
 

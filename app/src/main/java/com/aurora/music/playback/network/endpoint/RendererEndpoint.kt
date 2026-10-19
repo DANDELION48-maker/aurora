@@ -20,6 +20,7 @@ class RendererEndpoint(
     platform = "android",
     playback = playback,
     connect = connect,
+    reachable = { reachableAddresses(context.applicationContext) },
 ) {
     companion object {
         @Suppress("DEPRECATION")
@@ -38,8 +39,22 @@ class RendererEndpoint(
                     }
                 if (address != null) return requireNotNull(address.hostAddress)
             }
-            EndpointTls.localAddresses().firstOrNull()?.let { return it }
+            reachableAddresses(context).firstOrNull()?.let { return it }
             throw RendererException("local_network_required", "Connect to Wi-Fi, Ethernet or Tailscale first.", 409)
         }
+
+        // wi-fi and ethernet, then tailscale; mobile data and vowifi tunnels carry private addresses no peer can reach
+        @Suppress("DEPRECATION")
+        fun reachableAddresses(context: Context): List<String> = runCatching {
+            val connectivity = context.getSystemService(ConnectivityManager::class.java)
+            connectivity.allNetworks.flatMap { network ->
+                val capabilities = connectivity.getNetworkCapabilities(network) ?: return@flatMap emptyList()
+                val vpn = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN)
+                val local = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                if (!vpn && !local) return@flatMap emptyList()
+                connectivity.getLinkProperties(network)?.linkAddresses.orEmpty().map { it.address }.filterIsInstance<Inet4Address>()
+                    .filter { if (vpn) EndpointTls.isTailscale(it) else it.isSiteLocalAddress && !it.isLinkLocalAddress }
+            }.sortedBy { if (EndpointTls.isTailscale(it)) 1 else 0 }.mapNotNull { it.hostAddress }.distinct()
+        }.getOrDefault(emptyList())
     }
 }

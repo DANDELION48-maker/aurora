@@ -1903,7 +1903,7 @@ class PlaybackService : MediaLibraryService() {
         val transport = mediaSession?.player ?: player
         when (intent?.action) {
             ACTION_RECEIVER_START -> setReceiverForeground(true)
-            ACTION_RECEIVER_STOP -> networkBridge?.enableReceiver(false)
+            ACTION_RECEIVER_STOP -> container.networkOutput.enableReceiver(false)
             ACTION_MIX -> startMix()
             ACTION_PLAY_PAUSE -> { wakeFadeActive = false; if (transport.playWhenReady) transport.pause() else transport.play() }
             ACTION_NEXT -> transport.seekToNextMediaItem()

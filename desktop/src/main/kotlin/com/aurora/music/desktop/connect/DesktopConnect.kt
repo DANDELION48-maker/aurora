@@ -45,6 +45,8 @@ class DesktopConnect(private val container: DesktopContainer, private val local:
     private var remote: RemotePlayerController? = null
     private var scanJob: Job? = null
     val state: StateFlow<DesktopConnectState> = mutable.asStateFlow()
+    private val mutableMessages = kotlinx.coroutines.flow.MutableSharedFlow<String>(extraBufferCapacity = 4)
+    val messages: kotlinx.coroutines.flow.SharedFlow<String> = mutableMessages
     val active: StateFlow<PlayerController> = mutableActive.asStateFlow()
     val name = deviceName()
 
@@ -185,6 +187,14 @@ class DesktopConnect(private val container: DesktopContainer, private val local:
             remote = controller
             mutableActive.value = controller
             mutable.update { it.copy(controlling = fresh, error = null) }
+            scope.launch {
+                session.lost.first { it }
+                if (remote !== controller) return@launch
+                val message = session.error.value ?: "Lost connection to ${fresh.name}."
+                control(null)
+                mutable.update { it.copy(error = message) }
+                mutableMessages.tryEmit(message)
+            }
         }
     }
 

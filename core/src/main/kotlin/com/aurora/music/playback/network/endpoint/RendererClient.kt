@@ -156,7 +156,9 @@ class RendererClient private constructor(
                 "connect_disabled" -> "Remote control is off on that device."
                 "receiver_disabled" -> "That device only accepts remote control."
                 "not_available" -> "Those songs aren't available on that device."
-                else -> "The renderer could not complete this request."
+                "renderer_offline" -> "Remote control stopped on that device."
+                else -> runCatching { result.text("message", 160) }.getOrNull()?.takeIf { it.isNotBlank() }
+                    ?: "The renderer could not complete this request."
             }
             throw RendererException(code, message, response.code)
         }
@@ -169,7 +171,7 @@ class RendererClient private constructor(
     private fun transportError(error: Exception): RendererException = when (error) {
         is RendererException -> error
         is javax.net.ssl.SSLException -> RendererException("certificate_mismatch", "Check the renderer's pairing address and pair again.", 502)
-        else -> RendererException("renderer_unreachable", "Cannot reach the renderer. Check its address and Wi-Fi.", 503)
+        else -> RendererException("renderer_unreachable", "Can't reach that device. Make sure Aurora is open there with remote control on.", 503)
     }
 
     private fun parseStatus(value: JsonObject): RendererStatus {

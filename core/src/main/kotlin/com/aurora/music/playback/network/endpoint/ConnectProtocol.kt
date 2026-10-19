@@ -29,7 +29,7 @@ data class ConnectTrack(
     val albumId: String = "",
     val artistId: String = "",
 ) {
-    fun toSong(): Song = Song(id, title, artist, album, "", durationSec, albumId = albumId, artistId = artistId)
+    fun toSong(): Song = Song(id, title, artist, album, "", durationSec, accentArgb = com.aurora.music.util.accentArgbFor(id), albumId = albumId, artistId = artistId)
 
     companion object {
         fun of(song: Song) = ConnectTrack(song.id, song.title, song.artist, song.album, song.durationSec, song.albumId, song.artistId)
@@ -105,6 +105,7 @@ interface ConnectHost {
 
 object ConnectJson {
     private const val MAX_TRACKS = 500
+    const val MAX_ID = 2048
 
     fun encode(command: ConnectCommand): JsonObject = JsonObject().apply {
         addProperty("version", RENDERER_PROTOCOL_VERSION)
@@ -201,10 +202,15 @@ object ConnectJson {
     }
 
     private fun track(value: JsonObject) = ConnectTrack(
-        value.text("id", 512).also { if (it.isEmpty()) invalid() }, value.text("title", 512), value.text("artist", 512),
-        value.text("album", 512), value.int("durationSec").coerceIn(0, 7 * 24 * 3600),
-        value.text("albumId", 512), value.text("artistId", 512),
+        ref(value, "id").also { if (it.isEmpty()) invalid() }, label(value, "title"), label(value, "artist"),
+        label(value, "album"), value.int("durationSec").coerceIn(0, 7 * 24 * 3600), ref(value, "albumId"), ref(value, "artistId"),
     )
+
+    // merged-library ids carry the \u0001 namespace separator, so ids stay opaque and only display text is cleaned
+    private fun ref(value: JsonObject, key: String): String = string(value, key).also { if (it.length > MAX_ID) invalid() }
+    private fun label(value: JsonObject, key: String): String = string(value, key).filterNot(Char::isISOControl).take(512)
+    private fun string(value: JsonObject, key: String): String =
+        value.get(key)?.takeIf { it.isJsonPrimitive && it.asJsonPrimitive.isString }?.asString ?: invalid()
 
     private fun options(values: JsonArray?): List<ConnectOption> {
         if (values == null || values.size() > 64) invalid()

@@ -116,13 +116,15 @@ internal class MdnsAdvertiser : EndpointAdvertiser {
 internal suspend fun discoverDevices(): List<DiscoveredRenderer> = coroutineScope {
     lanAddresses().map { address ->
         async(Dispatchers.IO) {
-            runCatching { JmDNS.create(address).use { dns -> dns.list(SERVICE_TYPE, 3_000).mapNotNull(::discovered) } }.getOrDefault(emptyList())
+            runCatching { JmDNS.create(address).use { dns -> dns.list(SERVICE_TYPE, 3_000).mapNotNull { discovered(it, address) } } }.getOrDefault(emptyList())
         }
     }.awaitAll().flatten().distinctBy { it.id }
 }
 
-private fun discovered(info: ServiceInfo): DiscoveredRenderer? {
-    val host = info.inet4Addresses.firstOrNull()?.hostAddress ?: return null
+// a phone also announces its mobile-data and vowifi addresses, so take the one on the subnet we heard it from
+private fun discovered(info: ServiceInfo, local: InetAddress): DiscoveredRenderer? {
+    val host = info.inet4Addresses.sortedByDescending { remote -> remote.address.zip(local.address).takeWhile { (a, b) -> a == b }.size }
+        .firstOrNull()?.hostAddress ?: return null
     val id = info.getPropertyString("id").orEmpty()
     if (info.getPropertyString("v") != "1" || !id.matches(Regex("[a-f0-9]{32}")) || info.port !in 1..65535) return null
     return DiscoveredRenderer(id, info.getPropertyString("name").orEmpty().take(64), "https://$host:${info.port}",

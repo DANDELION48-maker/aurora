@@ -54,9 +54,9 @@ class AndroidConnectHost(
             val tracks = (0 until player.mediaItemCount).map { index ->
                 val item = player.getMediaItemAt(index)
                 val metadata = item.mediaMetadata
-                ConnectTrack(item.mediaId.take(512), metadata.title?.toString().orEmpty().take(512), metadata.artist?.toString().orEmpty().take(512),
+                ConnectTrack(item.mediaId, metadata.title?.toString().orEmpty().take(512), metadata.artist?.toString().orEmpty().take(512),
                     metadata.albumTitle?.toString().orEmpty().take(512), metadata.extras?.getInt("aurora.durationSec") ?: 0,
-                    metadata.extras?.getString("aurora.albumId").orEmpty().take(512), metadata.extras?.getString("aurora.artistId").orEmpty().take(512))
+                    metadata.extras?.getString("aurora.albumId").orEmpty(), metadata.extras?.getString("aurora.artistId").orEmpty())
             }
             val current = player.currentMediaItem?.mediaId.orEmpty()
             if (current.isNotEmpty() && liked?.first != current) refreshLiked(current)

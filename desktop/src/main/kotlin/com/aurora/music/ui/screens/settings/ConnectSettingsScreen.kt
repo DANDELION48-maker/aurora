@@ -41,7 +41,7 @@ fun ConnectSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
     val connect = LocalConnect.current ?: return
     val store = LocalDesktopContainer.current.settingsStore
     val state by connect.state.collectAsState()
-    val switch by store.connectSwitch.collectAsState(ConnectSwitch.KEEP)
+    val switch by store.connectSwitch.collectAsState(ConnectSwitch.PAUSE)
     val scope = rememberCoroutineScope()
     var host by remember { mutableStateOf("") }
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }

@@ -31,7 +31,7 @@ fun NetworkOutputScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
     var code by remember { mutableStateOf("") }
     var host by remember { mutableStateOf("") }
     val store = (LocalContext.current.applicationContext as AuroraApplication).container.settingsStore
-    val switch by store.connectSwitch.collectAsStateWithLifecycle(initialValue = com.aurora.music.playback.network.endpoint.ConnectSwitch.KEEP)
+    val switch by store.connectSwitch.collectAsStateWithLifecycle(initialValue = com.aurora.music.playback.network.endpoint.ConnectSwitch.PAUSE)
     val scope = rememberCoroutineScope()
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
     LaunchedEffect(state.pairing) {

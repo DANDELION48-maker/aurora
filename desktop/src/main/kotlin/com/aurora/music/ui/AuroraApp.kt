@@ -307,8 +307,9 @@ private fun Shell(
     val savedPanelWidth by desktopSettings.sidePanelWidth.collectAsStateWithLifecycle(initialValue = null)
 
     val snackbarHostState = remember { SnackbarHostState() }
-    LaunchedEffect(container, player) {
-        merge(container.sourceErrors, player.messages).collect { message ->
+    val connect = com.aurora.music.desktop.connect.LocalConnect.current
+    LaunchedEffect(container, player, connect) {
+        merge(container.sourceErrors, player.messages, connect?.messages ?: kotlinx.coroutines.flow.emptyFlow()).collect { message ->
             if (snackbarHostState.currentSnackbarData == null) snackbarHostState.showSnackbar(message)
         }
     }

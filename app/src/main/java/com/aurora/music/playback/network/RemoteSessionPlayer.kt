@@ -34,6 +34,7 @@ class RemoteSessionPlayer(context: Context, val session: ConnectSession) : Simpl
 
     init {
         scope.launch { session.status.collect { value -> status = value; value?.current?.id?.let(::loadArt); invalidateState() } }
+        scope.launch { session.connected.collect { invalidateState() } }
     }
 
     val name: String get() = status?.name?.ifBlank { null } ?: session.peer.name
@@ -43,7 +44,7 @@ class RemoteSessionPlayer(context: Context, val session: ConnectSession) : Simpl
         send(ConnectCommand.Shuffle(value))
     }
 
-    fun cycleRepeat() = send(ConnectCommand.Repeat(((status?.repeat ?: 0) + 1) % 3))
+    fun cycleRepeat() = send(ConnectCommand.Repeat(when (status?.repeat) { 0 -> 2; 2 -> 1; else -> 0 }))
 
     override fun getState(): State {
         val current = status ?: return State.Builder()
@@ -80,7 +81,11 @@ class RemoteSessionPlayer(context: Context, val session: ConnectSession) : Simpl
             .setDeviceInfo(DeviceInfo.Builder(DeviceInfo.PLAYBACK_TYPE_REMOTE).setMaxVolume(if (volume >= 0f) STEPS else 0).build())
             .setDeviceVolume((volume.coerceAtLeast(0f) * STEPS).roundToInt())
             .setPlayWhenReady(current.playing, Player.PLAY_WHEN_READY_CHANGE_REASON_REMOTE)
-            .setPlaybackState(if (playlist.isEmpty()) Player.STATE_IDLE else Player.STATE_READY)
+            .setPlaybackState(when {
+                playlist.isEmpty() -> Player.STATE_IDLE
+                !session.connected.value -> Player.STATE_BUFFERING
+                else -> Player.STATE_READY
+            })
             .setContentPositionMs { session.positionMs() }
             .build()
     }

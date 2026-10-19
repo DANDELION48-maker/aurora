@@ -52,11 +52,12 @@ internal class RemotePlayerController(
     private val offset: Int get() = session.status.value?.offset ?: 0
     private val jobs = listOf(
         scope.launch { session.status.collect { it?.let(::apply) } },
+        scope.launch { session.connected.collect { session.status.value?.let(::apply) } },
         scope.launch { volumeRequests.filterNotNull().conflate().collect { session.send(ConnectCommand.Volume(it)) } },
         scope.launch {
             while (true) {
                 delay(250)
-                if (session.status.value?.playing == true) mutableState.update { it.copy(positionSec = session.positionMs() / 1000f) }
+                if (session.status.value?.playing == true && session.connected.value) mutableState.update { it.copy(positionSec = session.positionMs() / 1000f) }
             }
         },
     )
@@ -69,7 +70,7 @@ internal class RemotePlayerController(
         val current = queue.getOrNull(local)?.let { if (artFor == it.id) it.copy(artworkUrl = artUrl) else it } ?: EMPTY_SONG
         mutableState.update {
             it.copy(current = current, queue = queue.mapIndexed { i, song -> if (i == local) current else song },
-                isPlaying = status.playing, positionSec = session.positionMs() / 1000f, shuffle = status.shuffle,
+                isPlaying = status.playing && session.connected.value, positionSec = session.positionMs() / 1000f, shuffle = status.shuffle,
                 repeat = when (status.repeat) { 1 -> RepeatMode.ONE; 2 -> RepeatMode.ALL; else -> RepeatMode.OFF },
                 speed = status.speed, likedIds = if (status.liked) setOf(current.id) else emptySet(), currentIndex = local.coerceAtLeast(0),
                 sleepTimerMinutes = status.sleepMinutes, sleepEndOfTrack = status.sleepEndOfTrack,
@@ -93,7 +94,7 @@ internal class RemotePlayerController(
                 File(artDir, name).apply { writeBytes(bytes) }
             }
             if (artFor == id && file != null) {
-                artUrl = file.toURI().toString()
+                artUrl = com.aurora.music.desktop.platform.desktopFileUri(file.path)
                 session.status.value?.let(::apply)
             }
         }

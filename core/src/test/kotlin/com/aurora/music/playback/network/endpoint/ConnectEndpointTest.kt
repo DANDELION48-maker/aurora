@@ -110,8 +110,29 @@ class ConnectEndpointTest {
                 assertEquals(listOf(ConnectCommand.Playing(true), ConnectCommand.Jump(1)), host.executed)
                 host.execute(ConnectCommand.Playing(false))
                 assertFalse(withTimeout(5_000) { session.status.first { it?.playing == false } }!!.playing)
+                assertTrue(session.connected.value)
+                server.connect = null
+                assertTrue(withTimeout(10_000) { session.lost.first { it } })
+                assertEquals("Remote control is off on that device.", session.error.value)
+            }
+            server.connect = host
+            ConnectSession(paired, scope, lostAfterMs = 1_500).use { session ->
+                withTimeout(10_000) { session.connected.first { it } }
+                server.stop()
+                assertTrue(withTimeout(15_000) { session.lost.first { it } })
+                assertFalse(session.connected.value)
+                val frozen = session.positionMs()
+                delay(300)
+                assertEquals(frozen, session.positionMs())
             }
         } finally { scope.cancel(); server.stop() }
+    }
+
+    @Test fun mergedIdsSurviveAndDisplayTextIsCleaned() {
+        val merged = ConnectTrack("nav\u0001song-1", "Line\nbreak", "A\u0000B", "", 60, "nav\u0001album", "nav\u0001artist")
+        val parsed = (ConnectJson.command(ConnectJson.encode(ConnectCommand.Play(listOf(merged), 0, 0, true))) as ConnectCommand.Play).tracks.single()
+        assertEquals(merged.copy(title = "Linebreak", artist = "AB"), parsed)
+        assertEquals(merged.id, ConnectJson.status(ConnectJson.encode(ConnectStatus(queue = listOf(merged)))).queue.single().id)
     }
 
     @Test fun typedAddressesDefaultToTheConnectPort() {

@@ -32,6 +32,7 @@ open class EndpointServer(
     private val platform: String,
     @Volatile var playback: RendererPlayback? = null,
     connect: ConnectHost? = null,
+    private val reachable: () -> List<String> = EndpointTls::localAddresses,
 ) {
     private val pairingAuth = RendererPairing(trust, persist = persist)
     private val mutableClients = MutableStateFlow(pairingAuth.clients())
@@ -112,7 +113,7 @@ open class EndpointServer(
     // every address this device answers on, so a controller paired at home also finds it over tailscale
     fun addresses(): List<String> {
         val port = server?.port ?: return emptyList()
-        return (listOfNotNull(endpointAddress?.address) + EndpointTls.localAddresses().map { "https://$it:$port" }).distinct()
+        return (listOfNotNull(endpointAddress?.address) + reachable().map { "https://$it:$port" }).distinct()
     }
 
     private fun handle(request: HttpRequest): HttpResponse = try {
@@ -207,7 +208,7 @@ open class EndpointServer(
             request.method == "GET" && path == "/v1/connect/art" -> {
                 authenticate(request)
                 val id = query(request.path)["id"].orEmpty()
-                if (id.isEmpty() || id.length > 512) throw RendererException("invalid_request", "Invalid artwork request.")
+                if (id.isEmpty() || id.length > ConnectJson.MAX_ID) throw RendererException("invalid_request", "Invalid artwork request.")
                 val bytes = connectHost().artwork(id)?.takeIf { it.size in 1..8_388_608 }
                     ?: throw RendererException("not_found", "No artwork.", 404)
                 HttpResponse(200, mapOf("Content-Type" to imageType(bytes)), bytes)
@@ -220,6 +221,8 @@ open class EndpointServer(
         failure("invalid_request", "Invalid renderer request.", 400)
     } catch (_: IllegalStateException) {
         failure("invalid_request", "Invalid renderer request.", 400)
+    } catch (_: InterruptedException) {
+        failure("renderer_offline", "Remote control stopped on that device.", 503)
     } catch (_: Exception) {
         failure("renderer_failed", "The renderer could not complete this request.", 500)
     }
