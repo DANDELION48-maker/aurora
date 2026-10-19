@@ -81,6 +81,7 @@ fun main() {
     AppStrings.setLocale(language)
     val player = DesktopPlayer(DesktopPlaybackEngine(resolver = container.streamResolver), container.playerDependencies())
     container.mixService.attach(player, container.scope)
+    val connect = com.aurora.music.desktop.connect.DesktopConnect(container, player)
     val shortcuts = MutableSharedFlow<Shortcut>(extraBufferCapacity = 8)
     val raises = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     Runtime.getRuntime().addShutdownHook(Thread { container.folderLibrary.close(); container.queueStore.flushNow(); container.playHistory.flushNow() })
@@ -154,6 +155,7 @@ fun main() {
             quitting = true
             AppLog.d(TAG, "Quitting")
             placement()?.let { runCatching { runBlocking { settings.setWindow(it) } } }
+            connect.close()
             player.close()
             container.close()
             com.aurora.music.desktop.web.Chromium.shutdown()
@@ -213,9 +215,10 @@ fun main() {
                     window.requestFocus()
                 }
             }
+            val activePlayer by connect.active.collectAsState()
             CompositionLocalProvider(LocalTrayAvailable provides trayAvailable, LocalBackdropAvailable provides WindowBackdrop.supported,
-                LocalWindowShown provides (visible && !windowState.isMinimized)) {
-                AuroraRoot(container, player, initialPrefs, systemAccent, translucent, glassLook) {
+                LocalWindowShown provides (visible && !windowState.isMinimized), com.aurora.music.desktop.connect.LocalConnect provides connect) {
+                AuroraRoot(container, activePlayer, initialPrefs, systemAccent, translucent, glassLook) {
                     val fullscreen = borderless || windowState.placement == WindowPlacement.Fullscreen
                     val undecorated = customTitleBar && HostPlatform.isLinux
                     WindowChrome(windowHandle, translucent)

@@ -158,6 +158,7 @@ import com.aurora.music.ui.screens.search.SearchScreen
 import com.aurora.music.ui.screens.settings.AboutSettingsScreen
 import com.aurora.music.ui.screens.settings.AccountsScreen
 import com.aurora.music.ui.screens.settings.AdvancedAudioSettingsScreen
+import com.aurora.music.ui.screens.settings.ConnectSettingsScreen
 import com.aurora.music.ui.screens.settings.AppearanceScreen
 import com.aurora.music.ui.screens.settings.ArtistInfoIntegrationScreen
 import com.aurora.music.ui.screens.settings.AudioOutputSettingsScreen
@@ -699,6 +700,7 @@ private fun Shell(
             com.aurora.music.ui.screens.stats.InsightsScreen(padding, onBack = pop, onSetup = { nav.navigate(Routes.SETTINGS_INSIGHTS) },
                 initialWindow = RecapWindow.containing(period, date), onOpenMap = { nav.navigate(Routes.LISTENING_MAP) })
         }
+        composable(Routes.SETTINGS_CONNECT) { ConnectSettingsScreen(padding, onBack = pop) }
         composable(Routes.SETTINGS_INTEGRATIONS) {
             IntegrationsSettingsScreen(
                 contentPadding = padding,
@@ -1317,6 +1319,7 @@ private fun Shell(
                                                     onOpenMerge = { open(Routes.SETTINGS_MERGE) },
                                                     onOpenLanguage = { open(Routes.SETTINGS_LANGUAGE) },
                                                     onOpenIntegrations = { open(Routes.SETTINGS_INTEGRATIONS) },
+                                                    onOpenConnect = { open(Routes.SETTINGS_CONNECT) },
                                                     onOpenAbout = { open(Routes.SETTINGS_ABOUT) },
                                                     onOpenProfile = { navController.navigate(Routes.PROFILE) },
                                                     onOpenAccounts = { open(Routes.SETTINGS_ACCOUNTS) },
@@ -1488,6 +1491,8 @@ private fun Shell(
                     )
                 }
             }
+            // the shell's snackbar sits under the expanded player, so player messages need their own host above it
+            if (playerState.expanded) SnackbarHost(snackbarHostState, Modifier.align(Alignment.BottomCenter).padding(bottom = 24.dp))
 
             AnimatedVisibility(visible = showVisualizer, enter = fadeIn(tween(220)), exit = fadeOut(tween(180))) {
                 VisualizerScreen(state = playerState, onClose = { showVisualizer = false })

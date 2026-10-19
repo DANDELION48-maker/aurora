@@ -99,6 +99,7 @@ fun SettingsScreen(
     onOpenMerge: () -> Unit = {},
     onOpenLanguage: () -> Unit,
     onOpenIntegrations: () -> Unit,
+    onOpenConnect: () -> Unit = {},
     onOpenAbout: () -> Unit,
     onOpenProfile: () -> Unit,
     onOpenAccounts: () -> Unit,
@@ -215,6 +216,7 @@ fun SettingsScreen(
                 item { SettingsSectionTitle(appString(R.string.text_connections_8f3509)) }
                 item {
                     SettingsGroup {
+                        SettingsDestinationRow(Icons.Filled.Devices, SettingsDestinations.connect, onClick = onOpenConnect)
                         SettingsDestinationRow(Icons.Filled.Extension, SettingsDestinations.integrations, onClick = onOpenIntegrations)
                     }
                 }

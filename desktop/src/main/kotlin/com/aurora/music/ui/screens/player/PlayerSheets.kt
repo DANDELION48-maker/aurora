@@ -85,6 +85,7 @@ fun OutputDeviceSheet(
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = com.aurora.music.ui.theme.solidColors().surface) {
         Column(Modifier.fillMaxWidth().heightIn(max = 650.dp).verticalScroll(rememberScrollState()).padding(horizontal = 8.dp).padding(bottom = 28.dp)) {
             Text(appString(R.string.text_play_on_4bd6fc), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black, modifier = Modifier.padding(start = 16.dp, bottom = 8.dp))
+            ConnectDevicesSection(onDismiss)
             OutputRow(Icons.Filled.SettingsSuggest, appString(R.string.language_system), systemDefault?.name, currentId == null) { onSelect(null) }
             devices.forEach { d ->
                 OutputRow(deviceIcon(d.kind), d.name, if (d.isDefault) appString(R.string.text_default_808d7d) else null, d.id == currentId) { onSelect(d.id) }

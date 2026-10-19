@@ -36,6 +36,7 @@ object Routes {
     const val SETTINGS_PRESET_RULES = "settings_preset_rules"
     const val SETTINGS_STORAGE = "settings_storage"
     const val SETTINGS_INTEGRATIONS = "settings_integrations"
+    const val SETTINGS_CONNECT = "settings_connect"
     const val SETTINGS_INTEGRATION_LYRICS = "settings_integration_lyrics"
     const val SETTINGS_INTEGRATION_LASTFM = "settings_integration_lastfm"
     const val SETTINGS_INTEGRATION_LISTENBRAINZ = "settings_integration_listenbrainz"
