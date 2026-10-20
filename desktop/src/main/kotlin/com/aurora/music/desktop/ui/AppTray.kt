@@ -3,16 +3,18 @@ package com.aurora.music.desktop.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Tray
 import com.aurora.music.R
 import com.aurora.music.desktop.player.PlayerController
+import com.aurora.music.desktop.player.settledState
 import com.aurora.music.localization.appString
 
 @Composable
 fun ApplicationScope.AppTray(icon: Painter, player: PlayerController, onShow: () -> Unit, onQuit: () -> Unit) {
-    val state by player.state.collectAsState()
+    val state by remember(player) { player.settledState }.collectAsState(player.state.value.settled())
     Tray(
         icon = icon,
         tooltip = if (state.hasTrack) "${state.current.title} · ${state.current.artist}".take(120) else "Aurora",

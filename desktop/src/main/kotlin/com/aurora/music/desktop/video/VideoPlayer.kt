@@ -1,7 +1,7 @@
 package com.aurora.music.desktop.video
 
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.toComposeImageBitmap
+import androidx.compose.ui.graphics.asComposeImageBitmap
 import com.aurora.music.desktop.audio.decode.HttpOptions
 import com.aurora.music.desktop.audio.decode.Interrupts
 import com.aurora.music.desktop.audio.decode.ffmpegUrl
@@ -50,9 +50,9 @@ import org.bytedeco.javacpp.DoublePointer
 import org.bytedeco.javacpp.IntPointer
 import org.bytedeco.javacpp.Pointer
 import org.bytedeco.javacpp.PointerPointer
+import org.jetbrains.skia.Bitmap
 import org.jetbrains.skia.ColorAlphaType
 import org.jetbrains.skia.ColorType
-import org.jetbrains.skia.Image
 import org.jetbrains.skia.ImageInfo
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -125,6 +125,9 @@ class VideoPlayer(private val url: String, private val http: HttpOptions = HttpO
             val strides = IntPointer(1).put(dstW * 4)
             val bytes = ByteArray(dstW * dstH * 4)
             val info = ImageInfo(dstW, dstH, ColorType.RGBA_8888, ColorAlphaType.UNPREMUL)
+            // frames cycle through a few bitmaps; a fresh native image per frame piled up gigabytes between collections
+            val ring = Array(3) { Bitmap() }
+            var slot = 0
             val context = codec
             var seekTarget = 0L
             // a loop keeps one running timeline: each pass is shifted to start where the previous one ended
@@ -150,7 +153,10 @@ class VideoPlayer(private val url: String, private val http: HttpOptions = HttpO
                     sws_scale(sws, frame.data(), frame.linesize(), 0, srcH, planes, strides)
                     pixels.get(bytes)
                     sampleTone(bytes, ease = !preview)
-                    mutableFrame.value = Image.makeRaster(info, bytes, dstW * 4).toComposeImageBitmap()
+                    val bitmap = ring[slot]
+                    slot = (slot + 1) % ring.size
+                    bitmap.installPixels(info, bytes, dstW * 4)
+                    mutableFrame.value = bitmap.asComposeImageBitmap()
                     mutableReady.value = true
                     preview = false
                     seekTarget = 0L

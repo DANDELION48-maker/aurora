@@ -418,6 +418,8 @@ fun PlayerScreen(
                                 drawRect(playerAccent, blendMode = BlendMode.SrcIn)
                             },
                         isPlaying = true,
+                        // stepped by the position ticks, so the bars add no frames of their own
+                        phase = state.positionSec / 2f % 1f,
                     )
                     Spacer(Modifier.width(10.dp))
                 }

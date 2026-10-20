@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Alignment
@@ -47,7 +48,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.LocalPlatformContext
-import coil3.compose.SubcomposeAsyncImage
+import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.aurora.music.R
@@ -96,16 +97,13 @@ fun Artwork(
         modifier = modifier.clip(RoundedCornerShape(artCorner)).background(placeholder),
         contentAlignment = Alignment.Center,
     ) {
-        SubcomposeAsyncImage(
-            model = ImageRequest.Builder(LocalPlatformContext.current)
-                .data(url)
-                .crossfade(true)
-                .build(),
+        // the box already paints the placeholder, and a subcomposition per cover is what makes grids scroll heavily
+        val context = LocalPlatformContext.current
+        AsyncImage(
+            model = remember(url, context) { ImageRequest.Builder(context).data(url).crossfade(true).build() },
             contentDescription = null,
             contentScale = contentScale,
             modifier = Modifier.fillMaxSize(),
-            loading = { Box(Modifier.fillMaxSize().background(placeholder)) },
-            error = { Box(Modifier.fillMaxSize().background(placeholder)) },
         )
         if (animated != null) AnimatedCoverLayer(animated, Modifier.fillMaxSize())
     }

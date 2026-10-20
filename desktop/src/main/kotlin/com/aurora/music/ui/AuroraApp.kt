@@ -107,6 +107,9 @@ import com.aurora.music.data.RecapWindow
 import com.aurora.music.data.ServerType
 import com.aurora.music.data.TabletSetting
 import com.aurora.music.data.ThemeStyle
+import com.aurora.music.desktop.player.PlayerController
+import com.aurora.music.desktop.player.PlayerUiState
+import com.aurora.music.desktop.player.settledState
 import com.aurora.music.desktop.ui.FilePickers
 import com.aurora.music.desktop.ui.LocalDesktopContainer
 import com.aurora.music.desktop.ui.LocalPlayer
@@ -263,7 +266,7 @@ private fun Shell(
     val repository = container.repository
     val authVM = viewModel(viewModelStoreOwner = rootOwner) { AuthViewModel(container) }
 
-    val playerState by player.state.collectAsStateWithLifecycle()
+    val playerState by remember(player) { player.settledState }.collectAsStateWithLifecycle(player.state.value.settled())
     val volume by player.volume.collectAsStateWithLifecycle()
     val authState by authVM.state.collectAsStateWithLifecycle()
     val musicFolders by authVM.musicFolders.collectAsStateWithLifecycle()
@@ -508,7 +511,7 @@ private fun Shell(
                 val gap = now - keySeek.at
                 val continuing = keySeek.song == playerState.current.id && gap < KEY_SEEK_WINDOW_MS
                 val step = if (continuing && gap < KEY_REPEAT_GAP_MS) SCRUB_SECONDS_PER_SECOND * gap / 1000f else SEEK_STEP_SECONDS.toFloat()
-                keySeek.target = ((if (continuing) keySeek.target else playerState.positionSec) + direction * step).coerceIn(0f, duration.toFloat())
+                keySeek.target = ((if (continuing) keySeek.target else player.state.value.positionSec) + direction * step).coerceIn(0f, duration.toFloat())
                 keySeek.at = now
                 keySeek.song = playerState.current.id
                 val send = { keySeek.sentAt = System.currentTimeMillis(); player.seekTo(keySeek.target / duration) }
@@ -560,7 +563,7 @@ private fun Shell(
 
     val nowPlayingPane: @Composable (PlayerPane, Modifier) -> Unit = { pane, modifier ->
         when (pane) {
-            PlayerPane.LYRICS -> LyricsPane(playerState, onSeek = { player.seekTo(it) }, modifier = modifier.clip(RoundedCornerShape(themedCorner(20.dp))))
+            PlayerPane.LYRICS -> LivePlayer(player) { live -> LyricsPane(live, onSeek = { player.seekTo(it) }, modifier = modifier.clip(RoundedCornerShape(themedCorner(20.dp)))) }
             PlayerPane.QUEUE -> QueueContent(
                 queue = playerState.queue,
                 currentIndex = playerState.currentIndex,
@@ -1437,9 +1440,9 @@ private fun Shell(
                     }
                 }
             }
-            if (dockVisible) {
+            if (dockVisible) LivePlayer(player) { live ->
                 PlaybackDock(
-                    state = playerState,
+                    state = live,
                     openPane = if (shell.sidePanel) sidePane else null,
                     volume = volume,
                     onExpand = { player.setExpanded(true) },
@@ -1469,8 +1472,8 @@ private fun Shell(
                     enter = slideInVertically(animationSpec = tween(320)) { it } + fadeIn(tween(220)),
                     exit = slideOutVertically(animationSpec = tween(280)) { it } + fadeOut(tween(180)),
                 ) {
-                    PlayerScreen(
-                        state = playerState,
+                    LivePlayer(player) { live -> PlayerScreen(
+                        state = live,
                         onOpenMix = openMix,
                         video = player.video.collectAsStateWithLifecycle().value,
                         onRequestVideo = { canvas -> player.requestMusicVideo(canvas) { confirm(it) } },
@@ -1523,14 +1526,14 @@ private fun Shell(
                                 onFullscreenChange(false)
                             }
                         },
-                    )
+                    ) }
                 }
             }
             // the shell's snackbar sits under the expanded player, so player messages need their own host above it
             if (playerState.expanded) SnackbarHost(snackbarHostState, Modifier.align(Alignment.BottomCenter).padding(bottom = 24.dp))
 
             AnimatedVisibility(visible = showVisualizer, enter = fadeIn(tween(220)), exit = fadeOut(tween(180))) {
-                VisualizerScreen(state = playerState, onClose = { showVisualizer = false })
+                LivePlayer(player) { live -> VisualizerScreen(state = live, onClose = { showVisualizer = false }) }
             }
             if (showMix) {
                 Box(Modifier.fillMaxSize().background(com.aurora.music.ui.theme.solidColors().background)) {
@@ -1637,3 +1640,10 @@ private const val KEY_SEEK_WINDOW_MS = 1_000L
 private const val KEY_REPEAT_GAP_MS = 150L
 private const val KEY_SEEK_SEND_MS = 100L
 private const val SCRUB_SECONDS_PER_SECOND = 12f
+
+// position moves ten times a second, so only the views that show it read the live state
+@Composable
+private fun LivePlayer(player: PlayerController, content: @Composable (PlayerUiState) -> Unit) {
+    val state by player.state.collectAsStateWithLifecycle()
+    content(state)
+}

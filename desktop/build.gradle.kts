@@ -136,7 +136,7 @@ tasks.test {
 compose.desktop {
     application {
         mainClass = "com.aurora.music.desktop.MainKt"
-        jvmArgs += listOf("-XX:+UseZGC", "-XX:+ZGenerational", "-Dfile.encoding=UTF-8")
+        jvmArgs += listOf("-XX:+UseZGC", "-XX:+ZGenerational", "-Xms64m", "-XX:SoftMaxHeapSize=512m", "-XX:ZUncommitDelay=30", "-Dfile.encoding=UTF-8")
         // compose draws through skiko; java2d's direct3d pipeline hangs on full-screen focus changes once chromium loads opengl
         jvmArgs += listOf("-Dsun.java2d.d3d=false", "-Dsun.java2d.noddraw=true")
         // embedded chromium (sign-in pages and the hidden spotify and soundcloud pages)

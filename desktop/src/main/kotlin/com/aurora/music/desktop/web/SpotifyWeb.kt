@@ -34,6 +34,8 @@ object SpotifyWebPlayer {
     internal val SCRIPT = """
         (function () {
           if (window.__aurora) return;
+          // the hidden page never plays, so it doesn't start chromium's drm process
+          try { navigator.requestMediaKeySystemAccess = function () { return Promise.reject(new DOMException('', 'NotSupportedError')); }; } catch (e) {}
           var nativeFetch = window.fetch.bind(window);
           var state = { headers: null, token: null, clientToken: null, ops: null, announced: false };
           window.__aurora = state;

@@ -55,7 +55,8 @@ fun desktopImageLoader(cacheDir: File, http: OkHttpClient, artwork: ArtworkRepos
             add(LocalFileFetcher.Factory())
             add(OkHttpNetworkFetcherFactory(callFactory = { http.newBuilder().addInterceptor(::youtubeArtworkFallback).build() }))
         }
-        .memoryCache { MemoryCache.Builder().maxSizePercent(PlatformContext.INSTANCE, 0.2).build() }
+        // a share of the max heap meant gigabytes of decoded covers in native memory
+        .memoryCache { MemoryCache.Builder().maxSizeBytes(128L * 1024 * 1024).build() }
         .diskCache { DiskCache.Builder().directory(cacheDir.toOkioPath()).maxSizeBytes(256L * 1024 * 1024).build() }
         .build()
 

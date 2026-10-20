@@ -10,7 +10,9 @@ import com.aurora.music.model.Song
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.map
 
 enum class RepeatMode { OFF, ALL, ONE }
 
@@ -48,7 +50,12 @@ data class PlayerUiState(
     val progress: Float get() = if (durationSec == 0) 0f else (positionSec / durationSec).coerceIn(0f, 1f)
     val isCurrentLiked: Boolean get() = likedIds.contains(current.id)
     val hasTrack: Boolean get() = current.id.isNotEmpty()
+
+    fun settled(): PlayerUiState = copy(positionSec = 0f)
 }
+
+// the state without the playback position, for views that would otherwise recompose on every tick
+val PlayerController.settledState: Flow<PlayerUiState> get() = state.map { it.settled() }.distinctUntilChanged()
 
 interface PlayerController {
     val state: StateFlow<PlayerUiState>

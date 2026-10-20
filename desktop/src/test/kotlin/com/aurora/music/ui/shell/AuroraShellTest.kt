@@ -93,6 +93,15 @@ class AuroraShellTest {
         }
     }
 
+    // the shell's own state carries no position, so a key seek must start from the live one
+    @Test fun seekShortcutStepsFromTheLivePosition() {
+        localScene("seek").use { scene ->
+            scene.awaitRoute(Routes.HOME)
+            scene.press(Shortcut.SEEK_FORWARD)
+            assertEquals((64f + 5f) / 214f, scene.player.seekedTo!!, 0.001f)
+        }
+    }
+
     @Test fun refocusingTheWindowDoesNotRefetchLikesEveryTime() {
         localScene("likes-refresh").use { scene ->
             scene.awaitRoute(Routes.HOME)

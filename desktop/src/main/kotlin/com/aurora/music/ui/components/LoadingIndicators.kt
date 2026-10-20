@@ -7,6 +7,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.delay
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -29,11 +30,11 @@ private val EqualizerBars = listOf(
 )
 
 @Composable
-fun LottieEqualizer(modifier: Modifier = Modifier, isPlaying: Boolean = true) {
-    val progress = rememberLoopProgress(2000, isPlaying)
+fun LottieEqualizer(modifier: Modifier = Modifier, isPlaying: Boolean = true, phase: Float? = null) {
+    val progress = rememberLoopProgress(2000, isPlaying && phase == null)
     Canvas(modifier) {
         artboard { unit ->
-            val step = progress.value * (EqualizerBars[0].size - 1)
+            val step = (phase ?: progress.value) * (EqualizerBars[0].size - 1)
             val index = step.toInt().coerceAtMost(EqualizerBars[0].size - 2)
             val fraction = EqualizerEasing.transform(step - index)
             EqualizerBars.forEachIndexed { bar, heights ->
@@ -87,8 +88,10 @@ private fun rememberLoopProgress(durationMillis: Int, playing: Boolean = true): 
         if (!playing) return@LaunchedEffect
         val start = progress.floatValue
         val origin = withInfiniteAnimationFrameMillis { it }
+        // every frame repaints the whole window, so a small looping icon runs at a capped rate
         while (true) {
             withInfiniteAnimationFrameMillis { progress.floatValue = (start + (it - origin).toFloat() / durationMillis) % 1f }
+            delay(33)
         }
     }
     return progress

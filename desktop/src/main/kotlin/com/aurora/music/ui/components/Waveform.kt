@@ -74,7 +74,8 @@ fun Waveform(
         if (touching || animatingSeek) return@LaunchedEffect
         pending?.let { if (!it.landed(target)) return@LaunchedEffect }
         pending = null
-        if (animated) shown.animateTo(target, tween(250, easing = LinearEasing)) else shown.snapTo(target)
+        // playback ticks move a fraction of a bar; tweening each one kept the whole window repainting every frame
+        if (animated && kotlin.math.abs(target - shown.value) > 0.02f) shown.animateTo(target, tween(250, easing = LinearEasing)) else shown.snapTo(target)
     }
     LaunchedEffect(seed, seekRequest) {
         val request = seekRequest ?: return@LaunchedEffect
