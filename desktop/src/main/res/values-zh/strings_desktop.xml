@@ -34,6 +34,12 @@
     <string name="merge_options_summary_desktop" formatted="false">"合并的服务为你的歌曲添加的内容"</string>
     <string name="merge_songs_from" formatted="false">"歌曲来源"</string>
     <string name="playlist_save_to_desktop" formatted="false">"保存到"</string>
+    <string name="shortcut_seek_back" formatted="false">"快退"</string>
+    <string name="shortcut_seek_forward" formatted="false">"快进"</string>
+    <string name="shortcut_show_list" formatted="false">"显示快捷键"</string>
+    <string name="shortcut_volume_down" formatted="false">"调低音量"</string>
+    <string name="shortcut_volume_up" formatted="false">"调高音量"</string>
+    <string name="shortcuts_title" formatted="false">"键盘快捷键"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"从 YouTube 下载的内容会保存到用户文件夹中的 Music/Aurora，该文件夹会被添加到你的音乐文件夹中。"</string>
     <string name="tag_edit_desktop_note" formatted="false">"写入标签会修改这台电脑上的文件。请先在其他应用中关闭它。"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"亚克力"</string>

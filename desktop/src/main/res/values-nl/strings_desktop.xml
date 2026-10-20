@@ -34,6 +34,12 @@
     <string name="merge_options_summary_desktop" formatted="false">"Wat samengevoegde diensten aan je nummers toevoegen"</string>
     <string name="merge_songs_from" formatted="false">"Nummers Uit"</string>
     <string name="playlist_save_to_desktop" formatted="false">"Opslaan In"</string>
+    <string name="shortcut_seek_back" formatted="false">"Terugspoelen"</string>
+    <string name="shortcut_seek_forward" formatted="false">"Vooruitspoelen"</string>
+    <string name="shortcut_show_list" formatted="false">"Sneltoetsen Tonen"</string>
+    <string name="shortcut_volume_down" formatted="false">"Volume Omlaag"</string>
+    <string name="shortcut_volume_up" formatted="false">"Volume Omhoog"</string>
+    <string name="shortcuts_title" formatted="false">"Sneltoetsen"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"Downloads van YouTube worden opgeslagen in Music/Aurora in je gebruikersmap, die aan je muziekmappen wordt toegevoegd."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Tags schrijven wijzigt het bestand op deze computer. Sluit het eerst in andere apps."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acryl"</string>

@@ -64,7 +64,13 @@ class TrackComments {
         internal set
     var failed by mutableStateOf(false)
         internal set
+    var available by mutableStateOf(false)
+        internal set
+    var enabled by mutableStateOf(true)
+        internal set
     internal var post: suspend (String, Long) -> Unit = { _, _ -> }
+    var setEnabled: (Boolean) -> Unit = {}
+        internal set
 }
 
 // comments load once per track; they're offered only once a soundcloud track for the song turned up
@@ -74,14 +80,19 @@ fun rememberTrackComments(song: Song): TrackComments {
     val features by container.settingsStore.mergeFeatures.collectAsStateWithLifecycle(initialValue = MergeFeatures())
     val state = remember(song.id) { TrackComments() }
     val repository = container.repository
+    val scope = rememberCoroutineScope()
     LaunchedEffect(song.id, features) {
         state.supported = false
         state.list = emptyList()
-        if (song.id.isEmpty() || !repository.supportsComments(song) || !features.commentsFor(repository.sourceType(song))) return@LaunchedEffect
+        val type = repository.sourceType(song)
+        state.available = song.id.isNotEmpty() && repository.supportsComments(song) && type?.name !in features.commentsOff
+        state.enabled = features.comments
+        if (!state.available || !features.commentsFor(type)) return@LaunchedEffect
         val loaded = runCatching { repository.comments(song) }.getOrNull() ?: return@LaunchedEffect
         state.list = loaded.sortedBy { it.timestampMs }
         state.supported = true
     }
+    state.setEnabled = { on -> scope.launch { container.settingsStore.setMergeFeatures(features.copy(comments = on)) } }
     // posted at the moment the track is at, the way soundcloud pins a comment
     state.post = { body, atMs ->
         val posted = runCatching { repository.postComment(song, body, atMs) }.getOrNull()

@@ -77,6 +77,8 @@ import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material.icons.filled.SpeakerNotes
+import androidx.compose.material.icons.filled.SpeakerNotesOff
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -179,6 +181,7 @@ fun PlayerScreen(
     onAutoDj: () -> Unit,
     onOpenMix: () -> Unit = {},
     onPostComment: (String) -> Unit = {},
+    onToggleComments: (Boolean) -> Unit = {},
     videoPlayer: androidx.media3.common.Player? = null,
     onVideoQualityChange: (Int?) -> Unit = {},
     onRequestVideo: (canvas: Boolean) -> Unit = {},
@@ -419,6 +422,12 @@ fun PlayerScreen(
                                 text = { Text(appString(R.string.player_comments)) },
                                 onClick = { showMenu = false; showComments = true },
                                 leadingIcon = { Icon(Icons.Filled.ChatBubble, null) },
+                            )
+                            if (state.commentsAvailable) DropdownMenuItem(
+                                text = { Text(appString(R.string.player_soundcloud_comments)) },
+                                onClick = { onToggleComments(!state.commentsEnabled) },
+                                leadingIcon = { Icon(if (state.commentsEnabled) Icons.Filled.SpeakerNotes else Icons.Filled.SpeakerNotesOff, null) },
+                                trailingIcon = if (state.commentsEnabled) ({ Icon(Icons.Filled.Check, null) }) else null,
                             )
                             MusicHapticsMenuItem()
                             DropdownMenuItem(

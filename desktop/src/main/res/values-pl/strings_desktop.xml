@@ -34,6 +34,12 @@
     <string name="merge_options_summary_desktop" formatted="false">"Co połączone serwisy dodają do Twoich utworów"</string>
     <string name="merge_songs_from" formatted="false">"Utwory Z"</string>
     <string name="playlist_save_to_desktop" formatted="false">"Zapisz W"</string>
+    <string name="shortcut_seek_back" formatted="false">"Przewiń Do Tyłu"</string>
+    <string name="shortcut_seek_forward" formatted="false">"Przewiń Do Przodu"</string>
+    <string name="shortcut_show_list" formatted="false">"Pokaż Skróty"</string>
+    <string name="shortcut_volume_down" formatted="false">"Ciszej"</string>
+    <string name="shortcut_volume_up" formatted="false">"Głośniej"</string>
+    <string name="shortcuts_title" formatted="false">"Skróty Klawiszowe"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"Pobrane z YouTube pliki są zapisywane w Music/Aurora w folderze użytkownika, który zostaje dodany do folderów z muzyką."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Zapisywanie tagów zmienia plik na tym komputerze. Najpierw zamknij go w innych aplikacjach."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Akryl"</string>

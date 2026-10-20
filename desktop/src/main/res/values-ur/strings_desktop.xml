@@ -34,6 +34,12 @@
     <string name="merge_options_summary_desktop" formatted="false">"\u2067ضم شدہ سروسز آپ کے گانوں میں کیا شامل کرتی ہیں\u2069"</string>
     <string name="merge_songs_from" formatted="false">"\u2067گانے کہاں سے\u2069"</string>
     <string name="playlist_save_to_desktop" formatted="false">"\u2067یہاں محفوظ کریں\u2069"</string>
+    <string name="shortcut_seek_back" formatted="false">"\u2067پیچھے کریں\u2069"</string>
+    <string name="shortcut_seek_forward" formatted="false">"\u2067آگے کریں\u2069"</string>
+    <string name="shortcut_show_list" formatted="false">"\u2067شارٹ کٹس دکھائیں\u2069"</string>
+    <string name="shortcut_volume_down" formatted="false">"\u2067آواز کم کریں\u2069"</string>
+    <string name="shortcut_volume_up" formatted="false">"\u2067آواز بڑھائیں\u2069"</string>
+    <string name="shortcuts_title" formatted="false">"\u2067کی بورڈ شارٹ کٹس\u2069"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"\u2067YouTube سے ڈاؤن لوڈز آپ کے یوزر فولڈر میں Music/Aurora میں محفوظ ہوتے ہیں، جو آپ کے میوزک فولڈرز میں شامل کر دیا جاتا ہے۔\u2069"</string>
     <string name="tag_edit_desktop_note" formatted="false">"\u2067ٹیگز لکھنے سے اس کمپیوٹر پر فائل بدل جاتی ہے۔ پہلے اسے دوسری ایپس میں بند کریں۔\u2069"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"\u2067ایکریلک\u2069"</string>

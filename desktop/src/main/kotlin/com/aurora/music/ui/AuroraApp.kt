@@ -495,12 +495,45 @@ private fun Shell(
         }
     }
 
+    var showShortcuts by remember { mutableStateOf(false) }
+    // a tap jumps, a held key scrubs at a steady rate; repeats arrive faster than the engine reports the new position,
+    // so they step on from the last target, and the engine gets at most one seek per interval with the latest target
+    val keySeek = remember { object { var target = 0f; var at = 0L; var sentAt = 0L; var song = ""; var pending: kotlinx.coroutines.Job? = null } }
     val onShortcut by rememberUpdatedState<(Shortcut) -> Unit> { shortcut ->
         val hasTrack = playerState.hasTrack
+        val seekBy = { direction: Int ->
+            val duration = playerState.durationSec
+            if (hasTrack && duration > 0) {
+                val now = System.currentTimeMillis()
+                val gap = now - keySeek.at
+                val continuing = keySeek.song == playerState.current.id && gap < KEY_SEEK_WINDOW_MS
+                val step = if (continuing && gap < KEY_REPEAT_GAP_MS) SCRUB_SECONDS_PER_SECOND * gap / 1000f else SEEK_STEP_SECONDS.toFloat()
+                keySeek.target = ((if (continuing) keySeek.target else playerState.positionSec) + direction * step).coerceIn(0f, duration.toFloat())
+                keySeek.at = now
+                keySeek.song = playerState.current.id
+                val send = { keySeek.sentAt = System.currentTimeMillis(); player.seekTo(keySeek.target / duration) }
+                val wait = KEY_SEEK_SEND_MS - (now - keySeek.sentAt)
+                if (wait <= 0) { keySeek.pending?.cancel(); send() }
+                else if (keySeek.pending?.isActive != true) keySeek.pending = scope.launch { kotlinx.coroutines.delay(wait); send() }
+            }
+        }
         when (shortcut) {
             Shortcut.PLAY_PAUSE -> if (hasTrack) player.togglePlay()
             Shortcut.PREVIOUS -> if (hasTrack) player.previous()
             Shortcut.NEXT -> if (hasTrack) player.next()
+            Shortcut.SEEK_BACK -> seekBy(-1)
+            Shortcut.SEEK_FORWARD -> seekBy(1)
+            Shortcut.VOLUME_UP -> player.setVolume(player.volume.value + VOLUME_STEP)
+            Shortcut.VOLUME_DOWN -> player.setVolume(player.volume.value - VOLUME_STEP)
+            Shortcut.MUTE -> player.toggleMute()
+            Shortcut.SHUFFLE -> player.toggleShuffle()
+            Shortcut.REPEAT -> player.cycleRepeat()
+            Shortcut.SETTINGS -> if (showChrome) {
+                player.setExpanded(false)
+                showVisualizer = false
+                navController.navigate(Routes.SETTINGS) { launchSingleTop = true }
+            }
+            Shortcut.SHORTCUTS -> showShortcuts = !showShortcuts
             Shortcut.LIKE -> if (hasTrack) player.toggleLikeCurrent()
             Shortcut.SEARCH -> if (showChrome) {
                 player.setExpanded(false)
@@ -518,6 +551,7 @@ private fun Shell(
         }
     }
     LaunchedEffect(shortcuts) { shortcuts.collect { onShortcut(it) } }
+    if (showShortcuts) com.aurora.music.ui.components.ShortcutsDialog(onDismiss = { showShortcuts = false })
     var lyricsFullscreen by remember { mutableStateOf(false) }
     LaunchedEffect(playerState.expanded, fullscreen) {
         if (fullscreen && !player.state.value.expanded) onFullscreenChange(false)
@@ -1479,7 +1513,7 @@ private fun Shell(
                         onSplitChange = { split -> scope.launch { store.setTabletSetting(TabletSetting.PLAYER_SPLIT, split) } },
                         fullscreen = fullscreen,
                         onFullscreenChange = onFullscreenChange,
-                        // full-screen lyrics take the whole screen too, and hand it back only if they took it
+                        // full-screen lyrics and music videos take the whole screen too, and hand it back only if they took it
                         onImmersiveLyrics = { on ->
                             if (on && !fullscreen) {
                                 lyricsFullscreen = true
@@ -1596,3 +1630,10 @@ private suspend fun playlistMutation(block: suspend () -> Boolean): Boolean = tr
 } catch (_: Exception) {
     false
 }
+
+private const val SEEK_STEP_SECONDS = 5
+private const val VOLUME_STEP = 0.1f
+private const val KEY_SEEK_WINDOW_MS = 1_000L
+private const val KEY_REPEAT_GAP_MS = 150L
+private const val KEY_SEEK_SEND_MS = 100L
+private const val SCRUB_SECONDS_PER_SECOND = 12f

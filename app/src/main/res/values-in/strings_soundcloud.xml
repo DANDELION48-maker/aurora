@@ -11,6 +11,7 @@
     <string name="soundcloud_page_failed">"Halaman masuk tidak dapat dimuat. Periksa koneksi Anda lalu muat ulang."</string>
     <string name="soundcloud_captcha_hint">"SoundCloud ingin memastikan Anda manusia sebelum menyimpan perubahan ini. Selesaikan sekali dan Aurora akan menyelesaikan perubahannya."</string>
     <string name="player_comments">"Komentar"</string>
+    <string name="player_soundcloud_comments">"Komentar SoundCloud"</string>
     <string name="comments_empty">"Belum ada komentar. Jadilah yang pertama."</string>
     <string name="comment_hint">"Komentar di %1$s"</string>
     <string name="comment_post">"Kirim"</string>

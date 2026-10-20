@@ -6,6 +6,8 @@ import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.FullscreenExit
+import androidx.compose.material.icons.filled.SpeakerNotes
+import androidx.compose.material.icons.filled.SpeakerNotesOff
 import androidx.compose.material.icons.filled.Lyrics
 import com.aurora.music.localization.appString
 import com.aurora.music.R
@@ -217,6 +219,8 @@ fun PlayerScreen(
 
     var showVideo by androidx.compose.runtime.saveable.rememberSaveable(song.id) { mutableStateOf(false) }
     var requestedCanvas by remember(song.id) { mutableStateOf<Boolean?>(null) }
+    var fullscreenVideo by androidx.compose.runtime.saveable.rememberSaveable(song.id) { mutableStateOf(false) }
+    val fullscreenActive = fullscreenVideo && showVideo && video != null && state.hasVideo && !state.videoIsCanvas
     LaunchedEffect(state.hasVideo, state.videoIsCanvas, requestedCanvas) {
         if (requestedCanvas != null && state.hasVideo && state.videoIsCanvas == requestedCanvas) { requestedCanvas = null; showVideo = true }
     }
@@ -331,6 +335,12 @@ fun PlayerScreen(
                             onClick = { showMenu = false; focusComment = null; showComments = true },
                             leadingIcon = { Icon(Icons.Filled.ChatBubble, null) },
                         )
+                        if (comments.available) DropdownMenuItem(
+                            text = { Text(appString(R.string.player_soundcloud_comments)) },
+                            onClick = { comments.setEnabled(!comments.enabled) },
+                            leadingIcon = { Icon(if (comments.enabled) Icons.Filled.SpeakerNotes else Icons.Filled.SpeakerNotesOff, null) },
+                            trailingIcon = if (comments.enabled) ({ Icon(Icons.Filled.Check, null) }) else null,
+                        )
                         DropdownMenuItem(
                             text = { Text(appString(R.string.text_sleep_timer_e90613)) },
                             onClick = { showMenu = false; onOpenSleep() },
@@ -376,8 +386,14 @@ fun PlayerScreen(
                 if (showVideo && video != null && state.hasVideo) {
                     Box(Modifier.fillMaxSize()) {
                         VideoSurface(video, Modifier.fillMaxSize(), corner = 20.dp, fill = state.videoIsCanvas)
-                        if (!state.videoIsCanvas) VideoQualityControl(state.videoQualityHeight, onVideoQualityChange,
-                            Modifier.align(Alignment.BottomEnd).padding(10.dp))
+                        if (!state.videoIsCanvas) Row(Modifier.align(Alignment.BottomEnd).padding(10.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                            VideoQualityControl(state.videoQualityHeight, onVideoQualityChange)
+                            IconButton(onClick = { fullscreenVideo = true },
+                                modifier = Modifier.size(36.dp).clip(CircleShape).background(Color.Black.copy(alpha = .5f)).pointerHoverIcon(PointerIcon.Hand)) {
+                                Icon(Icons.Filled.Fullscreen, appString(R.string.video_fullscreen_enter), tint = Color.White, modifier = Modifier.size(22.dp))
+                            }
+                        }
                     }
                 } else if (classic) {
                     Artwork(song.artworkUrl, song.accent, Modifier.fillMaxSize(), corner = 20.dp, animated = CoverKey.of(song))
@@ -634,8 +650,16 @@ fun PlayerScreen(
             }
         }
         LyricsOverlay(showLyrics, state, onClose = { showLyrics = false }, onTogglePlay, onPrevious, onNext, onSeek)
+        if (fullscreenActive && video != null) FullscreenMusicVideo(
+            video, state, playerAccent,
+            onAudio = { fullscreenVideo = false; showVideo = false },
+            onExit = { fullscreenVideo = false },
+            onVideoQualityChange = onVideoQualityChange,
+            onTogglePlay = onTogglePlay, onPrevious = onPrevious, onNext = onNext, onSeek = onSeek,
+        )
         val immersive by rememberUpdatedState(onImmersiveLyrics)
-        LaunchedEffect(showLyrics) { immersive(showLyrics) }
+        val takesScreen = showLyrics || fullscreenActive
+        LaunchedEffect(takesScreen) { immersive(takesScreen) }
         if (showComments && comments.supported) CommentsSheet(comments, playerAccent, state.positionSec, state.durationSec, focusComment,
             onSeek = onSeek, onDismiss = { showComments = false; focusComment = null })
     }
@@ -855,7 +879,7 @@ fun VideoSurface(player: com.aurora.music.desktop.video.VideoPlayer, modifier: M
 }
 
 @Composable
-private fun VideoQualityControl(qualityHeight: Int?, onQualityChange: (Int?) -> Unit, modifier: Modifier = Modifier) {
+internal fun VideoQualityControl(qualityHeight: Int?, onQualityChange: (Int?) -> Unit, modifier: Modifier = Modifier) {
     var expanded by remember { mutableStateOf(false) }
     Box(modifier) {
         androidx.compose.material3.FilledTonalButton(onClick = { expanded = true }, modifier = Modifier.height(36.dp).pointerHoverIcon(PointerIcon.Hand),

@@ -34,6 +34,12 @@
     <string name="merge_options_summary_desktop" formatted="false">"O que os serviços combinados acrescentam às tuas músicas"</string>
     <string name="merge_songs_from" formatted="false">"Músicas De"</string>
     <string name="playlist_save_to_desktop" formatted="false">"Guardar Em"</string>
+    <string name="shortcut_seek_back" formatted="false">"Retroceder"</string>
+    <string name="shortcut_seek_forward" formatted="false">"Avançar"</string>
+    <string name="shortcut_show_list" formatted="false">"Mostrar Atalhos"</string>
+    <string name="shortcut_volume_down" formatted="false">"Diminuir Volume"</string>
+    <string name="shortcut_volume_up" formatted="false">"Aumentar Volume"</string>
+    <string name="shortcuts_title" formatted="false">"Atalhos De Teclado"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"As transferências do YouTube são guardadas em Music/Aurora na tua pasta de utilizador, que é adicionada às tuas pastas de música."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Escrever etiquetas altera o ficheiro neste computador. Fecha-o primeiro noutras apps."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acrílico"</string>

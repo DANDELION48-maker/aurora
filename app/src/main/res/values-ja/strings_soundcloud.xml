@@ -11,6 +11,7 @@
     <string name="soundcloud_page_failed">"サインインページを読み込めませんでした。接続を確認して再読み込みしてください。"</string>
     <string name="soundcloud_captcha_hint">"この変更を保存する前に、SoundCloud が人間であることを確認します。一度解くと Aurora が変更を完了します。"</string>
     <string name="player_comments">"コメント"</string>
+    <string name="player_soundcloud_comments">"SoundCloud のコメント"</string>
     <string name="comments_empty">"まだコメントはありません。最初のコメントを書きましょう。"</string>
     <string name="comment_hint">"%1$s にコメント"</string>
     <string name="comment_post">"投稿"</string>

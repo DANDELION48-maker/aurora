@@ -11,6 +11,7 @@
     <string name="soundcloud_page_failed">"No se pudo cargar la página de inicio de sesión. Revisa tu conexión y recarga."</string>
     <string name="soundcloud_captcha_hint">"SoundCloud quiere comprobar que eres humano antes de guardar este cambio. Resuélvelo una vez y Aurora terminará el cambio."</string>
     <string name="player_comments">"Comentarios"</string>
+    <string name="player_soundcloud_comments">"Comentarios de SoundCloud"</string>
     <string name="comments_empty">"Aún no hay comentarios. Sé el primero."</string>
     <string name="comment_hint">"Comentar en %1$s"</string>
     <string name="comment_post">"Publicar"</string>

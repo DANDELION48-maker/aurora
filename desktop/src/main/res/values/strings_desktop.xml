@@ -34,6 +34,12 @@
     <string name="merge_options_summary_desktop" formatted="false">"What merged services add to your songs"</string>
     <string name="merge_songs_from" formatted="false">"Songs From"</string>
     <string name="playlist_save_to_desktop" formatted="false">"Save To"</string>
+    <string name="shortcut_seek_back" formatted="false">"Seek Back"</string>
+    <string name="shortcut_seek_forward" formatted="false">"Seek Forward"</string>
+    <string name="shortcut_show_list" formatted="false">"Show Shortcuts"</string>
+    <string name="shortcut_volume_down" formatted="false">"Volume Down"</string>
+    <string name="shortcut_volume_up" formatted="false">"Volume Up"</string>
+    <string name="shortcuts_title" formatted="false">"Keyboard Shortcuts"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"Downloads from YouTube are saved to Music/Aurora in your user folder, which is added to your music folders."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Writing tags edits the file on this computer. Close it in other apps first."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acrylic"</string>

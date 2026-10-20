@@ -34,6 +34,12 @@
     <string name="merge_options_summary_desktop" formatted="false">"Yang ditambahkan layanan gabungan ke lagu Anda"</string>
     <string name="merge_songs_from" formatted="false">"Lagu Dari"</string>
     <string name="playlist_save_to_desktop" formatted="false">"Simpan Ke"</string>
+    <string name="shortcut_seek_back" formatted="false">"Mundur"</string>
+    <string name="shortcut_seek_forward" formatted="false">"Maju"</string>
+    <string name="shortcut_show_list" formatted="false">"Tampilkan Pintasan"</string>
+    <string name="shortcut_volume_down" formatted="false">"Turunkan Volume"</string>
+    <string name="shortcut_volume_up" formatted="false">"Naikkan Volume"</string>
+    <string name="shortcuts_title" formatted="false">"Pintasan Keyboard"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"Unduhan dari YouTube disimpan ke Music/Aurora di folder pengguna Anda, yang ditambahkan ke folder musik Anda."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Menulis tag mengubah file di komputer ini. Tutup dulu di aplikasi lain."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Akrilik"</string>

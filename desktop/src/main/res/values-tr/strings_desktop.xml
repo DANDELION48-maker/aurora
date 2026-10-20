@@ -34,6 +34,12 @@
     <string name="merge_options_summary_desktop" formatted="false">"Birleştirilen hizmetlerin şarkılarınıza kattıkları"</string>
     <string name="merge_songs_from" formatted="false">"Şarkıların Kaynağı"</string>
     <string name="playlist_save_to_desktop" formatted="false">"Kaydedileceği Yer"</string>
+    <string name="shortcut_seek_back" formatted="false">"Geri Sar"</string>
+    <string name="shortcut_seek_forward" formatted="false">"İleri Sar"</string>
+    <string name="shortcut_show_list" formatted="false">"Kısayolları Göster"</string>
+    <string name="shortcut_volume_down" formatted="false">"Sesi Kıs"</string>
+    <string name="shortcut_volume_up" formatted="false">"Sesi Aç"</string>
+    <string name="shortcuts_title" formatted="false">"Klavye Kısayolları"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"YouTube\'dan indirilenler kullanıcı klasörünüzdeki Music/Aurora\'ya kaydedilir ve bu klasör müzik klasörlerinize eklenir."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Etiket yazmak bu bilgisayardaki dosyayı değiştirir. Önce diğer uygulamalarda kapatın."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Akrilik"</string>

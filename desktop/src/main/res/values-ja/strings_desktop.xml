@@ -34,6 +34,12 @@
     <string name="merge_options_summary_desktop" formatted="false">"統合したサービスが曲に追加するもの"</string>
     <string name="merge_songs_from" formatted="false">"曲のソース"</string>
     <string name="playlist_save_to_desktop" formatted="false">"保存先"</string>
+    <string name="shortcut_seek_back" formatted="false">"巻き戻し"</string>
+    <string name="shortcut_seek_forward" formatted="false">"早送り"</string>
+    <string name="shortcut_show_list" formatted="false">"ショートカットを表示"</string>
+    <string name="shortcut_volume_down" formatted="false">"音量を下げる"</string>
+    <string name="shortcut_volume_up" formatted="false">"音量を上げる"</string>
+    <string name="shortcuts_title" formatted="false">"キーボードショートカット"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"YouTube からのダウンロードはユーザーフォルダー内の Music/Aurora に保存され、音楽フォルダーに追加されます。"</string>
     <string name="tag_edit_desktop_note" formatted="false">"タグを書き込むとこのコンピューター上のファイルが変更されます。先に他のアプリで閉じてください。"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"アクリル"</string>

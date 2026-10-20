@@ -34,6 +34,12 @@
     <string name="merge_options_summary_desktop" formatted="false">"\u2067ما تضيفه الخدمات المدمجة إلى أغانيك\u2069"</string>
     <string name="merge_songs_from" formatted="false">"\u2067الأغاني من\u2069"</string>
     <string name="playlist_save_to_desktop" formatted="false">"\u2067حفظ في\u2069"</string>
+    <string name="shortcut_seek_back" formatted="false">"\u2067إرجاع\u2069"</string>
+    <string name="shortcut_seek_forward" formatted="false">"\u2067تقديم\u2069"</string>
+    <string name="shortcut_show_list" formatted="false">"\u2067عرض الاختصارات\u2069"</string>
+    <string name="shortcut_volume_down" formatted="false">"\u2067خفض الصوت\u2069"</string>
+    <string name="shortcut_volume_up" formatted="false">"\u2067رفع الصوت\u2069"</string>
+    <string name="shortcuts_title" formatted="false">"\u2067اختصارات لوحة المفاتيح\u2069"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"\u2067تُحفظ التنزيلات من YouTube في Music/Aurora داخل مجلد المستخدم، ويُضاف إلى مجلدات الموسيقى لديك.\u2069"</string>
     <string name="tag_edit_desktop_note" formatted="false">"\u2067تعديل الوسوم يغيّر الملف على هذا الكمبيوتر. أغلقه في التطبيقات الأخرى أولاً.\u2069"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"\u2067أكريليك\u2069"</string>

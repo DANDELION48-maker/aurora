@@ -13,7 +13,31 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.key.utf16CodePoint
 
-enum class Shortcut { PLAY_PAUSE, PREVIOUS, NEXT, SEARCH, LIKE, QUEUE, FULLSCREEN, BACK }
+enum class Shortcut {
+    PLAY_PAUSE, PREVIOUS, NEXT, SEEK_BACK, SEEK_FORWARD, VOLUME_UP, VOLUME_DOWN, MUTE, SHUFFLE, REPEAT,
+    LIKE, QUEUE, SEARCH, SETTINGS, FULLSCREEN, BACK, SHORTCUTS,
+}
+
+// the keys shown in the shortcut list, laid out the way spotify's desktop app binds them
+val ShortcutKeys: Map<Shortcut, List<String>> = linkedMapOf(
+    Shortcut.PLAY_PAUSE to listOf("Space"),
+    Shortcut.NEXT to listOf("Ctrl + →"),
+    Shortcut.PREVIOUS to listOf("Ctrl + ←"),
+    Shortcut.SEEK_FORWARD to listOf("Shift + →"),
+    Shortcut.SEEK_BACK to listOf("Shift + ←"),
+    Shortcut.VOLUME_UP to listOf("Ctrl + ↑"),
+    Shortcut.VOLUME_DOWN to listOf("Ctrl + ↓"),
+    Shortcut.MUTE to listOf("Ctrl + Shift + ↓"),
+    Shortcut.SHUFFLE to listOf("Ctrl + S"),
+    Shortcut.REPEAT to listOf("Ctrl + R"),
+    Shortcut.LIKE to listOf("Alt + Shift + B", "Ctrl + L"),
+    Shortcut.QUEUE to listOf("Alt + Shift + Q", "Ctrl + Q"),
+    Shortcut.SEARCH to listOf("Ctrl + K", "Ctrl + F"),
+    Shortcut.SETTINGS to listOf("Ctrl + ,"),
+    Shortcut.FULLSCREEN to listOf("F11"),
+    Shortcut.BACK to listOf("Alt + ←", "Esc"),
+    Shortcut.SHORTCUTS to listOf("Ctrl + /"),
+)
 
 // a focused button would also click on space, so the window keeps the key presses and lets only the typed space through
 fun KeyEvent.claimsSpace(): Boolean =
@@ -28,13 +52,35 @@ fun KeyEvent.shortcut(): Shortcut? {
         key == Key.F11 && !isCtrlPressed && !isAltPressed && !isShiftPressed -> Shortcut.FULLSCREEN
         key == Key.Escape && !isCtrlPressed && !isAltPressed && !isShiftPressed -> Shortcut.BACK
         key == Key.DirectionLeft && isAltPressed && !isCtrlPressed && !isShiftPressed -> Shortcut.BACK
-        !isCtrlPressed || isAltPressed || isShiftPressed -> null
+        isAltPressed && isShiftPressed && !isCtrlPressed -> when (key) {
+            Key.B -> Shortcut.LIKE
+            Key.Q -> Shortcut.QUEUE
+            else -> null
+        }
+        isShiftPressed && !isCtrlPressed && !isAltPressed -> when (key) {
+            Key.DirectionLeft -> Shortcut.SEEK_BACK
+            Key.DirectionRight -> Shortcut.SEEK_FORWARD
+            else -> null
+        }
+        // ctrl+/ comes as ctrl+shift+/ on layouts where the question mark shares the key
+        isCtrlPressed && isShiftPressed && !isAltPressed -> when (key) {
+            Key.DirectionDown -> Shortcut.MUTE
+            Key.Slash -> Shortcut.SHORTCUTS
+            else -> null
+        }
+        !isCtrlPressed || isAltPressed -> null
         else -> when (key) {
             Key.DirectionLeft -> Shortcut.PREVIOUS
             Key.DirectionRight -> Shortcut.NEXT
-            Key.F -> Shortcut.SEARCH
+            Key.DirectionUp -> Shortcut.VOLUME_UP
+            Key.DirectionDown -> Shortcut.VOLUME_DOWN
+            Key.S -> Shortcut.SHUFFLE
+            Key.R -> Shortcut.REPEAT
+            Key.F, Key.K -> Shortcut.SEARCH
             Key.L -> Shortcut.LIKE
             Key.Q -> Shortcut.QUEUE
+            Key.Comma -> Shortcut.SETTINGS
+            Key.Slash -> Shortcut.SHORTCUTS
             else -> null
         }
     }

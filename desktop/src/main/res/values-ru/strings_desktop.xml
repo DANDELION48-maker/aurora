@@ -34,6 +34,12 @@
     <string name="merge_options_summary_desktop" formatted="false">"Что объединённые сервисы добавляют к вашим трекам"</string>
     <string name="merge_songs_from" formatted="false">"Треки из"</string>
     <string name="playlist_save_to_desktop" formatted="false">"Сохранить в"</string>
+    <string name="shortcut_seek_back" formatted="false">"Перемотать назад"</string>
+    <string name="shortcut_seek_forward" formatted="false">"Перемотать вперёд"</string>
+    <string name="shortcut_show_list" formatted="false">"Показать сочетания клавиш"</string>
+    <string name="shortcut_volume_down" formatted="false">"Тише"</string>
+    <string name="shortcut_volume_up" formatted="false">"Громче"</string>
+    <string name="shortcuts_title" formatted="false">"Сочетания клавиш"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"Загрузки с YouTube сохраняются в Music/Aurora в папке пользователя, которая добавляется в ваши папки с музыкой."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Запись тегов изменяет файл на этом компьютере. Сначала закройте его в других приложениях."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Акрил"</string>

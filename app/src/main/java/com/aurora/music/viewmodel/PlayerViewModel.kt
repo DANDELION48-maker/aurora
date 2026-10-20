@@ -78,6 +78,8 @@ data class PlayerUiState(
     val videoIsCanvas: Boolean = false,
     val supportsCanvas: Boolean = false,
     val supportsComments: Boolean = false,
+    val commentsAvailable: Boolean = false,
+    val commentsEnabled: Boolean = true,
     val comments: List<com.aurora.music.model.TrackComment> = emptyList(),
     val supportsMusicVideo: Boolean = true,
 ) {
@@ -1047,12 +1049,18 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         if (song.id == commentsFor) return
         commentsFor = song.id
         commentsJob?.cancel()
-        _state.update { it.copy(comments = emptyList(), supportsComments = false) }
-        if (!container.repository.supportsComments(song) || !mergeFeatures.commentsFor(container.repository.sourceType(song))) return
+        val type = container.repository.sourceType(song)
+        val available = container.repository.supportsComments(song) && type?.name !in mergeFeatures.commentsOff
+        _state.update { it.copy(comments = emptyList(), supportsComments = false, commentsAvailable = available, commentsEnabled = mergeFeatures.comments) }
+        if (!available || !mergeFeatures.commentsFor(type)) return
         commentsJob = viewModelScope.launch {
             val list = runCatching { container.repository.comments(song) }.getOrNull() ?: return@launch
             if (_state.value.current.id == song.id) _state.update { it.copy(comments = list, supportsComments = true) }
         }
+    }
+
+    fun setCommentsEnabled(on: Boolean) {
+        viewModelScope.launch { container.settingsStore.setMergeFeatures(mergeFeatures.copy(comments = on)) }
     }
 
     // posted at the moment the track is at, the way soundcloud pins a comment

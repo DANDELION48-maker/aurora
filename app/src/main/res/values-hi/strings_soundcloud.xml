@@ -11,6 +11,7 @@
     <string name="soundcloud_page_failed">"साइन-इन पेज लोड नहीं हो सका। अपना कनेक्शन जाँचें और रीलोड करें।"</string>
     <string name="soundcloud_captcha_hint">"यह बदलाव सहेजने से पहले SoundCloud जाँचना चाहता है कि आप इंसान हैं। इसे एक बार हल करें, फिर Aurora बदलाव पूरा कर देगा।"</string>
     <string name="player_comments">"टिप्पणियाँ"</string>
+    <string name="player_soundcloud_comments">"SoundCloud टिप्पणियाँ"</string>
     <string name="comments_empty">"अभी कोई टिप्पणी नहीं। पहले आप करें।"</string>
     <string name="comment_hint">"%1$s पर टिप्पणी"</string>
     <string name="comment_post">"पोस्ट करें"</string>

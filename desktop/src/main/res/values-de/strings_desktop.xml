@@ -34,6 +34,12 @@
     <string name="merge_options_summary_desktop" formatted="false">"Was zusammengeführte Dienste zu deinen Songs beitragen"</string>
     <string name="merge_songs_from" formatted="false">"Songs Aus"</string>
     <string name="playlist_save_to_desktop" formatted="false">"Speichern In"</string>
+    <string name="shortcut_seek_back" formatted="false">"Zurückspulen"</string>
+    <string name="shortcut_seek_forward" formatted="false">"Vorspulen"</string>
+    <string name="shortcut_show_list" formatted="false">"Tastenkürzel Anzeigen"</string>
+    <string name="shortcut_volume_down" formatted="false">"Leiser"</string>
+    <string name="shortcut_volume_up" formatted="false">"Lauter"</string>
+    <string name="shortcuts_title" formatted="false">"Tastenkürzel"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"Downloads von YouTube werden in Music/Aurora in deinem Benutzerordner gespeichert, der zu deinen Musikordnern hinzugefügt wird."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Das Schreiben von Tags ändert die Datei auf diesem Computer. Schließe sie zuerst in anderen Apps."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acryl"</string>

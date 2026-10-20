@@ -1566,6 +1566,7 @@ fun AuroraApp() {
                     onAutoDj = { playerVM.startAutoDj(onResult = { confirm(it) }) },
                     onOpenMix = { playerVM.setExpanded(false); mixQueue = playerState.queue.filterNot { it.id.startsWith("aurora-mix:") }; showMix = true },
                     onPostComment = playerVM::postComment,
+                    onToggleComments = playerVM::setCommentsEnabled,
                     gestures = gesturePrefs,
                     requestedPane = playerPaneRequest,
                     onPaneRequestHandled = { playerPaneRequest = null },

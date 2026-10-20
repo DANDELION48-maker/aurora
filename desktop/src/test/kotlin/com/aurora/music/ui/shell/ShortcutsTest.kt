@@ -33,6 +33,26 @@ class ShortcutsTest {
         assertEquals(Shortcut.BACK, down(Key.DirectionLeft, alt = true).shortcut())
     }
 
+    @Test fun mapsSpotifysShortcuts() {
+        assertEquals(Shortcut.SEEK_BACK, down(Key.DirectionLeft, shift = true).shortcut())
+        assertEquals(Shortcut.SEEK_FORWARD, down(Key.DirectionRight, shift = true).shortcut())
+        assertEquals(Shortcut.VOLUME_UP, down(Key.DirectionUp, ctrl = true).shortcut())
+        assertEquals(Shortcut.VOLUME_DOWN, down(Key.DirectionDown, ctrl = true).shortcut())
+        assertEquals(Shortcut.MUTE, down(Key.DirectionDown, ctrl = true, shift = true).shortcut())
+        assertEquals(Shortcut.SHUFFLE, down(Key.S, ctrl = true).shortcut())
+        assertEquals(Shortcut.REPEAT, down(Key.R, ctrl = true).shortcut())
+        assertEquals(Shortcut.SEARCH, down(Key.K, ctrl = true).shortcut())
+        assertEquals(Shortcut.LIKE, down(Key.B, alt = true, shift = true).shortcut())
+        assertEquals(Shortcut.QUEUE, down(Key.Q, alt = true, shift = true).shortcut())
+        assertEquals(Shortcut.SETTINGS, down(Key.Comma, ctrl = true).shortcut())
+        assertEquals(Shortcut.SHORTCUTS, down(Key.Slash, ctrl = true).shortcut())
+        assertEquals(Shortcut.SHORTCUTS, down(Key.Slash, ctrl = true, shift = true).shortcut())
+    }
+
+    @Test fun everyShortcutIsListed() {
+        assertEquals(Shortcut.entries.toSet(), com.aurora.music.desktop.ui.ShortcutKeys.keys)
+    }
+
     @Test fun ignoresEverythingElse() {
         assertNull(down(Key.Spacebar).shortcut())
         assertNull(typed('a').shortcut())
@@ -41,6 +61,9 @@ class ShortcutsTest {
         assertNull(down(Key.F).shortcut())
         assertNull(down(Key.F, ctrl = true, shift = true).shortcut())
         assertNull(down(Key.DirectionLeft, ctrl = true, alt = true).shortcut())
+        assertNull(down(Key.DirectionUp, shift = true).shortcut())
+        assertNull(down(Key.S).shortcut())
+        assertNull(down(Key.B, alt = true).shortcut())
         assertNull(KeyEvent(Key.F, KeyEventType.KeyUp, isCtrlPressed = true).shortcut())
         assertNull(KeyEvent(Key.Escape, KeyEventType.KeyUp).shortcut())
     }

@@ -34,6 +34,12 @@
     <string name="merge_options_summary_desktop" formatted="false">"Cosa aggiungono i servizi uniti ai tuoi brani"</string>
     <string name="merge_songs_from" formatted="false">"Brani Da"</string>
     <string name="playlist_save_to_desktop" formatted="false">"Salva In"</string>
+    <string name="shortcut_seek_back" formatted="false">"Indietro Veloce"</string>
+    <string name="shortcut_seek_forward" formatted="false">"Avanti Veloce"</string>
+    <string name="shortcut_show_list" formatted="false">"Mostra Scorciatoie"</string>
+    <string name="shortcut_volume_down" formatted="false">"Abbassa Il Volume"</string>
+    <string name="shortcut_volume_up" formatted="false">"Alza Il Volume"</string>
+    <string name="shortcuts_title" formatted="false">"Scorciatoie Da Tastiera"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"I download da YouTube vengono salvati in Music/Aurora nella tua cartella utente, che viene aggiunta alle tue cartelle musicali."</string>
     <string name="tag_edit_desktop_note" formatted="false">"Scrivere i tag modifica il file su questo computer. Chiudilo prima nelle altre app."</string>
     <string name="text_acrylic_f39ce1" formatted="false">"Acrilico"</string>

@@ -11,6 +11,7 @@
     <string name="soundcloud_page_failed">"De inlogpagina kon niet laden. Controleer je verbinding en laad opnieuw."</string>
     <string name="soundcloud_captcha_hint">"SoundCloud wil controleren of je een mens bent voordat deze wijziging wordt opgeslagen. Los het één keer op en Aurora rondt de wijziging af."</string>
     <string name="player_comments">"Reacties"</string>
+    <string name="player_soundcloud_comments">"SoundCloud-reacties"</string>
     <string name="comments_empty">"Nog geen reacties. Wees de eerste."</string>
     <string name="comment_hint">"Reageer op %1$s"</string>
     <string name="comment_post">"Plaatsen"</string>

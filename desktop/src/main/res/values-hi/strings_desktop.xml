@@ -34,6 +34,12 @@
     <string name="merge_options_summary_desktop" formatted="false">"मर्ज की गई सेवाएँ आपके गानों में क्या जोड़ती हैं"</string>
     <string name="merge_songs_from" formatted="false">"गाने कहाँ से"</string>
     <string name="playlist_save_to_desktop" formatted="false">"यहाँ सहेजें"</string>
+    <string name="shortcut_seek_back" formatted="false">"पीछे करें"</string>
+    <string name="shortcut_seek_forward" formatted="false">"आगे बढ़ाएँ"</string>
+    <string name="shortcut_show_list" formatted="false">"शॉर्टकट दिखाएँ"</string>
+    <string name="shortcut_volume_down" formatted="false">"आवाज़ घटाएँ"</string>
+    <string name="shortcut_volume_up" formatted="false">"आवाज़ बढ़ाएँ"</string>
+    <string name="shortcuts_title" formatted="false">"कीबोर्ड शॉर्टकट"</string>
     <string name="storage_youtube_desktop_note" formatted="false">"YouTube से डाउनलोड आपके यूज़र फ़ोल्डर में Music/Aurora में सेव होते हैं, जिसे आपके संगीत फ़ोल्डरों में जोड़ा जाता है।"</string>
     <string name="tag_edit_desktop_note" formatted="false">"टैग लिखने से इस कंप्यूटर पर फ़ाइल बदल जाती है। पहले इसे दूसरे ऐप्स में बंद करें।"</string>
     <string name="text_acrylic_f39ce1" formatted="false">"ऐक्रेलिक"</string>
