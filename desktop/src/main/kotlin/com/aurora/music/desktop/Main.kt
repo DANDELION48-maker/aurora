@@ -203,8 +203,10 @@ fun main() {
                 player.mediaControls.attach(windowHandle) { raises.tryEmit(Unit) }
                 AppLog.d(TAG, "Window shown")
             }
-            LaunchedEffect(windowHandle, translucentWindow, micaBackdrop) {
-                if (windowHandle != 0L) translucent = WindowBackdrop.apply(window, translucentWindow, micaBackdrop)
+            val fullscreen = borderless || windowState.placement == WindowPlacement.Fullscreen
+            // a window covering the whole screen skips dwm composition whenever it can, so its backdrop blinks in and out
+            LaunchedEffect(windowHandle, translucentWindow, micaBackdrop, fullscreen) {
+                if (windowHandle != 0L) translucent = WindowBackdrop.apply(window, translucentWindow && !fullscreen, micaBackdrop)
             }
             LaunchedEffect(window) {
                 merge(instance.activations, raises).collect {
@@ -219,7 +221,6 @@ fun main() {
             CompositionLocalProvider(LocalTrayAvailable provides trayAvailable, LocalBackdropAvailable provides WindowBackdrop.supported,
                 LocalWindowShown provides (visible && !windowState.isMinimized), com.aurora.music.desktop.connect.LocalConnect provides connect) {
                 AuroraRoot(container, activePlayer, initialPrefs, systemAccent, translucent, glassLook) {
-                    val fullscreen = borderless || windowState.placement == WindowPlacement.Fullscreen
                     val undecorated = customTitleBar && HostPlatform.isLinux
                     WindowChrome(windowHandle, translucent)
                     AuroraApp(

@@ -5,6 +5,8 @@ import com.aurora.music.data.remote.AlbumDto
 import com.aurora.music.data.remote.ArtistDto
 import com.aurora.music.data.remote.PlaylistDto
 import com.aurora.music.data.remote.SongDto
+import com.aurora.music.util.TrackMatch
+import kotlin.math.abs
 import com.aurora.music.data.remote.SubsonicClient
 import com.aurora.music.data.remote.SubsonicResponse
 import com.aurora.music.model.Album
@@ -280,16 +282,17 @@ class SubsonicBackend(
         when (kind) {
             "album" -> {
                 val a = c.api.getAlbum(id).response.album ?: return null
+                val songs = distinctAlbumTracks(a.song)
                 DetailData(
-                    DetailInfo(a.name, "${a.displayArtist ?: a.artist ?: ""} • ${a.year}", a.toModel().artworkUrl, accentArgbFor(a.id), false, a.songCount, a.toModel().typeLabel),
-                    a.song.map { it.toModel() },
+                    DetailInfo(a.name, "${a.displayArtist ?: a.artist ?: ""} • ${a.year}", a.toModel().artworkUrl, accentArgbFor(a.id), false, songs.size, a.toModel().typeLabel),
+                    songs.map { it.toModel() },
                 )
             }
             "artist" -> {
                 val ar = c.api.getArtist(id).response.artist ?: return null
                 val albumModels = ar.album.map { it.toModel() }
                 val tracks = ar.album.take(6).flatMap { alb ->
-                    runCatching { c.api.getAlbum(alb.id).response.album?.song.orEmpty() }.getOrDefault(emptyList())
+                    runCatching { distinctAlbumTracks(c.api.getAlbum(alb.id).response.album?.song.orEmpty()) }.getOrDefault(emptyList())
                 }.map { it.toModel() }
                 DetailData(
                     DetailInfo(ar.name, "${ar.albumCount} albums · ${ar.album.sumOf { it.songCount }} tracks", ar.coverArt?.takeIf { it.isNotBlank() }?.let { c.coverArtUrl(it) }.orEmpty(), accentArgbFor(ar.id), true, tracks.size, "Artist"),
@@ -364,3 +367,19 @@ class SubsonicBackend(
 
     override fun coverArtUrl(id: String, size: Int): String = c.coverArtUrl(id, size)
 }
+
+// navidrome files two copies of one release under one album; only the liked or best-quality copy of each track stays
+internal fun distinctAlbumTracks(songs: List<SongDto>): List<SongDto> {
+    val kept = ArrayList<SongDto>(songs.size)
+    for (song in songs) {
+        val at = kept.indexOfFirst {
+            it.discNumber == song.discNumber && it.track == song.track && abs(it.duration - song.duration) <= 2 &&
+                TrackMatch.key(it.artist.orEmpty(), it.title) == TrackMatch.key(song.artist.orEmpty(), song.title)
+        }
+        if (at < 0) kept += song else if (rank(song) > rank(kept[at])) kept[at] = song
+    }
+    return kept
+}
+
+private fun rank(song: SongDto): Long =
+    (if (song.starred != null) 1L shl 60 else 0L) + song.bitDepth.toLong().shl(40) + song.samplingRate.toLong().shl(16) + song.bitRate

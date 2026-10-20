@@ -72,6 +72,7 @@ data class SongDto(
     val albumId: String? = null,
     val artistId: String? = null,
     val track: Int = 0,
+    val discNumber: Int = 0,
     val year: Int = 0,
     val genre: String? = null,
     val coverArt: String? = null,
