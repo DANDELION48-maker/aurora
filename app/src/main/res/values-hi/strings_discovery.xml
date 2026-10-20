@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="discovery_explore">"एक्सप्लोर"</string>
+    <string name="discovery_explore_failed">"एक्सप्लोर लोड नहीं हो सका। अपना कनेक्शन जाँचें और फिर कोशिश करें।"</string>
+    <string name="discovery_related">"मिलते-जुलते"</string>
+    <string name="discovery_related_empty">"YouTube Music में इस गाने से मिलता-जुलता कुछ नहीं है।"</string>
+</resources>

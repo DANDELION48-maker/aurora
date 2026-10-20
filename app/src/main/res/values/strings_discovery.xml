@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="discovery_explore">"Explore"</string>
+    <string name="discovery_explore_failed">"Explore couldn\'t load. Check your connection and try again."</string>
+    <string name="discovery_related">"Related"</string>
+    <string name="discovery_related_empty">"YouTube Music has nothing related to this song."</string>
+</resources>

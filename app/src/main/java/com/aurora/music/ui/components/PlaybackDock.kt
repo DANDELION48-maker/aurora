@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Lyrics
 import androidx.compose.material.icons.filled.OpenInFull
@@ -155,6 +156,8 @@ fun PlaybackDock(
                 }
                 PaneToggle(PlayerPane.LYRICS, Icons.Filled.Lyrics, openPane == PlayerPane.LYRICS) { onPane(PlayerPane.LYRICS) }
                 PaneToggle(PlayerPane.QUEUE, Icons.AutoMirrored.Filled.QueueMusic, openPane == PlayerPane.QUEUE) { onPane(PlayerPane.QUEUE) }
+                if (PlayerPane.RELATED in com.aurora.music.ui.screens.player.LocalPlayerPanes.current)
+                    PaneToggle(PlayerPane.RELATED, Icons.Filled.Explore, openPane == PlayerPane.RELATED) { onPane(PlayerPane.RELATED) }
                 if (roomy) IconButton(onClick = onExpand) {
                     Icon(Icons.Filled.OpenInFull, appString(R.string.tablet_open_now_playing), tint = colors.onSurfaceVariant)
                 }

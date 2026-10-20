@@ -3,10 +3,6 @@
     <string name="chromium_downloading" formatted="false">"Der Anmelde-Browser wird heruntergeladen. Das passiert nur einmal und braucht etwa 150 MB."</string>
     <string name="chromium_failed" formatted="false">"Der Anmelde-Browser konnte nicht starten: %1$s"</string>
     <string name="chromium_preparing" formatted="false">"Anmelde-Browser wird vorbereitet…"</string>
-    <string name="discovery_explore" formatted="false">"Entdecken"</string>
-    <string name="discovery_explore_failed" formatted="false">"Entdecken konnte nicht geladen werden. Prüfe deine Verbindung und versuche es erneut."</string>
-    <string name="discovery_related" formatted="false">"Ähnlich"</string>
-    <string name="discovery_related_empty" formatted="false">"YouTube Music hat nichts Ähnliches zu diesem Song."</string>
     <string name="discovery_start_radio" formatted="false">"Radio starten"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"Jede Wiedergabe behält den genauen Ort, an dem sie lief, damit du sie auf einer Karte sehen kannst. Die Daten bleiben auf diesem Computer, werden nie hochgeladen und sind von Backups ausgeschlossen. Du kannst sie jederzeit hier oder auf der Karte löschen."</string>
     <string name="insights_places_guide_desktop" formatted="false">"Während Musik läuft, prüft Aurora deinen Standort höchstens alle 10 Minuten, vergleicht ihn mit Zuhause und Arbeit und behält nur die Bezeichnung. Zuhause und Arbeit selbst bleiben auf diesem Computer und sind von allen Backups ausgeschlossen."</string>

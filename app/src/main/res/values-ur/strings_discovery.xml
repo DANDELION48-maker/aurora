@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="discovery_explore">"دریافت کریں"</string>
+    <string name="discovery_explore_failed">"دریافت لوڈ نہیں ہو سکا۔ اپنا کنکشن چیک کر کے دوبارہ کوشش کریں۔"</string>
+    <string name="discovery_related">"متعلقہ"</string>
+    <string name="discovery_related_empty">"YouTube Music میں اس گانے سے متعلق کچھ نہیں ہے۔"</string>
+</resources>

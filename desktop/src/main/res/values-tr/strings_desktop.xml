@@ -3,10 +3,6 @@
     <string name="chromium_downloading" formatted="false">"Giriş tarayıcısı indiriliyor. Bu yalnızca bir kez olur ve yaklaşık 150 MB tutar."</string>
     <string name="chromium_failed" formatted="false">"Giriş tarayıcısı başlatılamadı: %1$s"</string>
     <string name="chromium_preparing" formatted="false">"Giriş tarayıcısı hazırlanıyor…"</string>
-    <string name="discovery_explore" formatted="false">"Keşfet"</string>
-    <string name="discovery_explore_failed" formatted="false">"Keşfet yüklenemedi. Bağlantınızı kontrol edip tekrar deneyin."</string>
-    <string name="discovery_related" formatted="false">"Benzer"</string>
-    <string name="discovery_related_empty" formatted="false">"YouTube Music\'te bu şarkıyla ilgili bir şey yok."</string>
     <string name="discovery_start_radio" formatted="false">"Radyo başlat"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"Her dinleme çaldığı tam konumu saklar, böylece haritada görebilirsiniz. Bu bilgisayarda kalır, hiçbir yere yüklenmez ve yedeklere dahil edilmez. İstediğiniz zaman buradan veya haritadan silebilirsiniz."</string>
     <string name="insights_places_guide_desktop" formatted="false">"Müzik çalarken Aurora konumunuzu en fazla 10 dakikada bir kontrol eder, Ev ve İş ile karşılaştırır ve yalnızca etiketi saklar. Ev ve İş konumlarının kendisi bu bilgisayarda kalır ve hiçbir yedeğe dahil edilmez."</string>

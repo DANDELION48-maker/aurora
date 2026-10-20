@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="discovery_explore">"Ontdekken"</string>
+    <string name="discovery_explore_failed">"Ontdekken kon niet worden geladen. Controleer je verbinding en probeer het opnieuw."</string>
+    <string name="discovery_related">"Gerelateerd"</string>
+    <string name="discovery_related_empty">"YouTube Music heeft niets gerelateerds bij dit nummer."</string>
+</resources>

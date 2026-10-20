@@ -3,10 +3,6 @@
     <string name="chromium_downloading" formatted="false">"Pobieranie przeglądarki logowania. Dzieje się to raz i zajmuje około 150 MB."</string>
     <string name="chromium_failed" formatted="false">"Nie udało się uruchomić przeglądarki logowania: %1$s"</string>
     <string name="chromium_preparing" formatted="false">"Przygotowywanie przeglądarki logowania…"</string>
-    <string name="discovery_explore" formatted="false">"Odkrywaj"</string>
-    <string name="discovery_explore_failed" formatted="false">"Nie udało się wczytać Odkrywaj. Sprawdź połączenie i spróbuj ponownie."</string>
-    <string name="discovery_related" formatted="false">"Podobne"</string>
-    <string name="discovery_related_empty" formatted="false">"YouTube Music nie ma nic podobnego do tego utworu."</string>
     <string name="discovery_start_radio" formatted="false">"Uruchom radio"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"Każde odtworzenie zachowuje dokładne miejsce, w którym grało, aby można je było zobaczyć na mapie. Dane zostają na tym komputerze, nigdy nie są wysyłane i nie trafiają do kopii zapasowych. Możesz je usunąć tutaj lub z mapy w dowolnej chwili."</string>
     <string name="insights_places_guide_desktop" formatted="false">"Podczas odtwarzania Aurora sprawdza lokalizację najwyżej co 10 minut, porównuje ją z Domem i Pracą i zachowuje tylko etykietę. Same lokalizacje Domu i Pracy zostają na tym komputerze i nie trafiają do żadnej kopii zapasowej."</string>

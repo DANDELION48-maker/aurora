@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="discovery_explore">"Обзор"</string>
+    <string name="discovery_explore_failed">"Не удалось загрузить обзор. Проверьте подключение и повторите попытку."</string>
+    <string name="discovery_related">"Похожее"</string>
+    <string name="discovery_related_empty">"В YouTube Music нет ничего похожего на этот трек."</string>
+</resources>

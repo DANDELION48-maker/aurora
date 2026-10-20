@@ -70,6 +70,10 @@ object Routes {
     const val DUPLICATES = "duplicates"
     const val RADIO = "radio"
     const val PODCASTS = "podcasts"
+    const val EXPLORE = "explore"
+    const val EXPLORE_CATEGORY = "explore_category?params={params}&title={title}"
+    fun exploreCategory(params: String, title: String) =
+        "explore_category?params=${android.net.Uri.encode(params)}&title=${android.net.Uri.encode(title)}"
 
     // feed url has slashes and a query string so ride as encoded query params
     const val PODCAST_DETAIL = "podcast?feed={feed}&title={title}&image={image}&author={author}"

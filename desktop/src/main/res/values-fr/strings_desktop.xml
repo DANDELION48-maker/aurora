@@ -3,10 +3,6 @@
     <string name="chromium_downloading" formatted="false">"Téléchargement du navigateur de connexion. Cela n\'arrive qu\'une fois et prend environ 150 Mo."</string>
     <string name="chromium_failed" formatted="false">"Le navigateur de connexion n\'a pas pu démarrer : %1$s"</string>
     <string name="chromium_preparing" formatted="false">"Préparation du navigateur de connexion…"</string>
-    <string name="discovery_explore" formatted="false">"Explorer"</string>
-    <string name="discovery_explore_failed" formatted="false">"Impossible de charger Explorer. Vérifie ta connexion et réessaie."</string>
-    <string name="discovery_related" formatted="false">"Similaires"</string>
-    <string name="discovery_related_empty" formatted="false">"YouTube Music n\'a rien de similaire à ce morceau."</string>
     <string name="discovery_start_radio" formatted="false">"Lancer la radio"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"Chaque écoute conserve l’endroit exact où elle a été jouée, pour la voir sur une carte. Les données restent sur cet ordinateur, ne sont jamais envoyées et sont exclues des sauvegardes. Vous pouvez les supprimer ici ou depuis la carte à tout moment."</string>
     <string name="insights_places_guide_desktop" formatted="false">"Pendant la lecture, Aurora vérifie votre position au plus toutes les 10 minutes, la compare à Domicile et Travail et ne garde que l’étiquette. Domicile et Travail restent sur cet ordinateur et sont exclus de toutes les sauvegardes."</string>

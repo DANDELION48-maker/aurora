@@ -3,10 +3,6 @@
     <string name="chromium_downloading" formatted="false">"साइन-इन ब्राउज़र डाउनलोड हो रहा है। यह एक ही बार होता है और लगभग 150 MB लेता है।"</string>
     <string name="chromium_failed" formatted="false">"साइन-इन ब्राउज़र शुरू नहीं हो सका: %1$s"</string>
     <string name="chromium_preparing" formatted="false">"साइन-इन ब्राउज़र तैयार हो रहा है…"</string>
-    <string name="discovery_explore" formatted="false">"एक्सप्लोर"</string>
-    <string name="discovery_explore_failed" formatted="false">"एक्सप्लोर लोड नहीं हो सका। अपना कनेक्शन जाँचें और फिर कोशिश करें।"</string>
-    <string name="discovery_related" formatted="false">"मिलते-जुलते"</string>
-    <string name="discovery_related_empty" formatted="false">"YouTube Music में इस गाने से मिलता-जुलता कुछ नहीं है।"</string>
     <string name="discovery_start_radio" formatted="false">"रेडियो शुरू करें"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"हर प्ले वह सटीक जगह रखता है जहाँ वह चला, ताकि आप उसे नक्शे पर देख सकें। यह इसी कंप्यूटर पर रहता है, कभी अपलोड नहीं होता और बैकअप में शामिल नहीं होता। आप इसे कभी भी यहाँ या नक्शे से हटा सकते हैं।"</string>
     <string name="insights_places_guide_desktop" formatted="false">"संगीत चलते समय Aurora हर 10 मिनट में अधिकतम एक बार आपकी लोकेशन जाँचता है, उसे घर और काम से मिलाता है और केवल लेबल रखता है। घर और काम की जगहें इसी कंप्यूटर पर रहती हैं और किसी भी बैकअप में शामिल नहीं होतीं।"</string>

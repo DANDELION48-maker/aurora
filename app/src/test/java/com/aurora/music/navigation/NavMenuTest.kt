@@ -68,6 +68,21 @@ class NavMenuTest {
         assertFalse("stats" in sideReset.mainIds())
     }
 
+    @Test fun exploreJoinsOlderLayoutsBesideTheLibraryAndStaysHiddenOnceHidden() {
+        val older = NavMenu.parse("main=home,search,library,radio;more=podcasts")
+        assertEquals(listOf("home", "search", "library", "explore", "radio"), older.mainIds())
+        val hidden = NavMenu.parse(older.move("explore", NavPlacement.HIDDEN).encode())
+        assertFalse("explore" in hidden.mainIds() || "explore" in hidden.more.map { it.id })
+        assertEquals(listOf("home", "search", "library"), NavMenu.parse("").barIds())
+    }
+
+    @Test fun exploreHidesWithoutACatalogueToExplore() {
+        val layout = NavMenu.parse("").addTab("explore")
+        assertFalse("explore" in layout.visible(simpleMode = false, discovery = false).mainIds())
+        assertFalse("explore" in layout.visible(simpleMode = false, discovery = false).barIds())
+        assertTrue("explore" in layout.visible(simpleMode = false).barIds())
+    }
+
     @Test fun simpleModeHidesAdvancedAudioTabs() {
         val layout = NavMenu.parse("").addTab("signal_path")
         assertEquals(listOf("home", "search", "library"), layout.visible(simpleMode = true).barIds())

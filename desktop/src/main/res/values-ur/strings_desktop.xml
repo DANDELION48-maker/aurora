@@ -3,10 +3,6 @@
     <string name="chromium_downloading" formatted="false">"\u2067سائن ان براؤزر ڈاؤن لوڈ ہو رہا ہے۔ یہ ایک ہی بار ہوتا ہے اور تقریباً 150 MB لیتا ہے۔\u2069"</string>
     <string name="chromium_failed" formatted="false">"\u2067سائن ان براؤزر شروع نہیں ہو سکا: %1$s\u2069"</string>
     <string name="chromium_preparing" formatted="false">"\u2067سائن ان براؤزر تیار ہو رہا ہے…\u2069"</string>
-    <string name="discovery_explore" formatted="false">"\u2067دریافت کریں\u2069"</string>
-    <string name="discovery_explore_failed" formatted="false">"\u2067دریافت لوڈ نہیں ہو سکا۔ اپنا کنکشن چیک کر کے دوبارہ کوشش کریں۔\u2069"</string>
-    <string name="discovery_related" formatted="false">"\u2067متعلقہ\u2069"</string>
-    <string name="discovery_related_empty" formatted="false">"\u2067YouTube Music میں اس گانے سے متعلق کچھ نہیں ہے۔\u2069"</string>
     <string name="discovery_start_radio" formatted="false">"\u2067ریڈیو شروع کریں\u2069"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"\u2067ہر پلے وہ درست جگہ رکھتا ہے جہاں وہ چلا، تاکہ آپ اسے نقشے پر دیکھ سکیں۔ یہ اسی کمپیوٹر پر رہتا ہے، کبھی اپ لوڈ نہیں ہوتا اور بیک اپ میں شامل نہیں ہوتا۔ آپ اسے کسی بھی وقت یہاں یا نقشے سے حذف کر سکتے ہیں۔\u2069"</string>
     <string name="insights_places_guide_desktop" formatted="false">"\u2067موسیقی چلتے وقت Aurora زیادہ سے زیادہ ہر 10 منٹ میں ایک بار آپ کا مقام دیکھتا ہے، اسے گھر اور کام سے ملاتا ہے اور صرف لیبل رکھتا ہے۔ گھر اور کام کے مقامات اسی کمپیوٹر پر رہتے ہیں اور کسی بیک اپ میں شامل نہیں ہوتے۔\u2069"</string>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="discovery_explore">"استكشاف"</string>
+    <string name="discovery_explore_failed">"تعذر تحميل الاستكشاف. تحقق من اتصالك وحاول مرة أخرى."</string>
+    <string name="discovery_related">"ذات صلة"</string>
+    <string name="discovery_related_empty">"لا يوجد في YouTube Music شيء ذو صلة بهذه الأغنية."</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="discovery_explore">"Keşfet"</string>
+    <string name="discovery_explore_failed">"Keşfet yüklenemedi. Bağlantınızı kontrol edip tekrar deneyin."</string>
+    <string name="discovery_related">"Benzer"</string>
+    <string name="discovery_related_empty">"YouTube Music\'te bu şarkıyla ilgili bir şey yok."</string>
+</resources>

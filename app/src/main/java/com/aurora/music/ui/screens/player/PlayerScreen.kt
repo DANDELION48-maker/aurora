@@ -78,6 +78,7 @@ import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material.icons.filled.SpeakerNotes
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.SpeakerNotesOff
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.DropdownMenu
@@ -182,6 +183,7 @@ fun PlayerScreen(
     onOpenMix: () -> Unit = {},
     onPostComment: (String) -> Unit = {},
     onToggleComments: (Boolean) -> Unit = {},
+    onOpenRelated: (() -> Unit)? = null,
     videoPlayer: androidx.media3.common.Player? = null,
     onVideoQualityChange: (Int?) -> Unit = {},
     onRequestVideo: (canvas: Boolean) -> Unit = {},
@@ -209,8 +211,9 @@ fun PlayerScreen(
     var focusComment by remember { mutableStateOf<String?>(null) }
     if (showComments && state.supportsComments) CommentsSheet(state, focusComment, onDismiss = { showComments = false; focusComment = null },
         onSeek = onSeek, onPost = onPostComment)
-    val sidePane = PlayerPane.valueOf(sidePaneName)
-    val portraitTab = portraitTabName?.let { PlayerPane.valueOf(it) }
+    val panes = LocalPlayerPanes.current
+    val sidePane = PlayerPane.valueOf(sidePaneName).takeIf { it in panes } ?: PlayerPane.LYRICS
+    val portraitTab = portraitTabName?.let { PlayerPane.valueOf(it) }?.takeIf { it in panes }
     LaunchedEffect(requestedPane) {
         when {
             requestedPane == null -> return@LaunchedEffect
@@ -417,6 +420,11 @@ fun PlayerScreen(
                                 text = { Text(appString(R.string.text_visualizer_7177c7)) },
                                 onClick = { showMenu = false; onOpenVisualizer() },
                                 leadingIcon = { Icon(Icons.Filled.GraphicEq, null) },
+                            )
+                            if (onOpenRelated != null && state.hasTrack) DropdownMenuItem(
+                                text = { Text(appString(R.string.discovery_related)) },
+                                onClick = { showMenu = false; onOpenRelated() },
+                                leadingIcon = { Icon(Icons.Filled.Explore, null) },
                             )
                             if (state.supportsComments) DropdownMenuItem(
                                 text = { Text(appString(R.string.player_comments)) },

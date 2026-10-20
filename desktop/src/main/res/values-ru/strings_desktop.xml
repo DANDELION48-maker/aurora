@@ -3,10 +3,6 @@
     <string name="chromium_downloading" formatted="false">"Загрузка браузера для входа. Это происходит один раз и занимает около 150 МБ."</string>
     <string name="chromium_failed" formatted="false">"Не удалось запустить браузер для входа: %1$s"</string>
     <string name="chromium_preparing" formatted="false">"Подготовка браузера для входа…"</string>
-    <string name="discovery_explore" formatted="false">"Обзор"</string>
-    <string name="discovery_explore_failed" formatted="false">"Не удалось загрузить обзор. Проверьте подключение и повторите попытку."</string>
-    <string name="discovery_related" formatted="false">"Похожее"</string>
-    <string name="discovery_related_empty" formatted="false">"В YouTube Music нет ничего похожего на этот трек."</string>
     <string name="discovery_start_radio" formatted="false">"Запустить радио"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"Каждое прослушивание сохраняет точное место, где оно звучало, чтобы его можно было увидеть на карте. Данные остаются на этом компьютере, никуда не отправляются и не попадают в резервные копии. Удалить их можно здесь или на карте в любой момент."</string>
     <string name="insights_places_guide_desktop" formatted="false">"Пока играет музыка, Aurora проверяет местоположение не чаще раза в 10 минут, сравнивает его с Домом и Работой и сохраняет только метку. Сами точки Дом и Работа остаются на компьютере и не попадают в резервные копии."</string>

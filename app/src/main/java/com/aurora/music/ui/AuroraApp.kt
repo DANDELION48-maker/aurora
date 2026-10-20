@@ -250,6 +250,7 @@ fun AuroraApp() {
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
+    val navRoute = if (currentRoute == Routes.EXPLORE_CATEGORY) Routes.EXPLORE else currentRoute
     androidx.compose.runtime.LaunchedEffect(savedSessions, onboarding.phase, onboarding.connectingSource) {
         val source = onboarding.connectingSource
         if (onboarding.phase == SetupPhase.AUTH && source != null && savedSessions.any { it.type == source.type }) {
@@ -287,12 +288,14 @@ fun AuroraApp() {
     val windowLayout = LocalWindowLayout.current
     val rail = windowLayout.useNavigationRail && showChrome
     var sidePaneName by rememberSaveable { mutableStateOf<String?>(null) }
-    val sidePane = sidePaneName?.let { runCatching { PlayerPane.valueOf(it) }.getOrNull() }
+    val exploreAvailable = remember(sessionReady, downloadAccountEpoch) { container.repository.supportsExplore }
+    val playerPanes = if (exploreAvailable) PlayerPane.entries else listOf(PlayerPane.LYRICS, PlayerPane.QUEUE)
+    val sidePane = sidePaneName?.let { runCatching { PlayerPane.valueOf(it) }.getOrNull() }?.takeIf { it in playerPanes }
     val shell = windowLayout.shell(panelRequested = rail && sidePane != null && playerState.hasTrack)
     val uiPrefs = com.aurora.music.ui.theme.LocalUiPrefs.current
     val simpleMode by container.settingsStore.simpleMode.collectAsStateWithLifecycle(initialValue = false)
-    val navLayout = remember(uiPrefs.navLayout, simpleMode) {
-        com.aurora.music.navigation.NavMenu.parse(uiPrefs.navLayout).visible(simpleMode)
+    val navLayout = remember(uiPrefs.navLayout, simpleMode, exploreAvailable) {
+        com.aurora.music.navigation.NavMenu.parse(uiPrefs.navLayout).visible(simpleMode, discovery = exploreAvailable)
     }
     val navGap = if (rail) uiPrefs.tabletNavGap.dp else 0.dp
     val barMargin = if (uiPrefs.themeStyle == com.aurora.music.data.ThemeStyle.GLASS) 16.dp else 10.dp
@@ -311,6 +314,7 @@ fun AuroraApp() {
 
     var showSpeedSheet by rememberSaveable { mutableStateOf(false) }
     var showQueue by rememberSaveable { mutableStateOf(false) }
+    var showRelated by rememberSaveable { mutableStateOf(false) }
     var showMix by remember { mutableStateOf(false) }
     var mixRequest by remember { mutableStateOf<com.aurora.music.mix.MixCollectionRequest?>(null) }
     var mixQueue by remember { mutableStateOf<List<com.aurora.music.model.Song>>(emptyList()) }
@@ -516,6 +520,12 @@ fun AuroraApp() {
                 showTitle = false,
                 showActions = false,
                 modifier = modifier.padding(horizontal = 4.dp),
+            )
+            PlayerPane.RELATED -> com.aurora.music.ui.screens.player.RelatedPane(
+                playerState.current,
+                onOpenDetail = { kind, id -> playerVM.setExpanded(false); openDetail(kind, id) },
+                onPlayAll = { songs, index -> playerVM.playAll(songs, index) },
+                modifier = modifier,
             )
         }
     }
@@ -845,6 +855,7 @@ fun AuroraApp() {
                 }
         }
 
+    androidx.compose.runtime.CompositionLocalProvider(com.aurora.music.ui.screens.player.LocalPlayerPanes provides playerPanes) {
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen || drawerState.targetValue == DrawerValue.Open ||
@@ -856,7 +867,7 @@ fun AuroraApp() {
                     server = session?.server ?: "",
                     avatarUrl = profileAppearance.avatarUrl,
                     layout = navLayout,
-                    currentRoute = currentRoute,
+                    currentRoute = navRoute,
                     onProfile = { closeDrawerThen { navController.navigate(Routes.PROFILE) } },
                     onSettings = { closeDrawerThen { navController.navigate(Routes.SETTINGS) } },
                     onOpen = { item -> closeDrawerThen { openNavItem(item) } },
@@ -877,7 +888,7 @@ fun AuroraApp() {
                 ) {
                 if (shell.expandedSidebar) {
                     TabletSidebar(
-                        currentRoute = currentRoute,
+                        currentRoute = navRoute,
                         username = profileAppearance.name,
                         server = session?.server ?: "",
                         avatarUrl = profileAppearance.avatarUrl,
@@ -887,7 +898,7 @@ fun AuroraApp() {
                         onSettings = { navController.navigate(Routes.SETTINGS) { launchSingleTop = true } },
                     )
                 } else {
-                    TabletNavigationRail(currentRoute, navLayout.main, { openNavItem(it) }, { openDrawer() }) {
+                    TabletNavigationRail(navRoute, navLayout.main, { openNavItem(it) }, { openDrawer() }) {
                         navController.navigate(Routes.SETTINGS) { launchSingleTop = true }
                     }
                 }
@@ -939,7 +950,7 @@ fun AuroraApp() {
                                 Spacer(Modifier.height(8.dp))
                             }
                             if (!rail) Box {
-                                FloatingNav(currentRoute, navLayout.bar, navLayout.barMore,
+                                FloatingNav(navRoute, navLayout.bar, navLayout.barMore,
                                     onNavigate = { navigateTopLevel(it) }, onMore = { showNavMore = true }, onLongPress = ::onNavLongPress)
                                 Box(Modifier.align(Alignment.TopStart).padding(start = 8.dp)) {
                                     androidx.compose.material3.DropdownMenu(expanded = homeFeedMenu != null, onDismissRequest = { homeFeedMenu = null },
@@ -1449,6 +1460,31 @@ fun AuroraApp() {
                             onPlay = { playerVM.play(it) },
                         )
                     }
+                    composable(Routes.EXPLORE) {
+                        com.aurora.music.ui.screens.explore.ExploreScreen(
+                            contentPadding = inner,
+                            onBack = { navController.popBackStack() },
+                            onOpenDetail = { kind, id -> openDetail(kind, id) },
+                            onPlayAll = { songs, index -> playerVM.playAll(songs, index) },
+                            onOpenCategory = { navController.navigate(Routes.exploreCategory(it.params, it.title)) },
+                        )
+                    }
+                    composable(
+                        Routes.EXPLORE_CATEGORY,
+                        arguments = listOf(
+                            androidx.navigation.navArgument("params") { defaultValue = "" },
+                            androidx.navigation.navArgument("title") { defaultValue = "" },
+                        ),
+                    ) { entry ->
+                        com.aurora.music.ui.screens.explore.ExploreCategoryScreen(
+                            contentPadding = inner,
+                            params = entry.arguments?.getString("params").orEmpty(),
+                            title = entry.arguments?.getString("title").orEmpty(),
+                            onBack = { navController.popBackStack() },
+                            onOpenDetail = { kind, id -> openDetail(kind, id) },
+                            onPlayAll = { songs, index -> playerVM.playAll(songs, index) },
+                        )
+                    }
                     composable(Routes.PODCASTS) {
                         com.aurora.music.ui.screens.podcasts.PodcastsScreen(
                             contentPadding = inner,
@@ -1567,6 +1603,7 @@ fun AuroraApp() {
                     onOpenMix = { playerVM.setExpanded(false); mixQueue = playerState.queue.filterNot { it.id.startsWith("aurora-mix:") }; showMix = true },
                     onPostComment = playerVM::postComment,
                     onToggleComments = playerVM::setCommentsEnabled,
+                    onOpenRelated = if (exploreAvailable && !windowLayout.useNavigationRail) ({ showRelated = true }) else null,
                     gestures = gesturePrefs,
                     requestedPane = playerPaneRequest,
                     onPaneRequestHandled = { playerPaneRequest = null },
@@ -1613,6 +1650,7 @@ fun AuroraApp() {
             if (onboarding.phase == SetupPhase.AUTH || onboarding.phase == SetupPhase.TASK) setupUi()
         }
     }
+    }
 
     BackHandler(enabled = playerState.expanded && !showMix) { playerVM.setExpanded(false) }
 
@@ -1620,7 +1658,7 @@ fun AuroraApp() {
         val inBar = navLayout.bar.map { it.id }.toSet()
         NavMoreSheet(
             items = (navLayout.main + navLayout.more).filter { it.id !in inBar }.distinctBy { it.id },
-            currentRoute = currentRoute,
+            currentRoute = navRoute,
             onOpen = { item -> showNavMore = false; openNavItem(item) },
             onSettings = { showNavMore = false; navController.navigate(Routes.SETTINGS) { launchSingleTop = true } },
             onDismiss = { showNavMore = false },
@@ -1660,6 +1698,14 @@ fun AuroraApp() {
             onSelect = { playerVM.setSleepTimer(it) },
             onEndOfTrack = { playerVM.setSleepEndOfTrack() },
             onDismiss = { showSleep = false },
+        )
+    }
+    if (showRelated && playerState.hasTrack) {
+        com.aurora.music.ui.screens.player.RelatedSheet(
+            song = playerState.current,
+            onDismiss = { showRelated = false },
+            onOpenDetail = { kind, id -> showRelated = false; playerVM.setExpanded(false); openDetail(kind, id) },
+            onPlayAll = { songs, index -> playerVM.playAll(songs, index) },
         )
     }
     }

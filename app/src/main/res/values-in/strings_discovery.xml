@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="discovery_explore">"Jelajahi"</string>
+    <string name="discovery_explore_failed">"Jelajahi tidak dapat dimuat. Periksa koneksi Anda lalu coba lagi."</string>
+    <string name="discovery_related">"Terkait"</string>
+    <string name="discovery_related_empty">"YouTube Music tidak punya apa pun yang terkait dengan lagu ini."</string>
+</resources>

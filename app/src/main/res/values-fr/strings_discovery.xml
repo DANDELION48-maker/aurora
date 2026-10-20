@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="discovery_explore">"Explorer"</string>
+    <string name="discovery_explore_failed">"Impossible de charger Explorer. Vérifie ta connexion et réessaie."</string>
+    <string name="discovery_related">"Similaires"</string>
+    <string name="discovery_related_empty">"YouTube Music n\'a rien de similaire à ce morceau."</string>
+</resources>

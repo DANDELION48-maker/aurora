@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="discovery_explore">"Entdecken"</string>
+    <string name="discovery_explore_failed">"Entdecken konnte nicht geladen werden. Prüfe deine Verbindung und versuche es erneut."</string>
+    <string name="discovery_related">"Ähnlich"</string>
+    <string name="discovery_related_empty">"YouTube Music hat nichts Ähnliches zu diesem Song."</string>
+</resources>

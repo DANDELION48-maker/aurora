@@ -3,10 +3,6 @@
     <string name="chromium_downloading" formatted="false">"De inlogbrowser wordt gedownload. Dit gebeurt één keer en kost ongeveer 150 MB."</string>
     <string name="chromium_failed" formatted="false">"De inlogbrowser kon niet starten: %1$s"</string>
     <string name="chromium_preparing" formatted="false">"Inlogbrowser wordt voorbereid…"</string>
-    <string name="discovery_explore" formatted="false">"Ontdekken"</string>
-    <string name="discovery_explore_failed" formatted="false">"Ontdekken kon niet worden geladen. Controleer je verbinding en probeer het opnieuw."</string>
-    <string name="discovery_related" formatted="false">"Gerelateerd"</string>
-    <string name="discovery_related_empty" formatted="false">"YouTube Music heeft niets gerelateerds bij dit nummer."</string>
     <string name="discovery_start_radio" formatted="false">"Radio starten"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"Elke keer luisteren bewaart de exacte plek waar het speelde, zodat je het op een kaart ziet. Het blijft op deze computer, wordt nooit geüpload en gaat niet mee in back-ups. Je kunt het hier of vanaf de kaart altijd verwijderen."</string>
     <string name="insights_places_guide_desktop" formatted="false">"Terwijl er muziek speelt, controleert Aurora je locatie hooguit elke 10 minuten, vergelijkt die met Thuis en Werk en bewaart alleen het label. Thuis en Werk zelf blijven op deze computer en gaan nooit mee in een back-up."</string>

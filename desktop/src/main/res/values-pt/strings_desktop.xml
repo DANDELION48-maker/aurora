@@ -3,10 +3,6 @@
     <string name="chromium_downloading" formatted="false">"A transferir o navegador de início de sessão. Acontece uma vez e ocupa cerca de 150 MB."</string>
     <string name="chromium_failed" formatted="false">"Não foi possível iniciar o navegador de início de sessão: %1$s"</string>
     <string name="chromium_preparing" formatted="false">"A preparar o navegador de início de sessão…"</string>
-    <string name="discovery_explore" formatted="false">"Explorar"</string>
-    <string name="discovery_explore_failed" formatted="false">"Não foi possível carregar Explorar. Verifica a ligação e tenta novamente."</string>
-    <string name="discovery_related" formatted="false">"Relacionado"</string>
-    <string name="discovery_related_empty" formatted="false">"O YouTube Music não tem nada relacionado com esta música."</string>
     <string name="discovery_start_radio" formatted="false">"Iniciar rádio"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"Cada reprodução guarda o local exato onde tocou, para você ver no mapa. Fica neste computador, nunca é enviado e fica fora dos backups. Você pode apagar aqui ou pelo mapa a qualquer momento."</string>
     <string name="insights_places_guide_desktop" formatted="false">"Enquanto a música toca, o Aurora verifica sua localização no máximo a cada 10 minutos, compara com Casa e Trabalho e guarda só o rótulo. Casa e Trabalho ficam neste computador e ficam fora de todos os backups."</string>

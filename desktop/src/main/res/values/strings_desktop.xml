@@ -3,10 +3,6 @@
     <string name="chromium_downloading" formatted="false">"Downloading the sign-in browser. This happens once and takes about 150 MB."</string>
     <string name="chromium_failed" formatted="false">"The sign-in browser could not start: %1$s"</string>
     <string name="chromium_preparing" formatted="false">"Getting the sign-in browser ready…"</string>
-    <string name="discovery_explore" formatted="false">"Explore"</string>
-    <string name="discovery_explore_failed" formatted="false">"Explore couldn\'t load. Check your connection and try again."</string>
-    <string name="discovery_related" formatted="false">"Related"</string>
-    <string name="discovery_related_empty" formatted="false">"YouTube Music has nothing related to this song."</string>
     <string name="discovery_start_radio" formatted="false">"Start radio"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"Each play keeps the exact spot where it was playing, so you can see it on a map. It stays on this computer, is never uploaded and is left out of backups. You can delete it here or from the map at any time."</string>
     <string name="insights_places_guide_desktop" formatted="false">"Aurora checks your location at most every 10 minutes while music plays, compares it with Home and Work, and keeps only the label. Home and Work themselves stay on this computer and are left out of every backup."</string>

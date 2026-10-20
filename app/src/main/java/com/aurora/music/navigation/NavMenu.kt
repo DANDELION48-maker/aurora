@@ -6,6 +6,8 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Devices
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Podcasts
@@ -37,6 +39,8 @@ class NavMenuItem(
     val advancedAudio: Boolean = false,
     val audio: Boolean = false,
     val selectedIcon: ImageVector = icon,
+    // shown only while the signed-in sources can explore a streaming catalogue
+    val discovery: Boolean = false,
 ) {
     val label: String get() = destination?.label ?: appString(labelRes)
     val shortLabel: String get() = if (route == Routes.LIBRARY) appString(R.string.text_library_b8100f) else label
@@ -91,13 +95,13 @@ data class NavLayout(
 
     fun withBarMore(on: Boolean): NavLayout = if (on && !barMore && !canAddTab) this else copy(barMore = on)
 
-    fun visible(simpleMode: Boolean): NavLayout = if (!simpleMode) this else copy(
-        main = main.filterNot { it.advancedAudio },
-        more = more.filterNot { it.advancedAudio },
-        bar = bar.filterNot { it.advancedAudio },
-    )
+    fun visible(simpleMode: Boolean, discovery: Boolean = true): NavLayout {
+        fun List<NavMenuItem>.shown() = filterNot { (simpleMode && it.advancedAudio) || (!discovery && it.discovery) }
+        return copy(main = main.shown(), more = more.shown(), bar = bar.shown())
+    }
 
     fun encode(): String = "main=" + main.joinToString(",") { it.id } + ";more=" + more.joinToString(",") { it.id } +
+        ";hidden=" + hidden.joinToString(",") { it.id } +
         ";bar=" + bar.joinToString(",") { it.id } + ";barmore=" + if (barMore) "1" else "0"
 
     // the side menu and the tab bar reset on their own so one never wipes the other
@@ -117,6 +121,7 @@ object NavMenu {
         NavMenuItem("home", Routes.HOME, Icons.Outlined.Home, R.string.text_home_70f8bb, locked = true, selectedIcon = Icons.Filled.Home),
         NavMenuItem("search", Routes.SEARCH, Icons.Outlined.Search, R.string.text_search_bce064, locked = true, selectedIcon = Icons.Filled.Search),
         NavMenuItem("library", Routes.LIBRARY, Icons.Outlined.LibraryMusic, R.string.text_your_library_fd740f, locked = true, selectedIcon = Icons.Filled.LibraryMusic),
+        NavMenuItem("explore", Routes.EXPLORE, Icons.Outlined.Explore, R.string.discovery_explore, discovery = true, selectedIcon = Icons.Filled.Explore),
         NavMenuItem("radio", Routes.RADIO, Icons.Filled.Radio, R.string.text_radio_b11bf1),
         NavMenuItem("podcasts", Routes.PODCASTS, Icons.Filled.Podcasts, R.string.text_podcasts_fd52b4),
         NavMenuItem("history", Routes.HISTORY, Icons.Filled.History, R.string.text_listening_history_bd9991),
@@ -131,15 +136,16 @@ object NavMenu {
         NavMenuItem("signal_path", Routes.SIGNAL_PATH, Icons.Filled.Route, destination = SettingsDestinations.signalPath, audio = true, advancedAudio = true),
     )
 
-    private val defaultMain = listOf("home", "search", "library")
+    private val defaultMain = listOf("home", "search", "library", "explore")
     private val defaultMore = listOf("radio", "podcasts", "history", "stats", "duplicates")
+    private val defaultTabs = listOf("home", "search", "library")
     const val MAX_TABS = 5
     const val MIN_TABS = 2
     const val PINNED_TAB = "home"
 
     fun byId(id: String): NavMenuItem? = items.firstOrNull { it.id == id }
 
-    fun defaultBar(): List<NavMenuItem> = defaultMain.mapNotNull(::byId)
+    fun defaultBar(): List<NavMenuItem> = defaultTabs.mapNotNull(::byId)
 
     fun parse(raw: String): NavLayout {
         val parts = raw.split(';').associate { part ->
@@ -152,14 +158,18 @@ object NavMenu {
         val moreIds = (savedMore ?: defaultMore).filter { byId(it) != null && it !in mainIds }.distinct().toMutableList()
         items.filter { it.locked && it.id !in mainIds }.forEach { mainIds.add(0, it.id) }
         moreIds.removeAll { byId(it)?.locked == true }
+        // layouts saved before explore existed get it next to the library; a newer layout that hid it keeps it hidden
+        if (parts["hidden"] == null && "explore" !in mainIds && "explore" !in moreIds) {
+            mainIds.add((mainIds.indexOf("library") + 1).coerceIn(0, mainIds.size), "explore")
+        }
         val main = mainIds.mapNotNull(::byId)
         val more = moreIds.mapNotNull(::byId)
         val hidden = items.filter { it.id !in mainIds && it.id !in moreIds }
         // home anchors back navigation so it always stays a tab
         val barMore = parts["barmore"]?.firstOrNull() == "1"
-        val barIds = (parts["bar"] ?: defaultMain).filter { byId(it) != null }.distinct().toMutableList()
+        val barIds = (parts["bar"] ?: defaultTabs).filter { byId(it) != null }.distinct().toMutableList()
         if (PINNED_TAB !in barIds) barIds.add(0, PINNED_TAB)
-        if (barIds.size < MIN_TABS) defaultMain.filterNot { it in barIds }.take(MIN_TABS - barIds.size).forEach(barIds::add)
+        if (barIds.size < MIN_TABS) defaultTabs.filterNot { it in barIds }.take(MIN_TABS - barIds.size).forEach(barIds::add)
         val bar = barIds.take(if (barMore) MAX_TABS - 1 else MAX_TABS).mapNotNull(::byId)
         return NavLayout(main, more, hidden, bar, barMore)
     }

@@ -3,10 +3,6 @@
     <string name="chromium_downloading" formatted="false">"Mengunduh browser masuk. Ini hanya sekali dan butuh sekitar 150 MB."</string>
     <string name="chromium_failed" formatted="false">"Browser masuk tidak dapat dimulai: %1$s"</string>
     <string name="chromium_preparing" formatted="false">"Menyiapkan browser masuk…"</string>
-    <string name="discovery_explore" formatted="false">"Jelajahi"</string>
-    <string name="discovery_explore_failed" formatted="false">"Jelajahi tidak dapat dimuat. Periksa koneksi Anda lalu coba lagi."</string>
-    <string name="discovery_related" formatted="false">"Terkait"</string>
-    <string name="discovery_related_empty" formatted="false">"YouTube Music tidak punya apa pun yang terkait dengan lagu ini."</string>
     <string name="discovery_start_radio" formatted="false">"Mulai radio"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"Setiap pemutaran menyimpan lokasi tepat saat diputar, sehingga Anda bisa melihatnya di peta. Data tetap di komputer ini, tidak pernah diunggah, dan tidak ikut dalam cadangan. Anda dapat menghapusnya di sini atau dari peta kapan saja."</string>
     <string name="insights_places_guide_desktop" formatted="false">"Saat musik diputar, Aurora memeriksa lokasi Anda paling sering setiap 10 menit, membandingkannya dengan Rumah dan Kantor, lalu hanya menyimpan labelnya. Lokasi Rumah dan Kantor tetap di komputer ini dan tidak ikut dalam cadangan apa pun."</string>

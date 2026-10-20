@@ -3,10 +3,6 @@
     <string name="chromium_downloading" formatted="false">"正在下载登录浏览器。只需下载一次，约 150 MB。"</string>
     <string name="chromium_failed" formatted="false">"无法启动登录浏览器：%1$s"</string>
     <string name="chromium_preparing" formatted="false">"正在准备登录浏览器…"</string>
-    <string name="discovery_explore" formatted="false">"探索"</string>
-    <string name="discovery_explore_failed" formatted="false">"无法加载探索页。请检查网络连接后重试。"</string>
-    <string name="discovery_related" formatted="false">"相关"</string>
-    <string name="discovery_related_empty" formatted="false">"YouTube Music 没有与这首歌相关的内容。"</string>
     <string name="discovery_start_radio" formatted="false">"开始电台"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"每次播放都会保存播放时的确切位置，方便你在地图上查看。数据只保存在这台电脑上，从不上传，也不会进入备份。你可以随时在这里或地图上删除。"</string>
     <string name="insights_places_guide_desktop" formatted="false">"播放音乐时，Aurora 最多每 10 分钟检查一次位置，与家和工作地点比较，只保留标签。家和工作地点本身只保存在这台电脑上，不会进入任何备份。"</string>
