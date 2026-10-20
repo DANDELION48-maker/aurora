@@ -4,4 +4,5 @@
     <string name="discovery_explore_failed">"无法加载探索页。请检查网络连接后重试。"</string>
     <string name="discovery_related">"相关"</string>
     <string name="discovery_related_empty">"YouTube Music 没有与这首歌相关的内容。"</string>
+    <string name="discovery_start_radio" formatted="false">"开始电台"</string>
 </resources>

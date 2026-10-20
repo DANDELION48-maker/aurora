@@ -117,7 +117,9 @@ fun AccountsScreen(
                                 false -> appString(R.string.soundcloud_verify_failed)
                                 null -> appString(R.string.soundcloud_verify_detail)
                             }
-                            SettingsNavRow(Icons.Filled.VerifiedUser, title, subtitle, value = if (verifying == key(s)) "…" else null) {
+                            val waiting = container.soundCloudWaiting(s)
+                            val value = if (verifying == key(s)) "…" else if (waiting > 0) appString(R.string.soundcloud_verify_waiting, waiting) else null
+                            SettingsNavRow(Icons.Filled.VerifiedUser, title, subtitle, value = value) {
                                 if (verifying == null) scope.launch {
                                     verifying = key(s)
                                     verified[key(s)] = container.verifySoundCloud(s)

@@ -4,4 +4,5 @@
     <string name="discovery_explore_failed">"Impossible de charger Explorer. Vérifie ta connexion et réessaie."</string>
     <string name="discovery_related">"Similaires"</string>
     <string name="discovery_related_empty">"YouTube Music n\'a rien de similaire à ce morceau."</string>
+    <string name="discovery_start_radio" formatted="false">"Lancer la radio"</string>
 </resources>

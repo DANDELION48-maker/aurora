@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
 import androidx.compose.material.icons.filled.QueuePlayNext
+import androidx.compose.material.icons.filled.Radio
 import androidx.compose.material.icons.outlined.Explicit
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.MoreVert
@@ -216,6 +217,13 @@ fun SongRow(
                     onClick = { menuOpen = false; onDownload() },
                     leadingIcon = { Icon(Icons.Filled.Download, null) },
                 )
+                LocalStartRadio.current?.let { startRadio ->
+                    DropdownMenuItem(
+                        text = { Text(appString(R.string.discovery_start_radio)) },
+                        onClick = { menuOpen = false; startRadio(song) },
+                        leadingIcon = { Icon(Icons.Filled.Radio, null) },
+                    )
+                }
                 if (onGoToAlbum != null) DropdownMenuItem(
                     text = { Text(appString(R.string.text_go_to_album_e2d3b3)) },
                     onClick = { menuOpen = false; onGoToAlbum() },

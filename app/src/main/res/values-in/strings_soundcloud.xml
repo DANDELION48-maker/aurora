@@ -20,4 +20,6 @@
     <string name="soundcloud_verify_detail">"Kirim suka dan ikuti yang tertunda. SoundCloud mungkin meminta Anda membuktikan bahwa Anda manusia terlebih dahulu."</string>
     <string name="soundcloud_verify_done">"SoundCloud sudah terbaru."</string>
     <string name="soundcloud_verify_failed">"SoundCloud masih perlu memverifikasi Anda. Coba lagi."</string>
+    <string name="soundcloud_verify_waiting">"Menunggu: %1$d"</string>
+    <string name="comment_needs_verify">"SoundCloud ingin memastikan Anda manusia. Buka Setelan → Akun lalu pilih Verifikasi SoundCloud."</string>
 </resources>

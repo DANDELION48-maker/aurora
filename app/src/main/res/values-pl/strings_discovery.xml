@@ -4,4 +4,5 @@
     <string name="discovery_explore_failed">"Nie udało się wczytać Odkrywaj. Sprawdź połączenie i spróbuj ponownie."</string>
     <string name="discovery_related">"Podobne"</string>
     <string name="discovery_related_empty">"YouTube Music nie ma nic podobnego do tego utworu."</string>
+    <string name="discovery_start_radio" formatted="false">"Uruchom radio"</string>
 </resources>

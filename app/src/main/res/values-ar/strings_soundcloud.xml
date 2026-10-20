@@ -20,4 +20,6 @@
     <string name="soundcloud_verify_detail">"أرسل الإعجابات والمتابعات المنتظرة. قد يطلب منك SoundCloud أولاً إثبات أنك إنسان."</string>
     <string name="soundcloud_verify_done">"SoundCloud محدّث."</string>
     <string name="soundcloud_verify_failed">"لا يزال SoundCloud بحاجة إلى التحقق منك. حاول مرة أخرى."</string>
+    <string name="soundcloud_verify_waiting">"قيد الانتظار: %1$d"</string>
+    <string name="comment_needs_verify">"يريد SoundCloud التحقق من أنك إنسان. انتقل إلى الإعدادات ← الحسابات واختر التحقق من SoundCloud."</string>
 </resources>

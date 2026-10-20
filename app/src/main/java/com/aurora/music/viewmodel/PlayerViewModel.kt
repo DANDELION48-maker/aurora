@@ -1068,8 +1068,13 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         val song = _state.value.current
         val at = (controller?.currentPosition ?: 0L).coerceAtLeast(0L)
         viewModelScope.launch {
-            val posted = runCatching { container.repository.postComment(song, body, at) }.getOrNull()
-            if (posted == null) android.widget.Toast.makeText(getApplication(), appString(R.string.comment_failed), android.widget.Toast.LENGTH_SHORT).show()
+            val result = runCatching { container.repository.postComment(song, body, at) }
+            val posted = result.getOrNull()
+            if (posted == null) {
+                val needsVerify = result.exceptionOrNull() is com.aurora.music.data.remote.SoundCloudCheckException
+                android.widget.Toast.makeText(getApplication(), appString(if (needsVerify) R.string.comment_needs_verify else R.string.comment_failed),
+                    if (needsVerify) android.widget.Toast.LENGTH_LONG else android.widget.Toast.LENGTH_SHORT).show()
+            }
             else if (_state.value.current.id == song.id) _state.update { it.copy(comments = (it.comments + posted).sortedBy { c -> c.timestampMs }) }
         }
     }

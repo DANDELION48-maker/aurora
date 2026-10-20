@@ -17,7 +17,9 @@
     <string name="comment_post">"Post"</string>
     <string name="comment_failed">"Couldn\'t post your comment. Try again."</string>
     <string name="soundcloud_verify">"Verify SoundCloud"</string>
-    <string name="soundcloud_verify_detail">"Send the likes and follows that are waiting. SoundCloud may ask you to prove you're human first."</string>
+    <string name="soundcloud_verify_detail">"Send the likes and follows that are waiting. SoundCloud may ask you to prove you\'re human first."</string>
     <string name="soundcloud_verify_done">"SoundCloud is up to date."</string>
     <string name="soundcloud_verify_failed">"SoundCloud still needs you to verify. Try again."</string>
+    <string name="soundcloud_verify_waiting">"Waiting: %1$d"</string>
+    <string name="comment_needs_verify">"SoundCloud wants to check you\'re human. Go to Settings → Accounts and choose Verify SoundCloud."</string>
 </resources>

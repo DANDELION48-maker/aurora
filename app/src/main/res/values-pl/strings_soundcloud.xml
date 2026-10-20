@@ -20,4 +20,6 @@
     <string name="soundcloud_verify_detail">"Wysyła oczekujące polubienia i obserwacje. SoundCloud może najpierw poprosić o potwierdzenie, że jesteś człowiekiem."</string>
     <string name="soundcloud_verify_done">"SoundCloud jest aktualny."</string>
     <string name="soundcloud_verify_failed">"SoundCloud nadal wymaga weryfikacji. Spróbuj ponownie."</string>
+    <string name="soundcloud_verify_waiting">"Oczekuje: %1$d"</string>
+    <string name="comment_needs_verify">"SoundCloud chce sprawdzić, czy jesteś człowiekiem. Przejdź do Ustawienia → Konta i wybierz Zweryfikuj SoundCloud."</string>
 </resources>

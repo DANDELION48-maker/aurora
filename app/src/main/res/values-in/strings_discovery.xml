@@ -4,4 +4,5 @@
     <string name="discovery_explore_failed">"Jelajahi tidak dapat dimuat. Periksa koneksi Anda lalu coba lagi."</string>
     <string name="discovery_related">"Terkait"</string>
     <string name="discovery_related_empty">"YouTube Music tidak punya apa pun yang terkait dengan lagu ini."</string>
+    <string name="discovery_start_radio" formatted="false">"Mulai radio"</string>
 </resources>

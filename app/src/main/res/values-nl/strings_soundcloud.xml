@@ -20,4 +20,6 @@
     <string name="soundcloud_verify_detail">"Verstuurt likes en volgacties die wachten. SoundCloud kan eerst vragen te bewijzen dat je een mens bent."</string>
     <string name="soundcloud_verify_done">"SoundCloud is bijgewerkt."</string>
     <string name="soundcloud_verify_failed">"SoundCloud moet je nog verifiëren. Probeer het opnieuw."</string>
+    <string name="soundcloud_verify_waiting">"Wachtend: %1$d"</string>
+    <string name="comment_needs_verify">"SoundCloud wil controleren of je een mens bent. Ga naar Instellingen → Accounts en kies SoundCloud verifiëren."</string>
 </resources>

@@ -4,4 +4,5 @@
     <string name="discovery_explore_failed">"Ontdekken kon niet worden geladen. Controleer je verbinding en probeer het opnieuw."</string>
     <string name="discovery_related">"Gerelateerd"</string>
     <string name="discovery_related_empty">"YouTube Music heeft niets gerelateerds bij dit nummer."</string>
+    <string name="discovery_start_radio" formatted="false">"Radio starten"</string>
 </resources>

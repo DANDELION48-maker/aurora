@@ -3,7 +3,6 @@
     <string name="chromium_downloading" formatted="false">"\u2067جارٍ تنزيل متصفح تسجيل الدخول. يحدث هذا مرة واحدة ويحتاج نحو 150 ميغابايت.\u2069"</string>
     <string name="chromium_failed" formatted="false">"\u2067تعذر تشغيل متصفح تسجيل الدخول: %1$s\u2069"</string>
     <string name="chromium_preparing" formatted="false">"\u2067جارٍ تجهيز متصفح تسجيل الدخول…\u2069"</string>
-    <string name="discovery_start_radio" formatted="false">"\u2067بدء راديو\u2069"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"\u2067يحتفظ كل تشغيل بالمكان الدقيق الذي شُغّل فيه لتراه على الخريطة. تبقى البيانات على هذا الكمبيوتر ولا تُرفع أبدًا ولا تدخل في النسخ الاحتياطية. يمكنك حذفها من هنا أو من الخريطة في أي وقت.\u2069"</string>
     <string name="insights_places_guide_desktop" formatted="false">"\u2067أثناء تشغيل الموسيقى يتحقق Aurora من موقعك مرة كل 10 دقائق على الأكثر، ويقارنه بالمنزل والعمل، ويحتفظ بالوسم فقط. يبقى موقعا المنزل والعمل على هذا الكمبيوتر ولا يدخلان في أي نسخة احتياطية.\u2069"</string>
     <string name="insights_step_private_title_desktop" formatted="false">"\u2067تبقى البيانات على جهاز الكمبيوتر\u2069"</string>

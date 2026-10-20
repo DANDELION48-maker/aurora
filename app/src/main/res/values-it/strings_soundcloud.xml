@@ -20,4 +20,6 @@
     <string name="soundcloud_verify_detail">"Invia i Mi piace e i follow in attesa. SoundCloud potrebbe prima chiederti di dimostrare che sei umano."</string>
     <string name="soundcloud_verify_done">"SoundCloud è aggiornato."</string>
     <string name="soundcloud_verify_failed">"SoundCloud deve ancora verificarti. Riprova."</string>
+    <string name="soundcloud_verify_waiting">"In attesa: %1$d"</string>
+    <string name="comment_needs_verify">"SoundCloud vuole verificare che tu sia umano. Vai su Impostazioni → Account e scegli Verifica SoundCloud."</string>
 </resources>

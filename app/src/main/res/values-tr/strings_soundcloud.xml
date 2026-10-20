@@ -16,8 +16,10 @@
     <string name="comment_hint">"%1$s anına yorum"</string>
     <string name="comment_post">"Gönder"</string>
     <string name="comment_failed">"Yorumun gönderilemedi. Tekrar dene."</string>
-    <string name="soundcloud_verify">"SoundCloud'u doğrula"</string>
+    <string name="soundcloud_verify">"SoundCloud\'u doğrula"</string>
     <string name="soundcloud_verify_detail">"Bekleyen beğenileri ve takipleri gönderir. SoundCloud önce insan olduğunuzu kanıtlamanızı isteyebilir."</string>
     <string name="soundcloud_verify_done">"SoundCloud güncel."</string>
     <string name="soundcloud_verify_failed">"SoundCloud hâlâ doğrulamanızı bekliyor. Tekrar deneyin."</string>
+    <string name="soundcloud_verify_waiting">"Bekleyen: %1$d"</string>
+    <string name="comment_needs_verify">"SoundCloud insan olduğunuzu doğrulamak istiyor. Ayarlar → Hesaplar bölümüne gidip SoundCloud\'u doğrula seçeneğini seçin."</string>
 </resources>

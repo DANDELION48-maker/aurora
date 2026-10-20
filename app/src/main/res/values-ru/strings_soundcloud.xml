@@ -20,4 +20,6 @@
     <string name="soundcloud_verify_detail">"Отправляет ожидающие лайки и подписки. SoundCloud может сначала попросить подтвердить, что вы человек."</string>
     <string name="soundcloud_verify_done">"SoundCloud обновлён."</string>
     <string name="soundcloud_verify_failed">"SoundCloud всё ещё ждёт подтверждения. Попробуйте ещё раз."</string>
+    <string name="soundcloud_verify_waiting">"Ожидает: %1$d"</string>
+    <string name="comment_needs_verify">"SoundCloud хочет убедиться, что вы человек. Откройте Настройки → Аккаунты и выберите «Подтвердить SoundCloud»."</string>
 </resources>

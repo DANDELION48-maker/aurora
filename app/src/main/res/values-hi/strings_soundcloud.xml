@@ -20,4 +20,6 @@
     <string name="soundcloud_verify_detail">"इंतज़ार कर रहे लाइक और फ़ॉलो भेजें। SoundCloud पहले यह साबित करने को कह सकता है कि आप इंसान हैं।"</string>
     <string name="soundcloud_verify_done">"SoundCloud अप टू डेट है।"</string>
     <string name="soundcloud_verify_failed">"SoundCloud को अभी भी आपका सत्यापन चाहिए। फिर से कोशिश करें।"</string>
+    <string name="soundcloud_verify_waiting">"इंतज़ार में: %1$d"</string>
+    <string name="comment_needs_verify">"SoundCloud जाँचना चाहता है कि आप इंसान हैं। सेटिंग → खाते में जाकर SoundCloud सत्यापित करें चुनें।"</string>
 </resources>

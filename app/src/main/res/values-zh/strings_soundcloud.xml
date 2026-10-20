@@ -20,4 +20,6 @@
     <string name="soundcloud_verify_detail">"发送等待中的点赞和关注。SoundCloud 可能会先要求你证明自己是真人。"</string>
     <string name="soundcloud_verify_done">"SoundCloud 已是最新。"</string>
     <string name="soundcloud_verify_failed">"SoundCloud 仍需要验证你。请重试。"</string>
+    <string name="soundcloud_verify_waiting">"等待中：%1$d"</string>
+    <string name="comment_needs_verify">"SoundCloud 想确认你是真人。请前往 设置 → 账号 并选择“验证 SoundCloud”。"</string>
 </resources>

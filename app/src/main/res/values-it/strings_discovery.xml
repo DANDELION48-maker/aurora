@@ -4,4 +4,5 @@
     <string name="discovery_explore_failed">"Impossibile caricare Esplora. Controlla la connessione e riprova."</string>
     <string name="discovery_related">"Correlati"</string>
     <string name="discovery_related_empty">"YouTube Music non ha nulla di correlato a questo brano."</string>
+    <string name="discovery_start_radio" formatted="false">"Avvia radio"</string>
 </resources>

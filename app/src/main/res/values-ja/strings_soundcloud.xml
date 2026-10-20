@@ -20,4 +20,6 @@
     <string name="soundcloud_verify_detail">"保留中のいいねとフォローを送信します。SoundCloud が最初に人間であることの確認を求める場合があります。"</string>
     <string name="soundcloud_verify_done">"SoundCloud は最新の状態です。"</string>
     <string name="soundcloud_verify_failed">"SoundCloud の確認がまだ必要です。もう一度お試しください。"</string>
+    <string name="soundcloud_verify_waiting">"保留中: %1$d"</string>
+    <string name="comment_needs_verify">"SoundCloud が人間であることを確認しようとしています。設定 → アカウントで「SoundCloud を確認」を選んでください。"</string>
 </resources>

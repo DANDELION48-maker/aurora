@@ -151,6 +151,7 @@ class DesktopContainer(
     }
 
     suspend fun verifySoundCloud(session: Session): Boolean = (buildBackend(session) as? com.aurora.music.data.SoundCloudBackend)?.verify() == true
+    fun soundCloudWaiting(session: Session): Int = soundcloudPendingLikes.waiting(session.userId)
 
     // soundcloud previews and drm-only tracks play from a youtube match instead
     fun resolveSoundCloud(song: Song): String? {

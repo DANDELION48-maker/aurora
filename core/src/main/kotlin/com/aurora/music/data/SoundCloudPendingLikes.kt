@@ -25,6 +25,8 @@ class SoundCloudPendingLikes(filesDir: File? = null) {
 
     fun of(user: String): Map<String, PendingLike> = map[user].orEmpty()
 
+    fun waiting(user: String): Int = of(user).values.count { it.sentAt == 0L }
+
     fun set(user: String, track: String, like: PendingLike) = edit(user) { it.remove(track); it[track] = like }
 
     fun clear(user: String, track: String) = edit(user) { it.remove(track) }

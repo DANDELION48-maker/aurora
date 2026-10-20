@@ -4,4 +4,5 @@
     <string name="discovery_explore_failed">"探索を読み込めませんでした。接続を確認してもう一度お試しください。"</string>
     <string name="discovery_related">"関連"</string>
     <string name="discovery_related_empty">"YouTube Music にこの曲の関連コンテンツはありません。"</string>
+    <string name="discovery_start_radio" formatted="false">"ラジオを開始"</string>
 </resources>

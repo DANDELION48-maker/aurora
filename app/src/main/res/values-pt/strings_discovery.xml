@@ -4,4 +4,5 @@
     <string name="discovery_explore_failed">"Não foi possível carregar Explorar. Verifica a ligação e tenta novamente."</string>
     <string name="discovery_related">"Relacionado"</string>
     <string name="discovery_related_empty">"O YouTube Music não tem nada relacionado com esta música."</string>
+    <string name="discovery_start_radio" formatted="false">"Iniciar rádio"</string>
 </resources>

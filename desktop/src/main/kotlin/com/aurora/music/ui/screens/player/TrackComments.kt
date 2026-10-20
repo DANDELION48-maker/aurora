@@ -64,6 +64,8 @@ class TrackComments {
         internal set
     var failed by mutableStateOf(false)
         internal set
+    var needsVerify by mutableStateOf(false)
+        internal set
     var available by mutableStateOf(false)
         internal set
     var enabled by mutableStateOf(true)
@@ -95,8 +97,10 @@ fun rememberTrackComments(song: Song): TrackComments {
     state.setEnabled = { on -> scope.launch { container.settingsStore.setMergeFeatures(features.copy(comments = on)) } }
     // posted at the moment the track is at, the way soundcloud pins a comment
     state.post = { body, atMs ->
-        val posted = runCatching { repository.postComment(song, body, atMs) }.getOrNull()
+        val result = runCatching { repository.postComment(song, body, atMs) }
+        val posted = result.getOrNull()
         state.failed = posted == null
+        state.needsVerify = result.exceptionOrNull() is com.aurora.music.data.remote.SoundCloudCheckException
         if (posted != null) state.list = (state.list + posted).sortedBy { it.timestampMs }
     }
     return state
@@ -184,7 +188,7 @@ fun CommentsSheet(comments: TrackComments, accent: Color, positionSec: Float, du
                     }
                 }
             }
-            if (comments.failed) Text(appString(R.string.comment_failed), color = MaterialTheme.colorScheme.error,
+            if (comments.failed) Text(appString(if (comments.needsVerify) R.string.comment_needs_verify else R.string.comment_failed), color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 6.dp))
             Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                 OutlinedTextField(draft, { draft = it }, Modifier.weight(1f), singleLine = true,

@@ -193,6 +193,7 @@ class AppContainer(context: Context) {
     }
 
     suspend fun verifySoundCloud(session: Session): Boolean = (buildBackend(session) as? SoundCloudBackend)?.verify() == true
+    fun soundCloudWaiting(session: Session): Int = soundcloudPendingLikes.waiting(session.userId)
 
     // one client per login: soundcloud rotates the refresh token, so two clients refreshing it would sign each other out
     private val soundcloudClients = java.util.concurrent.ConcurrentHashMap<String, com.aurora.music.data.remote.SoundCloudClient>()

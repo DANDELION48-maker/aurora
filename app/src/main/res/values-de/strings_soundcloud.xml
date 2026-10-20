@@ -20,4 +20,6 @@
     <string name="soundcloud_verify_detail">"Sendet wartende Likes und Follows. SoundCloud fragt eventuell zuerst, ob du ein Mensch bist."</string>
     <string name="soundcloud_verify_done">"SoundCloud ist auf dem neuesten Stand."</string>
     <string name="soundcloud_verify_failed">"SoundCloud muss dich noch verifizieren. Versuche es erneut."</string>
+    <string name="soundcloud_verify_waiting">"Wartend: %1$d"</string>
+    <string name="comment_needs_verify">"SoundCloud möchte prüfen, ob du ein Mensch bist. Öffne Einstellungen → Konten und wähle SoundCloud verifizieren."</string>
 </resources>

@@ -3,7 +3,6 @@
     <string name="chromium_downloading" formatted="false">"Descargando el navegador de inicio de sesión. Solo ocurre una vez y ocupa unos 150 MB."</string>
     <string name="chromium_failed" formatted="false">"No se pudo iniciar el navegador de inicio de sesión: %1$s"</string>
     <string name="chromium_preparing" formatted="false">"Preparando el navegador de inicio de sesión…"</string>
-    <string name="discovery_start_radio" formatted="false">"Iniciar radio"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"Cada reproducción guarda el lugar exacto donde sonó para que puedas verlo en un mapa. Se queda en este ordenador, nunca se sube y no entra en las copias de seguridad. Puedes borrarlo aquí o desde el mapa cuando quieras."</string>
     <string name="insights_places_guide_desktop" formatted="false">"Mientras suena música, Aurora comprueba tu ubicación como mucho cada 10 minutos, la compara con Casa y Trabajo y solo guarda la etiqueta. Casa y Trabajo se quedan en este ordenador y no entran en ninguna copia de seguridad."</string>
     <string name="insights_step_private_title_desktop" formatted="false">"Se queda en tu ordenador"</string>

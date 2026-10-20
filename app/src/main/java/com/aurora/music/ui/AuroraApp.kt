@@ -855,7 +855,10 @@ fun AuroraApp() {
                 }
         }
 
-    androidx.compose.runtime.CompositionLocalProvider(com.aurora.music.ui.screens.player.LocalPlayerPanes provides playerPanes) {
+    androidx.compose.runtime.CompositionLocalProvider(
+        com.aurora.music.ui.screens.player.LocalPlayerPanes provides playerPanes,
+        com.aurora.music.ui.components.LocalStartRadio provides remember(playerVM) { { song: com.aurora.music.model.Song -> playerVM.startSonicRadio(song) { confirm(it) } } },
+    ) {
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen || drawerState.targetValue == DrawerValue.Open ||

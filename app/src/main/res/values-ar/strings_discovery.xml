@@ -4,4 +4,5 @@
     <string name="discovery_explore_failed">"تعذر تحميل الاستكشاف. تحقق من اتصالك وحاول مرة أخرى."</string>
     <string name="discovery_related">"ذات صلة"</string>
     <string name="discovery_related_empty">"لا يوجد في YouTube Music شيء ذو صلة بهذه الأغنية."</string>
+    <string name="discovery_start_radio" formatted="false">"بدء راديو"</string>
 </resources>

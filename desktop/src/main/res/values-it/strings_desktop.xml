@@ -3,7 +3,6 @@
     <string name="chromium_downloading" formatted="false">"Download del browser di accesso. Avviene una sola volta e occupa circa 150 MB."</string>
     <string name="chromium_failed" formatted="false">"Impossibile avviare il browser di accesso: %1$s"</string>
     <string name="chromium_preparing" formatted="false">"Preparazione del browser di accesso…"</string>
-    <string name="discovery_start_radio" formatted="false">"Avvia radio"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"Ogni ascolto conserva il punto esatto in cui è stato riprodotto, così puoi vederlo su una mappa. Resta su questo computer, non viene mai caricato ed è escluso dai backup. Puoi eliminarlo qui o dalla mappa in qualsiasi momento."</string>
     <string name="insights_places_guide_desktop" formatted="false">"Mentre la musica suona, Aurora controlla la posizione al massimo ogni 10 minuti, la confronta con Casa e Lavoro e conserva solo l’etichetta. Casa e Lavoro restano su questo computer e sono esclusi da ogni backup."</string>
     <string name="insights_step_private_title_desktop" formatted="false">"Resta sul tuo computer"</string>

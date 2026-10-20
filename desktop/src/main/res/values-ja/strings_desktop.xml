@@ -3,7 +3,6 @@
     <string name="chromium_downloading" formatted="false">"サインイン用ブラウザをダウンロードしています。初回のみで、約 150 MB です。"</string>
     <string name="chromium_failed" formatted="false">"サインイン用ブラウザを起動できませんでした: %1$s"</string>
     <string name="chromium_preparing" formatted="false">"サインイン用ブラウザを準備しています…"</string>
-    <string name="discovery_start_radio" formatted="false">"ラジオを開始"</string>
     <string name="insights_location_history_guide_desktop" formatted="false">"各再生は再生された正確な場所を保存し、地図で確認できます。データはこのコンピューターにのみ保存され、アップロードされることはなく、バックアップにも含まれません。ここまたは地図からいつでも削除できます。"</string>
     <string name="insights_places_guide_desktop" formatted="false">"音楽の再生中、Aurora は最大 10 分に 1 回位置を確認し、自宅と職場と比べてラベルだけを残します。自宅と職場の位置そのものはこのコンピューターにのみ保存され、どのバックアップにも含まれません。"</string>
     <string name="insights_step_private_title_desktop" formatted="false">"データはこのコンピューターの中だけ"</string>
