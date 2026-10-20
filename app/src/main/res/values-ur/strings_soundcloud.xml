@@ -16,4 +16,8 @@
     <string name="comment_hint">"%1$s پر تبصرہ"</string>
     <string name="comment_post">"پوسٹ کریں"</string>
     <string name="comment_failed">"آپ کا تبصرہ پوسٹ نہیں ہو سکا۔ دوبارہ کوشش کریں۔"</string>
+    <string name="soundcloud_verify">"SoundCloud کی تصدیق کریں"</string>
+    <string name="soundcloud_verify_detail">"منتظر لائکس اور فالوز بھیجیں۔ SoundCloud پہلے یہ ثابت کرنے کو کہہ سکتا ہے کہ آپ انسان ہیں۔"</string>
+    <string name="soundcloud_verify_done">"SoundCloud تازہ ترین ہے۔"</string>
+    <string name="soundcloud_verify_failed">"SoundCloud کو ابھی بھی آپ کی تصدیق درکار ہے۔ دوبارہ کوشش کریں۔"</string>
 </resources>

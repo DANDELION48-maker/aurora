@@ -3,6 +3,7 @@ package com.aurora.music.data
 import com.aurora.music.data.remote.*
 import com.google.gson.JsonParser
 import kotlinx.coroutines.runBlocking
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.*
 import org.junit.Test
 import java.util.Base64
@@ -71,7 +72,7 @@ class SoundCloudBackendTest {
     }
 
     private class Recorder(private val reads: (String) -> String) : SoundCloudTransport {
-        val writes = mutableListOf<String>()
+        val writes: MutableList<String> = java.util.Collections.synchronizedList(mutableListOf())
         override suspend fun get(path: String) = JsonParser.parseString(reads(path))
         override suspend fun send(method: String, path: String, body: com.google.gson.JsonObject?, form: Map<String, String>?): com.google.gson.JsonElement {
             writes += "$method $path ${body ?: ""}".trim()
@@ -110,9 +111,10 @@ class SoundCloudBackendTest {
         backend.setStarred("7", true, "artist")
         backend.setStarred("soundcloud:system-playlists:weekly:42", true, "playlist")
         backend.scrobble("5")
-        assertEquals(listOf("PUT /users/42/track_likes/5", "DELETE /users/42/playlist_likes/9", "POST /me/followings/7",
+        kotlinx.coroutines.withTimeout(5_000) { while (api.writes.size < 5) kotlinx.coroutines.delay(10) }
+        assertEquals(setOf("PUT /users/42/track_likes/5", "DELETE /users/42/playlist_likes/9", "POST /me/followings/7",
             "PUT /users/42/system_playlist_likes/soundcloud:system-playlists:weekly:42",
-            """POST /me/play-history {"track_urn":"soundcloud:tracks:5"}"""), api.writes)
+            """POST /me/play-history {"track_urn":"soundcloud:tracks:5"}"""), api.writes.toSet())
     }
 
     @Test fun playlistEditsSendTheWholeTrackListBack() = runBlocking {
@@ -191,5 +193,79 @@ class SoundCloudBackendTest {
         assertEquals("https://m.soundcloud.com/-/refresh-token", mobile.refreshUrl)
         assertEquals(SoundCloudWebSession.MOBILE, SoundCloudWebSession.decode(mobile.refreshed(listOf("oauth_token=d.e.f")).encode()).origin)
         assertThrows(java.io.IOException::class.java) { SoundCloudWebSession.decode(SoundCloudWebSession("oauth_token=x", "", "https://evil.example").encode()) }
+    }
+
+    @Test fun likesCountHereStraightAwayWhileSoundCloudRefusesThem() = runBlocking {
+        val backend = SoundCloudBackend(session, object : SoundCloudTransport {
+            override suspend fun get(path: String) = JsonParser.parseString(when (path) {
+                "/users/42/track_likes?limit=200" -> """{"collection":[{"track":${track(5)}}]}"""
+                "/tracks?ids=9" -> "[${track(9)}]"
+                else -> error(path)
+            })
+            override suspend fun send(method: String, path: String, body: com.google.gson.JsonObject?, form: Map<String, String>?): com.google.gson.JsonElement =
+                throw SoundCloudCheckException()
+        })
+        assertTrue(backend.setStarred("9", true, "song"))
+        assertEquals(listOf("9", "5"), backend.allSongs().map { it.id })
+        backend.setStarred("5", false, "song")
+        assertEquals(listOf("9"), backend.allSongs().map { it.id })
+        backend.setStarred("9", false, "song")
+        assertEquals(emptyList<String>(), backend.allSongs().map { it.id })
+        backend.setStarred("5", true, "song")
+        assertEquals(listOf("5"), backend.allSongs().map { it.id })
+    }
+
+    @Test fun pendingLikesSurviveARestartAndSettleOnceSoundCloudAgrees() = runBlocking {
+        val dir = java.nio.file.Files.createTempDirectory("aurora-sc-likes-").toFile()
+        try {
+            SoundCloudPendingLikes(dir).set("42", "track:9", PendingLike(true))
+            val backend = SoundCloudBackend(session, SoundCloudTransport { path ->
+                if (path != "/users/42/track_likes?limit=200") error(path)
+                JsonParser.parseString("""{"collection":[{"track":${track(9)}}]}""")
+            }, pending = SoundCloudPendingLikes(dir))
+            assertEquals(listOf("9"), backend.allSongs().map { it.id })
+            assertTrue(SoundCloudPendingLikes(dir).of("42").isEmpty())
+        } finally {
+            dir.deleteRecursively()
+        }
+    }
+
+    @Test fun onlyVerifyingCanOpenTheBotCheckAndOnlyOnce() {
+        val payload = Base64.getUrlEncoder().withoutPadding().encodeToString("""{"exp":4102444800}""".toByteArray())
+        val http = okhttp3.OkHttpClient.Builder().addInterceptor { chain ->
+            val text = if (chain.request().url.host == "soundcloud.com") """<script src="https://a-v2.sndcdn.com/assets/app.js">"""
+                else """client_id:"abcdefghijklmnopqrstuvwxyz012345""""
+            okhttp3.Response.Builder().request(chain.request()).protocol(okhttp3.Protocol.HTTP_1_1).code(200).message("OK")
+                .body(text.toResponseBody()).build()
+        }.build()
+        val prompts = mutableListOf<Boolean>()
+        val client = SoundCloudClient({ SoundCloudWebSession("oauth_token=h.$payload.s") }, http = http, browser = SoundCloudBrowser { _, _, _, _, _, _, prompt ->
+            prompts += prompt
+            403 to """{"url":"https://geo.captcha-delivery.com/captcha/?cid=x"}"""
+        })
+        assertThrows(SoundCloudCheckException::class.java) { runBlocking { client.send("POST", "/tracks/9/comments") } }
+        assertThrows(SoundCloudCheckException::class.java) { runBlocking { client.sendWithCheck("PUT", "/users/42/track_likes/9") } }
+        assertEquals(listOf(false, true), prompts)
+    }
+
+    @Test fun followsWaitTooAndVerifyingSendsWhatWaited() = runBlocking {
+        val sent = java.util.Collections.synchronizedList(mutableListOf<String>())
+        val backend = SoundCloudBackend(session, object : SoundCloudTransport {
+            override suspend fun get(path: String) = JsonParser.parseString(when (path) {
+                "/users/42/followings?limit=200" -> """{"collection":[]}"""
+                "/users/7" -> """{"id":7,"username":"uploader"}"""
+                else -> error(path)
+            })
+            override suspend fun send(method: String, path: String, body: com.google.gson.JsonObject?, form: Map<String, String>?): com.google.gson.JsonElement =
+                throw SoundCloudCheckException()
+            override suspend fun sendWithCheck(method: String, path: String): com.google.gson.JsonElement {
+                sent += "$method $path"
+                return JsonParser.parseString("{}")
+            }
+        })
+        backend.setStarred("7", true, "artist")
+        assertEquals(listOf("uploader"), backend.allArtists().map { it.name })
+        assertTrue(backend.verify())
+        assertEquals(listOf("POST /me/followings/7"), sent)
     }
 }

@@ -16,4 +16,8 @@
     <string name="comment_hint">"%1$s पर टिप्पणी"</string>
     <string name="comment_post">"पोस्ट करें"</string>
     <string name="comment_failed">"आपकी टिप्पणी पोस्ट नहीं हो सकी। फिर से कोशिश करें।"</string>
+    <string name="soundcloud_verify">"SoundCloud सत्यापित करें"</string>
+    <string name="soundcloud_verify_detail">"इंतज़ार कर रहे लाइक और फ़ॉलो भेजें। SoundCloud पहले यह साबित करने को कह सकता है कि आप इंसान हैं।"</string>
+    <string name="soundcloud_verify_done">"SoundCloud अप टू डेट है।"</string>
+    <string name="soundcloud_verify_failed">"SoundCloud को अभी भी आपका सत्यापन चाहिए। फिर से कोशिश करें।"</string>
 </resources>

@@ -39,14 +39,14 @@ class SoundCloudWebWriter(context: Context) : SoundCloudBrowser {
     val captcha = MutableStateFlow<WebView?>(null)
     @Volatile private var solved: CompletableDeferred<Boolean>? = null
 
-    override suspend fun fetch(origin: String, method: String, url: String, token: String, body: String?, contentType: String): Pair<Int, String> = lock.withLock {
+    override suspend fun fetch(origin: String, method: String, url: String, token: String, body: String?, contentType: String, prompt: Boolean): Pair<Int, String> = lock.withLock {
         require(origin in SoundCloudWebSession.ORIGINS && url.startsWith("https://api-v2.soundcloud.com/"))
         main.removeCallbacks(idle)
         try {
             val page = open(origin)
             val first = request(page, method, url, token, body, contentType)
             val challenge = captchaUrl(first) ?: return@withLock first
-            if (solve(page, challenge)) request(page, method, url, token, body, contentType) else first
+            if (prompt && solve(page, challenge)) request(page, method, url, token, body, contentType) else first
         } finally {
             main.removeCallbacks(idle)
             main.postDelayed(idle, IDLE_MS)

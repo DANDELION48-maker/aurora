@@ -67,6 +67,7 @@ class AppContainer(context: Context) {
     val queueStore = QueueStore(appContext.filesDir)
 
     val replayGainStore = ReplayGainStore(appContext.filesDir)
+    private val soundcloudPendingLikes = SoundCloudPendingLikes(appContext.filesDir)
 
     val localLibrary = LocalLibrary(appContext, gainProvider = { path -> replayGainStore.gainsFor(path) },
         separatorsProvider = { settingsStore.artistSeparators.first() })
@@ -191,6 +192,8 @@ class AppContainer(context: Context) {
             ?.let { com.aurora.music.playback.YoutubeResolver.PlaybackStream(it) }
     }
 
+    suspend fun verifySoundCloud(session: Session): Boolean = (buildBackend(session) as? SoundCloudBackend)?.verify() == true
+
     // one client per login: soundcloud rotates the refresh token, so two clients refreshing it would sign each other out
     private val soundcloudClients = java.util.concurrent.ConcurrentHashMap<String, com.aurora.music.data.remote.SoundCloudClient>()
     private fun soundcloudClient(session: Session) = soundcloudClients.getOrPut(session.token) {
@@ -232,7 +235,7 @@ class AppContainer(context: Context) {
                     (unifiedLibraryValue && lastSession?.type?.supportsMergedLibrary == true &&
                         (mergeSourceKeys.isEmpty() || session.accountKey() in mergeSourceKeys))) _sourceErrors.tryEmit(message)
             }
-            ServerType.SOUNDCLOUD -> SoundCloudBackend(session, soundcloudClient(session), localize)
+            ServerType.SOUNDCLOUD -> SoundCloudBackend(session, soundcloudClient(session), localize, soundcloudPendingLikes)
             ServerType.EXTENSION -> extensions.backend(session) { song ->
                 val enabled = extensions.entries.value.any { it.component == session.userId && it.enabled }
                 val downloaded = if (!enabled) downloadManager.getByOriginalId(song.id)

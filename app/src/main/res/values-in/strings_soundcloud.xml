@@ -16,4 +16,8 @@
     <string name="comment_hint">"Komentar di %1$s"</string>
     <string name="comment_post">"Kirim"</string>
     <string name="comment_failed">"Komentar Anda tidak dapat dikirim. Coba lagi."</string>
+    <string name="soundcloud_verify">"Verifikasi SoundCloud"</string>
+    <string name="soundcloud_verify_detail">"Kirim suka dan ikuti yang tertunda. SoundCloud mungkin meminta Anda membuktikan bahwa Anda manusia terlebih dahulu."</string>
+    <string name="soundcloud_verify_done">"SoundCloud sudah terbaru."</string>
+    <string name="soundcloud_verify_failed">"SoundCloud masih perlu memverifikasi Anda. Coba lagi."</string>
 </resources>

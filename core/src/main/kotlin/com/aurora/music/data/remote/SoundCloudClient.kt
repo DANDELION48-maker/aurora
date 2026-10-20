@@ -26,11 +26,16 @@ fun interface SoundCloudTransport {
     // form is for the endpoints the web player posts form-encoded, such as comments
     suspend fun send(method: String, path: String, body: JsonObject? = null, form: Map<String, String>? = null): JsonElement =
         throw IOException("SoundCloud changes are unavailable.")
+
+    // the one change that may open soundcloud's bot check for the user to pass; every other change is refused quietly
+    suspend fun sendWithCheck(method: String, path: String): JsonElement = send(method, path)
 }
+
+class SoundCloudCheckException : IOException("SoundCloud wants to check you're human. Go to Settings → Accounts and choose Verify SoundCloud.")
 
 // soundcloud's bot check turns away writes that don't come from a real browser, so the app can hand them to one
 fun interface SoundCloudBrowser {
-    suspend fun fetch(origin: String, method: String, url: String, token: String, body: String?, contentType: String): Pair<Int, String>
+    suspend fun fetch(origin: String, method: String, url: String, token: String, body: String?, contentType: String, prompt: Boolean): Pair<Int, String>
 }
 
 /** SoundCloud's web api: the signed-in web player's oauth token plus the client id its scripts carry. */
@@ -71,14 +76,18 @@ class SoundCloudClient(
     // a stale client id is refused like a bad login, so retry once with a fresh one before refreshing the login
     override suspend fun get(path: String): JsonElement = send("GET", path)
 
-    override suspend fun send(method: String, path: String, body: JsonObject?, form: Map<String, String>?): JsonElement = withContext(Dispatchers.IO) {
+    override suspend fun send(method: String, path: String, body: JsonObject?, form: Map<String, String>?): JsonElement = send(method, path, body, form, false)
+
+    override suspend fun sendWithCheck(method: String, path: String): JsonElement = send(method, path, null, null, true)
+
+    private suspend fun send(method: String, path: String, body: JsonObject?, form: Map<String, String>?, prompt: Boolean): JsonElement = withContext(Dispatchers.IO) {
         require(method in setOf("GET", "POST", "PUT", "DELETE"))
         val base = url(path)
         if (auth().expiresAt - System.currentTimeMillis() / 1000 < 300) refreshLogin(auth().token)
         val payload = form?.entries?.joinToString("&") { "${java.net.URLEncoder.encode(it.key, "UTF-8")}=${java.net.URLEncoder.encode(it.value, "UTF-8")}" }
             ?.let { it to FORM } ?: body?.let { it.toString() to JSON }
-        attempt(base, false, method, payload) ?: attempt(base, true, method, payload)
-            ?: (if (refreshLogin(auth().token)) attempt(base, false, method, payload) else null)
+        attempt(base, false, method, payload, prompt) ?: attempt(base, true, method, payload, prompt)
+            ?: (if (refreshLogin(auth().token)) attempt(base, false, method, payload, prompt) else null)
             ?: throw MediaAccountExpiredException()
     }
 
@@ -98,10 +107,10 @@ class SoundCloudClient(
         true
     }
 
-    private suspend fun attempt(base: HttpUrl, refresh: Boolean, method: String, payload: Pair<String, String>?): JsonElement? {
+    private suspend fun attempt(base: HttpUrl, refresh: Boolean, method: String, payload: Pair<String, String>?, prompt: Boolean): JsonElement? {
         val auth = auth()
         val url = base.newBuilder().setQueryParameter("client_id", clientId(refresh)).build()
-        val (code, text) = if (method != "GET" && browser != null) browser.fetch(auth.origin, method, url.toString(), auth.token, payload?.first, payload?.second ?: JSON)
+        val (code, text) = if (method != "GET" && browser != null) browser.fetch(auth.origin, method, url.toString(), auth.token, payload?.first, payload?.second ?: JSON, prompt)
         else {
             val request = Request.Builder().url(url)
                 .header("Accept", "application/json").header("Origin", auth.origin).header("Referer", "${auth.origin}/")
@@ -113,6 +122,8 @@ class SoundCloudClient(
                 .use { it.code to it.body?.string().orEmpty() }
         }
         if (method != "GET" && code !in 200..299) com.aurora.music.util.AppLog.d("SoundCloud", "$method ${base.encodedPath} -> $code ${text.take(120)}")
+        // a fresh client id won't pass the bot check either, and asking again would open its window a second time
+        if (code == 403 && "captcha-delivery.com" in text) throw SoundCloudCheckException()
         if (code == 401 || (code == 403 && !refresh)) return null
         if (code == 403) throw IOException("SoundCloud did not allow this request. Please try again.")
         if (code == 404) throw IOException("SoundCloud could not find this item.")

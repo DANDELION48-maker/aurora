@@ -16,4 +16,8 @@
     <string name="comment_hint">"Kommentar bei %1$s"</string>
     <string name="comment_post">"Senden"</string>
     <string name="comment_failed">"Dein Kommentar konnte nicht gesendet werden. Versuche es erneut."</string>
+    <string name="soundcloud_verify">"SoundCloud verifizieren"</string>
+    <string name="soundcloud_verify_detail">"Sendet wartende Likes und Follows. SoundCloud fragt eventuell zuerst, ob du ein Mensch bist."</string>
+    <string name="soundcloud_verify_done">"SoundCloud ist auf dem neuesten Stand."</string>
+    <string name="soundcloud_verify_failed">"SoundCloud muss dich noch verifizieren. Versuche es erneut."</string>
 </resources>

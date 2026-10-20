@@ -41,14 +41,14 @@ class SoundCloudWebWriter : SoundCloudBrowser {
     val captcha: StateFlow<Captcha?> = mutableCaptcha.asStateFlow()
     @Volatile private var solved: CompletableDeferred<Boolean>? = null
 
-    override suspend fun fetch(origin: String, method: String, url: String, token: String, body: String?, contentType: String): Pair<Int, String> = lock.withLock {
+    override suspend fun fetch(origin: String, method: String, url: String, token: String, body: String?, contentType: String, prompt: Boolean): Pair<Int, String> = lock.withLock {
         require(origin in SoundCloudWebSession.ORIGINS && url.startsWith("https://api-v2.soundcloud.com/"))
         idle?.cancel()
         try {
             val current = open(origin)
             val first = request(current, method, url, token, body, contentType)
             val challenge = captchaUrl(first) ?: return@withLock first
-            if (!solve(origin, challenge)) return@withLock first
+            if (!prompt || !solve(origin, challenge)) return@withLock first
             // the check was solved in another page; this one's bot-check script still holds the refused session
             close()
             request(open(origin), method, url, token, body, contentType)

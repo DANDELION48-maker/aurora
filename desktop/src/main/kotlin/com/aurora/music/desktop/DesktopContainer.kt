@@ -134,6 +134,7 @@ class DesktopContainer(
     val spotifyCredentials = com.aurora.music.desktop.platform.WebCredentials.spotify(paths.local)
     val soundcloudCredentials = com.aurora.music.desktop.platform.WebCredentials.soundcloud(paths.local)
     val soundcloudWriter = com.aurora.music.desktop.web.SoundCloudWebWriter()
+    private val soundcloudPendingLikes = com.aurora.music.data.SoundCloudPendingLikes(paths.local)
     val spotifyWeb = com.aurora.music.desktop.web.SpotifyWebBridge(java.io.File(paths.local, "web"))
     val youtubeResolver by lazy { com.aurora.music.desktop.youtube.YoutubeResolver(http) }
 
@@ -148,6 +149,8 @@ class DesktopContainer(
             session = { com.aurora.music.data.remote.SoundCloudWebSession.decode(soundcloudCredentials.read(session.token)) },
             onRefreshed = { soundcloudCredentials.update(session.token, it.encode()) }, http = http, browser = soundcloudWriter)
     }
+
+    suspend fun verifySoundCloud(session: Session): Boolean = (buildBackend(session) as? com.aurora.music.data.SoundCloudBackend)?.verify() == true
 
     // soundcloud previews and drm-only tracks play from a youtube match instead
     fun resolveSoundCloud(song: Song): String? {
@@ -336,7 +339,7 @@ class DesktopContainer(
                     (unifiedLibraryValue && lastSession?.type?.supportsMergedLibrary == true &&
                         (mergeSourceKeys.isEmpty() || session.accountKey() in mergeSourceKeys))) _sourceErrors.tryEmit(message)
             }
-            ServerType.SOUNDCLOUD -> com.aurora.music.data.SoundCloudBackend(session, soundcloudClient(session), localize)
+            ServerType.SOUNDCLOUD -> com.aurora.music.data.SoundCloudBackend(session, soundcloudClient(session), localize, soundcloudPendingLikes)
             ServerType.EXTENSION -> null
         }
     }

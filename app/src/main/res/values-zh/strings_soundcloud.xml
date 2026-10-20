@@ -16,4 +16,8 @@
     <string name="comment_hint">"在 %1$s 处评论"</string>
     <string name="comment_post">"发布"</string>
     <string name="comment_failed">"无法发布评论，请重试。"</string>
+    <string name="soundcloud_verify">"验证 SoundCloud"</string>
+    <string name="soundcloud_verify_detail">"发送等待中的点赞和关注。SoundCloud 可能会先要求你证明自己是真人。"</string>
+    <string name="soundcloud_verify_done">"SoundCloud 已是最新。"</string>
+    <string name="soundcloud_verify_failed">"SoundCloud 仍需要验证你。请重试。"</string>
 </resources>

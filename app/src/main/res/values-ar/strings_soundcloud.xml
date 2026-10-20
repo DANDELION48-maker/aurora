@@ -16,4 +16,8 @@
     <string name="comment_hint">"تعليق عند %1$s"</string>
     <string name="comment_post">"نشر"</string>
     <string name="comment_failed">"تعذّر نشر تعليقك. حاول مرة أخرى."</string>
+    <string name="soundcloud_verify">"التحقق من SoundCloud"</string>
+    <string name="soundcloud_verify_detail">"أرسل الإعجابات والمتابعات المنتظرة. قد يطلب منك SoundCloud أولاً إثبات أنك إنسان."</string>
+    <string name="soundcloud_verify_done">"SoundCloud محدّث."</string>
+    <string name="soundcloud_verify_failed">"لا يزال SoundCloud بحاجة إلى التحقق منك. حاول مرة أخرى."</string>
 </resources>

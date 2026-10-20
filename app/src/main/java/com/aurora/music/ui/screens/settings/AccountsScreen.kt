@@ -24,11 +24,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 import com.aurora.music.AuroraApplication
 import com.aurora.music.data.ServerType
 import com.aurora.music.data.Session
@@ -57,6 +63,10 @@ fun AccountsScreen(
     val active by container.settingsStore.session.collectAsStateWithLifecycle(initialValue = null)
     fun key(s: Session?) = s?.accountKey().orEmpty()
     val activeKey = key(active)
+    val soundclouds = saved.filter { it.type == ServerType.SOUNDCLOUD }
+    val scope = rememberCoroutineScope()
+    var verifying by remember { mutableStateOf<String?>(null) }
+    val verified = remember { mutableStateMapOf<String, Boolean>() }
 
     // always offered so you can jump to local even without a saved login
     val localSession = remember { Session(server = "On this device", username = "Local library", salt = "", token = "local", type = ServerType.LOCAL) }
@@ -104,6 +114,29 @@ fun AccountsScreen(
                         Icon(Icons.Filled.Add, null, tint = MaterialTheme.colorScheme.primary)
                         Spacer(Modifier.width(14.dp))
                         Text(appString(R.string.text_add_another_account_5dcc79), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.primary)
+                    }
+                }
+            }
+            if (soundclouds.isNotEmpty()) {
+                item { SettingsSectionTitle("SoundCloud") }
+                item {
+                    SettingsGroup {
+                        soundclouds.forEachIndexed { i, s ->
+                            if (i > 0) SettingsRowDivider()
+                            val title = appString(R.string.soundcloud_verify) + if (soundclouds.size > 1) " · ${s.username}" else ""
+                            val subtitle = when (verified[key(s)]) {
+                                true -> appString(R.string.soundcloud_verify_done)
+                                false -> appString(R.string.soundcloud_verify_failed)
+                                null -> appString(R.string.soundcloud_verify_detail)
+                            }
+                            SettingsNavRow(Icons.Filled.VerifiedUser, title, subtitle, value = if (verifying == key(s)) "…" else null) {
+                                if (verifying == null) scope.launch {
+                                    verifying = key(s)
+                                    verified[key(s)] = container.verifySoundCloud(s)
+                                    verifying = null
+                                }
+                            }
+                        }
                     }
                 }
             }

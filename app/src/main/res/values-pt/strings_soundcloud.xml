@@ -16,4 +16,8 @@
     <string name="comment_hint">"Comentar em %1$s"</string>
     <string name="comment_post">"Publicar"</string>
     <string name="comment_failed">"Não foi possível publicar seu comentário. Tente novamente."</string>
+    <string name="soundcloud_verify">"Verificar SoundCloud"</string>
+    <string name="soundcloud_verify_detail">"Envia as curtidas e os seguimentos pendentes. O SoundCloud pode pedir primeiro que você prove que é humano."</string>
+    <string name="soundcloud_verify_done">"O SoundCloud está atualizado."</string>
+    <string name="soundcloud_verify_failed">"O SoundCloud ainda precisa verificar você. Tente novamente."</string>
 </resources>

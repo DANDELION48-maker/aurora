@@ -16,4 +16,8 @@
     <string name="comment_hint">"%1$s にコメント"</string>
     <string name="comment_post">"投稿"</string>
     <string name="comment_failed">"コメントを投稿できませんでした。もう一度お試しください。"</string>
+    <string name="soundcloud_verify">"SoundCloud を確認"</string>
+    <string name="soundcloud_verify_detail">"保留中のいいねとフォローを送信します。SoundCloud が最初に人間であることの確認を求める場合があります。"</string>
+    <string name="soundcloud_verify_done">"SoundCloud は最新の状態です。"</string>
+    <string name="soundcloud_verify_failed">"SoundCloud の確認がまだ必要です。もう一度お試しください。"</string>
 </resources>

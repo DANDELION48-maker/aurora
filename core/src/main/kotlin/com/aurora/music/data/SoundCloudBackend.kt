@@ -6,6 +6,9 @@ import com.aurora.music.util.accentArgbFor
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -23,7 +26,11 @@ class SoundCloudBackend(
     override val session: Session,
     private val api: SoundCloudTransport,
     private val localize: (Song) -> Song = { it },
+    private val pending: SoundCloudPendingLikes = SoundCloudPendingLikes(),
 ) : MediaBackend {
+    private val background = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val syncLock = Mutex()
+    private val items = ConcurrentHashMap<String, JsonObject>()
     private val songs = ConcurrentHashMap<String, Song>()
     private val pageCache = ConcurrentHashMap<String, Pair<Long, List<JsonObject>>>()
     private val pageLock = Mutex()
@@ -67,7 +74,21 @@ class SoundCloudBackend(
         HomeData(sections = sections)
     }
 
-    private suspend fun library() = pages("/me/library/all?limit=200")
+    private suspend fun library(): List<JsonObject> {
+        val entries = pages("/me/library/all?limit=200")
+        val ids = entries.mapTo(HashSet(), ::collectionId)
+        val waiting = waiting(PLAYLIST_LIKE, entries.filter { it.string("type").endsWith("-like") }.mapTo(HashSet(), ::collectionId))
+        if (waiting.isEmpty()) return entries
+        val added = waiting.filterValues { it.liked }.keys.filter { it !in ids }.reversed().mapNotNull { id ->
+            if (id.startsWith(SYSTEM_PLAYLIST)) item("/system-playlists/$id")?.let { JsonObject().apply { addProperty("type", "system-playlist-like"); add("system_playlist", it) } }
+            else item("/playlists/$id?representation=mini")?.let { JsonObject().apply { addProperty("type", "playlist-like"); add("playlist", it) } }
+        }
+        return added + entries.filter { waiting[collectionId(it)]?.liked != false }
+    }
+    private fun collectionId(entry: JsonObject) = entry.obj("playlist").string("id").ifBlank { entry.obj("system_playlist").string("urn") }
+
+    private suspend fun item(path: String): JsonObject? =
+        items[path] ?: runCatching { api.get(path).asJsonObject }.getOrNull()?.also { items[path] = it }
     override suspend fun allAlbums() = library().mapNotNull { it.obj("playlist").takeIf { p -> p.bool("is_album") }?.let(::album) }.distinctBy { it.id }
     override suspend fun allPlaylists() = withCovers(library().mapNotNull { entry ->
         entry.obj("playlist").takeIf { it.string("id").isNotBlank() && !it.bool("is_album") }?.let(::playlist)
@@ -88,12 +109,81 @@ class SoundCloudBackend(
         }
         return list.map { p -> covers[p.id]?.takeIf { p.coverUrl.isBlank() && it.isNotBlank() }?.let { p.copy(coverUrl = it) } ?: p }
     }
-    override suspend fun allArtists() = pages("/users/$user/followings?limit=200").map(::artist)
-    override suspend fun allSongs() = remember(pages("/users/$user/track_likes?limit=200").mapNotNull { song(it.obj("track")) }).distinctBy { it.id }
+    override suspend fun allArtists(): List<Artist> {
+        val followed = pages("/users/$user/followings?limit=200").map(::artist)
+        val ids = followed.mapTo(HashSet()) { it.id }
+        val waiting = waiting(FOLLOW, ids)
+        if (waiting.isEmpty()) return followed
+        val added = waiting.filterValues { it.liked }.keys.filter { it !in ids }.reversed().mapNotNull { id -> item("/users/$id")?.let(::artist) }
+        return added + followed.filter { waiting[it.id]?.liked != false }
+    }
+    override suspend fun allSongs(): List<Song> {
+        val liked = remember(pages("/users/$user/track_likes?limit=200").mapNotNull { song(it.obj("track")) }).distinctBy { it.id }
+        val ids = liked.mapTo(HashSet()) { it.id }
+        val waiting = waiting(TRACK_LIKE, ids)
+        if (waiting.isEmpty()) return liked
+        val added = tracks(waiting.filterValues { it.liked }.keys.filter { it !in ids }.reversed())
+        return added + liked.filter { waiting[it.id]?.liked != false }
+    }
+
+    // likes soundcloud's own list now agrees with are done; ones it took a while ago but still doesn't list are left to it
+    private fun waiting(kind: String, present: Set<String>): Map<String, PendingLike> {
+        val now = System.currentTimeMillis()
+        val ofKind = pending.of(user).filterKeys { it.substringBefore(':') == kind }
+        ofKind.forEach { (key, like) ->
+            if (like.liked == (key.substringAfter(':') in present) || (like.sentAt > 0 && now - like.sentAt > SoundCloudPendingLikes.SENT_GRACE_MS)) pending.clear(user, key)
+        }
+        val left = pending.of(user).filterKeys { it.substringBefore(':') == kind }
+        if (left.values.any { it.sentAt == 0L } && pending.dueForSync(user)) background.launch { sync(check = false) }
+        return left.mapKeys { it.key.substringAfter(':') }
+    }
+
+    private suspend fun tracks(ids: List<String>): List<Song> {
+        val missing = ids.filterNot(songs::containsKey)
+        missing.chunked(50).forEach { chunk ->
+            runCatching { remember(api.get("/tracks?ids=${chunk.joinToString(",")}").asJsonArray.filter { it.isJsonObject }.mapNotNull { song(it.asJsonObject) }) }
+        }
+        return ids.mapNotNull { songs[it] }
+    }
+
+    // stops at the first refusal: until the user passes the bot check the rest would be refused too
+    private suspend fun sync(check: Boolean): Boolean = syncLock.withLock {
+        for ((key, like) in pending.of(user)) {
+            if (like.sentAt > 0) continue
+            val kind = key.substringBefore(':')
+            val id = key.substringAfter(':')
+            val path = when (kind) {
+                FOLLOW -> "/me/followings/$id"
+                PLAYLIST_LIKE -> if (id.startsWith(SYSTEM_PLAYLIST)) "/users/$user/system_playlist_likes/$id" else "/users/$user/playlist_likes/$id"
+                else -> "/users/$user/track_likes/$id"
+            }
+            val method = if (!like.liked) "DELETE" else if (kind == FOLLOW) "POST" else "PUT"
+            try {
+                if (check) api.sendWithCheck(method, path) else api.send(method, path)
+            } catch (e: SoundCloudCheckException) {
+                return@withLock false
+            } catch (e: MediaAccountExpiredException) {
+                return@withLock false
+            } catch (e: IOException) {
+                if (like.liked) continue
+            }
+            pending.set(user, key, like.copy(sentAt = System.currentTimeMillis()))
+            pageCache.clear()
+        }
+        pending.of(user).values.none { it.sentAt == 0L }
+    }
+
+    // sends whatever is waiting and lets soundcloud's bot check ask first; with nothing waiting, re-liking a liked track shows whether it would
+    suspend fun verify(): Boolean {
+        if (pending.of(user).values.any { it.sentAt == 0L }) return sync(check = true)
+        val probe = allSongs().firstOrNull() ?: return true
+        return runCatching { api.sendWithCheck("PUT", "/users/$user/track_likes/${probe.id}") }.isSuccess
+    }
     override suspend fun librarySongs(limit: Int) = allSongs().take(limit)
     override suspend fun songsPage(offset: Int, count: Int) = allSongs().drop(offset).take(count)
     override suspend fun starredSongs() = allSongs().map { it.copy(liked = true) }
-    override suspend fun starredCount() = api.get("/me").asJsonObject.int("likes_count")
+    override suspend fun starredCount() =
+        if (pending.of(user).keys.none { it.startsWith("$TRACK_LIKE:") }) api.get("/me").asJsonObject.int("likes_count") else allSongs().size
     override suspend fun starredIds(): Set<String> = coroutineScope {
         val tracks = async { allSongs().map { it.id } }
         val artists = async { allArtists().map { it.id } }
@@ -159,13 +249,13 @@ class SoundCloudBackend(
     private suspend fun change(method: String, path: String, body: JsonObject? = null): JsonElement =
         api.send(method, path, body).also { pageCache.clear() }
 
+    // a like or follow counts here straight away and reaches soundcloud in the background, whenever its bot check lets it through
     override suspend fun setStarred(id: String, starred: Boolean, kind: String): Boolean {
-        val path = when (kind) {
-            "artist" -> "/me/followings/$id"
-            "album", "playlist" -> if (id.startsWith(SYSTEM_PLAYLIST)) "/users/$user/system_playlist_likes/$id" else "/users/$user/playlist_likes/$id"
-            else -> "/users/$user/track_likes/$id"
-        }
-        change(if (!starred) "DELETE" else if (kind == "artist") "POST" else "PUT", path)
+        val key = "${when (kind) { "artist" -> FOLLOW; "album", "playlist" -> PLAYLIST_LIKE; else -> TRACK_LIKE }}:$id"
+        val earlier = pending.of(user)[key]
+        if (earlier != null && earlier.liked != starred && earlier.sentAt == 0L) pending.clear(user, key)
+        else pending.set(user, key, PendingLike(starred))
+        background.launch { sync(check = false) }
         return true
     }
 
@@ -254,6 +344,9 @@ class SoundCloudBackend(
 
     companion object {
         private const val SYSTEM_PLAYLIST = "soundcloud:system-playlists:"
+        private const val TRACK_LIKE = "track"
+        private const val FOLLOW = "artist"
+        private const val PLAYLIST_LIKE = "playlist"
 
         fun sentinel(id: String) = "aurora-sc://track/$id"
 

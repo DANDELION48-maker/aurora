@@ -16,4 +16,8 @@
     <string name="comment_hint">"%1$s에 댓글"</string>
     <string name="comment_post">"게시"</string>
     <string name="comment_failed">"댓글을 게시하지 못했습니다. 다시 시도하세요."</string>
+    <string name="soundcloud_verify">"SoundCloud 인증"</string>
+    <string name="soundcloud_verify_detail">"대기 중인 좋아요와 팔로우를 보냅니다. SoundCloud가 먼저 사람인지 확인을 요청할 수 있습니다."</string>
+    <string name="soundcloud_verify_done">"SoundCloud가 최신 상태입니다."</string>
+    <string name="soundcloud_verify_failed">"SoundCloud에서 아직 인증이 필요합니다. 다시 시도하세요."</string>
 </resources>

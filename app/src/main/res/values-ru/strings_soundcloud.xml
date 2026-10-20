@@ -16,4 +16,8 @@
     <string name="comment_hint">"Комментарий на %1$s"</string>
     <string name="comment_post">"Отправить"</string>
     <string name="comment_failed">"Не удалось отправить комментарий. Попробуйте ещё раз."</string>
+    <string name="soundcloud_verify">"Подтвердить SoundCloud"</string>
+    <string name="soundcloud_verify_detail">"Отправляет ожидающие лайки и подписки. SoundCloud может сначала попросить подтвердить, что вы человек."</string>
+    <string name="soundcloud_verify_done">"SoundCloud обновлён."</string>
+    <string name="soundcloud_verify_failed">"SoundCloud всё ещё ждёт подтверждения. Попробуйте ещё раз."</string>
 </resources>
