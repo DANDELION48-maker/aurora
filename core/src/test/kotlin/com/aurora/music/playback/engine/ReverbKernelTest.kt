@@ -1,6 +1,7 @@
 package com.aurora.music.playback.engine
 
 import com.aurora.music.data.ConcertPrefs
+import com.aurora.music.data.ConcertScene
 import com.aurora.music.data.ConcertSound
 import com.aurora.music.data.ConcertVenue
 import com.aurora.music.data.ReverbPreset
@@ -168,6 +169,20 @@ class ReverbKernelTest {
         }
     }
 
+    @Test fun everySceneKeepsTheLevelWithACrowdAndIgnoresBlockSizes() {
+        ConcertScene.ALL.forEachIndexed { i, scene ->
+            val prefs = ReverbPrefs(enabled = true, concert = scene.applyTo(ConcertPrefs(enabled = true)))
+            val source = warmNoise(60L + i)
+            val whole = runSized(kernel(prefs), rate * 3, intArrayOf(1024), source)
+            val ragged = runSized(kernel(prefs), rate * 3, intArrayOf(333, 1, 1024, 77), source)
+            assertTrue("scene $i", whole.contentEquals(ragged))
+            val dry = DoubleArray(rate * 2) { source(rate + it / 2, it % 2) }
+            val ratio = rms(whole, rate * 2) / rms(dry)
+            println("scene $i out/in rms ${"%.2f".format(ratio)}, peak ${"%.2f".format(whole.maxOf { abs(it) })}")
+            assertTrue("scene $i ratio $ratio", whole.all { it.isFinite() && abs(it) < 1.0 } && ratio in 0.6..1.5)
+        }
+    }
+
     @Test fun concertSwitchedOffLeavesStudioReverbAlone() {
         val source = noise(30)
         val plain = run(kernel(ReverbPrefs(enabled = true, concert = null)), rate * 2, source)
@@ -183,7 +198,7 @@ class ReverbKernelTest {
         var offset = rate
         for (step in 0 until 48) {
             val t = (step % 16) / 15f
-            val venue = ConcertPrefs(enabled = step % 16 != 15, venue = step / 16 * 2, sound = step % 8).withSeat(step % 5)
+            val venue = ConcertPrefs(enabled = step % 16 != 15, venue = step / 16 * 2, sound = step % 12, showDb = 85f + step % 30, crowd = (step % 3) * 0.3f).withSeat(step % 4)
             kernel.settings = kernel.settings.copy(concert = venue.copy(listenerX = t, size = t, openness = 1 - t))
             val start = offset
             val next = run(kernel, 2048) { frame, channel -> tone(start + frame, channel) }

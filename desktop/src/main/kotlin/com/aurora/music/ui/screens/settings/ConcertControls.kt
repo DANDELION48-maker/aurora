@@ -22,7 +22,9 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -41,13 +43,19 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.aurora.music.R
+import com.aurora.music.data.ConcertEarplugs
+import com.aurora.music.data.ConcertLayout
 import com.aurora.music.data.ConcertPrefs
+import com.aurora.music.data.ConcertScene
 import com.aurora.music.data.ConcertSeat
 import com.aurora.music.data.ConcertSound
 import com.aurora.music.data.ConcertVenue
@@ -63,6 +71,9 @@ internal fun concertVenueName(id: Int): String = appString(when (id) {
     ConcertVenue.STADIUM -> R.string.concert_venue_stadium
     ConcertVenue.FESTIVAL -> R.string.concert_venue_festival
     ConcertVenue.AMPHITHEATRE -> R.string.concert_venue_amphitheatre
+    ConcertVenue.BASEMENT -> R.string.concert_venue_basement
+    ConcertVenue.CHURCH -> R.string.concert_venue_church
+    ConcertVenue.WAREHOUSE -> R.string.concert_venue_warehouse
     else -> R.string.concert_venue_arena
 })
 
@@ -74,27 +85,44 @@ internal fun concertSoundName(id: Int): String = appString(when (id) {
     ConcertSound.HIP_HOP -> R.string.concert_sound_hip_hop
     ConcertSound.ELECTRONIC -> R.string.concert_sound_electronic
     ConcertSound.CLASSICAL -> R.string.concert_sound_classical
+    ConcertSound.INDIE -> R.string.concert_sound_indie
+    ConcertSound.PUNK -> R.string.concert_sound_punk
+    ConcertSound.POST_PUNK -> R.string.concert_sound_post_punk
+    ConcertSound.ACOUSTIC -> R.string.concert_sound_acoustic
     else -> R.string.concert_sound_pop
 })
 
-private fun concertSeatName(id: Int): String = appString(when (id) {
+private fun concertSeatName(venue: Int, id: Int): String = appString(when (id) {
     ConcertSeat.FRONT -> R.string.concert_seat_front
     ConcertSeat.BACK -> R.string.concert_seat_back
     ConcertSeat.SIDE -> R.string.concert_seat_side
-    ConcertSeat.BALCONY -> R.string.concert_seat_balcony
+    ConcertSeat.STANDS -> if (venue == ConcertVenue.THEATRE) R.string.concert_seat_balcony else R.string.concert_seat_stands
+    ConcertSeat.UPPER -> R.string.concert_seat_upper
     else -> R.string.concert_seat_middle
 })
 
+private val SCENE_NAMES = intArrayOf(
+    R.string.concert_scene_0, R.string.concert_scene_1, R.string.concert_scene_2, R.string.concert_scene_3, R.string.concert_scene_4,
+    R.string.concert_scene_5, R.string.concert_scene_6, R.string.concert_scene_7, R.string.concert_scene_8, R.string.concert_scene_9,
+    R.string.concert_scene_10, R.string.concert_scene_11, R.string.concert_scene_12,
+)
+
+// keeps the picked chip in view, so a long row never hides what is selected
 @Composable
 internal fun ChoiceChips(labels: List<String>, selected: Int, modifier: Modifier = Modifier, onPick: (Int) -> Unit) {
-    Row(modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    val scroll = rememberScrollState()
+    val starts = remember { mutableStateMapOf<Int, Int>() }
+    val inset = with(LocalDensity.current) { 32.dp.roundToPx() }
+    val target = starts[selected]
+    LaunchedEffect(target) { if (target != null) scroll.animateScrollTo((target - inset).coerceAtLeast(0)) }
+    Row(modifier.fillMaxWidth().horizontalScroll(scroll), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         labels.forEachIndexed { id, label ->
             val active = id == selected
             Text(
                 label,
                 style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold,
                 color = if (active) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.clip(RoundedCornerShape(50))
+                modifier = Modifier.onGloballyPositioned { starts[id] = it.positionInParent().x.toInt() }.clip(RoundedCornerShape(50))
                     .background(if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHighest)
                     .clickable { onPick(id) }.pointerHoverIcon(PointerIcon.Hand).padding(horizontal = 16.dp, vertical = 8.dp),
             )
@@ -107,12 +135,20 @@ internal fun ReverbModeChips(concert: Boolean, modifier: Modifier = Modifier, on
     SegmentedChoice(listOf(appString(R.string.reverb_mode_studio), appString(R.string.reverb_mode_concert)), if (concert) 1 else 0, modifier) { onPick(it == 1) }
 
 @Composable
+internal fun ConcertSceneChips(concert: ConcertPrefs, modifier: Modifier = Modifier, label: Boolean = true, onChange: (ConcertPrefs) -> Unit) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (label) ChipLabel(appString(R.string.concert_section_scenes))
+        ChoiceChips(SCENE_NAMES.map { appString(it) }, ConcertScene.ALL.indexOfFirst { it.matches(concert) }) { onChange(ConcertScene.ALL[it].applyTo(concert)) }
+    }
+}
+
+@Composable
 internal fun ConcertStyleChips(concert: ConcertPrefs, modifier: Modifier = Modifier, labelVenue: Boolean = true, onChange: (ConcertPrefs) -> Unit) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (labelVenue) ChipLabel(appString(R.string.concert_section_venue))
-        ChoiceChips(ConcertVenue.ALL.indices.map(::concertVenueName), concert.venue) { onChange(concert.withVenue(it)) }
+        ChoiceChips(ConcertVenue.ORDER.map(::concertVenueName), ConcertVenue.ORDER.indexOf(concert.venue)) { onChange(concert.withVenue(ConcertVenue.ORDER[it])) }
         ChipLabel(appString(R.string.concert_sound))
-        ChoiceChips(ConcertSound.ALL.indices.map(::concertSoundName), concert.sound) { onChange(concert.copy(sound = it)) }
+        ChoiceChips(ConcertSound.ORDER.map(::concertSoundName), ConcertSound.ORDER.indexOf(concert.sound)) { onChange(concert.withSound(ConcertSound.ORDER[it])) }
     }
 }
 
@@ -125,6 +161,10 @@ internal fun ConcertRoomSliders(concert: ConcertPrefs, modifier: Modifier = Modi
     val venue = ConcertVenue.ALL[concert.venue]
     val percent = remember { NumberFormat.getPercentInstance() }
     Column(modifier) {
+        ChipLabel(appString(R.string.concert_stage))
+        SegmentedChoice(listOf(appString(R.string.concert_stage_end), appString(R.string.concert_stage_centre)), concert.layout(), Modifier.padding(vertical = 8.dp)) {
+            onChange(concert.withLayout(if (it == 1) ConcertLayout.CENTRE else ConcertLayout.END))
+        }
         ConcertSlider(appString(R.string.concert_size), concert.size,
             label = { appString(R.string.concert_size_value, "%.0f".format(venue.widthM(it)), "%.0f".format(venue.lengthM(it))) }) { onChange(concert.copy(size = it)) }
         ConcertSlider(appString(R.string.concert_openness), concert.openness, label = {
@@ -133,23 +173,40 @@ internal fun ConcertRoomSliders(concert: ConcertPrefs, modifier: Modifier = Modi
     }
 }
 
+// how loud the show runs, and in the settings screen how busy it is and what's in your ears
+@Composable
+internal fun ConcertShowControls(concert: ConcertPrefs, modifier: Modifier = Modifier, full: Boolean = false, onChange: (ConcertPrefs) -> Unit) {
+    val percent = remember { NumberFormat.getPercentInstance() }
+    Column(modifier) {
+        ConcertSlider(appString(R.string.concert_loudness), concert.showDb, ConcertPrefs.MIN_DB..ConcertPrefs.MAX_DB,
+            label = { appString(R.string.concert_loudness_value, "%.0f".format(it)) }) { onChange(concert.copy(showDb = it)) }
+        if (full) {
+            ConcertSlider(appString(R.string.concert_crowd), concert.crowd, label = percent::format) { onChange(concert.copy(crowd = it)) }
+            ChipLabel(appString(R.string.concert_earplugs))
+            SegmentedChoice(listOf(appString(R.string.concert_earplugs_none), appString(R.string.concert_earplugs_musician), appString(R.string.concert_earplugs_foam)),
+                concert.earplugs, Modifier.padding(vertical = 8.dp)) { onChange(concert.copy(earplugs = it.coerceIn(ConcertEarplugs.NONE, ConcertEarplugs.FOAM))) }
+        }
+    }
+}
+
 @Composable
 internal fun ConcertPositionPicker(concert: ConcertPrefs, modifier: Modifier = Modifier, hint: Boolean = false, onChange: (ConcertPrefs) -> Unit) {
     var draft by remember { mutableStateOf<ConcertPrefs?>(null) }
     val shown = draft ?: concert
-    val distance = remember(shown) { ConcertAcoustics.room(shown).distanceM }
+    val room = remember(shown) { ConcertAcoustics.room(shown) }
+    val seats = ConcertSeat.available(shown.venue)
     Column(modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        ConcertVenueMap(shown, concert,
-            appString(if (shown.elevation > 0f) R.string.concert_distance_raised else R.string.concert_distance, "%.0f".format(distance)),
+        ConcertVenueMap(shown, concert, room.listenerHeightM > 0,
+            appString(if (room.listenerHeightM > 0) R.string.concert_distance_raised else R.string.concert_distance, "%.0f".format(room.distanceM)),
             onDraft = { draft = it }, onChange = onChange)
-        ChoiceChips(ConcertSeat.ALL.map(::concertSeatName), shown.seat() ?: -1) { onChange(concert.withSeat(it)) }
+        ChoiceChips(seats.map { concertSeatName(shown.venue, it) }, seats.indexOf(shown.seat())) { onChange(concert.withSeat(seats[it])) }
         if (hint) Text(appString(R.string.concert_map_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
-// top-down floor plan sized to the venue itself, so only touches on the floor move the dot (or the stage)
+// top-down floor plan sized to the venue itself, so only touches on the floor move the dot (or the stage); stands get tier lines
 @Composable
-private fun ConcertVenueMap(shown: ConcertPrefs, stored: ConcertPrefs, distance: String, onDraft: (ConcertPrefs?) -> Unit, onChange: (ConcertPrefs) -> Unit) {
+private fun ConcertVenueMap(shown: ConcertPrefs, stored: ConcertPrefs, raised: Boolean, distance: String, onDraft: (ConcertPrefs?) -> Unit, onChange: (ConcertPrefs) -> Unit) {
     val venue = ConcertVenue.ALL[shown.venue]
     val aspect = (venue.widthM(shown.size) / venue.lengthM(shown.size)).coerceIn(0.55f, 1.8f)
     val latest by rememberUpdatedState(shown)
@@ -157,6 +214,7 @@ private fun ConcertVenueMap(shown: ConcertPrefs, stored: ConcertPrefs, distance:
     val draft by rememberUpdatedState(onDraft)
     val change by rememberUpdatedState(onChange)
     val floor = MaterialTheme.colorScheme.surfaceContainerHighest
+    val tiers = MaterialTheme.colorScheme.onSurface
     val wall = MaterialTheme.colorScheme.outline
     val stageColor = MaterialTheme.colorScheme.primary
     val you = MaterialTheme.colorScheme.tertiary
@@ -195,6 +253,21 @@ private fun ConcertVenueMap(shown: ConcertPrefs, stored: ConcertPrefs, distance:
                 val r = venueRect(size, aspect, 2.dp.toPx())
                 val corner = CornerRadius(14.dp.toPx())
                 drawRoundRect(floor, r.topLeft, r.size, corner)
+                val f = venue.floor(shown.size)
+                if (venue.standSides != 0) clipRect(r.left, r.top, r.right, r.bottom) {
+                    val pit = Rect(r.left + f[0] * r.width, r.top + f[1] * r.height, r.left + f[2] * r.width, r.top + f[3] * r.height)
+                    drawRoundRect(tiers.copy(alpha = 0.07f), r.topLeft, r.size, corner)
+                    drawRect(floor, pit.topLeft, pit.size)
+                    drawRect(stageColor.copy(alpha = 0.10f), pit.topLeft, pit.size)
+                    val line = tiers.copy(alpha = 0.16f); val w = 1.dp.toPx()
+                    for (k in 1..2) {
+                        val t = k / 3f
+                        if (venue.standSides and ConcertVenue.FRONT != 0) drawLine(line, Offset(r.left, r.top + (pit.top - r.top) * t), Offset(r.right, r.top + (pit.top - r.top) * t), w)
+                        if (venue.standSides and ConcertVenue.BACK != 0) drawLine(line, Offset(r.left, r.bottom - (r.bottom - pit.bottom) * t), Offset(r.right, r.bottom - (r.bottom - pit.bottom) * t), w)
+                        if (venue.standSides and ConcertVenue.LEFT != 0) drawLine(line, Offset(r.left + (pit.left - r.left) * t, r.top), Offset(r.left + (pit.left - r.left) * t, r.bottom), w)
+                        if (venue.standSides and ConcertVenue.RIGHT != 0) drawLine(line, Offset(r.right - (r.right - pit.right) * t, r.top), Offset(r.right - (r.right - pit.right) * t, r.bottom), w)
+                    }
+                }
                 drawRoundRect(wall.copy(alpha = 1f - 0.7f * shown.openness), r.topLeft, r.size, corner,
                     style = Stroke(2.dp.toPx(), pathEffect = if (shown.openness > 0.5f) PathEffect.dashPathEffect(floatArrayOf(12f, 10f)) else null))
                 val s = Offset(r.left + shown.stageX * r.width, r.top + shown.stageY * r.height)
@@ -203,14 +276,15 @@ private fun ConcertVenueMap(shown: ConcertPrefs, stored: ConcertPrefs, distance:
                     for (i in 1..4) drawCircle(stageColor.copy(alpha = 0.12f), radius = i * r.minDimension * 0.2f, center = s, style = Stroke(1.5.dp.toPx()))
                 }
                 drawLine(you.copy(alpha = 0.6f), p, s, strokeWidth = 1.5.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(8f, 8f)))
+                val centred = shown.layout() == ConcertLayout.CENTRE
                 val centre = r.center - s
-                val facing = if (hypot(centre.x / r.width, centre.y / r.height) > 0.12f) centre else p - s
+                val facing = if (!centred && hypot(centre.x / r.width, centre.y / r.height) > 0.05f) centre else p - s
                 val stageW = (venue.stageWidthM(shown.size) / venue.widthM(shown.size) * r.width).coerceAtLeast(20.dp.toPx())
-                val stageD = 9.dp.toPx()
+                val stageD = if (centred) stageW * 0.6f else 9.dp.toPx()
                 rotate(Math.toDegrees(atan2(facing.y, facing.x).toDouble()).toFloat() - 90f, pivot = s) {
                     drawRoundRect(stageColor, Offset(s.x - stageW / 2, s.y - stageD / 2), Size(stageW, stageD), CornerRadius(4.dp.toPx()))
                 }
-                if (shown.elevation > 0f) drawCircle(you.copy(alpha = 0.3f), 15.dp.toPx(), p)
+                if (raised) drawCircle(you.copy(alpha = 0.3f), 15.dp.toPx(), p)
                 drawCircle(you, 9.dp.toPx(), p)
                 drawCircle(youRing, 9.dp.toPx(), p, style = Stroke(2.dp.toPx()))
             }
@@ -229,7 +303,7 @@ private fun venueRect(canvas: Size, aspect: Float, pad: Float): Rect {
 
 // drafts the thumb locally so datastore round-trips never make it jump
 @Composable
-private fun ConcertSlider(title: String, value: Float, label: (Float) -> String, onChange: (Float) -> Unit) {
+private fun ConcertSlider(title: String, value: Float, range: ClosedFloatingPointRange<Float> = 0f..1f, label: (Float) -> String, onChange: (Float) -> Unit) {
     var draft by remember { mutableStateOf<Float?>(null) }
     val shown = draft ?: value
     Column {
@@ -238,9 +312,10 @@ private fun ConcertSlider(title: String, value: Float, label: (Float) -> String,
             Text(label(shown), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Slider(
-            value = shown,
+            value = shown.coerceIn(range.start, range.endInclusive),
             onValueChange = { draft = it; onChange(it) },
             onValueChangeFinished = { draft = null },
+            valueRange = range,
             modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
             colors = SliderDefaults.colors(thumbColor = MaterialTheme.colorScheme.primary, activeTrackColor = MaterialTheme.colorScheme.primary),
         )

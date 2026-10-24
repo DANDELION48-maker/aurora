@@ -49,6 +49,8 @@ class ReverbKernel {
     private var airL = 0.0; private var airR = 0.0
     private val squeeze = LiveCompressor()
     private var duck = 0.0
+    private val pa = PaDrive()
+    private val crowd = CrowdNoise()
     private var concert = false
     private var fade = 0.0; private var fadeTarget = 0.0
 
@@ -89,6 +91,7 @@ class ReverbKernel {
             bandPass(EQ_FILTER + 5, 350.0)
             bandPass(EQ_FILTER + 10, 3000.0)
             biquad(EQ_FILTER + 15, min(10_000.0, rate * 0.4), highPass = true)
+            pa.configure(rate); crowd.configure(rate)
         }
         reset()
     }
@@ -100,7 +103,7 @@ class ReverbKernel {
         for (i in 0 until LINES) { oscCos[i] = cos(i * 0.77); oscSin[i] = sin(i * 0.77) }
         send = 0.0; dry = 1.0; silentFrames = 0
         gain.fill(0.0); erDelay.fill(0.0); airL = 0.0; airR = 0.0; fade = 0.0
-        squeeze.reset(); duck = 0.0
+        squeeze.reset(); duck = 0.0; pa.reset(); crowd.reset()
         applied = null; idle = true
     }
 
@@ -116,7 +119,7 @@ class ReverbKernel {
         scale = previous.scale; predelay = previous.predelay; silentFrames = previous.silentFrames; idle = false
         previous.gain.copyInto(gain); previous.erDelay.copyInto(erDelay); airL = previous.airL; airR = previous.airR; fade = previous.fade
         decayNow = previous.decayNow; hfNow = previous.hfNow
-        squeeze.copyStateFrom(previous.squeeze); duck = previous.duck
+        squeeze.copyStateFrom(previous.squeeze); duck = previous.duck; pa.copyStateFrom(previous.pa); crowd.copyStateFrom(previous.crowd)
     }
 
     fun process(block: AudioBlock) {
@@ -148,16 +151,23 @@ class ReverbKernel {
             early += (earlyTarget - early) * k; width += (widthTarget - width) * k
             scale += scaleStep; predelay += predelayStep
             val inL = samples[frame * 2]; val inR = samples[frame * 2 + 1]
-            var drive = 1.0
+            var feedL = inL; var feedR = inR
+            var paL = inL; var paR = inR
+            var crowdL = 0.0; var crowdR = 0.0
             if (live) {
+                // desk compressor, then the pushed pa; the crowd is in the room but not in the pa
                 duck += ((if (concert) squeeze.next(inL, inR) else 0.0) - duck) * k
-                drive = exp(duck * DB_TO_LN)
+                val drive = exp(duck * DB_TO_LN)
+                pa.process(inL * drive, inR * drive, gain[DRIVE], squeeze.level())
+                paL = pa.left; paR = pa.right
+                if (gain[CROWD] > 1e-5) { crowd.next(inL, inR, gain[CROWD]); crowdL = crowd.left; crowdR = crowd.right }
+                feedL = paL + crowdL; feedR = paR + crowdR
             }
 
-            var l = inL * send * drive
+            var l = feedL * send
             var y = f[0] * l + fs[0]; fs[0] = f[1] * l - f[3] * y + fs[1]; fs[1] = f[2] * l - f[4] * y; l = y
             y = f[5] * l + fs[2]; fs[2] = f[6] * l - f[8] * y + fs[3]; fs[3] = f[7] * l - f[9] * y; l = y
-            var rr = inR * send * drive
+            var rr = feedR * send
             y = f[0] * rr + fs[4]; fs[4] = f[1] * rr - f[3] * y + fs[5]; fs[5] = f[2] * rr - f[4] * y; rr = y
             y = f[5] * rr + fs[6]; fs[6] = f[6] * rr - f[8] * y + fs[7]; fs[7] = f[7] * rr - f[9] * y; rr = y
             pre[0][prePos] = l; pre[1][prePos] = rr
@@ -223,9 +233,9 @@ class ReverbKernel {
                 var tl = tm + ts; var tr = tm - ts
                 y = f[10] * tl + fs[8]; fs[8] = f[11] * tl - f[13] * y + fs[9]; fs[9] = f[12] * tl - f[14] * y; tl += y * gain[BOOM]
                 y = f[10] * tr + fs[10]; fs[10] = f[11] * tr - f[13] * y + fs[11]; fs[11] = f[12] * tr - f[14] * y; tr += y * gain[BOOM]
-                airL += gain[AIR] * (inL * send * drive - airL); airR += gain[AIR] * (inR * send * drive - airR)
-                val roomL = gain[DIRECT] * airL + gain[DIRECT + 1] * airR + venueL + tl * gain[LATE]
-                val roomR = gain[DIRECT + 2] * airL + gain[DIRECT + 3] * airR + venueR + tr * gain[LATE]
+                airL += gain[AIR] * (paL * send - airL); airR += gain[AIR] * (paR * send - airR)
+                val roomL = gain[DIRECT] * airL + gain[DIRECT + 1] * airR + venueL + tl * gain[LATE] + crowdL * send
+                val roomR = gain[DIRECT + 2] * airL + gain[DIRECT + 3] * airR + venueR + tr * gain[LATE] + crowdR * send
                 // the band's rig: parallel fixed bands with smoothed gains, so switching genre never jumps a coefficient
                 var venueOutL = roomL; var venueOutR = roomR
                 for (b in 0 until EQ_BANDS) {
@@ -234,8 +244,8 @@ class ReverbKernel {
                     y = f[c] * roomR + fs[st + 2]; fs[st + 2] = f[c + 1] * roomR - f[c + 3] * y + fs[st + 3]; fs[st + 3] = f[c + 2] * roomR - f[c + 4] * y; venueOutR += y * g
                 }
                 val studioL = mid + side; val studioR = mid - side
-                samples[frame * 2] = inL * dry + (studioL + (venueOutL - studioL) * fade) * wet
-                samples[frame * 2 + 1] = inR * dry + (studioR + (venueOutR - studioR) * fade) * wet
+                samples[frame * 2] = soften(inL * dry + (studioL + (venueOutL - studioL) * fade) * wet)
+                samples[frame * 2 + 1] = soften(inR * dry + (studioR + (venueOutR - studioR) * fade) * wet)
             }
         }
         if (!current.enabled) {
@@ -275,7 +285,10 @@ class ReverbKernel {
             gainTarget[LATE] = room.lateGain * LATE_TRIM
             gainTarget[BOOM] = 10.0.pow(room.boomDb / 20) - 1
             for (b in 0 until EQ_BANDS) gainTarget[EQ + b] = 10.0.pow(room.eqDb[b] / 20) - 1
-            room.rig.let { squeeze.configure(rate, it.ratio.toDouble(), it.headroomDb.toDouble(), it.releaseMs / 1000.0, it.makeupDb.toDouble()) }
+            squeeze.configure(rate, room.compRatio, room.compHeadroomDb, room.compReleaseSec, room.compMakeupDb)
+            gainTarget[DRIVE] = room.drive; gainTarget[CROWD] = room.crowd
+        } else {
+            gainTarget[DRIVE] = 0.0; gainTarget[CROWD] = 0.0
         }
         if (snap) {
             scale = scaleTarget; predelay = predelayTarget; wet = wetTarget; early = earlyTarget; width = widthTarget
@@ -309,6 +322,12 @@ class ReverbKernel {
         filter[at + 2] = edge / a0
         filter[at + 3] = -2 * c / a0
         filter[at + 4] = (1 - alpha) / a0
+    }
+
+    // concert output only: a soft knee above -0.9 dBFS so boosted rigs never clip the sink
+    private fun soften(x: Double): Double {
+        val a = kotlin.math.abs(x)
+        return if (a <= KNEE) x else kotlin.math.sign(x) * (KNEE + (1 - KNEE) * kotlin.math.tanh((a - KNEE) / (1 - KNEE)))
     }
 
     private fun bandPass(at: Int, hz: Double) {
@@ -374,7 +393,7 @@ class ReverbKernel {
         private const val GLIDE_SEC = 0.08
         private const val OUTPUT_GAIN = 2.1
         private const val ER_NORM = 0.55
-        private const val GAINS = 27
+        private const val GAINS = 29
         private const val TAP_RIGHT = 8
         private const val DIRECT = 16
         private const val AIR = 20
@@ -384,6 +403,9 @@ class ReverbKernel {
         private const val EQ_BANDS = 4
         private const val EQ_FILTER = 15
         private const val EQ_STATE = 12
+        private const val DRIVE = 27
+        private const val CROWD = 28
+        private const val KNEE = 0.9
         private val DB_TO_LN = kotlin.math.ln(10.0) / 20
         private const val LATE_TRIM = 0.6
         private const val BOOM_HZ = 100.0

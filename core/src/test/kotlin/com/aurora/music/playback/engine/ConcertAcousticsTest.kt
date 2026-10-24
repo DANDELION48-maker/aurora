@@ -1,6 +1,9 @@
 package com.aurora.music.playback.engine
 
+import com.aurora.music.data.ConcertEarplugs
+import com.aurora.music.data.ConcertLayout
 import com.aurora.music.data.ConcertPrefs
+import com.aurora.music.data.ConcertScene
 import com.aurora.music.data.ConcertSeat
 import com.aurora.music.data.ConcertSound
 import com.aurora.music.data.ConcertVenue
@@ -70,11 +73,69 @@ class ConcertAcousticsTest {
         ConcertSound.ALL.indices.map(::rig).forEachIndexed { id, r -> println("sound $id: drr %.1f dB, eq %s".format(r.drrDb(), r.eqDb.joinToString())) }
     }
 
+    @Test fun theStandsLiftYouUpAndThePitchDoesNot() {
+        val stadium = ConcertPrefs(enabled = true).withVenue(ConcertVenue.STADIUM)
+        assertEquals(ConcertLayout.CENTRE, stadium.layout())
+        val pitch = ConcertAcoustics.room(stadium.withSeat(ConcertSeat.MIDDLE))
+        val lower = ConcertAcoustics.room(stadium.withSeat(ConcertSeat.STANDS))
+        val upper = ConcertAcoustics.room(stadium.withSeat(ConcertSeat.UPPER))
+        println("stadium pitch %.0f m up %.1f, stands %.0f m up %.1f, upper %.0f m up %.1f".format(
+            pitch.distanceM, pitch.listenerHeightM, lower.distanceM, lower.listenerHeightM, upper.distanceM, upper.listenerHeightM))
+        assertEquals(0.0, pitch.listenerHeightM, 0.0)
+        assertTrue(lower.listenerHeightM > 3 && upper.listenerHeightM > lower.listenerHeightM + 10)
+        assertTrue(upper.distanceM > lower.distanceM && lower.distanceM > pitch.distanceM)
+    }
+
+    @Test fun aCentreStageSoundsTheSameFromEverySide() {
+        val v = ConcertVenue.ALL[ConcertVenue.STADIUM]
+        val base = ConcertPrefs(enabled = true, venue = ConcertVenue.STADIUM, size = 0.5f, stageX = 0.5f, stageY = 0.5f)
+        val north = ConcertAcoustics.room(base.copy(listenerX = 0.5f, listenerY = 0.5f - 30f / v.lengthM(0.5f)))
+        val east = ConcertAcoustics.room(base.copy(listenerX = 0.5f + 30f / v.widthM(0.5f), listenerY = 0.5f))
+        assertEquals(north.drrDb(), east.drrDb(), 0.75)
+        assertEquals(north.direct[0] + north.direct[1], north.direct[2] + north.direct[3], 1e-6)
+        assertEquals(east.direct[0] + east.direct[1], east.direct[2] + east.direct[3], 1e-6)
+    }
+
+    @Test fun aLouderShowDistortsAndSquashesMore() {
+        val quiet = ConcertAcoustics.room(venue(ConcertVenue.CLUB).withSound(ConcertSound.METAL).copy(showDb = 92f))
+        val loud = ConcertAcoustics.room(venue(ConcertVenue.CLUB).withSound(ConcertSound.METAL).copy(showDb = 112f))
+        assertTrue(loud.drive > quiet.drive + 0.4)
+        assertTrue(loud.eqDb[0] > quiet.eqDb[0] + 3 && loud.eqDb[3] > quiet.eqDb[3])
+        assertTrue(loud.compHeadroomDb < quiet.compHeadroomDb)
+        val jazz = ConcertAcoustics.room(venue(ConcertVenue.CLUB).withSound(ConcertSound.JAZZ))
+        assertTrue(jazz.drive < 0.01)
+    }
+
+    @Test fun foamEarplugsTakeTheTopOff() {
+        val open = ConcertAcoustics.room(venue(ConcertVenue.ARENA))
+        val foam = ConcertAcoustics.room(venue(ConcertVenue.ARENA).copy(earplugs = ConcertEarplugs.FOAM))
+        val musician = ConcertAcoustics.room(venue(ConcertVenue.ARENA).copy(earplugs = ConcertEarplugs.MUSICIAN))
+        assertTrue(foam.eqDb[3] < open.eqDb[3] - 10 && musician.eqDb[3] < open.eqDb[3] && musician.eqDb[3] > foam.eqDb[3])
+    }
+
+    @Test fun everySeatAndSceneLandsWhereItSays() {
+        for (id in ConcertVenue.ALL.indices) for (layout in listOf(ConcertLayout.END, ConcertLayout.CENTRE)) for (size in listOf(0f, 0.5f, 1f)) {
+            val p = ConcertPrefs(enabled = true).withVenue(id).copy(size = size).withLayout(layout)
+            assertEquals("venue $id layout $layout", layout, p.layout())
+            for (seat in ConcertSeat.available(id)) {
+                val at = p.withSeat(seat)
+                assertEquals("venue $id layout $layout size $size seat $seat", seat, at.seat())
+                val raised = ConcertVenue.ALL[id].tierHeightM(size, at.listenerX, at.listenerY)
+                if (seat >= ConcertSeat.STANDS) assertTrue("venue $id seat $seat in the stands", raised > 0f)
+                else if (seat != ConcertSeat.SIDE) assertEquals("venue $id seat $seat on the floor", 0f, raised, 0f)
+            }
+        }
+        ConcertScene.ALL.forEachIndexed { i, scene ->
+            val p = scene.applyTo(ConcertPrefs(enabled = true))
+            assertTrue("scene $i", scene.matches(p) && ConcertScene.ALL.indexOfFirst { it.matches(p) } == i)
+        }
+    }
+
     @Test fun everyVenueAndPositionGivesUsableNumbers() {
         val spots = listOf(0f, 0.5f, 1f)
         for (id in ConcertVenue.ALL.indices) for (sx in spots) for (sy in spots) for (x in spots) for (y in spots) {
-            val r = ConcertAcoustics.room(ConcertPrefs(enabled = true, venue = id, stageX = sx, stageY = sy, listenerX = x, listenerY = y, elevation = y))
-            val all = r.direct + r.tapSec + r.tapLeft + r.tapRight + doubleArrayOf(r.lateGain, r.directGain, r.airHz, r.boomDb)
+            val r = ConcertAcoustics.room(ConcertPrefs(enabled = true, venue = id, stageX = sx, stageY = sy, listenerX = x, listenerY = y, showDb = 80f + 35f * y))
+            val all = r.direct + r.tapSec + r.tapLeft + r.tapRight + r.eqDb + doubleArrayOf(r.lateGain, r.directGain, r.airHz, r.boomDb, r.drive, r.listenerHeightM)
             assertTrue("venue $id stage $sx,$sy at $x,$y", all.all { it.isFinite() })
             assertTrue(r.tapSec.all { it in 0.0..ConcertAcoustics.MAX_TAP_SEC } && r.late.predelayMs in 0f..200f)
             assertTrue(r.directGain > 0.05)

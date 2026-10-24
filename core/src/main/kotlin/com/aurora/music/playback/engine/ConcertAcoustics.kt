@@ -1,5 +1,6 @@
 package com.aurora.music.playback.engine
 
+import com.aurora.music.data.ConcertEarplugs
 import com.aurora.music.data.ConcertPrefs
 import com.aurora.music.data.ConcertSound
 import com.aurora.music.data.ConcertVenue
@@ -17,7 +18,8 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.math.tanh
 
-// direct gains map input channel to ear as [l->l, r->l, l->r, r->r]; taps are in seconds after the direct sound; eq is bass, low mids, presence, air in dB
+// direct gains map input channel to ear as [l->l, r->l, l->r, r->r]; taps are in seconds after the direct sound;
+// eq is bass, low mids, presence, air in dB (rig + the ear at show level + earplugs); drive pushes the pa into saturation
 class ConcertRoom(
     val late: ReverbPrefs,
     val lateGain: Double,
@@ -26,11 +28,17 @@ class ConcertRoom(
     val airHz: Double,
     val boomDb: Double,
     val eqDb: DoubleArray,
-    val rig: ConcertSound,
+    val drive: Double,
+    val crowd: Double,
+    val compRatio: Double,
+    val compHeadroomDb: Double,
+    val compReleaseSec: Double,
+    val compMakeupDb: Double,
     val tapSec: DoubleArray,
     val tapLeft: DoubleArray,
     val tapRight: DoubleArray,
     val distanceM: Double,
+    val listenerHeightM: Double,
 )
 
 // image-source early reflections, sabine critical distance for the direct-to-reverb ratio, line-array pa stacks
@@ -38,6 +46,7 @@ object ConcertAcoustics {
     const val MAX_TAP_SEC = 0.26
     private const val SPEED = 343.0
     private const val EAR = 1.7
+    private const val TOWER_M = 70.0
     // floor, ceiling, left, right, front, back, back-left, back-right: 0 none, 1 low wall, 2 high wall
     private val MIRROR = arrayOf(intArrayOf(0, 0, 1), intArrayOf(0, 0, 2), intArrayOf(1, 0, 0), intArrayOf(2, 0, 0),
         intArrayOf(0, 1, 0), intArrayOf(0, 2, 0), intArrayOf(1, 2, 0), intArrayOf(2, 2, 0))
@@ -48,8 +57,9 @@ object ConcertAcoustics {
         val rig = ConcertSound.ALL[c.sound]
         val open = c.openness.toDouble()
         val w = v.widthM(c.size).toDouble(); val l = v.lengthM(c.size).toDouble(); val h = v.heightM(c.size).toDouble()
+        val raised = v.tierHeightM(c.size, c.listenerX, c.listenerY).toDouble()
         val sx = c.stageX * w; val sy = c.stageY * l; val sz = min(v.speakerHeightM.toDouble(), h * 0.8)
-        val px = c.listenerX * w; val py = c.listenerY * l; val pz = EAR + c.elevation * 0.45 * h
+        val px = c.listenerX * w; val py = c.listenerY * l; val pz = EAR + raised
 
         // the stage faces the middle of the floor, a centre stage faces whoever listens
         val horizontal = max(hypot(px - sx, py - sy), 1e-6)
@@ -75,6 +85,8 @@ object ConcertAcoustics {
         fun aim(ex: Double, ey: Double) = 0.35 + 0.65 * front(ex, ey).pow(1.5)
 
         val distance = sqrt((px - sx) * (px - sx) + (py - sy) * (py - sy) + (pz - sz) * (pz - sz)).coerceAtLeast(1.0)
+        // delay towers keep far seats closer to a speaker than to the stage
+        val heard = if (v.delayTowers && distance > TOWER_M) TOWER_M + (distance - TOWER_M) * 0.35 else distance
         val aimed = aim(px - sx, py - sy)
 
         val half = v.stageWidthM(c.size) * rig.spread / 2.0
@@ -91,13 +103,14 @@ object ConcertAcoustics {
             direct[2 + k] = stackGain[k] * stackNorm * sin((p + 1) * PI / 4)
         }
 
-        val rt = (v.decaySec(c.size) * (1 - 0.7 * open) * rig.decay).coerceIn(0.2, 12.0)
+        val packed = c.crowd.toDouble()
+        val rt = (v.decaySec(c.size) * (1 - 0.7 * open) * rig.decay * (1 - 0.25 * packed)).coerceIn(0.2, 12.0)
         val volume = w * l * h
         val critical = 0.057 * sqrt(v.directivity * rig.directivity * volume / rt)
-        val lateEnergy = (distance / critical * rig.wash).pow(2)
+        val lateEnergy = (heard / critical * rig.wash).pow(2)
 
         val wall = v.walls.toDouble()
-        val reflect = doubleArrayOf(0.3, wall * (1 - open), wall * (1 - 0.85 * open), wall * (1 - 0.85 * open),
+        val reflect = doubleArrayOf(0.3 * (1 - 0.5 * packed), wall * (1 - open), wall * (1 - 0.85 * open), wall * (1 - 0.85 * open),
             0.5 * wall * (1 - 0.5 * open), wall * (1 - 0.7 * open), 0.0, 0.0)
         reflect[6] = reflect[2] * reflect[5]; reflect[7] = reflect[3] * reflect[5]
         val tapSec = DoubleArray(8); val tapGain = DoubleArray(8); val tapPan = DoubleArray(8)
@@ -113,7 +126,18 @@ object ConcertAcoustics {
             if (t > 0) firstWall = min(firstWall, tapSec[t])
         }
 
-        val eq = doubleArrayOf(rig.bassDb.toDouble(), rig.lowMidDb.toDouble(), rig.presenceDb.toDouble(), rig.airDb.toDouble())
+        // at show level the ear hears more lows and highs than at home, and a pushed pa and desk squash harder
+        val loud = (c.showDb - 85.0).coerceIn(0.0, 30.0)
+        val plugs = when (c.earplugs) {
+            ConcertEarplugs.MUSICIAN -> doubleArrayOf(0.0, 0.0, -1.5, -3.0)
+            ConcertEarplugs.FOAM -> doubleArrayOf(1.5, 1.0, -6.0, -12.0)
+            else -> DoubleArray(4)
+        }
+        val eq = doubleArrayOf(
+            min(10.0, rig.bassDb + min(8.0, 0.35 * loud)) + plugs[0], rig.lowMidDb + plugs[1],
+            rig.presenceDb + plugs[2], rig.airDb + min(1.5, 0.05 * loud) + plugs[3],
+        )
+        val drive = rig.drive * ((c.showDb - 88.0) / 20.0).coerceIn(0.0, 1.0)
         // rough loudness match so a bass-heavy rig isn't just louder
         val loudness = 10.0.pow(-(0.25 * eq[0] + 0.3 * eq[1] + 0.3 * eq[2] + 0.1 * eq[3]) / 20)
         val total = aimed * aimed + tapGain.sumOf { it * it } + lateEnergy
@@ -123,7 +147,7 @@ object ConcertAcoustics {
         val late = ReverbPrefs(
             enabled = true, decaySec = rt.toFloat(), size = scale.toFloat(),
             predelayMs = (firstWall * 1000).coerceAtMost(200.0).toFloat(),
-            damping = (0.3 + 0.4 * scale + 0.2 * open).toFloat(), lowCutHz = (35 + 100 * open).toFloat(),
+            damping = (0.3 + 0.4 * scale + 0.2 * open + 0.15 * packed).coerceAtMost(0.95).toFloat(), lowCutHz = (35 + 100 * open).toFloat(),
             highCutHz = (12000 - 5000 * scale - 2500 * open).toFloat(), width = (1.25 - 0.35 * open).toFloat(),
             early = 0f, modulation = 0.3f,
         )
@@ -132,14 +156,21 @@ object ConcertAcoustics {
             lateGain = sqrt(lateEnergy) * norm,
             directGain = aimed * norm,
             direct = direct,
-            airHz = (50_000 / sqrt(distance * (1 + 0.5 * open)) * (0.35 + 0.65 * front(px - sx, py - sy))).coerceIn(2000.0, 24_000.0),
+            airHz = (50_000 / sqrt(heard * (1 + 0.5 * open)) * (0.35 + 0.65 * front(px - sx, py - sy)) *
+                (if (raised > 0) 1.0 else 1 - 0.25 * packed)).coerceIn(2000.0, 24_000.0),
             boomDb = v.boomDb * (1 - open) * (0.5 + 0.5 * c.size) * rig.boom,
             eqDb = eq,
-            rig = rig,
+            drive = drive,
+            crowd = c.crowd.toDouble(),
+            compRatio = rig.ratio.toDouble(),
+            compHeadroomDb = (rig.headroomDb - 0.12 * (c.showDb - 95.0).coerceAtLeast(0.0)).coerceAtLeast(0.5),
+            compReleaseSec = rig.releaseMs / 1000.0,
+            compMakeupDb = rig.makeupDb.toDouble(),
             tapSec = tapSec,
             tapLeft = DoubleArray(8) { tapGain[it] * norm * cos((tapPan[it] + 1) * PI / 4) },
             tapRight = DoubleArray(8) { tapGain[it] * norm * sin((tapPan[it] + 1) * PI / 4) },
             distanceM = distance,
+            listenerHeightM = raised,
         )
     }
 

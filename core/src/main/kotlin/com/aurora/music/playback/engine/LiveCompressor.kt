@@ -18,6 +18,9 @@ class LiveCompressor {
 
     fun reset() { fast = 0.0; slow = 0.0 }
 
+    // the running programme level (rms of the louder channel)
+    fun level() = kotlin.math.sqrt(slow)
+
     fun copyStateFrom(previous: LiveCompressor) { fast = previous.fast; slow = previous.slow }
 
     // gain change in dB for this frame

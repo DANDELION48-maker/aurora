@@ -92,8 +92,10 @@ internal fun ReverbQuickControls(onOpenSettings: () -> Unit) {
                 colors = SliderDefaults.colors(thumbColor = accent, activeTrackColor = accent),
             )
             if (concert.enabled) Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                ConcertSceneChips(concert) { save(prefs.copy(concert = it)) }
                 ConcertStyleChips(concert) { save(prefs.copy(concert = it)) }
                 ConcertPositionPicker(concert) { save(prefs.copy(concert = it)) }
+                ConcertShowControls(concert) { save(prefs.copy(concert = it)) }
             } else ReverbPresetChips(prefs.preset) { id -> save(prefs.withPreset(id)) }
         }
         TextButton(onClick = onOpenSettings, modifier = Modifier.padding(top = 4.dp)) { Text(appString(R.string.reverb_more)) }
