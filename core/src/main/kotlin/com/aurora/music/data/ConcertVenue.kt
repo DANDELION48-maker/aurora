@@ -36,24 +36,34 @@ class ConcertVenue(
     }
 }
 
-// how the band's rig is tuned: eq in dB (bass, low mids, presence, air) and how hard it drives the room
+// how the band's rig is tuned: eq in dB (bass, low mids, presence, air), how hard it drives the room,
+// and the desk compressor (headroom above the running level before it squashes)
 class ConcertSound(
     val name: String,
     val bassDb: Float, val lowMidDb: Float, val presenceDb: Float, val airDb: Float,
     val directivity: Float, val spread: Float, val wash: Float, val decay: Float, val boom: Float,
+    val ratio: Float, val headroomDb: Float, val releaseMs: Float, val makeupDb: Float,
 ) {
     companion object {
         const val POP = 0; const val ROCK = 1; const val METAL = 2; const val SHOEGAZE = 3
         const val JAZZ = 4; const val HIP_HOP = 5; const val ELECTRONIC = 6; const val CLASSICAL = 7
         val ALL = listOf(
-            ConcertSound("pop", 1.5f, 0f, 1.5f, 1f, directivity = 1f, spread = 1f, wash = 1f, decay = 1f, boom = 1f),
-            ConcertSound("rock", 2f, 1f, 2f, 0.5f, directivity = 1f, spread = 1f, wash = 1.1f, decay = 1f, boom = 1.1f),
-            ConcertSound("metal", 3f, -2.5f, 3.5f, 1f, directivity = 1.1f, spread = 1.15f, wash = 1.25f, decay = 1f, boom = 1.3f),
-            ConcertSound("shoegaze", 1.5f, 2.5f, -1.5f, -2.5f, directivity = 0.8f, spread = 1.3f, wash = 1.9f, decay = 1.35f, boom = 1.2f),
-            ConcertSound("jazz", -1.5f, 1f, 0f, 0.5f, directivity = 0.4f, spread = 0.6f, wash = 0.9f, decay = 1f, boom = 0.4f),
-            ConcertSound("hip-hop", 6f, -1.5f, 2.5f, 0f, directivity = 1.2f, spread = 0.7f, wash = 0.7f, decay = 0.9f, boom = 1.6f),
-            ConcertSound("electronic", 5f, -1f, 0.5f, 2.5f, directivity = 1.2f, spread = 1.25f, wash = 1f, decay = 1f, boom = 1.6f),
-            ConcertSound("classical", -2f, 0f, -0.5f, 0f, directivity = 0.3f, spread = 1.2f, wash = 1.15f, decay = 1.05f, boom = 0.3f),
+            ConcertSound("pop", 1.5f, 0f, 1.5f, 1f, directivity = 1f, spread = 1f, wash = 1f, decay = 1f, boom = 1f,
+                ratio = 2.5f, headroomDb = 4f, releaseMs = 120f, makeupDb = 1f),
+            ConcertSound("rock", 2f, 1f, 2f, 0.5f, directivity = 1f, spread = 1f, wash = 1.1f, decay = 1f, boom = 1.1f,
+                ratio = 3f, headroomDb = 3f, releaseMs = 150f, makeupDb = 1.5f),
+            ConcertSound("metal", 3f, -2.5f, 3.5f, 1f, directivity = 1.1f, spread = 1.15f, wash = 1.25f, decay = 1f, boom = 1.3f,
+                ratio = 5f, headroomDb = 1.5f, releaseMs = 100f, makeupDb = 2f),
+            ConcertSound("shoegaze", 1.5f, 2.5f, -1.5f, -2.5f, directivity = 0.8f, spread = 1.3f, wash = 1.9f, decay = 1.35f, boom = 1.2f,
+                ratio = 3.5f, headroomDb = 2f, releaseMs = 300f, makeupDb = 1.5f),
+            ConcertSound("jazz", -1.5f, 1f, 0f, 0.5f, directivity = 0.4f, spread = 0.6f, wash = 0.9f, decay = 1f, boom = 0.4f,
+                ratio = 1.6f, headroomDb = 8f, releaseMs = 200f, makeupDb = 0f),
+            ConcertSound("hip-hop", 6f, -1.5f, 2.5f, 0f, directivity = 1.2f, spread = 0.7f, wash = 0.7f, decay = 0.9f, boom = 1.6f,
+                ratio = 4f, headroomDb = 3f, releaseMs = 120f, makeupDb = 1.5f),
+            ConcertSound("electronic", 5f, -1f, 0.5f, 2.5f, directivity = 1.2f, spread = 1.25f, wash = 1f, decay = 1f, boom = 1.6f,
+                ratio = 5f, headroomDb = 2f, releaseMs = 80f, makeupDb = 2f),
+            ConcertSound("classical", -2f, 0f, -0.5f, 0f, directivity = 0.3f, spread = 1.2f, wash = 1.15f, decay = 1.05f, boom = 0.3f,
+                ratio = 1f, headroomDb = 12f, releaseMs = 200f, makeupDb = 0f),
         )
     }
 }

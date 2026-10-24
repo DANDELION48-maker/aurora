@@ -47,6 +47,8 @@ class ReverbKernel {
     private val erTarget = DoubleArray(ER_TAPS)
     private val erStep = DoubleArray(ER_TAPS)
     private var airL = 0.0; private var airR = 0.0
+    private val squeeze = LiveCompressor()
+    private var duck = 0.0
     private var concert = false
     private var fade = 0.0; private var fadeTarget = 0.0
 
@@ -98,6 +100,7 @@ class ReverbKernel {
         for (i in 0 until LINES) { oscCos[i] = cos(i * 0.77); oscSin[i] = sin(i * 0.77) }
         send = 0.0; dry = 1.0; silentFrames = 0
         gain.fill(0.0); erDelay.fill(0.0); airL = 0.0; airR = 0.0; fade = 0.0
+        squeeze.reset(); duck = 0.0
         applied = null; idle = true
     }
 
@@ -113,6 +116,7 @@ class ReverbKernel {
         scale = previous.scale; predelay = previous.predelay; silentFrames = previous.silentFrames; idle = false
         previous.gain.copyInto(gain); previous.erDelay.copyInto(erDelay); airL = previous.airL; airR = previous.airR; fade = previous.fade
         decayNow = previous.decayNow; hfNow = previous.hfNow
+        squeeze.copyStateFrom(previous.squeeze); duck = previous.duck
     }
 
     fun process(block: AudioBlock) {
@@ -144,11 +148,16 @@ class ReverbKernel {
             early += (earlyTarget - early) * k; width += (widthTarget - width) * k
             scale += scaleStep; predelay += predelayStep
             val inL = samples[frame * 2]; val inR = samples[frame * 2 + 1]
+            var drive = 1.0
+            if (live) {
+                duck += ((if (concert) squeeze.next(inL, inR) else 0.0) - duck) * k
+                drive = exp(duck * DB_TO_LN)
+            }
 
-            var l = inL * send
+            var l = inL * send * drive
             var y = f[0] * l + fs[0]; fs[0] = f[1] * l - f[3] * y + fs[1]; fs[1] = f[2] * l - f[4] * y; l = y
             y = f[5] * l + fs[2]; fs[2] = f[6] * l - f[8] * y + fs[3]; fs[3] = f[7] * l - f[9] * y; l = y
-            var rr = inR * send
+            var rr = inR * send * drive
             y = f[0] * rr + fs[4]; fs[4] = f[1] * rr - f[3] * y + fs[5]; fs[5] = f[2] * rr - f[4] * y; rr = y
             y = f[5] * rr + fs[6]; fs[6] = f[6] * rr - f[8] * y + fs[7]; fs[7] = f[7] * rr - f[9] * y; rr = y
             pre[0][prePos] = l; pre[1][prePos] = rr
@@ -214,7 +223,7 @@ class ReverbKernel {
                 var tl = tm + ts; var tr = tm - ts
                 y = f[10] * tl + fs[8]; fs[8] = f[11] * tl - f[13] * y + fs[9]; fs[9] = f[12] * tl - f[14] * y; tl += y * gain[BOOM]
                 y = f[10] * tr + fs[10]; fs[10] = f[11] * tr - f[13] * y + fs[11]; fs[11] = f[12] * tr - f[14] * y; tr += y * gain[BOOM]
-                airL += gain[AIR] * (inL * send - airL); airR += gain[AIR] * (inR * send - airR)
+                airL += gain[AIR] * (inL * send * drive - airL); airR += gain[AIR] * (inR * send * drive - airR)
                 val roomL = gain[DIRECT] * airL + gain[DIRECT + 1] * airR + venueL + tl * gain[LATE]
                 val roomR = gain[DIRECT + 2] * airL + gain[DIRECT + 3] * airR + venueR + tr * gain[LATE]
                 // the band's rig: parallel fixed bands with smoothed gains, so switching genre never jumps a coefficient
@@ -266,6 +275,7 @@ class ReverbKernel {
             gainTarget[LATE] = room.lateGain * LATE_TRIM
             gainTarget[BOOM] = 10.0.pow(room.boomDb / 20) - 1
             for (b in 0 until EQ_BANDS) gainTarget[EQ + b] = 10.0.pow(room.eqDb[b] / 20) - 1
+            room.rig.let { squeeze.configure(rate, it.ratio.toDouble(), it.headroomDb.toDouble(), it.releaseMs / 1000.0, it.makeupDb.toDouble()) }
         }
         if (snap) {
             scale = scaleTarget; predelay = predelayTarget; wet = wetTarget; early = earlyTarget; width = widthTarget
@@ -374,6 +384,7 @@ class ReverbKernel {
         private const val EQ_BANDS = 4
         private const val EQ_FILTER = 15
         private const val EQ_STATE = 12
+        private val DB_TO_LN = kotlin.math.ln(10.0) / 20
         private const val LATE_TRIM = 0.6
         private const val BOOM_HZ = 100.0
         private const val FADE_FLOOR = 1e-7

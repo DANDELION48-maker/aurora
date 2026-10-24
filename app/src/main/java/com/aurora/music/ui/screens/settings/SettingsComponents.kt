@@ -219,36 +219,37 @@ fun SettingsSliderRow(title: String, valueLabel: String, value: Float, range: Cl
 
 @Composable
 fun SegmentedRow(title: String, options: List<String>, selected: Int, onSelect: (Int) -> Unit) {
-    if (isGlassTheme()) {
-        Column(Modifier.padding(horizontal = 20.dp, vertical = 10.dp)) {
-            Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Medium)
-            Spacer(Modifier.size(10.dp))
-            GlassSegmented(options, selected, onSelect)
-        }
-        return
-    }
-    val shape = if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(50) else MaterialTheme.shapes.small
     Column(Modifier.padding(horizontal = 20.dp, vertical = 10.dp)) {
         Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Medium)
         Spacer(Modifier.size(10.dp))
-        Row(
-            Modifier.fillMaxWidth().then(
-                if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA)
-                    Modifier.clip(shape).background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                else Modifier.auroraPanel(shape)
-            ).padding(4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            options.forEachIndexed { i, opt ->
-                val active = i == selected
-                Box(
-                    Modifier.weight(1f).clip(shape)
-                        .background(if (active) MaterialTheme.colorScheme.primary else androidx.compose.ui.graphics.Color.Transparent)
-                        .clickable { onSelect(i) }.padding(vertical = 8.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(opt, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = if (active) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant)
-                }
+        SegmentedChoice(options, selected, onSelect = onSelect)
+    }
+}
+
+@Composable
+fun SegmentedChoice(options: List<String>, selected: Int, modifier: Modifier = Modifier, onSelect: (Int) -> Unit) {
+    if (isGlassTheme()) {
+        Box(modifier) { GlassSegmented(options, selected, onSelect) }
+        return
+    }
+    val shape = if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(50) else MaterialTheme.shapes.small
+    Row(
+        modifier.fillMaxWidth().then(
+            if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA)
+                Modifier.clip(shape).background(MaterialTheme.colorScheme.surfaceContainerHigh)
+            else Modifier.auroraPanel(shape)
+        ).padding(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        options.forEachIndexed { i, opt ->
+            val active = i == selected
+            Box(
+                Modifier.weight(1f).clip(shape)
+                    .background(if (active) MaterialTheme.colorScheme.primary else androidx.compose.ui.graphics.Color.Transparent)
+                    .clickable { onSelect(i) }.padding(vertical = 8.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(opt, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = if (active) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     }

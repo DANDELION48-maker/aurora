@@ -79,7 +79,8 @@ internal fun ReverbQuickControls(onOpenSettings: () -> Unit) {
         }
         if (prefs.enabled) {
             val mix = dragMix ?: if (concert.enabled) concert.amount else prefs.mix
-            Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            ReverbModeChips(concert.enabled, Modifier.padding(top = 16.dp)) { on -> save(prefs.copy(concert = concert.copy(enabled = on))) }
+            Row(Modifier.padding(top = 16.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(appString(R.string.reverb_amount), style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
                 Text(NumberFormat.getPercentInstance().format(mix), style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -90,13 +91,10 @@ internal fun ReverbQuickControls(onOpenSettings: () -> Unit) {
                 onValueChangeFinished = { dragMix = null },
                 colors = SliderDefaults.colors(thumbColor = accent, activeTrackColor = accent),
             )
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                ReverbModeChips(concert.enabled) { on -> save(prefs.copy(concert = concert.copy(enabled = on))) }
-                if (concert.enabled) {
-                    ConcertVenuePicker(concert) { save(prefs.copy(concert = it)) }
-                    ConcertPositionPicker(concert) { save(prefs.copy(concert = it)) }
-                } else ReverbPresetChips(prefs.preset) { id -> save(prefs.withPreset(id)) }
-            }
+            if (concert.enabled) Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                ConcertStyleChips(concert) { save(prefs.copy(concert = it)) }
+                ConcertPositionPicker(concert) { save(prefs.copy(concert = it)) }
+            } else ReverbPresetChips(prefs.preset) { id -> save(prefs.withPreset(id)) }
         }
         TextButton(onClick = onOpenSettings, modifier = Modifier.padding(top = 4.dp)) { Text(appString(R.string.reverb_more)) }
     }

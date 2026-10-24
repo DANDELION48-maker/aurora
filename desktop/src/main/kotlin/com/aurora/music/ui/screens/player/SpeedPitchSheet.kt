@@ -26,8 +26,13 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +40,10 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.aurora.music.ui.screens.settings.SegmentedChoice
+
+// the tab you used last, for as long as the app runs
+private var lastTab = 0
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,6 +55,7 @@ fun SpeedPitchSheet(
     onDismiss: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var tab by remember { mutableIntStateOf(lastTab) }
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
@@ -53,39 +63,31 @@ fun SpeedPitchSheet(
     ) {
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(bottom = 32.dp)) {
             Text(appString(R.string.text_playback_controls_5ee1ab), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(16.dp))
+            SegmentedChoice(listOf(appString(R.string.text_speed_2d2cb0), appString(R.string.reverb_title)), tab) { tab = it; lastTab = it }
             Spacer(Modifier.height(20.dp))
 
-            ControlBlock(
-                icon = { Icon(Icons.Filled.Speed, null, tint = MaterialTheme.colorScheme.primary) },
-                title = appString(R.string.text_speed_2d2cb0),
-                value = "${"%.2f".format(speed)}x",
-            ) {
-                Slider(
-                    value = speed,
-                    onValueChange = onSpeed,
-                    valueRange = 0.5f..2.0f,
-                    steps = 29,
-                    colors = SliderDefaults.colors(thumbColor = MaterialTheme.colorScheme.primary, activeTrackColor = MaterialTheme.colorScheme.primary),
-                )
-                QuickPicks(listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f), speed) { onSpeed(it) }
-            }
+            if (tab == 1) com.aurora.music.ui.screens.settings.ReverbQuickControls(onOpenReverbSettings)
+            else Column {
+                ControlBlock(
+                    icon = { Icon(Icons.Filled.Speed, null, tint = MaterialTheme.colorScheme.primary) },
+                    title = appString(R.string.text_speed_2d2cb0),
+                    value = "${"%.2f".format(speed)}x",
+                ) {
+                    Slider(
+                        value = speed,
+                        onValueChange = onSpeed,
+                        valueRange = 0.5f..2.0f,
+                        steps = 29,
+                        colors = SliderDefaults.colors(thumbColor = MaterialTheme.colorScheme.primary, activeTrackColor = MaterialTheme.colorScheme.primary),
+                    )
+                    QuickPicks(listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f), speed) { onSpeed(it) }
+                }
 
-            Spacer(Modifier.height(24.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(50))
-                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                    .clickable(onClick = onReset)
-                    .pointerHoverIcon(PointerIcon.Hand)
-                    .padding(vertical = 14.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(appString(R.string.text_reset_to_default_39c90e), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+                TextButton(onClick = onReset, modifier = Modifier.align(Alignment.End).padding(top = 8.dp).pointerHoverIcon(PointerIcon.Hand)) {
+                    Text(appString(R.string.text_reset_to_default_39c90e))
+                }
             }
-
-            androidx.compose.material3.HorizontalDivider(Modifier.padding(vertical = 20.dp), color = MaterialTheme.colorScheme.outlineVariant)
-            com.aurora.music.ui.screens.settings.ReverbQuickControls(onOpenReverbSettings)
         }
     }
 }

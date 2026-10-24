@@ -30,7 +30,8 @@ import com.aurora.music.R
 import com.aurora.music.data.ReverbPrefs
 import com.aurora.music.localization.appString
 import com.aurora.music.ui.screens.player.ConcertPositionPicker
-import com.aurora.music.ui.screens.player.ConcertVenuePicker
+import com.aurora.music.ui.screens.player.ConcertRoomSliders
+import com.aurora.music.ui.screens.player.ConcertStyleChips
 import com.aurora.music.ui.screens.player.ReverbModeChips
 import com.aurora.music.ui.screens.player.ReverbPresetChips
 import java.text.NumberFormat
@@ -77,9 +78,14 @@ fun ReverbSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
             }
             if (concert.enabled) {
                 item { SettingsSectionTitle(appString(R.string.concert_section_venue)) }
-                item { SettingsGroup { ConcertVenuePicker(concert, Modifier.padding(16.dp)) { save(prefs.copy(concert = it)) } } }
+                item {
+                    SettingsGroup {
+                        ConcertStyleChips(concert, Modifier.padding(16.dp), labelVenue = false) { save(prefs.copy(concert = it)) }
+                        ConcertRoomSliders(concert, Modifier.padding(horizontal = 16.dp).padding(bottom = 8.dp)) { save(prefs.copy(concert = it)) }
+                    }
+                }
                 item { SettingsSectionTitle(appString(R.string.concert_section_position)) }
-                item { SettingsGroup { ConcertPositionPicker(concert, Modifier.padding(16.dp)) { save(prefs.copy(concert = it)) } } }
+                item { SettingsGroup { ConcertPositionPicker(concert, Modifier.padding(16.dp), hint = true) { save(prefs.copy(concert = it)) } } }
             } else {
                 item { SettingsSectionTitle(appString(R.string.reverb_section_space)) }
                 item {

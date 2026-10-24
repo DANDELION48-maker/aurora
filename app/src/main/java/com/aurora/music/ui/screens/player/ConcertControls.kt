@@ -7,10 +7,13 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,6 +51,7 @@ import com.aurora.music.data.ConcertSound
 import com.aurora.music.data.ConcertVenue
 import com.aurora.music.localization.appString
 import com.aurora.music.playback.engine.ConcertAcoustics
+import com.aurora.music.ui.screens.settings.SegmentedChoice
 import java.text.NumberFormat
 import kotlin.math.atan2
 import kotlin.math.hypot
@@ -99,16 +103,27 @@ internal fun ChoiceChips(labels: List<String>, selected: Int, modifier: Modifier
 
 @Composable
 internal fun ReverbModeChips(concert: Boolean, modifier: Modifier = Modifier, onPick: (Boolean) -> Unit) =
-    ChoiceChips(listOf(appString(R.string.reverb_mode_studio), appString(R.string.reverb_mode_concert)), if (concert) 1 else 0, modifier) { onPick(it == 1) }
+    SegmentedChoice(listOf(appString(R.string.reverb_mode_studio), appString(R.string.reverb_mode_concert)), if (concert) 1 else 0, modifier) { onPick(it == 1) }
 
 @Composable
-internal fun ConcertVenuePicker(concert: ConcertPrefs, modifier: Modifier = Modifier, onChange: (ConcertPrefs) -> Unit) {
+internal fun ConcertStyleChips(concert: ConcertPrefs, modifier: Modifier = Modifier, labelVenue: Boolean = true, onChange: (ConcertPrefs) -> Unit) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (labelVenue) ChipLabel(appString(R.string.concert_section_venue))
+        ChoiceChips(ConcertVenue.ALL.indices.map(::concertVenueName), concert.venue) { onChange(concert.withVenue(it)) }
+        ChipLabel(appString(R.string.concert_sound))
+        ChoiceChips(ConcertSound.ALL.indices.map(::concertSoundName), concert.sound) { onChange(concert.copy(sound = it)) }
+    }
+}
+
+@Composable
+private fun ChipLabel(text: String) =
+    Text(text, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
+
+@Composable
+internal fun ConcertRoomSliders(concert: ConcertPrefs, modifier: Modifier = Modifier, onChange: (ConcertPrefs) -> Unit) {
     val venue = ConcertVenue.ALL[concert.venue]
     val percent = remember { NumberFormat.getPercentInstance() }
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        ChoiceChips(ConcertVenue.ALL.indices.map(::concertVenueName), concert.venue) { onChange(concert.withVenue(it)) }
-        Text(appString(R.string.concert_sound), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 4.dp))
-        ChoiceChips(ConcertSound.ALL.indices.map(::concertSoundName), concert.sound) { onChange(concert.copy(sound = it)) }
+    Column(modifier) {
         ConcertSlider(appString(R.string.concert_size), concert.size,
             label = { appString(R.string.concert_size_value, "%.0f".format(venue.widthM(it)), "%.0f".format(venue.lengthM(it))) }) { onChange(concert.copy(size = it)) }
         ConcertSlider(appString(R.string.concert_openness), concert.openness, label = {
@@ -118,22 +133,22 @@ internal fun ConcertVenuePicker(concert: ConcertPrefs, modifier: Modifier = Modi
 }
 
 @Composable
-internal fun ConcertPositionPicker(concert: ConcertPrefs, modifier: Modifier = Modifier, onChange: (ConcertPrefs) -> Unit) {
+internal fun ConcertPositionPicker(concert: ConcertPrefs, modifier: Modifier = Modifier, hint: Boolean = false, onChange: (ConcertPrefs) -> Unit) {
     var draft by remember { mutableStateOf<ConcertPrefs?>(null) }
     val shown = draft ?: concert
     val distance = remember(shown) { ConcertAcoustics.room(shown).distanceM }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        ConcertVenueMap(shown, concert, onDraft = { draft = it }, onChange = onChange)
-        Text(appString(if (shown.elevation > 0f) R.string.concert_distance_raised else R.string.concert_distance, "%.0f".format(distance)),
-            style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Medium)
+        ConcertVenueMap(shown, concert,
+            appString(if (shown.elevation > 0f) R.string.concert_distance_raised else R.string.concert_distance, "%.0f".format(distance)),
+            onDraft = { draft = it }, onChange = onChange)
         ChoiceChips(ConcertSeat.ALL.map(::concertSeatName), shown.seat() ?: -1) { onChange(concert.withSeat(it)) }
-        Text(appString(R.string.concert_map_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        if (hint) Text(appString(R.string.concert_map_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
-// top-down floor plan, stage at its spot facing the room, drag the dot (or the stage) around
+// top-down floor plan sized to the venue itself, so only touches on the floor move the dot (or the stage)
 @Composable
-private fun ConcertVenueMap(shown: ConcertPrefs, stored: ConcertPrefs, onDraft: (ConcertPrefs?) -> Unit, onChange: (ConcertPrefs) -> Unit) {
+private fun ConcertVenueMap(shown: ConcertPrefs, stored: ConcertPrefs, distance: String, onDraft: (ConcertPrefs?) -> Unit, onChange: (ConcertPrefs) -> Unit) {
     val venue = ConcertVenue.ALL[shown.venue]
     val aspect = (venue.widthM(shown.size) / venue.lengthM(shown.size)).coerceIn(0.55f, 1.8f)
     val latest by rememberUpdatedState(shown)
@@ -152,49 +167,56 @@ private fun ConcertVenueMap(shown: ConcertPrefs, stored: ConcertPrefs, onDraft: 
         val y = ((at.y - r.top) / r.height).coerceIn(0.02f, 0.98f)
         return if (stage) from.copy(stageX = x, stageY = y) else from.copy(listenerX = x, listenerY = y)
     }
-    Canvas(
-        Modifier.fillMaxWidth().height(200.dp).semantics { contentDescription = label }
-            .pointerInput(aspect) {
-                detectTapGestures { at -> change(place(at, size.toSize(), 2.dp.toPx(), stage = false, from = base)) }
+    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Box(
+            Modifier.heightIn(max = 200.dp).aspectRatio(aspect).semantics { contentDescription = label }
+                .pointerInput(aspect) {
+                    detectTapGestures { at -> change(place(at, size.toSize(), 2.dp.toPx(), stage = false, from = base)) }
+                }
+                .pointerInput(aspect) {
+                    var stage = false
+                    detectDragGestures(
+                        onDragStart = { at ->
+                            val r = venueRect(size.toSize(), aspect, 2.dp.toPx())
+                            stage = (at - Offset(r.left + base.stageX * r.width, r.top + base.stageY * r.height)).getDistance() < 28.dp.toPx()
+                        },
+                        onDrag = { pointer, _ ->
+                            pointer.consume()
+                            val next = place(pointer.position, size.toSize(), 2.dp.toPx(), stage, latest)
+                            draft(next); change(next)
+                        },
+                        onDragEnd = { draft(null) },
+                        onDragCancel = { draft(null) },
+                    )
+                },
+        ) {
+            Canvas(Modifier.fillMaxSize()) {
+                val r = venueRect(size, aspect, 2.dp.toPx())
+                val corner = CornerRadius(14.dp.toPx())
+                drawRoundRect(floor, r.topLeft, r.size, corner)
+                drawRoundRect(wall.copy(alpha = 1f - 0.7f * shown.openness), r.topLeft, r.size, corner,
+                    style = Stroke(2.dp.toPx(), pathEffect = if (shown.openness > 0.5f) PathEffect.dashPathEffect(floatArrayOf(12f, 10f)) else null))
+                val s = Offset(r.left + shown.stageX * r.width, r.top + shown.stageY * r.height)
+                val p = Offset(r.left + shown.listenerX * r.width, r.top + shown.listenerY * r.height)
+                clipRect(r.left, r.top, r.right, r.bottom) {
+                    for (i in 1..4) drawCircle(stageColor.copy(alpha = 0.12f), radius = i * r.minDimension * 0.2f, center = s, style = Stroke(1.5.dp.toPx()))
+                }
+                drawLine(you.copy(alpha = 0.6f), p, s, strokeWidth = 1.5.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(8f, 8f)))
+                val centre = r.center - s
+                val facing = if (hypot(centre.x / r.width, centre.y / r.height) > 0.12f) centre else p - s
+                val stageW = (venue.stageWidthM(shown.size) / venue.widthM(shown.size) * r.width).coerceAtLeast(20.dp.toPx())
+                val stageD = 9.dp.toPx()
+                rotate(Math.toDegrees(atan2(facing.y, facing.x).toDouble()).toFloat() - 90f, pivot = s) {
+                    drawRoundRect(stageColor, Offset(s.x - stageW / 2, s.y - stageD / 2), Size(stageW, stageD), CornerRadius(4.dp.toPx()))
+                }
+                if (shown.elevation > 0f) drawCircle(you.copy(alpha = 0.3f), 15.dp.toPx(), p)
+                drawCircle(you, 9.dp.toPx(), p)
+                drawCircle(youRing, 9.dp.toPx(), p, style = Stroke(2.dp.toPx()))
             }
-            .pointerInput(aspect) {
-                var stage = false
-                detectDragGestures(
-                    onDragStart = { at ->
-                        val r = venueRect(size.toSize(), aspect, 2.dp.toPx())
-                        stage = (at - Offset(r.left + base.stageX * r.width, r.top + base.stageY * r.height)).getDistance() < 28.dp.toPx()
-                    },
-                    onDrag = { pointer, _ ->
-                        pointer.consume()
-                        val next = place(pointer.position, size.toSize(), 2.dp.toPx(), stage, latest)
-                        draft(next); change(next)
-                    },
-                    onDragEnd = { draft(null) },
-                    onDragCancel = { draft(null) },
-                )
-            },
-    ) {
-        val r = venueRect(size, aspect, 2.dp.toPx())
-        val corner = CornerRadius(14.dp.toPx())
-        drawRoundRect(floor, r.topLeft, r.size, corner)
-        drawRoundRect(wall.copy(alpha = 1f - 0.7f * shown.openness), r.topLeft, r.size, corner,
-            style = Stroke(2.dp.toPx(), pathEffect = if (shown.openness > 0.5f) PathEffect.dashPathEffect(floatArrayOf(12f, 10f)) else null))
-        val s = Offset(r.left + shown.stageX * r.width, r.top + shown.stageY * r.height)
-        val p = Offset(r.left + shown.listenerX * r.width, r.top + shown.listenerY * r.height)
-        clipRect(r.left, r.top, r.right, r.bottom) {
-            for (i in 1..4) drawCircle(stageColor.copy(alpha = 0.12f), radius = i * r.minDimension * 0.2f, center = s, style = Stroke(1.5.dp.toPx()))
+            Text(distance, Modifier.align(Alignment.BottomEnd).padding(8.dp)
+                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f), RoundedCornerShape(50)).padding(horizontal = 8.dp, vertical = 3.dp),
+                style = MaterialTheme.typography.labelMedium)
         }
-        drawLine(you.copy(alpha = 0.6f), p, s, strokeWidth = 1.5.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(8f, 8f)))
-        val centre = r.center - s
-        val facing = if (hypot(centre.x / r.width, centre.y / r.height) > 0.12f) centre else p - s
-        val stageW = (venue.stageWidthM(shown.size) / venue.widthM(shown.size) * r.width).coerceAtLeast(20.dp.toPx())
-        val stageD = 9.dp.toPx()
-        rotate(Math.toDegrees(atan2(facing.y, facing.x).toDouble()).toFloat() - 90f, pivot = s) {
-            drawRoundRect(stageColor, Offset(s.x - stageW / 2, s.y - stageD / 2), Size(stageW, stageD), CornerRadius(4.dp.toPx()))
-        }
-        if (shown.elevation > 0f) drawCircle(you.copy(alpha = 0.3f), 15.dp.toPx(), p)
-        drawCircle(you, 9.dp.toPx(), p)
-        drawCircle(youRing, 9.dp.toPx(), p, style = Stroke(2.dp.toPx()))
     }
 }
 
