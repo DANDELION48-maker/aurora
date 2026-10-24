@@ -213,7 +213,7 @@ internal fun LyricsPane(
 
 // artwork tones only app accents never enter this palette
 @Composable
-private fun LyricsBackdrop(song: Song) {
+internal fun LyricsBackdrop(song: Song) {
     val context = LocalPlatformContext.current
     val neutral = listOf(Color(0xFF39434B), Color(0xFF242B34), Color(0xFF50565A))
     var tones by remember(song.artworkUrl) { mutableStateOf(neutral) }

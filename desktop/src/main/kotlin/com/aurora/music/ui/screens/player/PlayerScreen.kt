@@ -203,6 +203,7 @@ fun PlayerScreen(
     val ui = LocalUiPrefs.current
     val classic = ui.themeStyle == ThemeStyle.AURORA
     var showLyrics by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
+    var showCover by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
     var pickedPane by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf<String?>(null) }
     var paneOpen by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
     val sidePane = pickedPane?.let(PlayerPane::valueOf) ?: PlayerPane.LYRICS
@@ -212,7 +213,6 @@ fun PlayerScreen(
         paneOpen = true
         onPaneRequestHandled()
     }
-    var showMenu by remember { mutableStateOf(false) }
     val comments = rememberTrackComments(song)
     var showComments by remember { mutableStateOf(false) }
     var focusComment by remember { mutableStateOf<String?>(null) }
@@ -271,6 +271,68 @@ fun PlayerScreen(
             ) {},
     ) {
         val short = maxHeight < 700.dp
+        val moreMenu: @Composable () -> Unit = {
+            var showMenu by remember { mutableStateOf(false) }
+            Box {
+                Icon(
+                    Icons.Filled.MoreVert, appString(R.string.text_more_4bab2d),
+                    modifier = Modifier.size(40.dp).clip(CircleShape).clickable { showMenu = true }.pointerHoverIcon(PointerIcon.Hand).padding(8.dp),
+                )
+                DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                    if (onOpenMix != null) DropdownMenuItem(text = { Text(appString(R.string.text_mix_studio_668363)) },
+                        onClick = { showMenu = false; onOpenMix() }, leadingIcon = { Icon(Icons.Filled.GraphicEq, null) })
+                    if (state.hasTrack && state.supportsCanvas && canvasPlayer == null) DropdownMenuItem(
+                        text = { Text(appString(R.string.canvas_open)) },
+                        enabled = !state.videoLoading,
+                        onClick = { showMenu = false; openVideo(canvas = true) },
+                        leadingIcon = { Icon(Icons.Filled.Animation, null) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(appString(R.string.text_sonic_radio_9b7bff)) },
+                        onClick = { showMenu = false; onSonicRadio() },
+                        leadingIcon = { Icon(Icons.Filled.Radio, null) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(appString(R.string.text_auto_dj_774a78)) },
+                        onClick = { showMenu = false; onAutoDj() },
+                        leadingIcon = { Icon(Icons.Filled.AutoAwesome, null) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(appString(R.string.text_visualizer_7177c7)) },
+                        onClick = { showMenu = false; onOpenVisualizer() },
+                        leadingIcon = { Icon(Icons.Filled.GraphicEq, null) },
+                    )
+                    if (comments.supported) DropdownMenuItem(
+                        text = { Text(appString(R.string.player_comments)) },
+                        onClick = { showMenu = false; focusComment = null; showComments = true },
+                        leadingIcon = { Icon(Icons.Filled.ChatBubble, null) },
+                    )
+                    if (comments.available) DropdownMenuItem(
+                        text = { Text(appString(R.string.player_soundcloud_comments)) },
+                        onClick = { comments.setEnabled(!comments.enabled) },
+                        leadingIcon = { Icon(if (comments.enabled) Icons.Filled.SpeakerNotes else Icons.Filled.SpeakerNotesOff, null) },
+                        trailingIcon = if (comments.enabled) ({ Icon(Icons.Filled.Check, null) }) else null,
+                    )
+                    DropdownMenuItem(
+                        text = { Text(appString(R.string.text_sleep_timer_e90613)) },
+                        onClick = { showMenu = false; onOpenSleep() },
+                        leadingIcon = { Icon(Icons.Filled.Bedtime, null) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(appString(R.string.text_go_to_album_e2d3b3)) },
+                        enabled = song.albumId.isNotBlank(),
+                        onClick = { showMenu = false; onGoToAlbum() },
+                        leadingIcon = { Icon(Icons.Filled.Album, null) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(appString(R.string.text_go_to_artist_d8f70c)) },
+                        enabled = song.artistId.isNotBlank(),
+                        onClick = { showMenu = false; onGoToArtist() },
+                        leadingIcon = { Icon(Icons.Filled.Person, null) },
+                    )
+                }
+            }
+        }
         val header: @Composable () -> Unit = {
             Row(
                 Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(top = if (short) 8.dp else 16.dp, bottom = 8.dp),
@@ -301,65 +363,7 @@ fun PlayerScreen(
                 HeaderButton(if (fullscreen) Icons.Filled.FullscreenExit else Icons.Filled.Fullscreen,
                     appString(if (fullscreen) R.string.player_exit_fullscreen else R.string.player_fullscreen)) { onFullscreenChange(!fullscreen) }
                 HeaderButton(Icons.Filled.Speaker, appString(R.string.text_output_device_709178), onClick = onOpenOutput)
-                Box {
-                    Icon(
-                        Icons.Filled.MoreVert, appString(R.string.text_more_4bab2d),
-                        modifier = Modifier.size(40.dp).clip(CircleShape).clickable { showMenu = true }.pointerHoverIcon(PointerIcon.Hand).padding(8.dp),
-                    )
-                    DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-                        if (onOpenMix != null) DropdownMenuItem(text = { Text(appString(R.string.text_mix_studio_668363)) },
-                            onClick = { showMenu = false; onOpenMix() }, leadingIcon = { Icon(Icons.Filled.GraphicEq, null) })
-                        if (state.hasTrack && state.supportsCanvas && canvasPlayer == null) DropdownMenuItem(
-                            text = { Text(appString(R.string.canvas_open)) },
-                            enabled = !state.videoLoading,
-                            onClick = { showMenu = false; openVideo(canvas = true) },
-                            leadingIcon = { Icon(Icons.Filled.Animation, null) },
-                        )
-                        DropdownMenuItem(
-                            text = { Text(appString(R.string.text_sonic_radio_9b7bff)) },
-                            onClick = { showMenu = false; onSonicRadio() },
-                            leadingIcon = { Icon(Icons.Filled.Radio, null) },
-                        )
-                        DropdownMenuItem(
-                            text = { Text(appString(R.string.text_auto_dj_774a78)) },
-                            onClick = { showMenu = false; onAutoDj() },
-                            leadingIcon = { Icon(Icons.Filled.AutoAwesome, null) },
-                        )
-                        DropdownMenuItem(
-                            text = { Text(appString(R.string.text_visualizer_7177c7)) },
-                            onClick = { showMenu = false; onOpenVisualizer() },
-                            leadingIcon = { Icon(Icons.Filled.GraphicEq, null) },
-                        )
-                        if (comments.supported) DropdownMenuItem(
-                            text = { Text(appString(R.string.player_comments)) },
-                            onClick = { showMenu = false; focusComment = null; showComments = true },
-                            leadingIcon = { Icon(Icons.Filled.ChatBubble, null) },
-                        )
-                        if (comments.available) DropdownMenuItem(
-                            text = { Text(appString(R.string.player_soundcloud_comments)) },
-                            onClick = { comments.setEnabled(!comments.enabled) },
-                            leadingIcon = { Icon(if (comments.enabled) Icons.Filled.SpeakerNotes else Icons.Filled.SpeakerNotesOff, null) },
-                            trailingIcon = if (comments.enabled) ({ Icon(Icons.Filled.Check, null) }) else null,
-                        )
-                        DropdownMenuItem(
-                            text = { Text(appString(R.string.text_sleep_timer_e90613)) },
-                            onClick = { showMenu = false; onOpenSleep() },
-                            leadingIcon = { Icon(Icons.Filled.Bedtime, null) },
-                        )
-                        DropdownMenuItem(
-                            text = { Text(appString(R.string.text_go_to_album_e2d3b3)) },
-                            enabled = song.albumId.isNotBlank(),
-                            onClick = { showMenu = false; onGoToAlbum() },
-                            leadingIcon = { Icon(Icons.Filled.Album, null) },
-                        )
-                        DropdownMenuItem(
-                            text = { Text(appString(R.string.text_go_to_artist_d8f70c)) },
-                            enabled = song.artistId.isNotBlank(),
-                            onClick = { showMenu = false; onGoToArtist() },
-                            leadingIcon = { Icon(Icons.Filled.Person, null) },
-                        )
-                    }
-                }
+                moreMenu()
             }
         }
         val artwork: @Composable (Modifier) -> Unit = { modifier ->
@@ -376,11 +380,13 @@ fun PlayerScreen(
                         } else Modifier
                     )
                     .then(if (canvasPlayer != null) Modifier.onGloballyPositioned { stageBounds.value = it.boundsInWindow() } else Modifier)
-                    .then(
-                        if (gestures.doubleTapPause) Modifier.pointerInput(Unit) {
-                            detectTapGestures(onDoubleTap = { onTogglePlay() })
-                        } else Modifier
-                    ),
+                    .pointerInput(gestures.doubleTapPause) {
+                        detectTapGestures(
+                            onDoubleTap = if (gestures.doubleTapPause) ({ onTogglePlay() }) else null,
+                            onTap = { if (!showVideo) showCover = true },
+                        )
+                    }
+                    .then(if (!showVideo) Modifier.pointerHoverIcon(PointerIcon.Hand) else Modifier),
                 contentAlignment = Alignment.Center,
             ) {
                 if (showVideo && video != null && state.hasVideo) {
@@ -652,6 +658,8 @@ fun PlayerScreen(
             }
         }
         LyricsOverlay(showLyrics, state, onClose = { showLyrics = false }, onTogglePlay, onPrevious, onNext, onSeek)
+        CoverOverlay(showCover && !showLyrics, state, onClose = { showCover = false }, onTogglePlay, onPrevious, onNext, onSeek, onToggleLike,
+            volume, onVolumeChange, onToggleMute, moreMenu)
         if (fullscreenActive && video != null) FullscreenMusicVideo(
             video, state, playerAccent,
             onAudio = { fullscreenVideo = false; showVideo = false },
@@ -695,6 +703,114 @@ private fun LyricsOverlay(
         LyricsScreen(state, onClose = onClose, onTogglePlay, onPrevious, onNext, onSeek)
     }
     BackHandler(enabled = visible) { onClose() }
+}
+
+// apple-music style full-art view: the cover fills the window and melts into its own colours behind the controls
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+private fun CoverOverlay(
+    visible: Boolean,
+    state: PlayerUiState,
+    onClose: () -> Unit,
+    onTogglePlay: () -> Unit,
+    onPrevious: () -> Unit,
+    onNext: () -> Unit,
+    onSeek: (Float) -> Unit,
+    onToggleLike: () -> Unit,
+    volume: Float,
+    onVolumeChange: (Float) -> Unit,
+    onToggleMute: () -> Unit,
+    menu: @Composable () -> Unit,
+) {
+    androidx.compose.animation.AnimatedVisibility(visible, enter = fadeIn(tween(320)), exit = fadeOut(tween(240))) {
+        MaterialTheme(colorScheme = canvasColors()) {
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+            val song = state.current
+            val noRipple = remember { MutableInteractionSource() }
+            val settle = remember(song.id) { androidx.compose.animation.core.Animatable(1.12f) }
+            LaunchedEffect(song.id) { settle.animateTo(1f, tween(1400, easing = androidx.compose.animation.core.FastOutSlowInEasing)) }
+            val drift = coverDrift(state.isPlaying)
+            BoxWithConstraints(Modifier.fillMaxSize().background(Color(0xFF17191D)).clickable(noRipple, indication = null) {}) {
+                LyricsBackdrop(song)
+                val wide = maxWidth > maxHeight
+                val side = if (wide) maxHeight else maxWidth
+                val fade = if (wide) Brush.horizontalGradient(.6f to Color.Black, 1f to Color.Transparent)
+                    else Brush.verticalGradient(.6f to Color.Black, 1f to Color.Transparent)
+                Artwork(
+                    song.artworkUrl, song.accent,
+                    Modifier.size(side)
+                        .clickable(noRipple, indication = null, onClick = onClose).pointerHoverIcon(PointerIcon.Hand)
+                        .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen; clip = true }
+                        .drawWithContent { drawContent(); drawRect(fade, blendMode = BlendMode.DstIn) }
+                        .graphicsLayer { kenBurns(drift.floatValue, settle.value) },
+                    corner = 0.dp, animated = CoverKey.of(song),
+                )
+                Icon(
+                    Icons.Filled.KeyboardArrowDown, appString(R.string.text_collapse_9cf188),
+                    modifier = Modifier.padding(16.dp).size(40.dp).clip(CircleShape).background(Color.Black.copy(alpha = .3f))
+                        .clickable(onClick = onClose).pointerHoverIcon(PointerIcon.Hand).padding(6.dp),
+                )
+                Box(Modifier.align(Alignment.TopEnd).padding(16.dp).clip(CircleShape).background(Color.Black.copy(alpha = .3f))) { menu() }
+                val controlsWidth = if (wide) (maxWidth - side * .8f).coerceIn(360.dp, 560.dp) else maxWidth
+                Column(
+                    Modifier.align(if (wide) Alignment.CenterEnd else Alignment.BottomCenter).width(controlsWidth)
+                        .padding(horizontal = 40.dp, vertical = 32.dp),
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f)) {
+                            MarqueeTitle(song.title, MaterialTheme.typography.headlineMedium)
+                            MarqueeTitle(song.artist, MaterialTheme.typography.titleMedium, MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = null)
+                        }
+                        Icon(
+                            if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                            appString(R.string.text_like_c7e02c),
+                            modifier = Modifier.size(48.dp).clip(CircleShape).clickable(onClick = onToggleLike).pointerHoverIcon(PointerIcon.Hand).padding(10.dp),
+                        )
+                    }
+                    Spacer(Modifier.height(16.dp))
+                    SeekBar(state.progress, state.positionSec.toInt(), state.durationSec, state.isLive, Color.White, song.id.hashCode(),
+                        LocalUiPrefs.current.playerSeekStyle, LocalUiPrefs.current.playerWaveBars, onSeek)
+                    Spacer(Modifier.height(12.dp))
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Filled.SkipPrevious, appString(R.string.text_previous_50f942),
+                            modifier = Modifier.size(64.dp).clip(CircleShape).clickable(onClick = onPrevious).pointerHoverIcon(PointerIcon.Hand).padding(8.dp))
+                        Icon(if (state.isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow, appString(R.string.text_play_pause_14a1d0),
+                            modifier = Modifier.size(80.dp).clip(CircleShape).clickable(onClick = onTogglePlay).pointerHoverIcon(PointerIcon.Hand).padding(8.dp))
+                        Icon(Icons.Filled.SkipNext, appString(R.string.text_next_bc9819),
+                            modifier = Modifier.size(64.dp).clip(CircleShape).clickable(onClick = onNext).pointerHoverIcon(PointerIcon.Hand).padding(8.dp))
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    VolumeControl(volume, onVolumeChange, onToggleMute, controlsWidth - 140.dp, Modifier.align(Alignment.CenterHorizontally), fill = Color.White)
+                }
+            }
+        }
+        }
+    }
+    BackHandler(enabled = visible) { onClose() }
+}
+
+// playing time, stepped like the lyrics glow: the cover moves under a pixel per step so a dozen redraws a second look smooth
+@Composable
+private fun coverDrift(running: Boolean): androidx.compose.runtime.FloatState {
+    val drift = remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(running) {
+        if (!running) return@LaunchedEffect
+        val from = drift.floatValue
+        val start = androidx.compose.runtime.withFrameMillis { it }
+        while (true) {
+            drift.floatValue = from + (androidx.compose.runtime.withFrameMillis { it } - start) / 1000f
+            kotlinx.coroutines.delay(80)
+        }
+    }
+    return drift
+}
+
+// a slow ken burns: zooms up to 12% toward a wandering point, so the cover never shows an edge
+private fun androidx.compose.ui.graphics.GraphicsLayerScope.kenBurns(seconds: Float, settle: Float) {
+    val zoom = (1f - kotlin.math.cos(seconds * 2f * kotlin.math.PI.toFloat() / 40f)) / 2f
+    scaleX = settle * (1f + .12f * zoom)
+    scaleY = scaleX
+    transformOrigin = androidx.compose.ui.graphics.TransformOrigin(.5f + .4f * kotlin.math.sin(seconds / 11f), .5f + .4f * kotlin.math.cos(seconds / 17f))
 }
 
 @Composable

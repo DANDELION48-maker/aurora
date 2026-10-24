@@ -204,6 +204,7 @@ fun PlayerScreen(
     val windowLayout = com.aurora.music.ui.layout.LocalWindowLayout.current
     val tablet = windowLayout.useNavigationRail && paneContent != null
     var showLyrics by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
+    var showCover by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
     var showVideo by androidx.compose.runtime.saveable.rememberSaveable(song.id) { mutableStateOf(false) }
     var sidePaneName by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(PlayerPane.LYRICS.name) }
     var portraitTabName by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf<String?>(null) }
@@ -227,7 +228,6 @@ fun PlayerScreen(
     var fullscreenVideo by androidx.compose.runtime.saveable.rememberSaveable(song.id) { mutableStateOf(false) }
     var inlineVideoControlsVisible by remember(song.id) { mutableStateOf(false) }
     var inlineVideoInteraction by remember(song.id) { mutableStateOf(0) }
-    var showMenu by remember { mutableStateOf(false) }
     val playerAccent = MaterialTheme.colorScheme.primary
     val onPlayerAccent = MaterialTheme.colorScheme.onPrimary
     val view = LocalView.current
@@ -284,7 +284,7 @@ fun PlayerScreen(
 
     // player is outside the scaffold so LocalContentColor defaults to black provide it explicitly
     CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
-    DragToDismiss(onDismiss = onCollapse, enabled = gestures.swipeDownDismiss && !showLyrics, shown = state.expanded, offsetState = surfaceOffset) {
+    DragToDismiss(onDismiss = onCollapse, enabled = gestures.swipeDownDismiss && !showLyrics && !showCover, shown = state.expanded, offsetState = surfaceOffset) {
     Box(
         Modifier
             .fillMaxSize()
@@ -311,6 +311,75 @@ fun PlayerScreen(
             }
         }
         CanvasTint(canvasShown) {
+        val moreMenu: @Composable () -> Unit = {
+            var showMenu by remember { mutableStateOf(false) }
+            Box {
+                Icon(
+                    Icons.Filled.MoreVert, appString(R.string.text_more_4bab2d),
+                    modifier = Modifier.size(40.dp).clip(CircleShape).clickable { showMenu = true }.padding(8.dp),
+                )
+                DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                    DropdownMenuItem(text = { Text(appString(R.string.text_mix_studio_668363)) }, onClick = { showMenu = false; onOpenMix() }, leadingIcon = { Icon(Icons.Filled.GraphicEq, null) })
+                    DropdownMenuItem(
+                        text = { Text(appString(R.string.text_sonic_radio_9b7bff)) },
+                        onClick = { showMenu = false; onSonicRadio() },
+                        leadingIcon = { Icon(Icons.Filled.Radio, null) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(appString(R.string.text_auto_dj_774a78)) },
+                        onClick = { showMenu = false; onAutoDj() },
+                        leadingIcon = { Icon(Icons.Filled.AutoAwesome, null) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(appString(R.string.text_visualizer_7177c7)) },
+                        onClick = { showMenu = false; onOpenVisualizer() },
+                        leadingIcon = { Icon(Icons.Filled.GraphicEq, null) },
+                    )
+                    if (onOpenRelated != null && state.hasTrack) DropdownMenuItem(
+                        text = { Text(appString(R.string.discovery_related)) },
+                        onClick = { showMenu = false; onOpenRelated() },
+                        leadingIcon = { Icon(Icons.Filled.Explore, null) },
+                    )
+                    if (state.supportsComments) DropdownMenuItem(
+                        text = { Text(appString(R.string.player_comments)) },
+                        onClick = { showMenu = false; showComments = true },
+                        leadingIcon = { Icon(Icons.Filled.ChatBubble, null) },
+                    )
+                    if (state.commentsAvailable) DropdownMenuItem(
+                        text = { Text(appString(R.string.player_soundcloud_comments)) },
+                        onClick = { onToggleComments(!state.commentsEnabled) },
+                        leadingIcon = { Icon(if (state.commentsEnabled) Icons.Filled.SpeakerNotes else Icons.Filled.SpeakerNotesOff, null) },
+                        trailingIcon = if (state.commentsEnabled) ({ Icon(Icons.Filled.Check, null) }) else null,
+                    )
+                    MusicHapticsMenuItem()
+                    DropdownMenuItem(
+                        text = { Text(appString(R.string.text_sleep_timer_e90613)) },
+                        onClick = { showMenu = false; onOpenSleep() },
+                        leadingIcon = { Icon(Icons.Filled.Bedtime, null) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(appString(R.string.text_go_to_album_e2d3b3)) },
+                        enabled = song.albumId.isNotBlank(),
+                        onClick = { showMenu = false; onGoToAlbum() },
+                        leadingIcon = { Icon(Icons.Filled.Album, null) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(appString(R.string.text_go_to_artist_d8f70c)) },
+                        enabled = song.artistId.isNotBlank(),
+                        onClick = { showMenu = false; onGoToArtist() },
+                        leadingIcon = { Icon(Icons.Filled.Person, null) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(appString(R.string.text_view_queue_827a90)) },
+                        onClick = {
+                            showMenu = false
+                            if (tablet) { sidePaneName = PlayerPane.QUEUE.name; portraitTabName = PlayerPane.QUEUE.name } else onOpenQueue()
+                        },
+                        leadingIcon = { Icon(Icons.AutoMirrored.Filled.QueueMusic, null) },
+                    )
+                }
+            }
+        }
         val header: @Composable () -> Unit = {
             Column(
                 Modifier
@@ -399,72 +468,7 @@ fun PlayerScreen(
                         Icons.Filled.Speaker, appString(R.string.text_output_device_709178),
                         modifier = Modifier.size(40.dp).clip(CircleShape).clickable(onClick = onOpenOutput).padding(8.dp),
                     )
-                    Box {
-                        Icon(
-                            Icons.Filled.MoreVert, appString(R.string.text_more_4bab2d),
-                            modifier = Modifier.size(40.dp).clip(CircleShape).clickable { showMenu = true }.padding(8.dp),
-                        )
-                        DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-                            DropdownMenuItem(text = { Text(appString(R.string.text_mix_studio_668363)) }, onClick = { showMenu = false; onOpenMix() }, leadingIcon = { Icon(Icons.Filled.GraphicEq, null) })
-                            DropdownMenuItem(
-                                text = { Text(appString(R.string.text_sonic_radio_9b7bff)) },
-                                onClick = { showMenu = false; onSonicRadio() },
-                                leadingIcon = { Icon(Icons.Filled.Radio, null) },
-                            )
-                            DropdownMenuItem(
-                                text = { Text(appString(R.string.text_auto_dj_774a78)) },
-                                onClick = { showMenu = false; onAutoDj() },
-                                leadingIcon = { Icon(Icons.Filled.AutoAwesome, null) },
-                            )
-                            DropdownMenuItem(
-                                text = { Text(appString(R.string.text_visualizer_7177c7)) },
-                                onClick = { showMenu = false; onOpenVisualizer() },
-                                leadingIcon = { Icon(Icons.Filled.GraphicEq, null) },
-                            )
-                            if (onOpenRelated != null && state.hasTrack) DropdownMenuItem(
-                                text = { Text(appString(R.string.discovery_related)) },
-                                onClick = { showMenu = false; onOpenRelated() },
-                                leadingIcon = { Icon(Icons.Filled.Explore, null) },
-                            )
-                            if (state.supportsComments) DropdownMenuItem(
-                                text = { Text(appString(R.string.player_comments)) },
-                                onClick = { showMenu = false; showComments = true },
-                                leadingIcon = { Icon(Icons.Filled.ChatBubble, null) },
-                            )
-                            if (state.commentsAvailable) DropdownMenuItem(
-                                text = { Text(appString(R.string.player_soundcloud_comments)) },
-                                onClick = { onToggleComments(!state.commentsEnabled) },
-                                leadingIcon = { Icon(if (state.commentsEnabled) Icons.Filled.SpeakerNotes else Icons.Filled.SpeakerNotesOff, null) },
-                                trailingIcon = if (state.commentsEnabled) ({ Icon(Icons.Filled.Check, null) }) else null,
-                            )
-                            MusicHapticsMenuItem()
-                            DropdownMenuItem(
-                                text = { Text(appString(R.string.text_sleep_timer_e90613)) },
-                                onClick = { showMenu = false; onOpenSleep() },
-                                leadingIcon = { Icon(Icons.Filled.Bedtime, null) },
-                            )
-                            DropdownMenuItem(
-                                text = { Text(appString(R.string.text_go_to_album_e2d3b3)) },
-                                enabled = song.albumId.isNotBlank(),
-                                onClick = { showMenu = false; onGoToAlbum() },
-                                leadingIcon = { Icon(Icons.Filled.Album, null) },
-                            )
-                            DropdownMenuItem(
-                                text = { Text(appString(R.string.text_go_to_artist_d8f70c)) },
-                                enabled = song.artistId.isNotBlank(),
-                                onClick = { showMenu = false; onGoToArtist() },
-                                leadingIcon = { Icon(Icons.Filled.Person, null) },
-                            )
-                            DropdownMenuItem(
-                                text = { Text(appString(R.string.text_view_queue_827a90)) },
-                                onClick = {
-                                    showMenu = false
-                                    if (tablet) { sidePaneName = PlayerPane.QUEUE.name; portraitTabName = PlayerPane.QUEUE.name } else onOpenQueue()
-                                },
-                                leadingIcon = { Icon(Icons.AutoMirrored.Filled.QueueMusic, null) },
-                            )
-                        }
-                    }
+                    moreMenu()
                 }
             }
 
@@ -484,11 +488,12 @@ fun PlayerScreen(
                             )
                         } else Modifier
                     )
-                    .then(
-                        if (gestures.doubleTapPause) Modifier.pointerInput(Unit) {
-                            detectTapGestures(onDoubleTap = { onTogglePlay() })
-                        } else Modifier
-                    ),
+                    .pointerInput(gestures.doubleTapPause) {
+                        detectTapGestures(
+                            onDoubleTap = if (gestures.doubleTapPause) ({ onTogglePlay() }) else null,
+                            onTap = { if (!showVideo) showCover = true },
+                        )
+                    },
                 contentAlignment = Alignment.Center,
             ) {
                 val artSide = minOf(maxWidth, maxHeight) * ui.playerArtSize.coerceIn(0.5f, 1f)
@@ -860,6 +865,7 @@ fun PlayerScreen(
             }
             LyricsOverlay(showLyrics, false, state, onClose = { showLyrics = false }, onTogglePlay, onPrevious, onNext, onSeek)
         }
+        CoverOverlay(showCover && !showLyrics && !fullscreenActive, state, onClose = { showCover = false }, onTogglePlay, onPrevious, onNext, onSeek, onToggleLike, moreMenu)
         }
     }
     }
@@ -900,6 +906,120 @@ private fun LyricsOverlay(
         }
     }
     androidx.activity.compose.BackHandler(enabled = visible) { onClose() }
+}
+
+// apple-music style full-art view: the cover fills the screen and melts into its own colours behind the controls
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun CoverOverlay(
+    visible: Boolean,
+    state: PlayerUiState,
+    onClose: () -> Unit,
+    onTogglePlay: () -> Unit,
+    onPrevious: () -> Unit,
+    onNext: () -> Unit,
+    onSeek: (Float) -> Unit,
+    onToggleLike: () -> Unit,
+    menu: @Composable () -> Unit,
+) {
+    androidx.compose.animation.AnimatedVisibility(visible, enter = fadeIn(tween(320)), exit = fadeOut(tween(240))) {
+        DragToDismiss(onDismiss = onClose, shown = visible) {
+            Box(Modifier.fillMaxSize()) {
+            CanvasTint(true) {
+                val song = state.current
+                val ui = LocalUiPrefs.current
+                val noRipple = remember { MutableInteractionSource() }
+                val context = androidx.compose.ui.platform.LocalContext.current
+                // "remove animations" in the system settings keeps the cover still
+                val motion = remember { android.provider.Settings.Global.getFloat(context.contentResolver,
+                    android.provider.Settings.Global.ANIMATOR_DURATION_SCALE, 1f) > 0f }
+                val settle = remember(song.id) { androidx.compose.animation.core.Animatable(if (motion) 1.12f else 1f) }
+                LaunchedEffect(song.id) { settle.animateTo(1f, tween(1400, easing = androidx.compose.animation.core.FastOutSlowInEasing)) }
+                val drift = coverDrift(state.isPlaying && motion)
+                BoxWithConstraints(Modifier.fillMaxSize().background(Color(0xFF17191D)).clickable(noRipple, indication = null) {}) {
+                    LyricsBackdrop(song)
+                    val wide = maxWidth > maxHeight
+                    val side = if (wide) maxHeight else maxWidth
+                    val fade = if (wide) Brush.horizontalGradient(.6f to Color.Black, 1f to Color.Transparent)
+                        else Brush.verticalGradient(.6f to Color.Black, 1f to Color.Transparent)
+                    Artwork(
+                        song.artworkUrl, song.accent,
+                        Modifier.size(side)
+                            .clickable(noRipple, indication = null, onClick = onClose)
+                            .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen; clip = true }
+                            .drawWithContent { drawContent(); drawRect(fade, blendMode = BlendMode.DstIn) }
+                            .graphicsLayer { kenBurns(drift.floatValue, settle.value) },
+                        corner = 0.dp, animated = CoverKey(song.album, song.artist, song.path),
+                    )
+                    Icon(
+                        Icons.Filled.KeyboardArrowDown, appString(R.string.text_collapse_9cf188),
+                        modifier = Modifier.windowInsetsPadding(WindowInsets.systemBarsIgnoringVisibility).padding(12.dp)
+                            .size(40.dp).clip(CircleShape).background(Color.Black.copy(alpha = .3f)).clickable(onClick = onClose).padding(6.dp),
+                    )
+                    Column(
+                        Modifier.align(if (wide) Alignment.CenterEnd else Alignment.BottomCenter)
+                            .then(if (wide) Modifier.width((maxWidth - side * .8f).coerceIn(320.dp, 520.dp)) else Modifier.fillMaxWidth())
+                            .windowInsetsPadding(WindowInsets.systemBarsIgnoringVisibility)
+                            .padding(horizontal = 28.dp, vertical = 24.dp),
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Column(Modifier.weight(1f)) {
+                                MarqueeTitle(song.title, MaterialTheme.typography.headlineSmall)
+                                MarqueeTitle(song.artist, MaterialTheme.typography.titleMedium, MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = null)
+                            }
+                            Icon(
+                                if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                                appString(R.string.text_like_c7e02c),
+                                modifier = Modifier.size(48.dp).clip(CircleShape).clickable(onClick = onToggleLike).padding(10.dp),
+                            )
+                        }
+                        Spacer(Modifier.height(16.dp))
+                        SeekBar(state.durationSec, state.isLive, Color.White, song.id.hashCode(), ui.playerSeekStyle, ui.playerWaveBars, onSeek)
+                        Spacer(Modifier.height(12.dp))
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Filled.SkipPrevious, appString(R.string.text_previous_50f942),
+                                modifier = Modifier.size(64.dp).clip(CircleShape).clickable(onClick = onPrevious).padding(8.dp))
+                            Icon(if (state.isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow, appString(R.string.text_play_pause_14a1d0),
+                                modifier = Modifier.size(80.dp).clip(CircleShape).clickable(onClick = onTogglePlay).padding(8.dp))
+                            Icon(Icons.Filled.SkipNext, appString(R.string.text_next_bc9819),
+                                modifier = Modifier.size(64.dp).clip(CircleShape).clickable(onClick = onNext).padding(8.dp))
+                        }
+                    }
+                }
+            }
+            // outside the white tint so the menu keeps the app's own colours
+            CompositionLocalProvider(LocalContentColor provides Color.White) {
+                Box(Modifier.align(Alignment.TopEnd).windowInsetsPadding(WindowInsets.systemBarsIgnoringVisibility).padding(12.dp)
+                    .clip(CircleShape).background(Color.Black.copy(alpha = .3f))) { menu() }
+            }
+            }
+        }
+    }
+    androidx.activity.compose.BackHandler(enabled = visible) { onClose() }
+}
+
+// playing time, stepped like the lyrics glow: the cover moves under a pixel per step so a dozen redraws a second look smooth
+@Composable
+private fun coverDrift(running: Boolean): androidx.compose.runtime.FloatState {
+    val drift = remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(running) {
+        if (!running) return@LaunchedEffect
+        val from = drift.floatValue
+        val start = androidx.compose.runtime.withFrameMillis { it }
+        while (true) {
+            drift.floatValue = from + (androidx.compose.runtime.withFrameMillis { it } - start) / 1000f
+            delay(80)
+        }
+    }
+    return drift
+}
+
+// a slow ken burns: zooms up to 12% toward a wandering point, so the cover never shows an edge
+private fun androidx.compose.ui.graphics.GraphicsLayerScope.kenBurns(seconds: Float, settle: Float) {
+    val zoom = (1f - kotlin.math.cos(seconds * 2f * kotlin.math.PI.toFloat() / 40f)) / 2f
+    scaleX = settle * (1f + .12f * zoom)
+    scaleY = scaleX
+    transformOrigin = androidx.compose.ui.graphics.TransformOrigin(.5f + .4f * kotlin.math.sin(seconds / 11f), .5f + .4f * kotlin.math.cos(seconds / 17f))
 }
 
 @Composable

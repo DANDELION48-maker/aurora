@@ -353,7 +353,7 @@ private fun Modifier.lyricsChrome(visible: Boolean, alpha: Float) =
 
 // Extract several real artwork tones; app accents and Material You never enter this palette.
 @Composable
-private fun LyricsBackdrop(song: Song) {
+internal fun LyricsBackdrop(song: Song) {
     val context = LocalContext.current
     val neutral = listOf(Color(0xFF39434B), Color(0xFF242B34), Color(0xFF50565A))
     var tones by remember(song.artworkUrl) { mutableStateOf(neutral) }
