@@ -24,4 +24,13 @@
     <string name="concert_distance_raised">"A %1$s m del escenario, en alto"</string>
     <string name="concert_map_hint">"Arrastra el punto para moverte entre el público o arrastra el escenario para colocarlo."</string>
     <string name="concert_map_label">"Plano del recinto"</string>
+    <string name="concert_sound">"Sonido"</string>
+    <string name="concert_sound_pop">"Pop"</string>
+    <string name="concert_sound_rock">"Rock"</string>
+    <string name="concert_sound_metal">"Metal"</string>
+    <string name="concert_sound_shoegaze">"Shoegaze"</string>
+    <string name="concert_sound_jazz">"Jazz"</string>
+    <string name="concert_sound_hip_hop">"Hip hop"</string>
+    <string name="concert_sound_electronic">"Electrónica"</string>
+    <string name="concert_sound_classical">"Clásica"</string>
 </resources>

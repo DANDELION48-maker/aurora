@@ -24,4 +24,13 @@
     <string name="concert_distance_raised">"ステージから %1$s m・高い席"</string>
     <string name="concert_map_hint">"点をドラッグして客席を移動、ステージをドラッグして配置を変更できます。"</string>
     <string name="concert_map_label">"会場マップ"</string>
+    <string name="concert_sound">"サウンド"</string>
+    <string name="concert_sound_pop">"ポップ"</string>
+    <string name="concert_sound_rock">"ロック"</string>
+    <string name="concert_sound_metal">"メタル"</string>
+    <string name="concert_sound_shoegaze">"シューゲイザー"</string>
+    <string name="concert_sound_jazz">"ジャズ"</string>
+    <string name="concert_sound_hip_hop">"ヒップホップ"</string>
+    <string name="concert_sound_electronic">"エレクトロニック"</string>
+    <string name="concert_sound_classical">"クラシック"</string>
 </resources>

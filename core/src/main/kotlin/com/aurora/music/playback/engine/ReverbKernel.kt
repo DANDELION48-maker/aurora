@@ -39,8 +39,8 @@ class ReverbKernel {
     private val oscSin = DoubleArray(LINES)
     private val stepCos = DoubleArray(LINES)
     private val stepSin = DoubleArray(LINES)
-    private val filter = DoubleArray(15)
-    private val filterState = DoubleArray(12)
+    private val filter = DoubleArray(35)
+    private val filterState = DoubleArray(28)
     private val gain = DoubleArray(GAINS)
     private val gainTarget = DoubleArray(GAINS)
     private val erDelay = DoubleArray(ER_TAPS)
@@ -83,6 +83,10 @@ class ReverbKernel {
                 stepCos[i] = cos(2 * PI * MOD_HZ[i] / rate); stepSin[i] = sin(2 * PI * MOD_HZ[i] / rate)
             }
             biquad(10, BOOM_HZ, highPass = false)
+            biquad(EQ_FILTER, 90.0, highPass = false)
+            bandPass(EQ_FILTER + 5, 350.0)
+            bandPass(EQ_FILTER + 10, 3000.0)
+            biquad(EQ_FILTER + 15, min(10_000.0, rate * 0.4), highPass = true)
         }
         reset()
     }
@@ -211,8 +215,15 @@ class ReverbKernel {
                 y = f[10] * tl + fs[8]; fs[8] = f[11] * tl - f[13] * y + fs[9]; fs[9] = f[12] * tl - f[14] * y; tl += y * gain[BOOM]
                 y = f[10] * tr + fs[10]; fs[10] = f[11] * tr - f[13] * y + fs[11]; fs[11] = f[12] * tr - f[14] * y; tr += y * gain[BOOM]
                 airL += gain[AIR] * (inL * send - airL); airR += gain[AIR] * (inR * send - airR)
-                val venueOutL = gain[DIRECT] * airL + gain[DIRECT + 1] * airR + venueL + tl * gain[LATE]
-                val venueOutR = gain[DIRECT + 2] * airL + gain[DIRECT + 3] * airR + venueR + tr * gain[LATE]
+                val roomL = gain[DIRECT] * airL + gain[DIRECT + 1] * airR + venueL + tl * gain[LATE]
+                val roomR = gain[DIRECT + 2] * airL + gain[DIRECT + 3] * airR + venueR + tr * gain[LATE]
+                // the band's rig: parallel fixed bands with smoothed gains, so switching genre never jumps a coefficient
+                var venueOutL = roomL; var venueOutR = roomR
+                for (b in 0 until EQ_BANDS) {
+                    val c = EQ_FILTER + b * 5; val st = EQ_STATE + b * 4; val g = gain[EQ + b]
+                    y = f[c] * roomL + fs[st]; fs[st] = f[c + 1] * roomL - f[c + 3] * y + fs[st + 1]; fs[st + 1] = f[c + 2] * roomL - f[c + 4] * y; venueOutL += y * g
+                    y = f[c] * roomR + fs[st + 2]; fs[st + 2] = f[c + 1] * roomR - f[c + 3] * y + fs[st + 3]; fs[st + 3] = f[c + 2] * roomR - f[c + 4] * y; venueOutR += y * g
+                }
                 val studioL = mid + side; val studioR = mid - side
                 samples[frame * 2] = inL * dry + (studioL + (venueOutL - studioL) * fade) * wet
                 samples[frame * 2 + 1] = inR * dry + (studioR + (venueOutR - studioR) * fade) * wet
@@ -254,6 +265,7 @@ class ReverbKernel {
             // the tail is normalised for white noise, music-like spectra ring about 4.5 dB hotter
             gainTarget[LATE] = room.lateGain * LATE_TRIM
             gainTarget[BOOM] = 10.0.pow(room.boomDb / 20) - 1
+            for (b in 0 until EQ_BANDS) gainTarget[EQ + b] = 10.0.pow(room.eqDb[b] / 20) - 1
         }
         if (snap) {
             scale = scaleTarget; predelay = predelayTarget; wet = wetTarget; early = earlyTarget; width = widthTarget
@@ -287,6 +299,14 @@ class ReverbKernel {
         filter[at + 2] = edge / a0
         filter[at + 3] = -2 * c / a0
         filter[at + 4] = (1 - alpha) / a0
+    }
+
+    private fun bandPass(at: Int, hz: Double) {
+        val w = 2 * PI * hz / rate
+        val alpha = sin(w) / (2 * 0.9)
+        val a0 = 1 + alpha
+        filter[at] = alpha / a0; filter[at + 1] = 0.0; filter[at + 2] = -alpha / a0
+        filter[at + 3] = -2 * cos(w) / a0; filter[at + 4] = (1 - alpha) / a0
     }
 
     private fun linear(buffer: DoubleArray, mask: Int, write: Int, delay: Double): Double {
@@ -344,12 +364,16 @@ class ReverbKernel {
         private const val GLIDE_SEC = 0.08
         private const val OUTPUT_GAIN = 2.1
         private const val ER_NORM = 0.55
-        private const val GAINS = 23
+        private const val GAINS = 27
         private const val TAP_RIGHT = 8
         private const val DIRECT = 16
         private const val AIR = 20
         private const val LATE = 21
         private const val BOOM = 22
+        private const val EQ = 23
+        private const val EQ_BANDS = 4
+        private const val EQ_FILTER = 15
+        private const val EQ_STATE = 12
         private const val LATE_TRIM = 0.6
         private const val BOOM_HZ = 100.0
         private const val FADE_FLOOR = 1e-7

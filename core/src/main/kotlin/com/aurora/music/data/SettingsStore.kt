@@ -1013,7 +1013,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
             highCutHz = p[Keys.REVERB_HIGH_CUT] ?: d.highCutHz, width = p[Keys.REVERB_WIDTH] ?: d.width,
             early = p[Keys.REVERB_EARLY] ?: d.early, modulation = p[Keys.REVERB_MODULATION] ?: d.modulation,
             concert = ConcertPrefs(
-                enabled = p[Keys.CONCERT_ENABLED] ?: c.enabled, venue = p[Keys.CONCERT_VENUE] ?: c.venue,
+                enabled = p[Keys.CONCERT_ENABLED] ?: c.enabled, venue = p[Keys.CONCERT_VENUE] ?: c.venue, sound = p[Keys.CONCERT_SOUND] ?: c.sound,
                 amount = p[Keys.CONCERT_AMOUNT] ?: c.amount, size = p[Keys.CONCERT_SIZE] ?: c.size,
                 openness = p[Keys.CONCERT_OPENNESS] ?: c.openness,
                 stageX = p[Keys.CONCERT_STAGE_X] ?: c.stageX, stageY = p[Keys.CONCERT_STAGE_Y] ?: c.stageY,
@@ -1370,7 +1370,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         p[Keys.REVERB_DAMPING] = r.damping; p[Keys.REVERB_LOW_CUT] = r.lowCutHz; p[Keys.REVERB_HIGH_CUT] = r.highCutHz
         p[Keys.REVERB_WIDTH] = r.width; p[Keys.REVERB_EARLY] = r.early; p[Keys.REVERB_MODULATION] = r.modulation
         val c = r.concertPrefs
-        p[Keys.CONCERT_ENABLED] = c.enabled; p[Keys.CONCERT_VENUE] = c.venue; p[Keys.CONCERT_AMOUNT] = c.amount
+        p[Keys.CONCERT_ENABLED] = c.enabled; p[Keys.CONCERT_VENUE] = c.venue; p[Keys.CONCERT_SOUND] = c.sound; p[Keys.CONCERT_AMOUNT] = c.amount
         p[Keys.CONCERT_SIZE] = c.size; p[Keys.CONCERT_OPENNESS] = c.openness
         p[Keys.CONCERT_STAGE_X] = c.stageX; p[Keys.CONCERT_STAGE_Y] = c.stageY
         p[Keys.CONCERT_LISTENER_X] = c.listenerX; p[Keys.CONCERT_LISTENER_Y] = c.listenerY; p[Keys.CONCERT_ELEVATION] = c.elevation

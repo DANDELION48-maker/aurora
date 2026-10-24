@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.toSize
 import com.aurora.music.R
 import com.aurora.music.data.ConcertPrefs
 import com.aurora.music.data.ConcertSeat
+import com.aurora.music.data.ConcertSound
 import com.aurora.music.data.ConcertVenue
 import com.aurora.music.localization.appString
 import com.aurora.music.playback.engine.ConcertAcoustics
@@ -58,6 +59,17 @@ internal fun concertVenueName(id: Int): String = appString(when (id) {
     ConcertVenue.FESTIVAL -> R.string.concert_venue_festival
     ConcertVenue.AMPHITHEATRE -> R.string.concert_venue_amphitheatre
     else -> R.string.concert_venue_arena
+})
+
+internal fun concertSoundName(id: Int): String = appString(when (id) {
+    ConcertSound.ROCK -> R.string.concert_sound_rock
+    ConcertSound.METAL -> R.string.concert_sound_metal
+    ConcertSound.SHOEGAZE -> R.string.concert_sound_shoegaze
+    ConcertSound.JAZZ -> R.string.concert_sound_jazz
+    ConcertSound.HIP_HOP -> R.string.concert_sound_hip_hop
+    ConcertSound.ELECTRONIC -> R.string.concert_sound_electronic
+    ConcertSound.CLASSICAL -> R.string.concert_sound_classical
+    else -> R.string.concert_sound_pop
 })
 
 private fun concertSeatName(id: Int): String = appString(when (id) {
@@ -95,6 +107,8 @@ internal fun ConcertVenuePicker(concert: ConcertPrefs, modifier: Modifier = Modi
     val percent = remember { NumberFormat.getPercentInstance() }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         ChoiceChips(ConcertVenue.ALL.indices.map(::concertVenueName), concert.venue) { onChange(concert.withVenue(it)) }
+        Text(appString(R.string.concert_sound), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 4.dp))
+        ChoiceChips(ConcertSound.ALL.indices.map(::concertSoundName), concert.sound) { onChange(concert.copy(sound = it)) }
         ConcertSlider(appString(R.string.concert_size), concert.size,
             label = { appString(R.string.concert_size_value, "%.0f".format(venue.widthM(it)), "%.0f".format(venue.lengthM(it))) }) { onChange(concert.copy(size = it)) }
         ConcertSlider(appString(R.string.concert_openness), concert.openness, label = {

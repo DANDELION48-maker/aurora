@@ -54,7 +54,7 @@ internal fun reverbPresetName(id: Int): String = appString(when (id) {
 
 internal fun reverbSummary(prefs: ReverbPrefs): String = when {
     !prefs.enabled -> appString(R.string.text_off_e3de5a)
-    prefs.concertPrefs.enabled -> "${concertVenueName(prefs.concertPrefs.venue)} · ${NumberFormat.getPercentInstance().format(prefs.concertPrefs.amount)}"
+    prefs.concertPrefs.enabled -> "${concertVenueName(prefs.concertPrefs.venue)} · ${concertSoundName(prefs.concertPrefs.sound)} · ${NumberFormat.getPercentInstance().format(prefs.concertPrefs.amount)}"
     else -> "${reverbPresetName(prefs.preset)} · ${NumberFormat.getPercentInstance().format(prefs.mix)}"
 }
 
@@ -78,7 +78,7 @@ fun ReverbQuickControls(onOpenSettings: () -> Unit) {
             Column(Modifier.weight(1f)) {
                 Text(appString(R.string.reverb_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text(if (!prefs.enabled) appString(R.string.reverb_summary)
-                    else if (concert.enabled) "${appString(R.string.reverb_mode_concert)} · ${concertVenueName(concert.venue)}"
+                    else if (concert.enabled) "${appString(R.string.reverb_mode_concert)} · ${concertVenueName(concert.venue)} · ${concertSoundName(concert.sound)}"
                     else reverbPresetName(prefs.preset),
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }

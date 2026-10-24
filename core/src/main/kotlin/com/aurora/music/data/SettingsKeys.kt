@@ -117,6 +117,7 @@ internal object SettingsKeys {
     val REVERB_MODULATION = floatPreferencesKey("reverb_modulation")
     val CONCERT_ENABLED = booleanPreferencesKey("reverb_concert")
     val CONCERT_VENUE = intPreferencesKey("reverb_concert_venue")
+    val CONCERT_SOUND = intPreferencesKey("reverb_concert_sound")
     val CONCERT_AMOUNT = floatPreferencesKey("reverb_concert_amount")
     val CONCERT_SIZE = floatPreferencesKey("reverb_concert_size")
     val CONCERT_OPENNESS = floatPreferencesKey("reverb_concert_openness")

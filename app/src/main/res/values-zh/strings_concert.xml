@@ -24,4 +24,13 @@
     <string name="concert_distance_raised">"距舞台 %1$s 米，高处座位"</string>
     <string name="concert_map_hint">"拖动圆点在人群中移动，或拖动舞台来摆放它。"</string>
     <string name="concert_map_label">"场馆地图"</string>
+    <string name="concert_sound">"声音风格"</string>
+    <string name="concert_sound_pop">"流行"</string>
+    <string name="concert_sound_rock">"摇滚"</string>
+    <string name="concert_sound_metal">"金属"</string>
+    <string name="concert_sound_shoegaze">"自赏"</string>
+    <string name="concert_sound_jazz">"爵士"</string>
+    <string name="concert_sound_hip_hop">"嘻哈"</string>
+    <string name="concert_sound_electronic">"电子"</string>
+    <string name="concert_sound_classical">"古典"</string>
 </resources>

@@ -2,6 +2,7 @@ package com.aurora.music.playback.engine
 
 import com.aurora.music.data.ConcertPrefs
 import com.aurora.music.data.ConcertSeat
+import com.aurora.music.data.ConcertSound
 import com.aurora.music.data.ConcertVenue
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -56,6 +57,17 @@ class ConcertAcousticsTest {
         val front = ConcertAcoustics.room(venue(ConcertVenue.ARENA, ConcertSeat.FRONT))
         val back = ConcertAcoustics.room(venue(ConcertVenue.ARENA, ConcertSeat.BACK))
         assertTrue(front.direct[0] / front.direct[2] > 2 * back.direct[0] / back.direct[2])
+    }
+
+    @Test fun eachGenreGetsItsOwnRig() {
+        fun rig(sound: Int) = ConcertAcoustics.room(venue(ConcertVenue.ARENA).copy(sound = sound))
+        val rap = rig(ConcertSound.HIP_HOP); val jazz = rig(ConcertSound.JAZZ); val gaze = rig(ConcertSound.SHOEGAZE)
+        val metal = rig(ConcertSound.METAL); val rock = rig(ConcertSound.ROCK)
+        assertTrue(rap.eqDb[0] > jazz.eqDb[0] + 5 && rap.boomDb > jazz.boomDb)
+        assertTrue(gaze.drrDb() < rock.drrDb() - 3 && gaze.late.decaySec > rock.late.decaySec)
+        assertTrue(jazz.drrDb() < rap.drrDb() - 6)
+        assertTrue(metal.eqDb[1] < 0 && metal.eqDb[2] > rock.eqDb[2])
+        ConcertSound.ALL.indices.map(::rig).forEachIndexed { id, r -> println("sound $id: drr %.1f dB, eq %s".format(r.drrDb(), r.eqDb.joinToString())) }
     }
 
     @Test fun everyVenueAndPositionGivesUsableNumbers() {

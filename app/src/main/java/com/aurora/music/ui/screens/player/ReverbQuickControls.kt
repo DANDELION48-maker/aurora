@@ -67,7 +67,7 @@ internal fun ReverbQuickControls(onOpenSettings: () -> Unit) {
             Column(Modifier.weight(1f)) {
                 Text(appString(R.string.reverb_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text(if (!prefs.enabled) appString(R.string.reverb_summary)
-                    else if (concert.enabled) "${appString(R.string.reverb_mode_concert)} · ${concertVenueName(concert.venue)}"
+                    else if (concert.enabled) "${appString(R.string.reverb_mode_concert)} · ${concertVenueName(concert.venue)} · ${concertSoundName(concert.sound)}"
                     else reverbPresetName(prefs.preset),
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }

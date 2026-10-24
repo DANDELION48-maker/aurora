@@ -36,6 +36,28 @@ class ConcertVenue(
     }
 }
 
+// how the band's rig is tuned: eq in dB (bass, low mids, presence, air) and how hard it drives the room
+class ConcertSound(
+    val name: String,
+    val bassDb: Float, val lowMidDb: Float, val presenceDb: Float, val airDb: Float,
+    val directivity: Float, val spread: Float, val wash: Float, val decay: Float, val boom: Float,
+) {
+    companion object {
+        const val POP = 0; const val ROCK = 1; const val METAL = 2; const val SHOEGAZE = 3
+        const val JAZZ = 4; const val HIP_HOP = 5; const val ELECTRONIC = 6; const val CLASSICAL = 7
+        val ALL = listOf(
+            ConcertSound("pop", 1.5f, 0f, 1.5f, 1f, directivity = 1f, spread = 1f, wash = 1f, decay = 1f, boom = 1f),
+            ConcertSound("rock", 2f, 1f, 2f, 0.5f, directivity = 1f, spread = 1f, wash = 1.1f, decay = 1f, boom = 1.1f),
+            ConcertSound("metal", 3f, -2.5f, 3.5f, 1f, directivity = 1.1f, spread = 1.15f, wash = 1.25f, decay = 1f, boom = 1.3f),
+            ConcertSound("shoegaze", 1.5f, 2.5f, -1.5f, -2.5f, directivity = 0.8f, spread = 1.3f, wash = 1.9f, decay = 1.35f, boom = 1.2f),
+            ConcertSound("jazz", -1.5f, 1f, 0f, 0.5f, directivity = 0.4f, spread = 0.6f, wash = 0.9f, decay = 1f, boom = 0.4f),
+            ConcertSound("hip-hop", 6f, -1.5f, 2.5f, 0f, directivity = 1.2f, spread = 0.7f, wash = 0.7f, decay = 0.9f, boom = 1.6f),
+            ConcertSound("electronic", 5f, -1f, 0.5f, 2.5f, directivity = 1.2f, spread = 1.25f, wash = 1f, decay = 1f, boom = 1.6f),
+            ConcertSound("classical", -2f, 0f, -0.5f, 0f, directivity = 0.3f, spread = 1.2f, wash = 1.15f, decay = 1.05f, boom = 0.3f),
+        )
+    }
+}
+
 object ConcertSeat {
     const val FRONT = 0; const val MIDDLE = 1; const val BACK = 2; const val SIDE = 3; const val BALCONY = 4
     val ALL = listOf(FRONT, MIDDLE, BACK, SIDE, BALCONY)
@@ -45,6 +67,7 @@ object ConcertSeat {
 data class ConcertPrefs(
     val enabled: Boolean = false,
     val venue: Int = ConcertVenue.ARENA,
+    val sound: Int = ConcertSound.POP,
     val amount: Float = 1f,
     val size: Float = 0.5f,
     val openness: Float = 0f,
@@ -55,13 +78,13 @@ data class ConcertPrefs(
     val elevation: Float = 0f,
 ) {
     fun clamped(): ConcertPrefs = copy(
-        venue = venue.coerceIn(0, ConcertVenue.ALL.lastIndex), amount = amount.unit(1f), size = size.unit(0.5f),
+        venue = venue.coerceIn(0, ConcertVenue.ALL.lastIndex), sound = sound.coerceIn(0, ConcertSound.ALL.lastIndex), amount = amount.unit(1f), size = size.unit(0.5f),
         openness = openness.unit(0f), stageX = stageX.unit(0.5f), stageY = stageY.unit(0.06f),
         listenerX = listenerX.unit(0.5f), listenerY = listenerY.unit(0.43f), elevation = elevation.unit(0f),
     )
 
     fun withVenue(id: Int): ConcertPrefs = ConcertVenue.ALL.getOrNull(id)?.let {
-        ConcertPrefs(enabled = enabled, venue = id, amount = amount, openness = it.openness).withSeat(ConcertSeat.MIDDLE)
+        ConcertPrefs(enabled = enabled, venue = id, sound = sound, amount = amount, openness = it.openness).withSeat(ConcertSeat.MIDDLE)
     } ?: this
 
     fun withSeat(seat: Int): ConcertPrefs {

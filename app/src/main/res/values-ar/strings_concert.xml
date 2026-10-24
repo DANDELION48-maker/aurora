@@ -24,4 +24,13 @@
     <string name="concert_distance_raised">"%1$s م من المسرح، مقعد مرتفع"</string>
     <string name="concert_map_hint">"اسحب النقطة للتنقل بين الجمهور، أو اسحب المسرح لتغيير موضعه."</string>
     <string name="concert_map_label">"خريطة المكان"</string>
+    <string name="concert_sound">"الصوت"</string>
+    <string name="concert_sound_pop">"بوب"</string>
+    <string name="concert_sound_rock">"روك"</string>
+    <string name="concert_sound_metal">"ميتال"</string>
+    <string name="concert_sound_shoegaze">"شوغيز"</string>
+    <string name="concert_sound_jazz">"جاز"</string>
+    <string name="concert_sound_hip_hop">"هيب هوب"</string>
+    <string name="concert_sound_electronic">"إلكتروني"</string>
+    <string name="concert_sound_classical">"كلاسيكي"</string>
 </resources>

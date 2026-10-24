@@ -24,4 +24,13 @@
     <string name="concert_distance_raised">"%1$s м от сцены, верхний ярус"</string>
     <string name="concert_map_hint">"Перетащите точку, чтобы перемещаться в толпе, или перетащите сцену, чтобы её переставить."</string>
     <string name="concert_map_label">"Схема площадки"</string>
+    <string name="concert_sound">"Звук"</string>
+    <string name="concert_sound_pop">"Поп"</string>
+    <string name="concert_sound_rock">"Рок"</string>
+    <string name="concert_sound_metal">"Метал"</string>
+    <string name="concert_sound_shoegaze">"Шугейз"</string>
+    <string name="concert_sound_jazz">"Джаз"</string>
+    <string name="concert_sound_hip_hop">"Хип-хоп"</string>
+    <string name="concert_sound_electronic">"Электроника"</string>
+    <string name="concert_sound_classical">"Классика"</string>
 </resources>

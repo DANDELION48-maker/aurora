@@ -24,4 +24,13 @@
     <string name="concert_distance_raised">"Sahneye %1$s m, yüksek koltuk"</string>
     <string name="concert_map_hint">"Kalabalıkta dolaşmak için noktayı, yerini değiştirmek için sahneyi sürükleyin."</string>
     <string name="concert_map_label">"Mekân planı"</string>
+    <string name="concert_sound">"Ses"</string>
+    <string name="concert_sound_pop">"Pop"</string>
+    <string name="concert_sound_rock">"Rock"</string>
+    <string name="concert_sound_metal">"Metal"</string>
+    <string name="concert_sound_shoegaze">"Shoegaze"</string>
+    <string name="concert_sound_jazz">"Caz"</string>
+    <string name="concert_sound_hip_hop">"Hip hop"</string>
+    <string name="concert_sound_electronic">"Elektronik"</string>
+    <string name="concert_sound_classical">"Klasik"</string>
 </resources>

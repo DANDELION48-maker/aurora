@@ -153,7 +153,7 @@ fun EqualizerScreen(contentPadding: PaddingValues, onBack: () -> Unit, onOpenLou
                         appString(R.string.text_your_complete_processing_settings_ready_to_recall_a6fd9f), onClick = onOpenProcessingPresets)
                     SettingsRowDivider()
                     SettingsDestinationRow(Icons.Filled.Waves, SettingsDestinations.reverb,
-                        if (reverb.concertPrefs.enabled && reverb.enabled) "${com.aurora.music.ui.screens.player.concertVenueName(reverb.concertPrefs.venue)} · ${java.text.NumberFormat.getPercentInstance().format(reverb.concertPrefs.amount)}"
+                        if (reverb.concertPrefs.enabled && reverb.enabled) "${com.aurora.music.ui.screens.player.concertVenueName(reverb.concertPrefs.venue)} · ${com.aurora.music.ui.screens.player.concertSoundName(reverb.concertPrefs.sound)} · ${java.text.NumberFormat.getPercentInstance().format(reverb.concertPrefs.amount)}"
                         else if (reverb.enabled) "${com.aurora.music.ui.screens.player.reverbPresetName(reverb.preset)} · ${java.text.NumberFormat.getPercentInstance().format(reverb.mix)}"
                         else appString(R.string.text_off_e3de5a), onClick = onOpenReverb)
                 }

@@ -24,4 +24,13 @@
     <string name="concert_distance_raised">"اسٹیج سے %1$s میٹر، اونچی نشست"</string>
     <string name="concert_map_hint">"ہجوم میں گھومنے کے لیے نقطے کو گھسیٹیں، یا اسٹیج کی جگہ بدلنے کے لیے اسے گھسیٹیں۔"</string>
     <string name="concert_map_label">"مقام کا نقشہ"</string>
+    <string name="concert_sound">"ساؤنڈ"</string>
+    <string name="concert_sound_pop">"پاپ"</string>
+    <string name="concert_sound_rock">"راک"</string>
+    <string name="concert_sound_metal">"میٹل"</string>
+    <string name="concert_sound_shoegaze">"شوگیز"</string>
+    <string name="concert_sound_jazz">"جاز"</string>
+    <string name="concert_sound_hip_hop">"ہپ ہاپ"</string>
+    <string name="concert_sound_electronic">"الیکٹرانک"</string>
+    <string name="concert_sound_classical">"کلاسیکی"</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.aurora.music.playback.engine
 
 import com.aurora.music.data.ConcertPrefs
+import com.aurora.music.data.ConcertSound
 import com.aurora.music.data.ConcertVenue
 import com.aurora.music.data.ReverbPreset
 import com.aurora.music.data.ReverbPrefs
@@ -156,6 +157,17 @@ class ReverbKernelTest {
         }
     }
 
+    @Test fun everyGenreRigKeepsTheLevel() {
+        ConcertSound.ALL.indices.forEach { id ->
+            val source = warmNoise(40L + id)
+            val out = run(kernel(ReverbPrefs(enabled = true, concert = ConcertPrefs(enabled = true, sound = id))), rate * 3, source)
+            val dry = DoubleArray(rate * 2) { source(rate + it / 2, it % 2) }
+            val ratio = rms(out, rate * 2) / rms(dry)
+            println("sound $id out/in rms ${"%.2f".format(ratio)}")
+            assertTrue("sound $id ratio $ratio", out.all { it.isFinite() } && ratio in 0.7..1.4)
+        }
+    }
+
     @Test fun concertSwitchedOffLeavesStudioReverbAlone() {
         val source = noise(30)
         val plain = run(kernel(ReverbPrefs(enabled = true, concert = null)), rate * 2, source)
@@ -171,7 +183,7 @@ class ReverbKernelTest {
         var offset = rate
         for (step in 0 until 48) {
             val t = (step % 16) / 15f
-            val venue = ConcertPrefs(enabled = step % 16 != 15, venue = step / 16 * 2).withSeat(step % 5)
+            val venue = ConcertPrefs(enabled = step % 16 != 15, venue = step / 16 * 2, sound = step % 8).withSeat(step % 5)
             kernel.settings = kernel.settings.copy(concert = venue.copy(listenerX = t, size = t, openness = 1 - t))
             val start = offset
             val next = run(kernel, 2048) { frame, channel -> tone(start + frame, channel) }

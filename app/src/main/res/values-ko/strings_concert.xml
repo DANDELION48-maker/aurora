@@ -24,4 +24,13 @@
     <string name="concert_distance_raised">"무대에서 %1$s m, 높은 좌석"</string>
     <string name="concert_map_hint">"점을 끌어 관객 사이를 이동하거나, 무대를 끌어 위치를 바꾸세요."</string>
     <string name="concert_map_label">"공연장 지도"</string>
+    <string name="concert_sound">"사운드"</string>
+    <string name="concert_sound_pop">"팝"</string>
+    <string name="concert_sound_rock">"록"</string>
+    <string name="concert_sound_metal">"메탈"</string>
+    <string name="concert_sound_shoegaze">"슈게이징"</string>
+    <string name="concert_sound_jazz">"재즈"</string>
+    <string name="concert_sound_hip_hop">"힙합"</string>
+    <string name="concert_sound_electronic">"일렉트로닉"</string>
+    <string name="concert_sound_classical">"클래식"</string>
 </resources>

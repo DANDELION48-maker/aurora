@@ -1,6 +1,7 @@
 package com.aurora.music.playback.engine
 
 import com.aurora.music.data.ConcertPrefs
+import com.aurora.music.data.ConcertSound
 import com.aurora.music.data.ConcertVenue
 import com.aurora.music.data.ReverbPrefs
 import kotlin.math.PI
@@ -16,7 +17,7 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.math.tanh
 
-// direct gains map input channel to ear as [l->l, r->l, l->r, r->r]; taps are in seconds after the direct sound
+// direct gains map input channel to ear as [l->l, r->l, l->r, r->r]; taps are in seconds after the direct sound; eq is bass, low mids, presence, air in dB
 class ConcertRoom(
     val late: ReverbPrefs,
     val lateGain: Double,
@@ -24,6 +25,7 @@ class ConcertRoom(
     val direct: DoubleArray,
     val airHz: Double,
     val boomDb: Double,
+    val eqDb: DoubleArray,
     val tapSec: DoubleArray,
     val tapLeft: DoubleArray,
     val tapRight: DoubleArray,
@@ -42,6 +44,7 @@ object ConcertAcoustics {
     fun room(prefs: ConcertPrefs): ConcertRoom {
         val c = prefs.clamped()
         val v = ConcertVenue.ALL[c.venue]
+        val rig = ConcertSound.ALL[c.sound]
         val open = c.openness.toDouble()
         val w = v.widthM(c.size).toDouble(); val l = v.lengthM(c.size).toDouble(); val h = v.heightM(c.size).toDouble()
         val sx = c.stageX * w; val sy = c.stageY * l; val sz = min(v.speakerHeightM.toDouble(), h * 0.8)
@@ -73,7 +76,7 @@ object ConcertAcoustics {
         val distance = sqrt((px - sx) * (px - sx) + (py - sy) * (py - sy) + (pz - sz) * (pz - sz)).coerceAtLeast(1.0)
         val aimed = aim(px - sx, py - sy)
 
-        val half = v.stageWidthM(c.size) / 2.0
+        val half = v.stageWidthM(c.size) * rig.spread / 2.0
         val stackX = doubleArrayOf(sx - half * fy, sx + half * fy); val stackY = doubleArrayOf(sy + half * fx, sy - half * fx)
         val stackGain = DoubleArray(2) { k ->
             val d = sqrt((px - stackX[k]).pow(2) + (py - stackY[k]).pow(2) + (pz - sz).pow(2)).coerceAtLeast(1.0)
@@ -87,10 +90,10 @@ object ConcertAcoustics {
             direct[2 + k] = stackGain[k] * stackNorm * sin((p + 1) * PI / 4)
         }
 
-        val rt = (v.decaySec(c.size) * (1 - 0.7 * open)).coerceIn(0.2, 12.0)
+        val rt = (v.decaySec(c.size) * (1 - 0.7 * open) * rig.decay).coerceIn(0.2, 12.0)
         val volume = w * l * h
-        val critical = 0.057 * sqrt(v.directivity * volume / rt)
-        val lateEnergy = (distance / critical).pow(2)
+        val critical = 0.057 * sqrt(v.directivity * rig.directivity * volume / rt)
+        val lateEnergy = (distance / critical * rig.wash).pow(2)
 
         val wall = v.walls.toDouble()
         val reflect = doubleArrayOf(0.3, wall * (1 - open), wall * (1 - 0.85 * open), wall * (1 - 0.85 * open),
@@ -109,8 +112,11 @@ object ConcertAcoustics {
             if (t > 0) firstWall = min(firstWall, tapSec[t])
         }
 
+        val eq = doubleArrayOf(rig.bassDb.toDouble(), rig.lowMidDb.toDouble(), rig.presenceDb.toDouble(), rig.airDb.toDouble())
+        // rough loudness match so a bass-heavy rig isn't just louder
+        val loudness = 10.0.pow(-(0.25 * eq[0] + 0.3 * eq[1] + 0.3 * eq[2] + 0.1 * eq[3]) / 20)
         val total = aimed * aimed + tapGain.sumOf { it * it } + lateEnergy
-        val norm = 1 / sqrt(total)
+        val norm = loudness / sqrt(total)
         for (k in 0..3) direct[k] *= aimed * norm
         val scale = ((cbrt(volume) - 10) / 80).coerceIn(0.0, 1.0)
         val late = ReverbPrefs(
@@ -126,7 +132,8 @@ object ConcertAcoustics {
             directGain = aimed * norm,
             direct = direct,
             airHz = (50_000 / sqrt(distance * (1 + 0.5 * open)) * (0.35 + 0.65 * front(px - sx, py - sy))).coerceIn(2000.0, 24_000.0),
-            boomDb = v.boomDb * (1 - open) * (0.5 + 0.5 * c.size),
+            boomDb = v.boomDb * (1 - open) * (0.5 + 0.5 * c.size) * rig.boom,
+            eqDb = eq,
             tapSec = tapSec,
             tapLeft = DoubleArray(8) { tapGain[it] * norm * cos((tapPan[it] + 1) * PI / 4) },
             tapRight = DoubleArray(8) { tapGain[it] * norm * sin((tapPan[it] + 1) * PI / 4) },

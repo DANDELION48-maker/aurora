@@ -24,4 +24,13 @@
     <string name="concert_distance_raised">"मंच से %1$s मी, ऊँची सीट"</string>
     <string name="concert_map_hint">"भीड़ में घूमने के लिए बिंदु को खींचें, या मंच की जगह बदलने के लिए उसे खींचें।"</string>
     <string name="concert_map_label">"स्थल का नक्शा"</string>
+    <string name="concert_sound">"साउंड"</string>
+    <string name="concert_sound_pop">"पॉप"</string>
+    <string name="concert_sound_rock">"रॉक"</string>
+    <string name="concert_sound_metal">"मेटल"</string>
+    <string name="concert_sound_shoegaze">"शूगेज़"</string>
+    <string name="concert_sound_jazz">"जैज़"</string>
+    <string name="concert_sound_hip_hop">"हिप-हॉप"</string>
+    <string name="concert_sound_electronic">"इलेक्ट्रॉनिक"</string>
+    <string name="concert_sound_classical">"शास्त्रीय"</string>
 </resources>

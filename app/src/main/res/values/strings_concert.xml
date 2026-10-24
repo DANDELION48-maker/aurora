@@ -24,4 +24,13 @@
     <string name="concert_distance_raised">"%1$s m from the stage, raised seat"</string>
     <string name="concert_map_hint">"Drag the dot to move through the crowd, or drag the stage to place it."</string>
     <string name="concert_map_label">"Venue map"</string>
+    <string name="concert_sound">"Sound"</string>
+    <string name="concert_sound_pop">"Pop"</string>
+    <string name="concert_sound_rock">"Rock"</string>
+    <string name="concert_sound_metal">"Metal"</string>
+    <string name="concert_sound_shoegaze">"Shoegaze"</string>
+    <string name="concert_sound_jazz">"Jazz"</string>
+    <string name="concert_sound_hip_hop">"Hip-hop"</string>
+    <string name="concert_sound_electronic">"Electronic"</string>
+    <string name="concert_sound_classical">"Classical"</string>
 </resources>
