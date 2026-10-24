@@ -252,7 +252,7 @@ fun LibraryScreen(
                     modifier = Modifier.size(40.dp).clip(CircleShape).clickable(onClick = onCycleView).padding(8.dp))
             }
             Icon(Icons.Filled.Search, appString(R.string.text_search_bce064), modifier = Modifier.size(40.dp).clip(CircleShape).clickable(onClick = onOpenSearch).padding(8.dp))
-            Icon(Icons.Filled.Add, appString(R.string.text_create_playlist_62c988), modifier = Modifier.size(40.dp).clip(CircleShape).clickable { showCreate = true }.padding(8.dp))
+            if (state.signedIn) Icon(Icons.Filled.Add, appString(R.string.text_create_playlist_62c988), modifier = Modifier.size(40.dp).clip(CircleShape).clickable { showCreate = true }.padding(8.dp))
         }
 
         if (showCreate) {
@@ -442,7 +442,7 @@ private fun AllOverview(
         // quick access tiles
         item {
             val tiles = buildList {
-                add(QuickTile(appString(R.string.text_liked_songs_58c3a9), appPlural(R.plurals.track_count, (state.likedSongCount)), Icons.Filled.Favorite, state.likedCover,
+                if (state.signedIn) add(QuickTile(appString(R.string.text_liked_songs_58c3a9), appPlural(R.plurals.track_count, (state.likedSongCount)), Icons.Filled.Favorite, state.likedCover,
                     onLongClick = onOpenAllLiked) { onOpenDetail("liked", state.likedId) })
                 if (canDownload) add(QuickTile(appString(R.string.text_downloads_a862c2), appPlural(R.plurals.item_count, (state.downloadedRows.size)), Icons.Filled.Download, "") { onFilter(LibraryFilter.DOWNLOADED) })
                 if (state.supportsFolders) add(QuickTile(appString(R.string.text_folders_19adc4), appString(R.string.text_browse_files_524932), Icons.Filled.Folder, "") { onOpenFolders() })
@@ -1037,7 +1037,7 @@ private fun CollectionMenu(row: LibRow, actions: LibActions, expanded: Boolean, 
             )
         }
         if (!isVirtual && !isSmart) {
-            DropdownMenuItem(
+            if (com.aurora.music.ui.components.LocalCanLike.current(row.id)) DropdownMenuItem(
                 text = { Text(if (liked) appString(R.string.text_unlike_e4fc40) else appString(R.string.text_like_c7e02c)) },
                 onClick = { onDismiss(); actions.onToggleLike(row) },
                 leadingIcon = { Icon(if (liked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder, null) },

@@ -38,9 +38,9 @@ fun interface SoundCloudBrowser {
     suspend fun fetch(origin: String, method: String, url: String, token: String, body: String?, contentType: String, prompt: Boolean): Pair<Int, String>
 }
 
-/** SoundCloud's web api: the signed-in web player's oauth token plus the client id its scripts carry. */
+/** SoundCloud's web api: the signed-in web player's oauth token plus the client id its scripts carry; a null session is a guest. */
 class SoundCloudClient(
-    private val session: () -> SoundCloudWebSession,
+    private val session: (() -> SoundCloudWebSession)?,
     private val onRefreshed: (SoundCloudWebSession) -> Unit = {},
     http: OkHttpClient = OkHttpClient(),
     private val browser: SoundCloudBrowser? = null,
@@ -50,7 +50,7 @@ class SoundCloudClient(
     private val loginLock = Mutex()
     @Volatile private var clientId = ""
     @Volatile private var current: SoundCloudWebSession? = null
-    private fun auth() = (current ?: session()).validate()
+    private fun auth() = session?.let { (current ?: it()).validate() }
 
     // shortcut: the id is scraped once per process, persist it if cold starts feel slow
     private suspend fun clientId(refresh: Boolean): String = idLock.withLock {
@@ -83,17 +83,17 @@ class SoundCloudClient(
     private suspend fun send(method: String, path: String, body: JsonObject?, form: Map<String, String>?, prompt: Boolean): JsonElement = withContext(Dispatchers.IO) {
         require(method in setOf("GET", "POST", "PUT", "DELETE"))
         val base = url(path)
-        if (auth().expiresAt - System.currentTimeMillis() / 1000 < 300) refreshLogin(auth().token)
+        auth()?.let { if (it.expiresAt - System.currentTimeMillis() / 1000 < 300) refreshLogin(it.token) }
         val payload = form?.entries?.joinToString("&") { "${java.net.URLEncoder.encode(it.key, "UTF-8")}=${java.net.URLEncoder.encode(it.value, "UTF-8")}" }
             ?.let { it to FORM } ?: body?.let { it.toString() to JSON }
         attempt(base, false, method, payload, prompt) ?: attempt(base, true, method, payload, prompt)
-            ?: (if (refreshLogin(auth().token)) attempt(base, false, method, payload, prompt) else null)
-            ?: throw MediaAccountExpiredException()
+            ?: (auth()?.let { if (refreshLogin(it.token)) attempt(base, false, method, payload, prompt) else null })
+            ?: throw if (session == null) IOException("Sign in to SoundCloud to do this.") else MediaAccountExpiredException()
     }
 
     // the web player swaps its http-only refresh cookie for a new day-long token the same way
     private suspend fun refreshLogin(stale: String): Boolean = loginLock.withLock {
-        val auth = auth()
+        val auth = auth() ?: return@withLock false
         if (auth.token != stale) return@withLock true
         if (!auth.canRefresh) return@withLock false
         val request = Request.Builder().url(auth.refreshUrl).post(ByteArray(0).toRequestBody())
@@ -109,13 +109,14 @@ class SoundCloudClient(
 
     private suspend fun attempt(base: HttpUrl, refresh: Boolean, method: String, payload: Pair<String, String>?, prompt: Boolean): JsonElement? {
         val auth = auth()
+        val origin = auth?.origin ?: WEB
         val url = base.newBuilder().setQueryParameter("client_id", clientId(refresh)).build()
-        val (code, text) = if (method != "GET" && browser != null) browser.fetch(auth.origin, method, url.toString(), auth.token, payload?.first, payload?.second ?: JSON, prompt)
+        val (code, text) = if (method != "GET" && browser != null && auth != null) browser.fetch(origin, method, url.toString(), auth.token, payload?.first, payload?.second ?: JSON, prompt)
         else {
             val request = Request.Builder().url(url)
-                .header("Accept", "application/json").header("Origin", auth.origin).header("Referer", "${auth.origin}/")
-                .header("Authorization", "OAuth ${auth.token}")
-                .apply { auth.userAgent.takeIf { it.isNotBlank() }?.let { header("User-Agent", it) } }
+                .header("Accept", "application/json").header("Origin", origin).header("Referer", "$origin/")
+                .apply { auth?.let { header("Authorization", "OAuth ${it.token}") } }
+                .apply { auth?.userAgent?.takeIf { it.isNotBlank() }?.let { header("User-Agent", it) } }
                 .method(method, if (method == "GET" || method == "DELETE" && payload == null) null
                     else (payload?.first ?: "{}").toRequestBody((payload?.second ?: JSON).toMediaType())).build()
             runCatching { http.newCall(request).execute() }.getOrElse { throw IOException("Could not connect to SoundCloud. Please retry.") }

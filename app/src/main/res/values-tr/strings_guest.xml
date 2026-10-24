@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guest_name">"Misafir"</string>
+    <string name="guest_continue">"Oturum açmadan devam et"</string>
+    <string name="guest_detail">"Hesap olmadan göz at, ara ve dinle. Beğeniler, yorumlar ve çalma listeleri için oturum açman gerekir."</string>
+</resources>

@@ -146,8 +146,8 @@ class DesktopContainer(
     private val soundcloudClients = java.util.concurrent.ConcurrentHashMap<String, com.aurora.music.data.remote.SoundCloudClient>()
     private fun soundcloudClient(session: Session) = soundcloudClients.getOrPut(session.token) {
         com.aurora.music.data.remote.SoundCloudClient(
-            session = { com.aurora.music.data.remote.SoundCloudWebSession.decode(soundcloudCredentials.read(session.token)) },
-            onRefreshed = { soundcloudCredentials.update(session.token, it.encode()) }, http = http, browser = soundcloudWriter)
+            session = { com.aurora.music.data.remote.SoundCloudWebSession.decode(soundcloudCredentials.read(session.token)) }.takeUnless { session.isGuest },
+            onRefreshed = { soundcloudCredentials.update(session.token, it.encode()) }, http = http, browser = if (session.isGuest) null else soundcloudWriter)
     }
 
     suspend fun verifySoundCloud(session: Session): Boolean = (buildBackend(session) as? com.aurora.music.data.SoundCloudBackend)?.verify() == true
@@ -334,7 +334,7 @@ class DesktopContainer(
                 com.aurora.music.data.SpotifyWebBackend(session, spotifyWeb.account { spotifyCredentials.read(session.token) }, localize) else null
             ServerType.YOUTUBE_MUSIC -> ReportingMediaBackend(com.aurora.music.data.YouTubeMusicBackend(session,
                 com.aurora.music.data.remote.YouTubeMusicClient(
-                    session = { com.aurora.music.data.remote.YouTubeMusicWebSession.decode(youtubeMusicCredentials.read(session.token)) }, http = http),
+                    session = { com.aurora.music.data.remote.YouTubeMusicWebSession.decode(youtubeMusicCredentials.read(session.token)) }.takeUnless { session.isGuest }, http = http),
                 youtubeResolver::signatureTimestamp)) { message ->
                 if (lastSession?.accountKey() == session.accountKey() ||
                     (unifiedLibraryValue && lastSession?.type?.supportsMergedLibrary == true &&
@@ -493,8 +493,8 @@ class DesktopContainer(
     suspend fun forgetSavedSession(session: Session) {
         settingsStore.removeSavedSession(session)
         when (session.type) {
-            ServerType.YOUTUBE_MUSIC -> youtubeMusicCredentials.remove(session.token)
-            ServerType.SOUNDCLOUD -> { soundcloudClients.remove(session.token); soundcloudCredentials.remove(session.token) }
+            ServerType.YOUTUBE_MUSIC -> if (!session.isGuest) youtubeMusicCredentials.remove(session.token)
+            ServerType.SOUNDCLOUD -> { soundcloudClients.remove(session.token); if (!session.isGuest) soundcloudCredentials.remove(session.token) }
             ServerType.SPOTIFY -> if (session.salt == com.aurora.music.data.SpotifyWebBackend.WEB_PLAYER) {
                 spotifyCredentials.remove(session.token)
                 spotifyWeb.reset()

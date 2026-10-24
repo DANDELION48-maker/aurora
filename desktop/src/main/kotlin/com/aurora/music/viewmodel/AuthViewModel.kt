@@ -94,6 +94,15 @@ class AuthViewModel(private val container: DesktopContainer) : ViewModel() {
         Session(SoundCloudClient.WEB, name, "", save(auth.encode()), ServerType.SOUNDCLOUD, userId = id, imageUrl = avatar)
     }
 
+    fun continueAsGuest(onDone: () -> Unit = {}) {
+        val type = _state.value.type
+        if (_state.value.loading || !type.supportsGuest) return
+        viewModelScope.launch {
+            container.applySession(Session.guest(type, appString(R.string.guest_name)))
+            onDone()
+        }
+    }
+
     fun connectSpotifyWeb(sessionCookie: String, profile: SpotifyWebProfile?, onDone: () -> Unit = {}) {
         if (sessionCookie.isBlank() || profile == null) {
             _state.update { it.copy(loading = false, error = appString(R.string.spotify_web_failed)) }

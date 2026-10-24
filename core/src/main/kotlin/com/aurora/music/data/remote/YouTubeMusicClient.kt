@@ -52,8 +52,9 @@ fun interface YouTubeMusicTransport {
     }
 }
 
+// a null session is a signed-out guest on the public web api
 class YouTubeMusicClient(
-    private val session: () -> YouTubeMusicWebSession,
+    private val session: (() -> YouTubeMusicWebSession)?,
     http: OkHttpClient = OkHttpClient(),
 ) : YouTubeMusicTransport {
     private val http = http.newBuilder().followRedirects(false).followSslRedirects(false)
@@ -61,17 +62,18 @@ class YouTubeMusicClient(
 
     override suspend fun request(endpoint: String, body: JsonObject): JsonObject = withContext(Dispatchers.IO) {
         require(endpoint.matches(Regex("[a-zA-Z_/]+")))
-        val auth = session().validate()
-        val version = auth.clientVersion.ifBlank {
+        val auth = session?.invoke()?.validate()
+        val version = auth?.clientVersion.orEmpty().ifBlank {
             "1.${LocalDate.now(ZoneOffset.UTC).format(DateTimeFormatter.BASIC_ISO_DATE)}.01.00"
         }
         val payload = body.deepCopy().apply {
             add("context", JsonObject().apply {
-                add("client", json("clientName" to "WEB_REMIX", "clientVersion" to version,
-                    "hl" to "en", "visitorData" to auth.visitorData))
+                add("client", json("clientName" to "WEB_REMIX", "clientVersion" to version, "hl" to "en").apply {
+                    auth?.let { addProperty("visitorData", it.visitorData) }
+                })
                 add("user", JsonObject().apply {
                     addProperty("lockedSafetyMode", false)
-                    (auth.pageId ?: auth.dataSyncId).takeIf { it.isNotBlank() }?.let { addProperty("onBehalfOfUser", it) }
+                    (auth?.pageId ?: auth?.dataSyncId)?.takeIf { it.isNotBlank() }?.let { addProperty("onBehalfOfUser", it) }
                 })
             })
         }
@@ -87,7 +89,7 @@ class YouTubeMusicClient(
 
     override suspend fun trackPlayback(url: String, parameters: Map<String, String>) = withContext(Dispatchers.IO) {
         val target = validatedTrackingUrl(url)
-        val auth = session().validate()
+        val auth = session?.invoke()?.validate() ?: throw IOException("YouTube Music playback reporting needs an account.")
         val request = authenticated(auth, auth.clientVersion).url(
             target.newBuilder().apply {
                 parameters.forEach { (key, value) -> setQueryParameter(key, value) }
@@ -96,13 +98,16 @@ class YouTubeMusicClient(
         execute(request) { Unit }
     }
 
-    private fun authenticated(auth: YouTubeMusicWebSession, version: String) = Request.Builder()
+    private fun authenticated(auth: YouTubeMusicWebSession?, version: String) = Request.Builder()
         .header("Origin", ORIGIN).header("X-Origin", ORIGIN).header("Referer", "$ORIGIN/")
-        .header("User-Agent", auth.userAgent.ifBlank { USER_AGENT })
-        .header("Cookie", auth.cookie).header("Authorization", auth.authorization(System.currentTimeMillis() / 1000))
-        .header("X-Goog-AuthUser", auth.authUser).header("X-Goog-Visitor-Id", auth.visitorData)
+        .header("User-Agent", auth?.userAgent.orEmpty().ifBlank { USER_AGENT })
         .header("X-YouTube-Client-Name", "67").header("X-YouTube-Client-Version", version)
-        .apply { auth.pageId?.takeIf { it.isNotBlank() }?.let { header("X-Goog-PageId", it) } }
+        .apply {
+            if (auth == null) return@apply
+            header("Cookie", auth.cookie).header("Authorization", auth.authorization(System.currentTimeMillis() / 1000))
+            header("X-Goog-AuthUser", auth.authUser).header("X-Goog-Visitor-Id", auth.visitorData)
+            auth.pageId?.takeIf { it.isNotBlank() }?.let { header("X-Goog-PageId", it) }
+        }
 
     private suspend fun <T> execute(request: Request, read: (Response) -> T): T {
         currentCoroutineContext().ensureActive()
@@ -119,7 +124,8 @@ class YouTubeMusicClient(
                 override fun onResponse(call: Call, response: Response) {
                     try {
                         val result = response.use {
-                            if (it.code == 401) throw com.aurora.music.data.MediaAccountExpiredException()
+                            if (it.code == 401 && session != null) throw com.aurora.music.data.MediaAccountExpiredException()
+                            if (it.code == 401) throw IOException("Sign in to YouTube Music to do this.")
                             if (it.code == 403) throw IOException("YouTube Music did not allow this request. Please try again.")
                             if (!it.isSuccessful) throw IOException("YouTube Music request failed (${it.code}). Try again later.")
                             read(it)

@@ -26,7 +26,7 @@ import com.aurora.music.viewmodel.AuthUiState
 import kotlinx.coroutines.delay
 
 @Composable
-fun SoundCloudStep(state: AuthUiState, onConnect: (String) -> Unit) {
+fun SoundCloudStep(state: AuthUiState, onConnect: (String) -> Unit, onGuest: () -> Unit) {
     var browserOpen by remember { mutableStateOf(false) }
     var detailsExpanded by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
@@ -35,6 +35,7 @@ fun SoundCloudStep(state: AuthUiState, onConnect: (String) -> Unit) {
             modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp), shape = RoundedCornerShape(16.dp)) {
             Text(appString(R.string.soundcloud_sign_in), style = MaterialTheme.typography.titleSmall)
         }
+        GuestOption(!state.loading, onGuest)
         TextButton(onClick = { detailsExpanded = !detailsExpanded }) { Text(if (detailsExpanded) appString(R.string.text_hide_connection_details_64711a) else appString(R.string.text_connection_details_ab30a5)) }
         androidx.compose.animation.AnimatedVisibility(detailsExpanded) {
             Text(appString(R.string.soundcloud_details), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guest_name">"ゲスト"</string>
+    <string name="guest_continue">"サインインせずに続ける"</string>
+    <string name="guest_detail">"アカウントなしで閲覧、検索、再生できます。いいね、コメント、プレイリストにはサインインが必要です。"</string>
+</resources>

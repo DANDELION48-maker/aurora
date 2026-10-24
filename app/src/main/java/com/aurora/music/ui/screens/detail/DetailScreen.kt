@@ -98,6 +98,7 @@ fun DetailScreen(
     itemKind: String,
     isItemLiked: Boolean,
     onToggleItemLike: () -> Unit,
+    canLikeItem: Boolean = true,
     downloadedIds: Set<String>,
     onDownload: (Song) -> Unit,
     onRemoveDownload: (String) -> Unit,
@@ -205,7 +206,7 @@ fun DetailScreen(
                     Spacer(Modifier.width(4.dp)); Text(appString(R.string.text_mix_fd7391))
                 }
                 if (!wrap) Spacer(Modifier.weight(1f))
-                if (itemKind == "album" || itemKind == "playlist" || itemKind == "artist") {
+                if (canLikeItem && (itemKind == "album" || itemKind == "playlist" || itemKind == "artist")) {
                     Icon(
                         if (isItemLiked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                         if (isItemLiked) appString(R.string.text_unlike_e4fc40) else appString(R.string.text_like_c7e02c),

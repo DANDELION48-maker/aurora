@@ -569,6 +569,7 @@ fun AuroraApp() {
                 itemKind = kind,
                 isItemLiked = playerState.likedIds.contains(id),
                 onToggleItemLike = { playerVM.toggleLike(id, kind) },
+                canLikeItem = container.repository.canLike(id),
                 downloadedIds = downloadedIds,
                 onDownload = onDownload,
                 onRemoveDownload = onRemoveDownload,
@@ -858,6 +859,7 @@ fun AuroraApp() {
     androidx.compose.runtime.CompositionLocalProvider(
         com.aurora.music.ui.screens.player.LocalPlayerPanes provides playerPanes,
         com.aurora.music.ui.components.LocalStartRadio provides remember(playerVM) { { song: com.aurora.music.model.Song -> playerVM.startSonicRadio(song) { confirm(it) } } },
+        com.aurora.music.ui.components.LocalCanLike provides container.repository::canLike,
     ) {
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -1019,6 +1021,7 @@ fun AuroraApp() {
                             onConnectSpotifyWeb = authVM::connectSpotifyWeb,
                             onConnectYouTubeMusic = authVM::connectYouTubeMusic,
                             onConnectSoundCloud = authVM::connectSoundCloud,
+                            onContinueAsGuest = authVM::continueAsGuest,
                             savedSessions = savedSessions,
                             onUseSaved = { s -> authVM.useSaved(s) },   // nav to home handled by the sessionReady effect
                         )

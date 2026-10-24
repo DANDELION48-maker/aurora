@@ -25,8 +25,13 @@ class YouTubeMusicBackend(
     private fun remember(result: SearchResults): SearchResults = result.also { it.songs.forEach { song -> songs[song.id] = song } }
     private suspend fun browse(id: String) = api.request("browse", json("browseId" to id))
 
-    override suspend fun ping(): Boolean = account(api).first.isNotBlank()
+    override val signedIn: Boolean get() = !session.isGuest
+
+    override suspend fun ping(): Boolean = if (signedIn) account(api).first.isNotBlank() else browse("FEmusic_moods_and_genres").size() > 0
     override suspend fun profileImageUrl(): String = session.imageUrl
+
+    // a guest has no library, and youtube answers its library pages with a sign-in prompt
+    private suspend fun library(id: String): SearchResults = if (signedIn) pages(id) else SearchResults()
 
     private suspend fun pages(id: String): SearchResults = pageLock.withLock {
         pageCache[id]?.takeIf { System.nanoTime() - it.first < 60_000_000_000L }?.let { return@withLock it.second }
@@ -59,18 +64,18 @@ class YouTubeMusicBackend(
         remember(YouTubeMusicParser.results(response))
         return YouTubeMusicParser.home(response)
     }
-    override suspend fun allAlbums() = pages("FEmusic_liked_albums").albums
-    override suspend fun allArtists() = pages("FEmusic_library_corpus_track_artists").artists
-    override suspend fun allPlaylists() = pages("FEmusic_liked_playlists").playlists.filter { it.id != "LM" && it.id != "SE" }
-    override suspend fun allSongs() = pages("FEmusic_liked_videos").songs.distinctBy { it.id }
+    override suspend fun allAlbums() = library("FEmusic_liked_albums").albums
+    override suspend fun allArtists() = library("FEmusic_library_corpus_track_artists").artists
+    override suspend fun allPlaylists() = library("FEmusic_liked_playlists").playlists.filter { it.id != "LM" && it.id != "SE" }
+    override suspend fun allSongs() = library("FEmusic_liked_videos").songs.distinctBy { it.id }
     override suspend fun librarySongs(limit: Int) = allSongs().take(limit)
     override suspend fun songsPage(offset: Int, count: Int) = allSongs().drop(offset).take(count)
-    override suspend fun starredSongs() = pages("VLLM").songs.distinctBy { it.id }.map { it.copy(liked = true) }
+    override suspend fun starredSongs() = library("VLLM").songs.distinctBy { it.id }.map { it.copy(liked = true) }
     override suspend fun starredCount() = starredSongs().size
     override suspend fun starredIds(): Set<String> = coroutineScope {
         val tracks = async { starredSongs().map { it.id } }
         val albums = async { allAlbums().map { it.id } }
-        val artists = async { pages("FEmusic_library_corpus_artists").artists.map { it.id } }
+        val artists = async { library("FEmusic_library_corpus_artists").artists.map { it.id } }
         (tracks.await() + albums.await() + artists.await()).toSet()
     }
     override suspend fun likedSongIds(ids: List<String>) = starredSongs().map { it.id }.toSet().intersect(ids.toSet())
@@ -155,10 +160,11 @@ class YouTubeMusicBackend(
         val description = if (kind != "playlist") null
             else header?.objects("musicDescriptionShelfRenderer")?.firstOrNull()?.obj("description")?.label().orEmpty()
         return DetailData(DetailInfo(title, header?.obj("subtitle")?.label().orEmpty(), art, accentArgbFor(id), kind == "artist", enriched.size,
-            kind.replaceFirstChar { it.uppercase() }, editableDescription = description, description = description.orEmpty()), enriched, initial.albums)
+            kind.replaceFirstChar { it.uppercase() }, editableDescription = description, description = description.orEmpty(), editable = signedIn), enriched, initial.albums)
     }
 
     private suspend fun mutation(endpoint: String, body: JsonObject): Boolean {
+        if (!signedIn) return false
         val response = api.request(endpoint, body)
         val status = response.string("status")
         if (status.isNotBlank() && status != "STATUS_SUCCEEDED" && status != "SUCCESS")
@@ -167,7 +173,7 @@ class YouTubeMusicBackend(
         return true
     }
 
-    override suspend fun setStarred(id: String, starred: Boolean, kind: String): Boolean = when (kind) {
+    override suspend fun setStarred(id: String, starred: Boolean, kind: String): Boolean = if (!signedIn) false else when (kind) {
         "artist" -> mutation(if (starred) "subscription/subscribe" else "subscription/unsubscribe", JsonObject().apply {
             add("channelIds", JsonArray().apply { add(id) })
         })
@@ -184,7 +190,7 @@ class YouTubeMusicBackend(
         if (starred) "like/like" else "like/removelike", JsonObject().apply { add("target", json((if (playlist) "playlistId" else "videoId") to id)) })
 
     override suspend fun createPlaylist(name: String) = createPlaylistWithId(name) != null
-    override suspend fun createPlaylistWithId(name: String): String? = api.request("playlist/create",
+    override suspend fun createPlaylistWithId(name: String): String? = if (!signedIn) null else api.request("playlist/create",
         json("title" to name, "description" to "", "privacyStatus" to "PRIVATE")).string("playlistId").takeIf { it.isNotBlank() }?.also { pageCache.clear() }
     override suspend fun updatePlaylist(id: String, name: String?, comment: String?): Boolean {
         val actions = JsonArray().apply {
@@ -202,6 +208,7 @@ class YouTubeMusicBackend(
         })
     }
     override suspend fun removeFromPlaylist(playlistId: String, trackIds: List<String>): Boolean {
+        if (!signedIn) return false
         var response = browse("VL${playlistId.removePrefix("VL")}")
         val entries = linkedMapOf<String, String>()
         val seen = hashSetOf<String>()
@@ -226,7 +233,7 @@ class YouTubeMusicBackend(
     }
 
     override suspend fun scrobble(id: String) {}
-    override suspend fun reportPlayback(report: PlaybackReport) = playbackTracker.report(report)
+    override suspend fun reportPlayback(report: PlaybackReport) { if (signedIn) playbackTracker.report(report) }
     override suspend fun serverLyrics(song: Song): Lyrics? = null
     override fun streamUrl(songId: String, maxBitrate: Int, lossless: Boolean) = YouTubeMusicParser.sentinel(songId)
     override fun coverArtUrl(id: String, size: Int) = songs[id]?.artworkUrl.orEmpty()

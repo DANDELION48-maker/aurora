@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guest_name">"Invitado"</string>
+    <string name="guest_continue">"Continuar sin iniciar sesión"</string>
+    <string name="guest_detail">"Explora, busca y reproduce sin cuenta. Para los me gusta, los comentarios y las listas tienes que iniciar sesión."</string>
+</resources>

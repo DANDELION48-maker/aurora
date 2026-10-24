@@ -35,7 +35,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
 
 @Composable
-fun YouTubeMusicStep(state: AuthUiState, onConnect: (String) -> Unit) {
+fun YouTubeMusicStep(state: AuthUiState, onConnect: (String) -> Unit, onGuest: () -> Unit) {
     var browserOpen by remember { mutableStateOf(false) }
     var detailsExpanded by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
@@ -54,6 +54,7 @@ fun YouTubeMusicStep(state: AuthUiState, onConnect: (String) -> Unit) {
             modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp), shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)) {
             Text(appString(R.string.text_sign_in_with_google_4a0b72), style = MaterialTheme.typography.titleSmall)
         }
+        GuestOption(!state.loading, onGuest)
         TextButton(onClick = { detailsExpanded = !detailsExpanded }) { Text(if (detailsExpanded) appString(R.string.text_hide_connection_details_64711a) else appString(R.string.text_connection_details_ab30a5)) }
         androidx.compose.animation.AnimatedVisibility(detailsExpanded) {
             Text(appString(R.string.text_aurora_uses_youtube_music_s_unofficial_web_interface_and_stores_y_28fcb3),

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guest_name">"Gość"</string>
+    <string name="guest_continue">"Kontynuuj bez logowania"</string>
+    <string name="guest_detail">"Przeglądaj, wyszukuj i słuchaj bez konta. Polubienia, komentarze i playlisty wymagają zalogowania."</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guest_name">"Invité"</string>
+    <string name="guest_continue">"Continuer sans se connecter"</string>
+    <string name="guest_detail">"Parcours, cherche et écoute sans compte. Les j'aime, les commentaires et les playlists demandent une connexion."</string>
+</resources>

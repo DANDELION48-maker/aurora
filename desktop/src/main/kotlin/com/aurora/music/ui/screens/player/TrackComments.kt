@@ -68,6 +68,8 @@ class TrackComments {
         internal set
     var available by mutableStateOf(false)
         internal set
+    var canPost by mutableStateOf(false)
+        internal set
     var enabled by mutableStateOf(true)
         internal set
     internal var post: suspend (String, Long) -> Unit = { _, _ -> }
@@ -88,6 +90,7 @@ fun rememberTrackComments(song: Song): TrackComments {
         state.list = emptyList()
         val type = repository.sourceType(song)
         state.available = song.id.isNotEmpty() && repository.supportsComments(song) && type?.name !in features.commentsOff
+        state.canPost = repository.canPostComments(song)
         state.enabled = features.comments
         if (!state.available || !features.commentsFor(type)) return@LaunchedEffect
         val loaded = runCatching { repository.comments(song) }.getOrNull() ?: return@LaunchedEffect
@@ -190,7 +193,7 @@ fun CommentsSheet(comments: TrackComments, accent: Color, positionSec: Float, du
             }
             if (comments.failed) Text(appString(if (comments.needsVerify) R.string.comment_needs_verify else R.string.comment_failed), color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 6.dp))
-            Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            if (comments.canPost) Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                 OutlinedTextField(draft, { draft = it }, Modifier.weight(1f), singleLine = true,
                     placeholder = { Text(appString(R.string.comment_hint, formatTime(positionSec.toInt()))) })
                 Spacer(Modifier.width(8.dp))

@@ -624,6 +624,7 @@ private fun Shell(
                 itemKind = kind,
                 isItemLiked = playerState.likedIds.contains(id),
                 onToggleItemLike = { player.toggleLike(id, kind) },
+                canLikeItem = container.repository.canLike(id),
                 downloadedIds = downloadedIds,
                 onDownload = onDownload,
                 onRemoveDownload = onRemoveDownload,
@@ -823,6 +824,7 @@ private fun Shell(
     val startRadio: (Song) -> Unit = { song -> player.startSonicRadio(song) { confirm(it) } }
     CompositionLocalProvider(
         com.aurora.music.ui.components.LocalStartRadio provides startRadio,
+        com.aurora.music.ui.components.LocalCanLike provides container.repository::canLike,
         com.aurora.music.ui.screens.player.LocalPlayerPanes provides
             if (exploreAvailable) PlayerPane.entries else listOf(PlayerPane.LYRICS, PlayerPane.QUEUE),
     ) {
@@ -955,6 +957,7 @@ private fun Shell(
                                     onConnectYouTubeMusic = { authVM.connectYouTubeMusic(it, onSignedIn) },
                                     onConnectSpotifyWeb = { cookie, profile -> authVM.connectSpotifyWeb(cookie, profile, onSignedIn) },
                                     onConnectSoundCloud = { authVM.connectSoundCloud(it, onSignedIn) },
+                                    onContinueAsGuest = { authVM.continueAsGuest(onSignedIn) },
                                     spotifyOperations = container.spotifyWeb.operations,
                                     onExit = if (sessionReady == true) ({
                                         authVM.reset()

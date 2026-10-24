@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guest_name">"Gast"</string>
+    <string name="guest_continue">"Doorgaan zonder in te loggen"</string>
+    <string name="guest_detail">"Blader, zoek en speel af zonder account. Voor likes, reacties en playlists moet je inloggen."</string>
+</resources>

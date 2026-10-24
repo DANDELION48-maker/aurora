@@ -149,6 +149,12 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    fun continueAsGuest() {
+        val type = _state.value.type
+        if (_state.value.loading || !type.supportsGuest) return
+        viewModelScope.launch { container.applySession(Session.guest(type, appString(R.string.guest_name))) }
+    }
+
     fun signInLocal() {
         if (_state.value.loading) return
         _state.update { it.copy(type = ServerType.LOCAL, loading = true, error = null) }

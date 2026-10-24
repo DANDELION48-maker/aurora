@@ -445,7 +445,7 @@ fun PlayerScreen(
                 val likeTint by animateColorAsState(
                     if (state.isCurrentLiked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant, label = "like",
                 )
-                Icon(
+                if (com.aurora.music.ui.components.LocalCanLike.current(song.id)) Icon(
                     imageVector = if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                     contentDescription = appString(R.string.text_like_c7e02c),
                     tint = likeTint,
@@ -761,7 +761,7 @@ private fun CoverOverlay(
                             MarqueeTitle(song.title, MaterialTheme.typography.headlineMedium)
                             MarqueeTitle(song.artist, MaterialTheme.typography.titleMedium, MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = null)
                         }
-                        Icon(
+                        if (com.aurora.music.ui.components.LocalCanLike.current(song.id)) Icon(
                             if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                             appString(R.string.text_like_c7e02c),
                             modifier = Modifier.size(48.dp).clip(CircleShape).clickable(onClick = onToggleLike).pointerHoverIcon(PointerIcon.Hand).padding(10.dp),

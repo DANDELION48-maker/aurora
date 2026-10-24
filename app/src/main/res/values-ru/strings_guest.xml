@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guest_name">"Гость"</string>
+    <string name="guest_continue">"Продолжить без входа"</string>
+    <string name="guest_detail">"Просматривайте, ищите и слушайте без аккаунта. Для лайков, комментариев и плейлистов нужно войти."</string>
+</resources>

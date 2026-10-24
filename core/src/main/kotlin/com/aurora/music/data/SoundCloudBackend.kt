@@ -55,12 +55,14 @@ class SoundCloudBackend(
     }
     private suspend fun list(path: String) = api.get(path).asJsonObject.items("collection")
 
-    override suspend fun ping(): Boolean = api.get("/me").asJsonObject.string("id").isNotBlank()
+    override val signedIn: Boolean get() = !session.isGuest
+
+    override suspend fun ping(): Boolean = if (signedIn) api.get("/me").asJsonObject.string("id").isNotBlank() else list("/mixed-selections?limit=1").isNotEmpty()
     override suspend fun profileImageUrl(): String = session.imageUrl
 
     override suspend fun home(): HomeData = coroutineScope {
-        val history = async { runCatching { remember(list("/me/play-history/tracks?limit=30").mapNotNull { song(it.obj("track")) }) }.getOrNull() }
-        val stream = async { runCatching { remember(list("/stream?limit=40").mapNotNull { song(it.obj("track")) }) }.getOrNull() }
+        val history = async { if (signedIn) runCatching { remember(list("/me/play-history/tracks?limit=30").mapNotNull { song(it.obj("track")) }) }.getOrNull() else null }
+        val stream = async { if (signedIn) runCatching { remember(list("/stream?limit=40").mapNotNull { song(it.obj("track")) }) }.getOrNull() else null }
         val discover = async { runCatching { list("/mixed-selections?limit=10") }.getOrNull() }
         val sections = buildList {
             history.await()?.distinctBy { it.id }?.takeIf { it.isNotEmpty() }?.let { add(HomeFeedSection("history", "Recently played", items = it.map(HomeFeedItem::Track))) }
@@ -75,6 +77,7 @@ class SoundCloudBackend(
     }
 
     private suspend fun library(): List<JsonObject> {
+        if (!signedIn) return emptyList()
         val entries = pages("/me/library/all?limit=200")
         val ids = entries.mapTo(HashSet(), ::collectionId)
         val waiting = waiting(PLAYLIST_LIKE, entries.filter { it.string("type").endsWith("-like") }.mapTo(HashSet(), ::collectionId))
@@ -110,6 +113,7 @@ class SoundCloudBackend(
         return list.map { p -> covers[p.id]?.takeIf { p.coverUrl.isBlank() && it.isNotBlank() }?.let { p.copy(coverUrl = it) } ?: p }
     }
     override suspend fun allArtists(): List<Artist> {
+        if (!signedIn) return emptyList()
         val followed = pages("/users/$user/followings?limit=200").map(::artist)
         val ids = followed.mapTo(HashSet()) { it.id }
         val waiting = waiting(FOLLOW, ids)
@@ -118,6 +122,7 @@ class SoundCloudBackend(
         return added + followed.filter { waiting[it.id]?.liked != false }
     }
     override suspend fun allSongs(): List<Song> {
+        if (!signedIn) return emptyList()
         val liked = remember(pages("/users/$user/track_likes?limit=200").mapNotNull { song(it.obj("track")) }).distinctBy { it.id }
         val ids = liked.mapTo(HashSet()) { it.id }
         val waiting = waiting(TRACK_LIKE, ids)
@@ -175,6 +180,7 @@ class SoundCloudBackend(
 
     // sends whatever is waiting and lets soundcloud's bot check ask first; with nothing waiting, re-liking a liked track shows whether it would
     suspend fun verify(): Boolean {
+        if (!signedIn) return true
         if (pending.of(user).values.any { it.sentAt == 0L }) return sync(check = true)
         val probe = allSongs().firstOrNull() ?: return true
         return runCatching { api.sendWithCheck("PUT", "/users/$user/track_likes/${probe.id}") }.isSuccess
@@ -182,7 +188,7 @@ class SoundCloudBackend(
     override suspend fun librarySongs(limit: Int) = allSongs().take(limit)
     override suspend fun songsPage(offset: Int, count: Int) = allSongs().drop(offset).take(count)
     override suspend fun starredSongs() = allSongs().map { it.copy(liked = true) }
-    override suspend fun starredCount() =
+    override suspend fun starredCount() = if (!signedIn) 0 else
         if (pending.of(user).keys.none { it.startsWith("$TRACK_LIKE:") }) api.get("/me").asJsonObject.int("likes_count") else allSongs().size
     override suspend fun starredIds(): Set<String> = coroutineScope {
         val tracks = async { allSongs().map { it.id } }
@@ -246,11 +252,14 @@ class SoundCloudBackend(
         else -> null
     }
 
-    private suspend fun change(method: String, path: String, body: JsonObject? = null): JsonElement =
-        api.send(method, path, body).also { pageCache.clear() }
+    private suspend fun change(method: String, path: String, body: JsonObject? = null): JsonElement {
+        if (!signedIn) throw IOException("Sign in to SoundCloud to change playlists.")
+        return api.send(method, path, body).also { pageCache.clear() }
+    }
 
     // a like or follow counts here straight away and reaches soundcloud in the background, whenever its bot check lets it through
     override suspend fun setStarred(id: String, starred: Boolean, kind: String): Boolean {
+        if (!signedIn) return false
         val key = "${when (kind) { "artist" -> FOLLOW; "album", "playlist" -> PLAYLIST_LIKE; else -> TRACK_LIKE }}:$id"
         val earlier = pending.of(user)[key]
         if (earlier != null && earlier.liked != starred && earlier.sentAt == 0L) pending.clear(user, key)
@@ -298,7 +307,7 @@ class SoundCloudBackend(
 
     // the web player adds each played track to the account's history the same way
     override suspend fun scrobble(id: String) {
-        if (id.matches(Regex("[0-9]+"))) api.send("POST", "/me/play-history", JsonObject().apply { addProperty("track_urn", "soundcloud:tracks:$id") })
+        if (signedIn && id.matches(Regex("[0-9]+"))) api.send("POST", "/me/play-history", JsonObject().apply { addProperty("track_urn", "soundcloud:tracks:$id") })
     }
 
     override fun supportsComments(song: Song) = song.id.matches(Regex("[0-9]+"))
@@ -318,7 +327,7 @@ class SoundCloudBackend(
     }
 
     override suspend fun postComment(song: Song, body: String, timestampMs: Long): TrackComment? {
-        if (!supportsComments(song)) return null
+        if (!canPostComments(song)) return null
         // the web player posts comments form-encoded and unwrapped, and json gets a 400
         return comment(api.send("POST", "/tracks/${song.id}/comments", form = mapOf("body" to body, "timestamp" to timestampMs.toString())).asJsonObject)
     }

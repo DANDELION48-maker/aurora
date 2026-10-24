@@ -309,7 +309,7 @@ fun LibraryScreen(
         ) {
             HeaderAction(Icons.Filled.Search, appString(R.string.text_search_bce064), onOpenSearch)
             onOpenMix?.let { HeaderAction(Icons.Filled.GraphicEq, appString(R.string.text_mix_studio_668363), it) }
-            HeaderAction(Icons.Filled.Add, appString(R.string.text_create_playlist_62c988)) { showCreate = true }
+            if (state.signedIn) HeaderAction(Icons.Filled.Add, appString(R.string.text_create_playlist_62c988)) { showCreate = true }
         }
 
         if (showCreate) {
@@ -588,7 +588,7 @@ private fun AllOverview(
                 accentFor("liked"), state.likedId, "liked",
             )
             val tiles = buildList {
-                add(QuickTile(liked.title, liked.subtitle, Icons.Filled.Favorite, state.likedCover, row = liked) { onOpen(liked) })
+                if (state.signedIn) add(QuickTile(liked.title, liked.subtitle, Icons.Filled.Favorite, state.likedCover, row = liked) { onOpen(liked) })
                 if (canDownload) add(QuickTile(appString(R.string.text_downloads_a862c2), appPlural(R.plurals.item_count, (state.downloadedRows.size)), Icons.Filled.Download, "") { onFilter(LibraryFilter.DOWNLOADED) })
                 if (state.supportsFolders) add(QuickTile(appString(R.string.text_folders_19adc4), appString(R.string.text_browse_files_524932), Icons.Filled.Folder, "") { onOpenFolders() })
                 if (onOpenRadio != null) add(QuickTile(appString(R.string.text_radio_b11bf1), appString(R.string.text_live_stations_f40694), Icons.Filled.Radio, "") { onOpenRadio() })
@@ -1344,7 +1344,7 @@ private fun CollectionMenu(row: LibRow, actions: LibActions, expanded: Boolean, 
             )
         }
         if (!isVirtual && !isSmart) {
-            DropdownMenuItem(
+            if (com.aurora.music.ui.components.LocalCanLike.current(row.id)) DropdownMenuItem(
                 text = { Text(if (liked) appString(R.string.text_unlike_e4fc40) else appString(R.string.text_like_c7e02c)) },
                 onClick = { onDismiss(); actions.onToggleLike(row) },
                 leadingIcon = { Icon(if (liked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder, null) },

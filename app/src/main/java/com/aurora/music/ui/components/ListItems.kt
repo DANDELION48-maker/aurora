@@ -63,6 +63,9 @@ import com.aurora.music.ui.theme.LocalUiPrefs
 import com.aurora.music.ui.theme.auroraPanel
 import com.aurora.music.model.accent
 
+// a guest source's songs, albums and artists can't be liked
+val LocalCanLike = androidx.compose.runtime.staticCompositionLocalOf<(String) -> Boolean> { { true } }
+
 @Composable
 fun SongRow(
     song: Song,
@@ -87,9 +90,10 @@ fun SongRow(
     var showPlaylists by remember(song.id, song.playbackSource?.providerId) { mutableStateOf(false) }
     val shape = if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(14.dp) else MaterialTheme.shapes.small
     val tablet = com.aurora.music.ui.layout.LocalWindowLayout.current.useNavigationRail
+    val canLike = LocalCanLike.current(song.id)
     key(song.id, song.playbackSource?.providerId) {
     TrackSwipeActions(modifier, shape, isLiked, enabled = !menuOpen && !showPlaylists,
-        onPlayNext = onPlayNext, onQueue = onAddToQueue, onLike = onToggleLike,
+        onPlayNext = onPlayNext, onQueue = onAddToQueue, onLike = onToggleLike.takeIf { canLike },
         onPlaylists = { showPlaylists = true }) {
     // only tablets need the measured width so phones skip the per-row subcomposition
     val wide: @Composable (Boolean) -> Unit = { albumColumn ->
@@ -158,7 +162,7 @@ fun SongRow(
             Icon(Icons.Filled.DownloadDone, appString(R.string.text_downloaded_c61970), tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
             Spacer(Modifier.width(6.dp))
         }
-        Icon(
+        if (canLike) Icon(
             imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
             contentDescription = appString(if (isLiked) R.string.text_remove_from_liked_9d1568 else R.string.text_add_to_liked_b99f26),
             tint = if (isLiked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
@@ -198,7 +202,7 @@ fun SongRow(
                     onClick = { menuOpen = false; onAddToQueue() },
                     leadingIcon = { Icon(Icons.AutoMirrored.Filled.QueueMusic, null) },
                 )
-                DropdownMenuItem(
+                if (canLike) DropdownMenuItem(
                     text = { Text(if (isLiked) appString(R.string.text_remove_from_liked_9d1568) else appString(R.string.text_add_to_liked_b99f26)) },
                     onClick = { menuOpen = false; onToggleLike() },
                     leadingIcon = { Icon(if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder, null) },

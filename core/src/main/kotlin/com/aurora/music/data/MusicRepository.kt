@@ -368,6 +368,11 @@ class MusicRepository(
     suspend fun canvasUrl(song: Song): String? = if (offline) null else backend?.canvasUrl(song)
 
     fun supportsComments(song: Song): Boolean = !offline && backend?.supportsComments(song) == true
+    fun canPostComments(song: Song): Boolean = !offline && backend?.canPostComments(song) == true
+
+    // guest sources hide likes, playlist edits and their personal library
+    fun canLike(id: String): Boolean = backend?.signedIn(backendSongId(id) ?: id) != false
+    fun signedIn(view: String? = null): Boolean = viewOf(view)?.signedIn != false
     fun sourceType(song: Song): ServerType? = backend?.sourceType(song)
     suspend fun comments(song: Song): List<com.aurora.music.model.TrackComment>? = if (offline) null else backend?.comments(song)
     suspend fun postComment(song: Song, body: String, timestampMs: Long): com.aurora.music.model.TrackComment? =
@@ -482,6 +487,8 @@ class MusicRepository(
         if (offline) return null
         val source = backend ?: return null
         val id = backendSongId(song.id) ?: return null
+        // a guest on its own has no playlists; merged, its songs still go in local ones
+        if (!source.signedIn(id) && source.libraryViews.isEmpty()) return null
         val expectedProvider = source.playbackSourceIdentity(song.copy(id = id, playbackSource = null, streamUrl = ""))?.providerId
         if (song.playbackSource?.providerId != null && song.playbackSource.providerId != expectedProvider) return null
         return PlaylistMembershipEditor(source, id, song.copy(id = id), isActive = { !offline && backend === source },

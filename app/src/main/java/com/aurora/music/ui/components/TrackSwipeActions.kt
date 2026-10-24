@@ -39,9 +39,9 @@ import kotlin.math.sign
 
 internal enum class TrackSwipeAction { NONE, PLAY_NEXT, QUEUE, LIKE, PLAYLISTS }
 
-internal fun trackSwipeAction(offset: Float, shortDistance: Float, longDistance: Float): TrackSwipeAction = when {
+internal fun trackSwipeAction(offset: Float, shortDistance: Float, longDistance: Float, canLike: Boolean = true): TrackSwipeAction = when {
     abs(offset) < shortDistance -> TrackSwipeAction.NONE
-    offset >= longDistance -> TrackSwipeAction.LIKE
+    offset >= longDistance && canLike -> TrackSwipeAction.LIKE
     offset <= -longDistance -> TrackSwipeAction.PLAYLISTS
     offset > 0 -> TrackSwipeAction.PLAY_NEXT
     else -> TrackSwipeAction.QUEUE
@@ -55,7 +55,7 @@ internal fun TrackSwipeActions(
     enabled: Boolean,
     onPlayNext: (() -> Unit)?,
     onQueue: (() -> Unit)?,
-    onLike: () -> Unit,
+    onLike: (() -> Unit)?,
     onPlaylists: () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -67,12 +67,12 @@ internal fun TrackSwipeActions(
     var returning by remember { mutableStateOf(false) }
     val shortDistance = minOf(with(density) { 72.dp.toPx() }, width * .22f).coerceAtLeast(1f)
     val longDistance = minOf(with(density) { 180.dp.toPx() }, width * .55f).coerceAtLeast(shortDistance + 1f)
-    val selected = trackSwipeAction(offset, shortDistance, longDistance)
+    val selected = trackSwipeAction(offset, shortDistance, longDistance, onLike != null)
     val commit by rememberUpdatedState<(TrackSwipeAction) -> Unit> { action ->
         when (action) {
             TrackSwipeAction.PLAY_NEXT -> onPlayNext?.invoke()
             TrackSwipeAction.QUEUE -> onQueue?.invoke()
-            TrackSwipeAction.LIKE -> onLike()
+            TrackSwipeAction.LIKE -> onLike?.invoke()
             TrackSwipeAction.PLAYLISTS -> onPlaylists()
             TrackSwipeAction.NONE -> Unit
         }
@@ -111,7 +111,7 @@ internal fun TrackSwipeActions(
                     }
                     change.consume()
                     offset = (delta.x - sign(delta.x) * viewConfiguration.touchSlop).coerceIn(-rowWidth * .8f, rowWidth * .8f)
-                    val next = trackSwipeAction(offset, shortDistance, longDistance)
+                    val next = trackSwipeAction(offset, shortDistance, longDistance, onLike != null)
                     if (next != lastAction && next != TrackSwipeAction.NONE) {
                         container.haptic()
                     }
@@ -120,7 +120,7 @@ internal fun TrackSwipeActions(
             } finally {
                 if (dragging) {
                     returning = true
-                    val chosen = if (released) trackSwipeAction(offset, shortDistance, longDistance) else TrackSwipeAction.NONE
+                    val chosen = if (released) trackSwipeAction(offset, shortDistance, longDistance, onLike != null) else TrackSwipeAction.NONE
                     scope.launch {
                         try {
                             // Return the row before opening a modal or removing a liked-list item.

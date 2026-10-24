@@ -78,6 +78,7 @@ data class PlayerUiState(
     val videoIsCanvas: Boolean = false,
     val supportsCanvas: Boolean = false,
     val supportsComments: Boolean = false,
+    val canPostComments: Boolean = false,
     val commentsAvailable: Boolean = false,
     val commentsEnabled: Boolean = true,
     val comments: List<com.aurora.music.model.TrackComment> = emptyList(),
@@ -1051,7 +1052,8 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         commentsJob?.cancel()
         val type = container.repository.sourceType(song)
         val available = container.repository.supportsComments(song) && type?.name !in mergeFeatures.commentsOff
-        _state.update { it.copy(comments = emptyList(), supportsComments = false, commentsAvailable = available, commentsEnabled = mergeFeatures.comments) }
+        _state.update { it.copy(comments = emptyList(), supportsComments = false, canPostComments = container.repository.canPostComments(song),
+            commentsAvailable = available, commentsEnabled = mergeFeatures.comments) }
         if (!available || !mergeFeatures.commentsFor(type)) return
         commentsJob = viewModelScope.launch {
             val list = runCatching { container.repository.comments(song) }.getOrNull() ?: return@launch
@@ -1120,7 +1122,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     // song/album/artist persist to the server playlist persists locally
     fun toggleLike(id: String, kind: String = "song") {
         if (id.startsWith("aurora-mix:")) return
-        if (id.isEmpty()) return
+        if (id.isEmpty() || !container.repository.canLike(id)) return
         val nowLiked = !_state.value.likedIds.contains(id)
         if (kind == "playlist") {
             likedPlaylistIds = if (nowLiked) likedPlaylistIds + id else likedPlaylistIds - id

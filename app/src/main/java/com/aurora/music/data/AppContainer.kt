@@ -199,8 +199,8 @@ class AppContainer(context: Context) {
     private val soundcloudClients = java.util.concurrent.ConcurrentHashMap<String, com.aurora.music.data.remote.SoundCloudClient>()
     private fun soundcloudClient(session: Session) = soundcloudClients.getOrPut(session.token) {
         com.aurora.music.data.remote.SoundCloudClient(
-            session = { com.aurora.music.data.remote.SoundCloudWebSession.decode(soundcloudCredentials.read(session.token)) },
-            onRefreshed = { soundcloudCredentials.update(session.token, it.encode()) }, http = http, browser = soundcloudWriter)
+            session = { com.aurora.music.data.remote.SoundCloudWebSession.decode(soundcloudCredentials.read(session.token)) }.takeUnless { session.isGuest },
+            onRefreshed = { soundcloudCredentials.update(session.token, it.encode()) }, http = http, browser = if (session.isGuest) null else soundcloudWriter)
     }
 
     private fun resolveYtSentinel(sentinel: String): String? {
@@ -231,7 +231,8 @@ class AppContainer(context: Context) {
             ServerType.LOCAL -> LocalBackend(localLibrary, localStore, session)
             ServerType.YOUTUBE_MUSIC -> ReportingMediaBackend(YouTubeMusicBackend(session,
                 com.aurora.music.data.remote.YouTubeMusicClient(
-                    session = { com.aurora.music.data.remote.YouTubeMusicWebSession.decode(youtubeMusicCredentials.read(session.token)) }), youtubeResolver::signatureTimestamp)) { message ->
+                    session = { com.aurora.music.data.remote.YouTubeMusicWebSession.decode(youtubeMusicCredentials.read(session.token)) }.takeUnless { session.isGuest }),
+                youtubeResolver::signatureTimestamp)) { message ->
                 if (lastSession?.accountKey() == session.accountKey() ||
                     (unifiedLibraryValue && lastSession?.type?.supportsMergedLibrary == true &&
                         (mergeSourceKeys.isEmpty() || session.accountKey() in mergeSourceKeys))) _sourceErrors.tryEmit(message)
@@ -309,7 +310,7 @@ class AppContainer(context: Context) {
     val spotifyWeb by lazy { SpotifyWebBridge(appContext) }
     val youTubeDownloader by lazy {
         YouTubeDownloader(appContext, youtubeResolver, { settingsStore.youTubeDownloadPrefs.first() }, http) {
-            settingsStore.savedSessions.first().firstOrNull { it.type == ServerType.YOUTUBE_MUSIC }?.let { session ->
+            settingsStore.savedSessions.first().firstOrNull { it.type == ServerType.YOUTUBE_MUSIC && !it.isGuest }?.let { session ->
                 runCatching { com.aurora.music.data.remote.YouTubeMusicWebSession.decode(youtubeMusicCredentials.read(session.token)) }.getOrNull()
             }
         }

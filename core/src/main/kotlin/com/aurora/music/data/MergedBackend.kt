@@ -394,6 +394,9 @@ class MergedBackend(
     override suspend fun setStarred(id: String, starred: Boolean, kind: String): Boolean =
         route(id) { src, _, oid -> src.setStarred(oid, starred, kind) } ?: false
 
+    override val signedIn: Boolean get() = sources.all { it.signedIn }
+    override fun signedIn(id: String): Boolean = unwrap(id)?.let { (i, oid) -> sources[i].signedIn(oid) } ?: primary?.signedIn(id) ?: true
+
     // liked songs follow the library view they were opened from; any other id is every source together
     private fun likedScope(id: String): MediaBackend = if (!nested && id in VIEW_IDS) libraryView(id) else this
 
@@ -481,6 +484,13 @@ class MergedBackend(
     override fun supportsComments(song: Song): Boolean {
         val (i, oid) = unwrap(song.id) ?: return false
         return sources[i].supportsComments(song.copy(id = oid)) || borrows(soundcloudIndex, i, song)
+    }
+
+    override fun canPostComments(song: Song): Boolean {
+        val (i, oid) = unwrap(song.id) ?: return false
+        val original = song.copy(id = oid)
+        if (sources[i].supportsComments(original)) return sources[i].canPostComments(original)
+        return borrows(soundcloudIndex, i, song) && sources[soundcloudIndex].signedIn
     }
 
     override suspend fun comments(song: Song): List<com.aurora.music.model.TrackComment>? {

@@ -121,6 +121,7 @@ fun SignInScreen(
     onConnectYouTubeMusic: (String) -> Unit = {},
     onConnectSpotifyWeb: (String, com.aurora.music.data.SpotifyWebProfile?) -> Unit = { _, _ -> },
     onConnectSoundCloud: (String) -> Unit = {},
+    onContinueAsGuest: () -> Unit = {},
     spotifyOperations: com.aurora.music.desktop.web.SpotifyOperations? = null,
     // leaves the page when it was opened to add another account
     onExit: (() -> Unit)? = null,
@@ -194,9 +195,9 @@ fun SignInScreen(
                         AuthStep.SERVER -> ServerStep(state, onScheme, onHost, canContinueServer, onContinueServer)
                         AuthStep.CREDENTIALS -> CredentialsStep(state, onUsername, onPassword, onBack, canSubmit, onSignIn)
                         AuthStep.FOLDERS -> FoldersStep(state, musicFolders, onAddFolder, onRemoveFolder, onLocal)
-                        AuthStep.YOUTUBE_MUSIC -> YouTubeMusicStep(state, onConnectYouTubeMusic)
+                        AuthStep.YOUTUBE_MUSIC -> YouTubeMusicStep(state, onConnectYouTubeMusic, onContinueAsGuest)
                         AuthStep.SPOTIFY -> spotifyOperations?.let { SpotifyWebStep(state, it, onConnectSpotifyWeb) }
-                        AuthStep.SOUNDCLOUD -> SoundCloudStep(state, onConnectSoundCloud)
+                        AuthStep.SOUNDCLOUD -> SoundCloudStep(state, onConnectSoundCloud, onContinueAsGuest)
                     }
                     if (state.loading) Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         CircularProgressIndicator(Modifier.size(20.dp), color = AuroraRose, strokeWidth = 2.dp)

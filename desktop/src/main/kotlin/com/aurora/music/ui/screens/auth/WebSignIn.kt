@@ -23,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -205,7 +206,7 @@ private fun rememberPage(origins: Set<String>, prepare: suspend () -> Unit, star
 }
 
 @Composable
-fun YouTubeMusicStep(state: AuthUiState, onConnect: (String) -> Unit) {
+fun YouTubeMusicStep(state: AuthUiState, onConnect: (String) -> Unit, onGuest: () -> Unit) {
     var browserOpen by remember { mutableStateOf(false) }
     var detailsExpanded by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
@@ -215,6 +216,7 @@ fun YouTubeMusicStep(state: AuthUiState, onConnect: (String) -> Unit) {
             modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp), shape = RoundedCornerShape(16.dp)) {
             Text(appString(R.string.text_sign_in_with_google_4a0b72), style = MaterialTheme.typography.titleSmall)
         }
+        GuestOption(!state.loading, onGuest)
         TextButton(onClick = { detailsExpanded = !detailsExpanded }) {
             Text(if (detailsExpanded) appString(R.string.text_hide_connection_details_64711a) else appString(R.string.text_connection_details_ab30a5))
         }
@@ -363,7 +365,7 @@ private fun SpotifyLoginBrowser(state: AuthUiState, operations: SpotifyOperation
 }
 
 @Composable
-fun SoundCloudStep(state: AuthUiState, onConnect: (String) -> Unit) {
+fun SoundCloudStep(state: AuthUiState, onConnect: (String) -> Unit, onGuest: () -> Unit) {
     var browserOpen by remember { mutableStateOf(false) }
     var detailsExpanded by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
@@ -372,6 +374,7 @@ fun SoundCloudStep(state: AuthUiState, onConnect: (String) -> Unit) {
             modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp), shape = RoundedCornerShape(16.dp)) {
             Text(appString(R.string.soundcloud_sign_in), style = MaterialTheme.typography.titleSmall)
         }
+        GuestOption(!state.loading, onGuest)
         TextButton(onClick = { detailsExpanded = !detailsExpanded }) {
             Text(if (detailsExpanded) appString(R.string.text_hide_connection_details_64711a) else appString(R.string.text_connection_details_ab30a5))
         }
@@ -380,6 +383,17 @@ fun SoundCloudStep(state: AuthUiState, onConnect: (String) -> Unit) {
         }
     }
     if (browserOpen) SoundCloudBrowserWindow(state, { browserOpen = false }, onConnect)
+}
+
+@Composable
+private fun GuestOption(enabled: Boolean, onClick: () -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedButton(onClick = onClick, enabled = enabled,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp), shape = RoundedCornerShape(16.dp)) {
+            Text(appString(R.string.guest_continue), style = MaterialTheme.typography.titleSmall)
+        }
+        Text(appString(R.string.guest_detail), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
 }
 
 @Composable

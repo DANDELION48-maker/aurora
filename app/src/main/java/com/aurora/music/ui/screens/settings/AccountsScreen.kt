@@ -63,7 +63,7 @@ fun AccountsScreen(
     val active by container.settingsStore.session.collectAsStateWithLifecycle(initialValue = null)
     fun key(s: Session?) = s?.accountKey().orEmpty()
     val activeKey = key(active)
-    val soundclouds = saved.filter { it.type == ServerType.SOUNDCLOUD }
+    val soundclouds = saved.filter { it.type == ServerType.SOUNDCLOUD && !it.isGuest }
     val scope = rememberCoroutineScope()
     var verifying by remember { mutableStateOf<String?>(null) }
     val verified = remember { mutableStateMapOf<String, Boolean>() }

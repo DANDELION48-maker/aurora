@@ -39,6 +39,9 @@ enum class ServerType {
 
     // streaming catalogues get their own home, search and library views instead of mixing into the merged one
     val isCatalogue: Boolean get() = this == YOUTUBE_MUSIC || this == SPOTIFY || this == SOUNDCLOUD
+
+    // browsable and playable signed out through the service's public access
+    val supportsGuest: Boolean get() = this == YOUTUBE_MUSIC || this == SOUNDCLOUD
 }
 
 // sessions store tokens without raw passwords
@@ -55,6 +58,8 @@ data class Session(
 ) {
     val isValid: Boolean get() = server.isNotBlank() && username.isNotBlank() && token.isNotBlank()
 
+    val isGuest: Boolean get() = salt == GUEST && type.supportsGuest
+
     val typeLabel: String get() = when (type) {
         ServerType.SPOTIFY -> "Spotify"
         ServerType.YOUTUBE_MUSIC -> "YouTube Music"
@@ -64,6 +69,16 @@ data class Session(
         ServerType.SUBSONIC -> "Navidrome"
         ServerType.LOCAL -> "On this device"
         ServerType.EXTENSION -> "Extension"
+    }
+
+    companion object {
+        const val GUEST = "guest"
+
+        fun guest(type: ServerType, name: String): Session {
+            require(type.supportsGuest)
+            val server = if (type == ServerType.SOUNDCLOUD) com.aurora.music.data.remote.SoundCloudClient.WEB else com.aurora.music.data.remote.YouTubeMusicClient.ORIGIN
+            return Session(server, name, GUEST, GUEST, type, userId = GUEST)
+        }
     }
 }
 

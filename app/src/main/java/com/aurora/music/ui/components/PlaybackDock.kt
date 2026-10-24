@@ -121,7 +121,7 @@ fun PlaybackDock(
                             maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
                 }
-                if (!isMix) {
+                if (!isMix && LocalCanLike.current(song.id)) {
                     val likeTint by animateColorAsState(if (state.isCurrentLiked) colors.primary else colors.onSurfaceVariant, label = "dockLike")
                     IconButton(onClick = onToggleLike) {
                         Icon(if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,

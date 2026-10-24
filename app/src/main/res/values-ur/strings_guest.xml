@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guest_name">"مہمان"</string>
+    <string name="guest_continue">"سائن ان کیے بغیر جاری رکھیں"</string>
+    <string name="guest_detail">"اکاؤنٹ کے بغیر براؤز کریں، تلاش کریں اور چلائیں۔ لائکس، تبصروں اور پلے لسٹس کے لیے سائن ان ضروری ہے۔"</string>
+</resources>

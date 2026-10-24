@@ -810,7 +810,7 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
 
     // song/album/artist persist to the server playlist persists locally
     override fun toggleLike(id: String, kind: String) {
-        if (id.isEmpty() || id.startsWith("aurora-mix:")) return
+        if (id.isEmpty() || id.startsWith("aurora-mix:") || !deps.repository.canLike(id)) return
         val nowLiked = !_state.value.likedIds.contains(id)
         if (kind == "playlist") {
             likedPlaylistIds = if (nowLiked) likedPlaylistIds + id else likedPlaylistIds - id

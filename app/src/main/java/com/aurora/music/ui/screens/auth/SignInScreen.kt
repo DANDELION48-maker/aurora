@@ -106,6 +106,7 @@ fun SignInScreen(
     onConnectSpotifyWeb: (String, com.aurora.music.data.SpotifyWebProfile?) -> Unit = { _, _ -> },
     onConnectYouTubeMusic: (String) -> Unit = {},
     onConnectSoundCloud: (String) -> Unit = {},
+    onContinueAsGuest: () -> Unit = {},
     savedSessions: List<com.aurora.music.data.Session> = emptyList(),
     onUseSaved: (com.aurora.music.data.Session) -> Unit = {},
 ) {
@@ -181,8 +182,8 @@ fun SignInScreen(
                     AuthStep.SERVER -> ServerStep(state, onScheme, onHost, canContinueServer, onContinueServer)
                     AuthStep.CREDENTIALS -> CredentialsStep(state, onUsername, onPassword, onBack, canSubmit, onSignIn)
                     AuthStep.SPOTIFY -> SpotifyWebStep(state, onConnectSpotifyWeb) { SpotifyStep(state, onConnectSpotify) }
-                    AuthStep.YOUTUBE_MUSIC -> YouTubeMusicStep(state, onConnectYouTubeMusic)
-                    AuthStep.SOUNDCLOUD -> SoundCloudStep(state, onConnectSoundCloud)
+                    AuthStep.YOUTUBE_MUSIC -> YouTubeMusicStep(state, onConnectYouTubeMusic, onContinueAsGuest)
+                    AuthStep.SOUNDCLOUD -> SoundCloudStep(state, onConnectSoundCloud, onContinueAsGuest)
                 }
                 if (state.loading) Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     CircularProgressIndicator(Modifier.size(20.dp), color = AuroraRose, strokeWidth = 2.dp)
@@ -485,5 +486,16 @@ private fun PrimaryButton(label: String, enabled: Boolean, modifier: Modifier = 
     Button(onClick = onClick, enabled = enabled, modifier = modifier.heightIn(min = 54.dp), shape = RoundedCornerShape(16.dp)) {
         if (loading) CircularProgressIndicator(Modifier.size(22.dp), strokeWidth = 2.dp)
         else Text(label, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+    }
+}
+
+@Composable
+internal fun GuestOption(enabled: Boolean, onClick: () -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedButton(onClick = onClick, enabled = enabled,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp), shape = RoundedCornerShape(16.dp)) {
+            Text(appString(R.string.guest_continue), style = MaterialTheme.typography.titleSmall)
+        }
+        Text(appString(R.string.guest_detail), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

@@ -1282,8 +1282,12 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     suspend fun addSavedSession(session: Session) = dataStore.edit { p ->
         if (!session.isValid) return@edit
         val cur = parseSessions(p[Keys.SAVED_SESSIONS])
-        val next = cur.filterNot { it.accountKey() == session.accountKey() } + session
+        // signing in takes the guest's place, in the merged library too
+        val guest = if (session.isGuest) null else cur.firstOrNull { it.isGuest && it.type == session.type }
+        val next = cur.filterNot { it.accountKey() == session.accountKey() || it == guest } + session
         p[Keys.SAVED_SESSIONS] = gson.toJson(next)
+        val merged = p[Keys.MERGE_SOURCES].orEmpty()
+        if (guest != null && guest.accountKey() in merged) p[Keys.MERGE_SOURCES] = merged - guest.accountKey() + session.accountKey()
     }
 
     suspend fun removeSavedSession(session: Session) = dataStore.edit { p ->

@@ -102,6 +102,9 @@ private const val TitleWeight = 0.42f
 private const val AlbumWeight = 0.33f
 private val addedFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
 
+// a guest source's songs, albums and artists can't be liked
+val LocalCanLike = androidx.compose.runtime.staticCompositionLocalOf<(String) -> Boolean> { { true } }
+
 @Composable
 fun SongRow(
     song: Song,
@@ -130,6 +133,7 @@ fun SongRow(
     val interaction = remember { MutableInteractionSource() }
     val hovered by interaction.collectIsHoveredAsState()
     val shape = rowShape()
+    val canLike = LocalCanLike.current(song.id)
     val menuItems: @Composable (close: () -> Unit) -> Unit = { close ->
         DropdownMenuItem(
             text = { Text(appString(R.string.text_play_5d12bd)) },
@@ -146,7 +150,7 @@ fun SongRow(
             onClick = { close(); onAddToQueue() },
             leadingIcon = { Icon(Icons.AutoMirrored.Filled.QueueMusic, null) },
         )
-        DropdownMenuItem(
+        if (canLike) DropdownMenuItem(
             text = { Text(if (isLiked) appString(R.string.text_remove_from_liked_9d1568) else appString(R.string.text_add_to_liked_b99f26)) },
             onClick = { close(); onToggleLike() },
             leadingIcon = { Icon(if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder, null) },
@@ -280,13 +284,13 @@ fun SongRow(
             )
         }
         Spacer(Modifier.width(RowInset))
-        RowAction(
+        if (canLike) RowAction(
             if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
             appString(if (isLiked) R.string.text_remove_from_liked_9d1568 else R.string.text_add_to_liked_b99f26),
             tint = if (isLiked) MaterialTheme.colorScheme.primary else muted,
             visible = hovered || isLiked,
             onClick = onToggleLike,
-        )
+        ) else Spacer(Modifier.size(ActionSize))
         Text(
             if (song.durationSec > 0) formatTime(song.durationSec) else "—",
             style = MaterialTheme.typography.labelMedium,

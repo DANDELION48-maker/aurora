@@ -82,7 +82,7 @@ fun MiniPlayer(
 
     val artSize = when (ui.miniStyle) { MiniStyle.COMPACT -> 38.dp; MiniStyle.PROMINENT -> 54.dp; else -> 44.dp }
     val rowPad = when (ui.miniStyle) { MiniStyle.COMPACT -> 6.dp; MiniStyle.PROMINENT -> 12.dp; else -> 8.dp }
-    val showLike = ui.miniStyle != MiniStyle.COMPACT && !isMix
+    val showLike = ui.miniStyle != MiniStyle.COMPACT && !isMix && LocalCanLike.current(song.id)
 
     Column(
         modifier = modifier
@@ -213,7 +213,7 @@ private fun GlassMiniPlayer(
             Text(song.artist, style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant,
                 maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
-        if (ui.miniStyle != MiniStyle.COMPACT && !isMix) GlassGlyph(
+        if (ui.miniStyle != MiniStyle.COMPACT && !isMix && LocalCanLike.current(song.id)) GlassGlyph(
             if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder, appString(R.string.text_like_c7e02c), likeTint, 24.dp, onToggleLike)
         GlassGlyph(if (state.isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow, appString(R.string.text_play_pause_14a1d0), colors.onSurface, 32.dp, onTogglePlay)
         if (!isMix) GlassGlyph(Icons.Filled.SkipNext, appString(R.string.text_next_bc9819), colors.onSurface, 32.dp, onNext)

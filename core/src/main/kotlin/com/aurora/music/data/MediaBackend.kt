@@ -9,6 +9,10 @@ import com.aurora.music.model.Song
 interface MediaBackend {
     val session: Session
     val supportsOfflineBrowsing: Boolean get() = false
+
+    // a guest source browses and plays, but likes, comments, playlists and its personal library need an account
+    val signedIn: Boolean get() = true
+    fun signedIn(id: String): Boolean = signedIn
     val homeFeeds: List<HomeFeedChoice> get() = emptyList()
     val searchSources: List<SearchSourceChoice> get() = emptyList()
     suspend fun search(query: String, source: String): SearchResults = search(query)
@@ -147,6 +151,7 @@ interface MediaBackend {
 
     // timed comments along the track; null when there is no track on the service to comment on
     fun supportsComments(song: Song): Boolean = false
+    fun canPostComments(song: Song): Boolean = signedIn && supportsComments(song)
     suspend fun comments(song: Song): List<com.aurora.music.model.TrackComment>? = null
     suspend fun postComment(song: Song, body: String, timestampMs: Long): com.aurora.music.model.TrackComment? = null
 

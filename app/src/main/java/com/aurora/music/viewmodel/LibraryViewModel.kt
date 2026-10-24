@@ -40,6 +40,8 @@ data class LibraryUiState(
     val likedSongCount: Int = 0,
     val likedCover: String = "",
     val supportsFolders: Boolean = false,
+    // a guest source has no liked songs or playlists of its own
+    val signedIn: Boolean = true,
     val smartPlaylists: List<com.aurora.music.data.SmartPlaylist> = emptyList(),
     // aurora's own local play tracking used to fill in "most played" where the server reports no playCount
     val localPlayCounts: Map<String, Int> = emptyMap(),
@@ -160,7 +162,7 @@ class LibraryViewModel(app: Application) : AndroidViewModel(app) {
         // a view switch while this was loading belongs to the newer load
         if (scope() != scope) return
         _state.update {
-            it.copy(loading = false, playlists = playlists, albums = albums, artists = artists, songs = songs, songsLoadingMore = false, canLoadMoreSongs = songs.size >= SONG_PAGE, downloadedRows = container.repository.downloadedLibrary(), likedSongCount = likedCount, likedCover = songs.firstOrNull()?.artworkUrl ?: "", supportsFolders = container.repository.supportsFolders)
+            it.copy(loading = false, playlists = playlists, albums = albums, artists = artists, songs = songs, songsLoadingMore = false, canLoadMoreSongs = songs.size >= SONG_PAGE, downloadedRows = container.repository.downloadedLibrary(), likedSongCount = likedCount, likedCover = songs.firstOrNull()?.artworkUrl ?: "", supportsFolders = container.repository.supportsFolders, signedIn = repo.signedIn(scope))
         }
         // warm the full-library cache in the background so the first Play is instant
         fullSongsAsync()

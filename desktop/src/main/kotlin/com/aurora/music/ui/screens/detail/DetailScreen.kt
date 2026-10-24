@@ -135,6 +135,7 @@ fun DetailScreen(
     itemKind: String,
     isItemLiked: Boolean,
     onToggleItemLike: () -> Unit,
+    canLikeItem: Boolean = true,
     downloadedIds: Set<String>,
     onDownload: (Song) -> Unit,
     onRemoveDownload: (String) -> Unit,
@@ -255,7 +256,7 @@ fun DetailScreen(
                 HeaderIcon(Icons.Filled.GraphicEq, appString(R.string.text_mix_fd7391), MaterialTheme.colorScheme.onSurface, enabled = tracks.size >= 2) { mix() }
             }
             if (!wrap) Spacer(Modifier.weight(1f))
-            if (itemKind == "album" || itemKind == "playlist" || itemKind == "artist") {
+            if (canLikeItem && (itemKind == "album" || itemKind == "playlist" || itemKind == "artist")) {
                 HeaderIcon(
                     if (isItemLiked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                     appString(if (isItemLiked) R.string.text_unlike_e4fc40 else R.string.text_like_c7e02c),
