@@ -1,5 +1,7 @@
 package com.aurora.music.playback.engine
 
+import com.aurora.music.data.ConcertPrefs
+import com.aurora.music.data.ConcertVenue
 import com.aurora.music.data.ReverbPreset
 import com.aurora.music.data.ReverbPrefs
 import org.junit.Assert.assertEquals
@@ -112,14 +114,85 @@ class ReverbKernelTest {
         assertTrue("step $worst", worst < 0.2)
     }
 
+    private fun concert(venue: Int) = ReverbPrefs(enabled = true, concert = ConcertPrefs(enabled = true).withVenue(venue))
+
+    private fun runSized(kernel: ReverbKernel, frames: Int, sizes: IntArray, source: (Int, Int) -> Double): DoubleArray {
+        val out = DoubleArray(frames * 2)
+        val block = AudioBlock(format, 1024)
+        var done = 0; var i = 0
+        while (done < frames) {
+            val n = minOf(sizes[i++ % sizes.size], frames - done)
+            block.begin(n)
+            for (f in 0 until n) { block.samples[f * 2] = source(done + f, 0); block.samples[f * 2 + 1] = source(done + f, 1) }
+            kernel.process(block)
+            System.arraycopy(block.samples, 0, out, done * 2, n * 2)
+            done += n
+        }
+        return out
+    }
+
+    // music-like spectrum: white noise through a one-pole low-pass near 1 khz
+    private fun warmNoise(seed: Long): (Int, Int) -> Double {
+        val random = java.util.Random(seed)
+        val values = DoubleArray(rate * 12)
+        var l = 0.0; var r = 0.0
+        for (i in 0 until values.size / 2) {
+            l += 0.12 * (random.nextGaussian() - l); r += 0.12 * (random.nextGaussian() - r)
+            values[i * 2] = l * 0.4; values[i * 2 + 1] = r * 0.4
+        }
+        return { frame, channel -> values[(frame * 2 + channel) % values.size] }
+    }
+
+    @Test fun concertVenuesKeepTheLevelAndIgnoreBlockSizes() {
+        ConcertVenue.ALL.indices.forEach { id ->
+            val source = warmNoise(20L + id)
+            val whole = runSized(kernel(concert(id)), rate * 3, intArrayOf(1024), source)
+            val ragged = runSized(kernel(concert(id)), rate * 3, intArrayOf(1, 77, 1024, 333), source)
+            assertTrue("venue $id", whole.contentEquals(ragged))
+            val dry = DoubleArray(rate * 2) { source(rate * 2 + it / 2, it % 2) }
+            val ratio = rms(whole, rate * 2 * 2) / rms(dry)
+            println("venue $id out/in rms ${"%.2f".format(ratio)}")
+            assertTrue("venue $id ratio $ratio", whole.all { it.isFinite() } && ratio in 0.7..1.4)
+        }
+    }
+
+    @Test fun concertSwitchedOffLeavesStudioReverbAlone() {
+        val source = noise(30)
+        val plain = run(kernel(ReverbPrefs(enabled = true, concert = null)), rate * 2, source)
+        val parked = run(kernel(ReverbPrefs(enabled = true, concert = ConcertPrefs(venue = ConcertVenue.STADIUM, openness = 1f))), rate * 2, source)
+        assertTrue(plain.contentEquals(parked))
+    }
+
+    @Test fun walkingAroundAndSwitchingModesDoesNotClick() {
+        val kernel = kernel(ReverbPrefs(enabled = true, mix = 0.3f))
+        val tone = { frame: Int, _: Int -> 0.3 * sin(2 * Math.PI * 440 * frame / rate) }
+        var last = run(kernel, rate, tone)
+        var worst = 0.0
+        var offset = rate
+        for (step in 0 until 48) {
+            val t = (step % 16) / 15f
+            val venue = ConcertPrefs(enabled = step % 16 != 15, venue = step / 16 * 2).withSeat(step % 5)
+            kernel.settings = kernel.settings.copy(concert = venue.copy(listenerX = t, size = t, openness = 1 - t))
+            val start = offset
+            val next = run(kernel, 2048) { frame, channel -> tone(start + frame, channel) }
+            worst = maxOf(worst, abs(next[0] - last[last.size - 2]))
+            for (i in 1 until 2048) worst = maxOf(worst, abs(next[i * 2] - next[i * 2 - 2]))
+            last = next; offset += 2048
+        }
+        println("largest sample step while moving through venues ${"%.4f".format(worst)}")
+        assertTrue("step $worst", worst < 0.2)
+    }
+
     @Test fun costsFarLessThanRealtime() {
-        val kernel = kernel(ReverbPrefs(enabled = true))
-        val source = noise(6)
-        run(kernel, rate * 5, source)
-        val started = System.nanoTime()
-        run(kernel, rate * 30, source)
-        val realtime = (System.nanoTime() - started) / 1e9 / 30
-        println("cpu per second of audio ${"%.2f".format(realtime * 100)}%")
-        assertTrue(realtime < 0.25)
+        for (prefs in listOf(ReverbPrefs(enabled = true), concert(ConcertVenue.ARENA))) {
+            val kernel = kernel(prefs)
+            val source = noise(6)
+            run(kernel, rate * 5, source)
+            val started = System.nanoTime()
+            run(kernel, rate * 30, source)
+            val realtime = (System.nanoTime() - started) / 1e9 / 30
+            println("cpu per second of audio ${"%.2f".format(realtime * 100)}% (concert ${prefs.concertPrefs.enabled})")
+            assertTrue(realtime < 0.25)
+        }
     }
 }

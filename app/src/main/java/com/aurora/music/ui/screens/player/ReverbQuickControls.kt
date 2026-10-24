@@ -1,17 +1,11 @@
 package com.aurora.music.ui.screens.player
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Waves
 import androidx.compose.material3.Icon
@@ -30,7 +24,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -54,21 +47,8 @@ internal fun reverbPresetName(id: Int): String = appString(when (id) {
 })
 
 @Composable
-internal fun ReverbPresetChips(selected: Int, modifier: Modifier = Modifier, onPick: (Int) -> Unit) {
-    Row(modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        ReverbPreset.ALL.indices.forEach { id ->
-            val active = id == selected
-            Text(
-                reverbPresetName(id),
-                style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold,
-                color = if (active) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.clip(RoundedCornerShape(50))
-                    .background(if (active) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.surfaceContainerHighest)
-                    .clickable { onPick(id) }.padding(horizontal = 16.dp, vertical = 8.dp),
-            )
-        }
-    }
-}
+internal fun ReverbPresetChips(selected: Int, modifier: Modifier = Modifier, onPick: (Int) -> Unit) =
+    ChoiceChips(ReverbPreset.ALL.indices.map(::reverbPresetName), selected, modifier, onPick)
 
 @Composable
 internal fun ReverbQuickControls(onOpenSettings: () -> Unit) {
@@ -78,13 +58,17 @@ internal fun ReverbQuickControls(onOpenSettings: () -> Unit) {
     val scope = rememberCoroutineScope()
     var dragMix by remember { mutableStateOf<Float?>(null) }
     val accent = MaterialTheme.colorScheme.secondary
+    val concert = prefs.concertPrefs
+    fun save(next: ReverbPrefs) { scope.launch { store.setReverb(next) } }
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Filled.Waves, null, tint = accent)
             Spacer(Modifier.width(10.dp))
             Column(Modifier.weight(1f)) {
                 Text(appString(R.string.reverb_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Text(if (prefs.enabled) reverbPresetName(prefs.preset) else appString(R.string.reverb_summary),
+                Text(if (!prefs.enabled) appString(R.string.reverb_summary)
+                    else if (concert.enabled) "${appString(R.string.reverb_mode_concert)} · ${concertVenueName(concert.venue)}"
+                    else reverbPresetName(prefs.preset),
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Switch(
@@ -94,7 +78,7 @@ internal fun ReverbQuickControls(onOpenSettings: () -> Unit) {
             )
         }
         if (prefs.enabled) {
-            val mix = dragMix ?: prefs.mix
+            val mix = dragMix ?: if (concert.enabled) concert.amount else prefs.mix
             Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(appString(R.string.reverb_amount), style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
                 Text(NumberFormat.getPercentInstance().format(mix), style = MaterialTheme.typography.titleSmall,
@@ -102,11 +86,17 @@ internal fun ReverbQuickControls(onOpenSettings: () -> Unit) {
             }
             Slider(
                 value = mix,
-                onValueChange = { v -> dragMix = v; scope.launch { store.setReverb(prefs.copy(mix = v)) } },
+                onValueChange = { v -> dragMix = v; save(if (concert.enabled) prefs.copy(concert = concert.copy(amount = v)) else prefs.copy(mix = v)) },
                 onValueChangeFinished = { dragMix = null },
                 colors = SliderDefaults.colors(thumbColor = accent, activeTrackColor = accent),
             )
-            ReverbPresetChips(prefs.preset) { id -> scope.launch { store.setReverb(prefs.withPreset(id)) } }
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                ReverbModeChips(concert.enabled) { on -> save(prefs.copy(concert = concert.copy(enabled = on))) }
+                if (concert.enabled) {
+                    ConcertVenuePicker(concert) { save(prefs.copy(concert = it)) }
+                    ConcertPositionPicker(concert) { save(prefs.copy(concert = it)) }
+                } else ReverbPresetChips(prefs.preset) { id -> save(prefs.withPreset(id)) }
+            }
         }
         TextButton(onClick = onOpenSettings, modifier = Modifier.padding(top = 4.dp)) { Text(appString(R.string.reverb_more)) }
     }

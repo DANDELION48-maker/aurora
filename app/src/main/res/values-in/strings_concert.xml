@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_mode_studio">"Studio"</string>
+    <string name="reverb_mode_concert">"Konser"</string>
+    <string name="concert_section_venue">"Tempat"</string>
+    <string name="concert_section_position">"Posisi Anda"</string>
+    <string name="concert_venue_club">"Klub"</string>
+    <string name="concert_venue_theatre">"Gedung konser"</string>
+    <string name="concert_venue_arena">"Arena"</string>
+    <string name="concert_venue_stadium">"Stadion"</string>
+    <string name="concert_venue_festival">"Festival"</string>
+    <string name="concert_venue_amphitheatre">"Amfiteater"</string>
+    <string name="concert_seat_front">"Baris depan"</string>
+    <string name="concert_seat_middle">"Tengah"</string>
+    <string name="concert_seat_back">"Belakang"</string>
+    <string name="concert_seat_side">"Samping"</string>
+    <string name="concert_seat_balcony">"Balkon"</string>
+    <string name="concert_size">"Ukuran tempat"</string>
+    <string name="concert_openness">"Keterbukaan"</string>
+    <string name="concert_enclosed">"Tertutup"</string>
+    <string name="concert_open_air">"Terbuka"</string>
+    <string name="concert_size_value">"%1$s × %2$s m"</string>
+    <string name="concert_distance">"%1$s m dari panggung"</string>
+    <string name="concert_distance_raised">"%1$s m dari panggung, kursi tinggi"</string>
+    <string name="concert_map_hint">"Seret titik untuk berpindah di antara penonton, atau seret panggung untuk memindahkannya."</string>
+    <string name="concert_map_label">"Denah tempat"</string>
+</resources>

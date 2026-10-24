@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_mode_studio">"스튜디오"</string>
+    <string name="reverb_mode_concert">"콘서트"</string>
+    <string name="concert_section_venue">"공연장"</string>
+    <string name="concert_section_position">"내 위치"</string>
+    <string name="concert_venue_club">"클럽"</string>
+    <string name="concert_venue_theatre">"콘서트홀"</string>
+    <string name="concert_venue_arena">"아레나"</string>
+    <string name="concert_venue_stadium">"스타디움"</string>
+    <string name="concert_venue_festival">"페스티벌"</string>
+    <string name="concert_venue_amphitheatre">"원형극장"</string>
+    <string name="concert_seat_front">"맨 앞줄"</string>
+    <string name="concert_seat_middle">"가운데"</string>
+    <string name="concert_seat_back">"뒤쪽"</string>
+    <string name="concert_seat_side">"옆쪽"</string>
+    <string name="concert_seat_balcony">"발코니"</string>
+    <string name="concert_size">"공연장 크기"</string>
+    <string name="concert_openness">"개방감"</string>
+    <string name="concert_enclosed">"실내"</string>
+    <string name="concert_open_air">"야외"</string>
+    <string name="concert_size_value">"%1$s × %2$s m"</string>
+    <string name="concert_distance">"무대에서 %1$s m"</string>
+    <string name="concert_distance_raised">"무대에서 %1$s m, 높은 좌석"</string>
+    <string name="concert_map_hint">"점을 끌어 관객 사이를 이동하거나, 무대를 끌어 위치를 바꾸세요."</string>
+    <string name="concert_map_label">"공연장 지도"</string>
+</resources>

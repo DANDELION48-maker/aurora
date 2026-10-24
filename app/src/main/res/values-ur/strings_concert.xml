@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_mode_studio">"اسٹوڈیو"</string>
+    <string name="reverb_mode_concert">"کنسرٹ"</string>
+    <string name="concert_section_venue">"مقام"</string>
+    <string name="concert_section_position">"آپ کی جگہ"</string>
+    <string name="concert_venue_club">"کلب"</string>
+    <string name="concert_venue_theatre">"کنسرٹ ہال"</string>
+    <string name="concert_venue_arena">"ایرینا"</string>
+    <string name="concert_venue_stadium">"اسٹیڈیم"</string>
+    <string name="concert_venue_festival">"فیسٹیول"</string>
+    <string name="concert_venue_amphitheatre">"ایمفی تھیٹر"</string>
+    <string name="concert_seat_front">"اگلی قطار"</string>
+    <string name="concert_seat_middle">"درمیان"</string>
+    <string name="concert_seat_back">"پیچھے"</string>
+    <string name="concert_seat_side">"ایک طرف"</string>
+    <string name="concert_seat_balcony">"بالکونی"</string>
+    <string name="concert_size">"مقام کا سائز"</string>
+    <string name="concert_openness">"کھلا پن"</string>
+    <string name="concert_enclosed">"بند"</string>
+    <string name="concert_open_air">"کھلی فضا"</string>
+    <string name="concert_size_value">"%1$s × %2$s میٹر"</string>
+    <string name="concert_distance">"اسٹیج سے %1$s میٹر"</string>
+    <string name="concert_distance_raised">"اسٹیج سے %1$s میٹر، اونچی نشست"</string>
+    <string name="concert_map_hint">"ہجوم میں گھومنے کے لیے نقطے کو گھسیٹیں، یا اسٹیج کی جگہ بدلنے کے لیے اسے گھسیٹیں۔"</string>
+    <string name="concert_map_label">"مقام کا نقشہ"</string>
+</resources>

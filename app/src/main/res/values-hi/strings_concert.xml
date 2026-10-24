@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_mode_studio">"स्टूडियो"</string>
+    <string name="reverb_mode_concert">"कॉन्सर्ट"</string>
+    <string name="concert_section_venue">"स्थल"</string>
+    <string name="concert_section_position">"आपकी जगह"</string>
+    <string name="concert_venue_club">"क्लब"</string>
+    <string name="concert_venue_theatre">"कॉन्सर्ट हॉल"</string>
+    <string name="concert_venue_arena">"एरीना"</string>
+    <string name="concert_venue_stadium">"स्टेडियम"</string>
+    <string name="concert_venue_festival">"फ़ेस्टिवल"</string>
+    <string name="concert_venue_amphitheatre">"एम्फ़ीथिएटर"</string>
+    <string name="concert_seat_front">"आगे की पंक्ति"</string>
+    <string name="concert_seat_middle">"बीच में"</string>
+    <string name="concert_seat_back">"पीछे"</string>
+    <string name="concert_seat_side">"किनारे"</string>
+    <string name="concert_seat_balcony">"बालकनी"</string>
+    <string name="concert_size">"स्थल का आकार"</string>
+    <string name="concert_openness">"खुलापन"</string>
+    <string name="concert_enclosed">"बंद"</string>
+    <string name="concert_open_air">"खुले में"</string>
+    <string name="concert_size_value">"%1$s × %2$s मी"</string>
+    <string name="concert_distance">"मंच से %1$s मी"</string>
+    <string name="concert_distance_raised">"मंच से %1$s मी, ऊँची सीट"</string>
+    <string name="concert_map_hint">"भीड़ में घूमने के लिए बिंदु को खींचें, या मंच की जगह बदलने के लिए उसे खींचें।"</string>
+    <string name="concert_map_label">"स्थल का नक्शा"</string>
+</resources>

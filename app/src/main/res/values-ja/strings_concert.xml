@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_mode_studio">"スタジオ"</string>
+    <string name="reverb_mode_concert">"コンサート"</string>
+    <string name="concert_section_venue">"会場"</string>
+    <string name="concert_section_position">"あなたの位置"</string>
+    <string name="concert_venue_club">"クラブ"</string>
+    <string name="concert_venue_theatre">"コンサートホール"</string>
+    <string name="concert_venue_arena">"アリーナ"</string>
+    <string name="concert_venue_stadium">"スタジアム"</string>
+    <string name="concert_venue_festival">"フェス"</string>
+    <string name="concert_venue_amphitheatre">"円形劇場"</string>
+    <string name="concert_seat_front">"最前列"</string>
+    <string name="concert_seat_middle">"中央"</string>
+    <string name="concert_seat_back">"後方"</string>
+    <string name="concert_seat_side">"サイド"</string>
+    <string name="concert_seat_balcony">"バルコニー"</string>
+    <string name="concert_size">"会場の広さ"</string>
+    <string name="concert_openness">"開放度"</string>
+    <string name="concert_enclosed">"屋内"</string>
+    <string name="concert_open_air">"野外"</string>
+    <string name="concert_size_value">"%1$s × %2$s m"</string>
+    <string name="concert_distance">"ステージから %1$s m"</string>
+    <string name="concert_distance_raised">"ステージから %1$s m・高い席"</string>
+    <string name="concert_map_hint">"点をドラッグして客席を移動、ステージをドラッグして配置を変更できます。"</string>
+    <string name="concert_map_label">"会場マップ"</string>
+</resources>

@@ -1004,6 +1004,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
 
     val reverbPrefs: Flow<ReverbPrefs> = dataStore.data.map { p ->
         val d = ReverbPrefs()
+        val c = ConcertPrefs()
         ReverbPrefs(
             enabled = p[Keys.REVERB_ENABLED] ?: d.enabled, preset = p[Keys.REVERB_PRESET] ?: d.preset,
             mix = p[Keys.REVERB_MIX] ?: d.mix, decaySec = p[Keys.REVERB_DECAY] ?: d.decaySec,
@@ -1011,6 +1012,14 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
             damping = p[Keys.REVERB_DAMPING] ?: d.damping, lowCutHz = p[Keys.REVERB_LOW_CUT] ?: d.lowCutHz,
             highCutHz = p[Keys.REVERB_HIGH_CUT] ?: d.highCutHz, width = p[Keys.REVERB_WIDTH] ?: d.width,
             early = p[Keys.REVERB_EARLY] ?: d.early, modulation = p[Keys.REVERB_MODULATION] ?: d.modulation,
+            concert = ConcertPrefs(
+                enabled = p[Keys.CONCERT_ENABLED] ?: c.enabled, venue = p[Keys.CONCERT_VENUE] ?: c.venue,
+                amount = p[Keys.CONCERT_AMOUNT] ?: c.amount, size = p[Keys.CONCERT_SIZE] ?: c.size,
+                openness = p[Keys.CONCERT_OPENNESS] ?: c.openness,
+                stageX = p[Keys.CONCERT_STAGE_X] ?: c.stageX, stageY = p[Keys.CONCERT_STAGE_Y] ?: c.stageY,
+                listenerX = p[Keys.CONCERT_LISTENER_X] ?: c.listenerX, listenerY = p[Keys.CONCERT_LISTENER_Y] ?: c.listenerY,
+                elevation = p[Keys.CONCERT_ELEVATION] ?: c.elevation,
+            ),
         ).clamped()
     }.distinctUntilChanged()
 
@@ -1360,6 +1369,11 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         p[Keys.REVERB_DECAY] = r.decaySec; p[Keys.REVERB_SIZE] = r.size; p[Keys.REVERB_PREDELAY] = r.predelayMs
         p[Keys.REVERB_DAMPING] = r.damping; p[Keys.REVERB_LOW_CUT] = r.lowCutHz; p[Keys.REVERB_HIGH_CUT] = r.highCutHz
         p[Keys.REVERB_WIDTH] = r.width; p[Keys.REVERB_EARLY] = r.early; p[Keys.REVERB_MODULATION] = r.modulation
+        val c = r.concertPrefs
+        p[Keys.CONCERT_ENABLED] = c.enabled; p[Keys.CONCERT_VENUE] = c.venue; p[Keys.CONCERT_AMOUNT] = c.amount
+        p[Keys.CONCERT_SIZE] = c.size; p[Keys.CONCERT_OPENNESS] = c.openness
+        p[Keys.CONCERT_STAGE_X] = c.stageX; p[Keys.CONCERT_STAGE_Y] = c.stageY
+        p[Keys.CONCERT_LISTENER_X] = c.listenerX; p[Keys.CONCERT_LISTENER_Y] = c.listenerY; p[Keys.CONCERT_ELEVATION] = c.elevation
     }
     suspend fun setAlarm(enabled: Boolean, hour: Int, minute: Int) = dataStore.edit {
         it[Keys.ALARM_ENABLED] = enabled; it[Keys.ALARM_HOUR] = hour; it[Keys.ALARM_MINUTE] = minute

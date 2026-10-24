@@ -350,16 +350,19 @@ data class ReverbPrefs(
     val width: Float = 1f,
     val early: Float = 0.3f,
     val modulation: Float = 0.35f,
+    val concert: ConcertPrefs? = ConcertPrefs(),
 ) {
+    val concertPrefs: ConcertPrefs get() = concert ?: ConcertPrefs()
     fun clamped(): ReverbPrefs = copy(
         mix = mix.finite(0.25f).coerceIn(0f, 1f), decaySec = decaySec.finite(2.4f).coerceIn(0.2f, 12f),
         size = size.finite(0.7f).coerceIn(0f, 1f), predelayMs = predelayMs.finite(20f).coerceIn(0f, 200f),
         damping = damping.finite(0.45f).coerceIn(0f, 1f), lowCutHz = lowCutHz.finite(160f).coerceIn(20f, 1000f),
         highCutHz = highCutHz.finite(9000f).coerceIn(1500f, 20000f), width = width.finite(1f).coerceIn(0f, 1.5f),
         early = early.finite(0.3f).coerceIn(0f, 1f), modulation = modulation.finite(0.35f).coerceIn(0f, 1f),
+        concert = concertPrefs.clamped(),
     )
     fun withPreset(id: Int): ReverbPrefs = ReverbPreset.ALL.getOrNull(id)?.let {
-        it.copy(enabled = enabled, preset = id, mix = mix)
+        it.copy(enabled = enabled, preset = id, mix = mix, concert = concertPrefs.copy(enabled = false))
     } ?: this
     private fun Float.finite(fallback: Float) = if (isFinite()) this else fallback
 }

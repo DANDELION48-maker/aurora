@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_mode_studio">"录音室"</string>
+    <string name="reverb_mode_concert">"演唱会"</string>
+    <string name="concert_section_venue">"场馆"</string>
+    <string name="concert_section_position">"你的位置"</string>
+    <string name="concert_venue_club">"俱乐部"</string>
+    <string name="concert_venue_theatre">"音乐厅"</string>
+    <string name="concert_venue_arena">"体育馆"</string>
+    <string name="concert_venue_stadium">"体育场"</string>
+    <string name="concert_venue_festival">"音乐节"</string>
+    <string name="concert_venue_amphitheatre">"露天剧场"</string>
+    <string name="concert_seat_front">"第一排"</string>
+    <string name="concert_seat_middle">"中间"</string>
+    <string name="concert_seat_back">"后排"</string>
+    <string name="concert_seat_side">"侧面"</string>
+    <string name="concert_seat_balcony">"楼座"</string>
+    <string name="concert_size">"场馆大小"</string>
+    <string name="concert_openness">"开放程度"</string>
+    <string name="concert_enclosed">"室内"</string>
+    <string name="concert_open_air">"露天"</string>
+    <string name="concert_size_value">"%1$s × %2$s 米"</string>
+    <string name="concert_distance">"距舞台 %1$s 米"</string>
+    <string name="concert_distance_raised">"距舞台 %1$s 米，高处座位"</string>
+    <string name="concert_map_hint">"拖动圆点在人群中移动，或拖动舞台来摆放它。"</string>
+    <string name="concert_map_label">"场馆地图"</string>
+</resources>

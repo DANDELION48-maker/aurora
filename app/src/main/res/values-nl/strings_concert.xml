@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_mode_studio">"Studio"</string>
+    <string name="reverb_mode_concert">"Concert"</string>
+    <string name="concert_section_venue">"Locatie"</string>
+    <string name="concert_section_position">"Jouw plek"</string>
+    <string name="concert_venue_club">"Club"</string>
+    <string name="concert_venue_theatre">"Concertzaal"</string>
+    <string name="concert_venue_arena">"Arena"</string>
+    <string name="concert_venue_stadium">"Stadion"</string>
+    <string name="concert_venue_festival">"Festival"</string>
+    <string name="concert_venue_amphitheatre">"Amfitheater"</string>
+    <string name="concert_seat_front">"Eerste rij"</string>
+    <string name="concert_seat_middle">"Midden"</string>
+    <string name="concert_seat_back">"Achteraan"</string>
+    <string name="concert_seat_side">"Zijkant"</string>
+    <string name="concert_seat_balcony">"Balkon"</string>
+    <string name="concert_size">"Grootte van de zaal"</string>
+    <string name="concert_openness">"Openheid"</string>
+    <string name="concert_enclosed">"Overdekt"</string>
+    <string name="concert_open_air">"Openlucht"</string>
+    <string name="concert_size_value">"%1$s × %2$s m"</string>
+    <string name="concert_distance">"%1$s m van het podium"</string>
+    <string name="concert_distance_raised">"%1$s m van het podium, verhoogde plek"</string>
+    <string name="concert_map_hint">"Sleep de stip om door het publiek te lopen, of sleep het podium om het te verplaatsen."</string>
+    <string name="concert_map_label">"Plattegrond"</string>
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_mode_studio">"Studio"</string>
+    <string name="reverb_mode_concert">"Concert"</string>
+    <string name="concert_section_venue">"Salle"</string>
+    <string name="concert_section_position">"Votre place"</string>
+    <string name="concert_venue_club">"Club"</string>
+    <string name="concert_venue_theatre">"Salle de concert"</string>
+    <string name="concert_venue_arena">"Aréna"</string>
+    <string name="concert_venue_stadium">"Stade"</string>
+    <string name="concert_venue_festival">"Festival"</string>
+    <string name="concert_venue_amphitheatre">"Amphithéâtre"</string>
+    <string name="concert_seat_front">"Premier rang"</string>
+    <string name="concert_seat_middle">"Milieu"</string>
+    <string name="concert_seat_back">"Fond"</string>
+    <string name="concert_seat_side">"Côté"</string>
+    <string name="concert_seat_balcony">"Balcon"</string>
+    <string name="concert_size">"Taille de la salle"</string>
+    <string name="concert_openness">"Ouverture"</string>
+    <string name="concert_enclosed">"Fermé"</string>
+    <string name="concert_open_air">"Plein air"</string>
+    <string name="concert_size_value">"%1$s × %2$s m"</string>
+    <string name="concert_distance">"À %1$s m de la scène"</string>
+    <string name="concert_distance_raised">"À %1$s m de la scène, en hauteur"</string>
+    <string name="concert_map_hint">"Faites glisser le point pour vous déplacer dans la foule, ou la scène pour la placer."</string>
+    <string name="concert_map_label">"Plan de la salle"</string>
+</resources>

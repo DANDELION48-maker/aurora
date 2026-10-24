@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_mode_studio">"استوديو"</string>
+    <string name="reverb_mode_concert">"حفلة"</string>
+    <string name="concert_section_venue">"المكان"</string>
+    <string name="concert_section_position">"مكانك"</string>
+    <string name="concert_venue_club">"نادٍ"</string>
+    <string name="concert_venue_theatre">"قاعة حفلات"</string>
+    <string name="concert_venue_arena">"صالة كبرى"</string>
+    <string name="concert_venue_stadium">"ملعب"</string>
+    <string name="concert_venue_festival">"مهرجان"</string>
+    <string name="concert_venue_amphitheatre">"مدرج"</string>
+    <string name="concert_seat_front">"الصف الأمامي"</string>
+    <string name="concert_seat_middle">"الوسط"</string>
+    <string name="concert_seat_back">"الخلف"</string>
+    <string name="concert_seat_side">"الجانب"</string>
+    <string name="concert_seat_balcony">"الشرفة"</string>
+    <string name="concert_size">"حجم المكان"</string>
+    <string name="concert_openness">"الانفتاح"</string>
+    <string name="concert_enclosed">"مغلق"</string>
+    <string name="concert_open_air">"في الهواء الطلق"</string>
+    <string name="concert_size_value">"%1$s × %2$s م"</string>
+    <string name="concert_distance">"%1$s م من المسرح"</string>
+    <string name="concert_distance_raised">"%1$s م من المسرح، مقعد مرتفع"</string>
+    <string name="concert_map_hint">"اسحب النقطة للتنقل بين الجمهور، أو اسحب المسرح لتغيير موضعه."</string>
+    <string name="concert_map_label">"خريطة المكان"</string>
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_mode_studio">"Студия"</string>
+    <string name="reverb_mode_concert">"Концерт"</string>
+    <string name="concert_section_venue">"Площадка"</string>
+    <string name="concert_section_position">"Ваше место"</string>
+    <string name="concert_venue_club">"Клуб"</string>
+    <string name="concert_venue_theatre">"Концертный зал"</string>
+    <string name="concert_venue_arena">"Арена"</string>
+    <string name="concert_venue_stadium">"Стадион"</string>
+    <string name="concert_venue_festival">"Фестиваль"</string>
+    <string name="concert_venue_amphitheatre">"Амфитеатр"</string>
+    <string name="concert_seat_front">"Первый ряд"</string>
+    <string name="concert_seat_middle">"Середина"</string>
+    <string name="concert_seat_back">"Сзади"</string>
+    <string name="concert_seat_side">"Сбоку"</string>
+    <string name="concert_seat_balcony">"Балкон"</string>
+    <string name="concert_size">"Размер площадки"</string>
+    <string name="concert_openness">"Открытость"</string>
+    <string name="concert_enclosed">"Закрытая"</string>
+    <string name="concert_open_air">"Под открытым небом"</string>
+    <string name="concert_size_value">"%1$s × %2$s м"</string>
+    <string name="concert_distance">"%1$s м от сцены"</string>
+    <string name="concert_distance_raised">"%1$s м от сцены, верхний ярус"</string>
+    <string name="concert_map_hint">"Перетащите точку, чтобы перемещаться в толпе, или перетащите сцену, чтобы её переставить."</string>
+    <string name="concert_map_label">"Схема площадки"</string>
+</resources>

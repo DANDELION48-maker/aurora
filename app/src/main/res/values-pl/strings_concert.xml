@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_mode_studio">"Studio"</string>
+    <string name="reverb_mode_concert">"Koncert"</string>
+    <string name="concert_section_venue">"Obiekt"</string>
+    <string name="concert_section_position">"Gdzie stoisz"</string>
+    <string name="concert_venue_club">"Klub"</string>
+    <string name="concert_venue_theatre">"Sala koncertowa"</string>
+    <string name="concert_venue_arena">"Arena"</string>
+    <string name="concert_venue_stadium">"Stadion"</string>
+    <string name="concert_venue_festival">"Festiwal"</string>
+    <string name="concert_venue_amphitheatre">"Amfiteatr"</string>
+    <string name="concert_seat_front">"Pierwszy rząd"</string>
+    <string name="concert_seat_middle">"Środek"</string>
+    <string name="concert_seat_back">"Tył"</string>
+    <string name="concert_seat_side">"Bok"</string>
+    <string name="concert_seat_balcony">"Balkon"</string>
+    <string name="concert_size">"Wielkość obiektu"</string>
+    <string name="concert_openness">"Otwartość"</string>
+    <string name="concert_enclosed">"Zamknięty"</string>
+    <string name="concert_open_air">"Plener"</string>
+    <string name="concert_size_value">"%1$s × %2$s m"</string>
+    <string name="concert_distance">"%1$s m od sceny"</string>
+    <string name="concert_distance_raised">"%1$s m od sceny, podwyższone miejsce"</string>
+    <string name="concert_map_hint">"Przeciągnij kropkę, aby poruszać się w tłumie, albo przeciągnij scenę, aby ją przestawić."</string>
+    <string name="concert_map_label">"Plan obiektu"</string>
+</resources>

@@ -3,9 +3,6 @@ package com.aurora.music.ui.screens.settings
 import com.aurora.music.localization.appString
 import com.aurora.music.R
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,8 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Waves
 import androidx.compose.material3.Icon
@@ -34,7 +29,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
@@ -58,26 +52,15 @@ internal fun reverbPresetName(id: Int): String = appString(when (id) {
     else -> R.string.reverb_custom
 })
 
-internal fun reverbSummary(prefs: ReverbPrefs): String =
-    if (prefs.enabled) "${reverbPresetName(prefs.preset)} · ${NumberFormat.getPercentInstance().format(prefs.mix)}"
-    else appString(R.string.text_off_e3de5a)
+internal fun reverbSummary(prefs: ReverbPrefs): String = when {
+    !prefs.enabled -> appString(R.string.text_off_e3de5a)
+    prefs.concertPrefs.enabled -> "${concertVenueName(prefs.concertPrefs.venue)} · ${NumberFormat.getPercentInstance().format(prefs.concertPrefs.amount)}"
+    else -> "${reverbPresetName(prefs.preset)} · ${NumberFormat.getPercentInstance().format(prefs.mix)}"
+}
 
 @Composable
-internal fun ReverbPresetChips(selected: Int, modifier: Modifier = Modifier, onPick: (Int) -> Unit) {
-    Row(modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        ReverbPreset.ALL.indices.forEach { id ->
-            val active = id == selected
-            Text(
-                reverbPresetName(id),
-                style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold,
-                color = if (active) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.clip(RoundedCornerShape(50))
-                    .background(if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHighest)
-                    .clickable { onPick(id) }.pointerHoverIcon(PointerIcon.Hand).padding(horizontal = 16.dp, vertical = 8.dp),
-            )
-        }
-    }
-}
+internal fun ReverbPresetChips(selected: Int, modifier: Modifier = Modifier, onPick: (Int) -> Unit) =
+    ChoiceChips(ReverbPreset.ALL.indices.map(::reverbPresetName), selected, modifier, onPick)
 
 @Composable
 fun ReverbQuickControls(onOpenSettings: () -> Unit) {
@@ -86,13 +69,17 @@ fun ReverbQuickControls(onOpenSettings: () -> Unit) {
     val scope = rememberCoroutineScope()
     var dragMix by remember { mutableStateOf<Float?>(null) }
     val accent = MaterialTheme.colorScheme.primary
+    val concert = prefs.concertPrefs
+    fun save(next: ReverbPrefs) { scope.launch { store.setReverb(next) } }
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Filled.Waves, null, tint = accent)
             Spacer(Modifier.width(10.dp))
             Column(Modifier.weight(1f)) {
                 Text(appString(R.string.reverb_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Text(if (prefs.enabled) reverbPresetName(prefs.preset) else appString(R.string.reverb_summary),
+                Text(if (!prefs.enabled) appString(R.string.reverb_summary)
+                    else if (concert.enabled) "${appString(R.string.reverb_mode_concert)} · ${concertVenueName(concert.venue)}"
+                    else reverbPresetName(prefs.preset),
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Switch(
@@ -103,7 +90,7 @@ fun ReverbQuickControls(onOpenSettings: () -> Unit) {
             )
         }
         if (prefs.enabled) {
-            val mix = dragMix ?: prefs.mix
+            val mix = dragMix ?: if (concert.enabled) concert.amount else prefs.mix
             Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(appString(R.string.reverb_amount), style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
                 Text(NumberFormat.getPercentInstance().format(mix), style = MaterialTheme.typography.titleSmall,
@@ -111,12 +98,18 @@ fun ReverbQuickControls(onOpenSettings: () -> Unit) {
             }
             Slider(
                 value = mix,
-                onValueChange = { v -> dragMix = v; scope.launch { store.setReverb(prefs.copy(mix = v)) } },
+                onValueChange = { v -> dragMix = v; save(if (concert.enabled) prefs.copy(concert = concert.copy(amount = v)) else prefs.copy(mix = v)) },
                 onValueChangeFinished = { dragMix = null },
                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                 colors = SliderDefaults.colors(thumbColor = accent, activeTrackColor = accent),
             )
-            ReverbPresetChips(prefs.preset) { id -> scope.launch { store.setReverb(prefs.withPreset(id)) } }
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                ReverbModeChips(concert.enabled) { on -> save(prefs.copy(concert = concert.copy(enabled = on))) }
+                if (concert.enabled) {
+                    ConcertVenuePicker(concert) { save(prefs.copy(concert = it)) }
+                    ConcertPositionPicker(concert) { save(prefs.copy(concert = it)) }
+                } else ReverbPresetChips(prefs.preset) { id -> save(prefs.withPreset(id)) }
+            }
         }
         TextButton(onClick = onOpenSettings, modifier = Modifier.padding(top = 4.dp).pointerHoverIcon(PointerIcon.Hand)) {
             Text(appString(R.string.reverb_more))
@@ -132,6 +125,7 @@ fun ReverbSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
     val percent = remember { NumberFormat.getPercentInstance() }
     fun save(next: ReverbPrefs) { scope.launch { store.setReverb(next) } }
     fun shape(edit: (ReverbPrefs) -> ReverbPrefs) = save(edit(prefs).copy(preset = -1))
+    val concert = prefs.concertPrefs
     fun seconds(v: Float) = appString(R.string.reverb_value_seconds, "%.1f".format(v))
     fun millis(v: Float) = appString(R.string.reverb_value_ms, "%.0f".format(v))
     fun hertz(v: Float) = if (v < 1000f) appString(R.string.reverb_value_hz, "%.0f".format(v))
@@ -146,37 +140,49 @@ fun ReverbSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
                         save(prefs.copy(enabled = on))
                     }
                     SettingsRowDivider()
-                    ReverbSlider(appString(R.string.reverb_amount), prefs.mix, 0f..1f, label = percent::format) { v -> save(prefs.copy(mix = v)) }
+                    ReverbSlider(appString(R.string.reverb_amount), if (concert.enabled) concert.amount else prefs.mix, 0f..1f, label = percent::format) { v ->
+                        save(if (concert.enabled) prefs.copy(concert = concert.copy(amount = v)) else prefs.copy(mix = v))
+                    }
                 }
             }
             item { SettingsSectionTitle(appString(R.string.reverb_section_style)) }
             item {
                 SettingsGroup {
-                    ReverbPresetChips(prefs.preset, Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) { id -> save(prefs.withPreset(id)) }
+                    Column(Modifier.padding(horizontal = 16.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        ReverbModeChips(concert.enabled) { on -> save(prefs.copy(concert = concert.copy(enabled = on))) }
+                        if (!concert.enabled) ReverbPresetChips(prefs.preset) { id -> save(prefs.withPreset(id)) }
+                    }
                 }
             }
-            item { SettingsSectionTitle(appString(R.string.reverb_section_space)) }
-            item {
-                SettingsGroup {
-                    ReverbSlider(appString(R.string.reverb_decay), prefs.decaySec, 0.2f..12f, log = true, label = ::seconds) { v -> shape { it.copy(decaySec = v) } }
-                    ReverbSlider(appString(R.string.reverb_size), prefs.size, 0f..1f, label = percent::format) { v -> shape { it.copy(size = v) } }
-                    ReverbSlider(appString(R.string.reverb_predelay), prefs.predelayMs, 0f..200f, label = ::millis) { v -> shape { it.copy(predelayMs = v) } }
-                    ReverbSlider(appString(R.string.reverb_early), prefs.early, 0f..1f, label = percent::format) { v -> shape { it.copy(early = v) } }
+            if (concert.enabled) {
+                item { SettingsSectionTitle(appString(R.string.concert_section_venue)) }
+                item { SettingsGroup { ConcertVenuePicker(concert, Modifier.padding(16.dp)) { save(prefs.copy(concert = it)) } } }
+                item { SettingsSectionTitle(appString(R.string.concert_section_position)) }
+                item { SettingsGroup { ConcertPositionPicker(concert, Modifier.padding(16.dp)) { save(prefs.copy(concert = it)) } } }
+            } else {
+                item { SettingsSectionTitle(appString(R.string.reverb_section_space)) }
+                item {
+                    SettingsGroup {
+                        ReverbSlider(appString(R.string.reverb_decay), prefs.decaySec, 0.2f..12f, log = true, label = ::seconds) { v -> shape { it.copy(decaySec = v) } }
+                        ReverbSlider(appString(R.string.reverb_size), prefs.size, 0f..1f, label = percent::format) { v -> shape { it.copy(size = v) } }
+                        ReverbSlider(appString(R.string.reverb_predelay), prefs.predelayMs, 0f..200f, label = ::millis) { v -> shape { it.copy(predelayMs = v) } }
+                        ReverbSlider(appString(R.string.reverb_early), prefs.early, 0f..1f, label = percent::format) { v -> shape { it.copy(early = v) } }
+                    }
                 }
-            }
-            item { SettingsSectionTitle(appString(R.string.reverb_section_tone)) }
-            item {
-                SettingsGroup {
-                    ReverbSlider(appString(R.string.reverb_damping), prefs.damping, 0f..1f, label = percent::format) { v -> shape { it.copy(damping = v) } }
-                    ReverbSlider(appString(R.string.reverb_low_cut), prefs.lowCutHz, 20f..1000f, log = true, label = ::hertz) { v -> shape { it.copy(lowCutHz = v) } }
-                    ReverbSlider(appString(R.string.reverb_high_cut), prefs.highCutHz, 1500f..20000f, log = true, label = ::hertz) { v -> shape { it.copy(highCutHz = v) } }
+                item { SettingsSectionTitle(appString(R.string.reverb_section_tone)) }
+                item {
+                    SettingsGroup {
+                        ReverbSlider(appString(R.string.reverb_damping), prefs.damping, 0f..1f, label = percent::format) { v -> shape { it.copy(damping = v) } }
+                        ReverbSlider(appString(R.string.reverb_low_cut), prefs.lowCutHz, 20f..1000f, log = true, label = ::hertz) { v -> shape { it.copy(lowCutHz = v) } }
+                        ReverbSlider(appString(R.string.reverb_high_cut), prefs.highCutHz, 1500f..20000f, log = true, label = ::hertz) { v -> shape { it.copy(highCutHz = v) } }
+                    }
                 }
-            }
-            item { SettingsSectionTitle(appString(R.string.reverb_section_character)) }
-            item {
-                SettingsGroup {
-                    ReverbSlider(appString(R.string.reverb_width), prefs.width, 0f..1.5f, label = percent::format) { v -> shape { it.copy(width = v) } }
-                    ReverbSlider(appString(R.string.reverb_modulation), prefs.modulation, 0f..1f, label = percent::format) { v -> shape { it.copy(modulation = v) } }
+                item { SettingsSectionTitle(appString(R.string.reverb_section_character)) }
+                item {
+                    SettingsGroup {
+                        ReverbSlider(appString(R.string.reverb_width), prefs.width, 0f..1.5f, label = percent::format) { v -> shape { it.copy(width = v) } }
+                        ReverbSlider(appString(R.string.reverb_modulation), prefs.modulation, 0f..1f, label = percent::format) { v -> shape { it.copy(modulation = v) } }
+                    }
                 }
             }
             item {

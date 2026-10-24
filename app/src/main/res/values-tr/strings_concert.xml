@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reverb_mode_studio">"Stüdyo"</string>
+    <string name="reverb_mode_concert">"Konser"</string>
+    <string name="concert_section_venue">"Mekân"</string>
+    <string name="concert_section_position">"Konumunuz"</string>
+    <string name="concert_venue_club">"Kulüp"</string>
+    <string name="concert_venue_theatre">"Konser salonu"</string>
+    <string name="concert_venue_arena">"Arena"</string>
+    <string name="concert_venue_stadium">"Stadyum"</string>
+    <string name="concert_venue_festival">"Festival"</string>
+    <string name="concert_venue_amphitheatre">"Amfitiyatro"</string>
+    <string name="concert_seat_front">"Ön sıra"</string>
+    <string name="concert_seat_middle">"Orta"</string>
+    <string name="concert_seat_back">"Arka"</string>
+    <string name="concert_seat_side">"Yan"</string>
+    <string name="concert_seat_balcony">"Balkon"</string>
+    <string name="concert_size">"Mekân boyutu"</string>
+    <string name="concert_openness">"Açıklık"</string>
+    <string name="concert_enclosed">"Kapalı"</string>
+    <string name="concert_open_air">"Açık hava"</string>
+    <string name="concert_size_value">"%1$s × %2$s m"</string>
+    <string name="concert_distance">"Sahneye %1$s m"</string>
+    <string name="concert_distance_raised">"Sahneye %1$s m, yüksek koltuk"</string>
+    <string name="concert_map_hint">"Kalabalıkta dolaşmak için noktayı, yerini değiştirmek için sahneyi sürükleyin."</string>
+    <string name="concert_map_label">"Mekân planı"</string>
+</resources>
