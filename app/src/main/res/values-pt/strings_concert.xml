@@ -67,4 +67,25 @@
     <string name="concert_stage_centre">"Palco central"</string>
     <string name="concert_section_show">"O show"</string>
     <string name="concert_section_scenes">"Cenas"</string>
+    <string name="concert_audience">"Público"</string>
+    <string name="concert_audience_empty">"Vazio"</string>
+    <string name="concert_audience_packed">"Lotado"</string>
+    <string name="concert_stage_sound">"Som do palco"</string>
+    <string name="concert_stage_sound_value">"%1$s dB"</string>
+    <string name="concert_subs">"Subwoofers"</string>
+    <string name="concert_subs_auto">"Automático"</string>
+    <string name="concert_subs_split">"Esquerda e direita"</string>
+    <string name="concert_subs_centre">"Centro"</string>
+    <string name="concert_subs_cardioid">"Cardioide"</string>
+    <string name="concert_section_air">"Ar"</string>
+    <string name="concert_temperature">"Temperatura"</string>
+    <string name="concert_temperature_value">"%1$s °C"</string>
+    <string name="concert_humidity">"Umidade"</string>
+    <string name="concert_listen">"Ouvindo em"</string>
+    <string name="concert_listen_headphones">"Fones (3D)"</string>
+    <string name="concert_listen_speakers">"Alto-falantes"</string>
+    <string name="concert_room">"Sala"</string>
+    <string name="concert_room_modelled">"Modelada"</string>
+    <string name="concert_room_hint">"Importe respostas ao impulso na biblioteca para ouvir uma sala medida."</string>
+    <string name="concert_decay">"Tempo de reverberação"</string>
 </resources>

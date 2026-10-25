@@ -19,7 +19,7 @@ class ReverbKernelTest {
     private val rate = 48_000
     private val format = AudioStreamFormat(rate, ChannelLayout.STEREO)
 
-    private fun kernel(prefs: ReverbPrefs) = ReverbKernel().apply { configure(rate); settings = prefs }
+    private fun kernel(prefs: ReverbPrefs) = ReverbKernel(concertCapable = true).apply { configure(rate); settings = prefs }
 
     private fun run(kernel: ReverbKernel, frames: Int, source: (Int, Int) -> Double): DoubleArray {
         val out = DoubleArray(frames * 2)
@@ -181,6 +181,21 @@ class ReverbKernelTest {
             println("scene $i out/in rms ${"%.2f".format(ratio)}, peak ${"%.2f".format(whole.maxOf { abs(it) })}")
             assertTrue("scene $i ratio $ratio", whole.all { it.isFinite() && abs(it) < 1.0 } && ratio in 0.6..1.5)
         }
+    }
+
+    @Test fun aMeasuredRoomPutsItsReflectionsWhereTheyWereMeasured() {
+        val ir = FloatArray(4000).also { it[50] = 1f; it[50 + 480] = 0.5f }
+        val measured = MeasuredRoom.prepare(com.aurora.music.playback.ImpulseResponse(ir, ir, rate), rate)
+        val prefs = ReverbPrefs(enabled = true, concert = ConcertPrefs(enabled = true).withVenue(ConcertVenue.CLUB)
+            .withSound(ConcertSound.ELECTRONIC).copy(showDb = 85f, roomImpulse = "measured"))
+        fun play(sizes: IntArray) = ReverbKernel(concertCapable = true).apply { configure(rate); settings = prefs; this.measured = measured }
+            .let { runSized(it, rate, sizes) { frame, _ -> if (frame == 30000) 0.8 else 0.0 } }
+        val out = play(intArrayOf(1024))
+        assertTrue(out.contentEquals(play(intArrayOf(77, 1024, 1, 333))))
+        val direct = (29_990 until 30_200).maxByOrNull { abs(out[it * 2]) }!!
+        val echo = (30_300 until 30_700).maxByOrNull { abs(out[it * 2]) }!!
+        println("direct at $direct, measured reflection at $echo")
+        assertTrue(echo - direct in 450..500 && abs(out[echo * 2]) > 0.05 * abs(out[direct * 2]))
     }
 
     @Test fun concertSwitchedOffLeavesStudioReverbAlone() {

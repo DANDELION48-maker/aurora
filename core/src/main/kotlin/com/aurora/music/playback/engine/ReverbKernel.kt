@@ -11,9 +11,12 @@ import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-// stereo diffuser into an 8-line householder fdn with frequency-dependent decay, modulated lines and early reflections
-class ReverbKernel {
+// stereo diffuser into an 8-line householder fdn with frequency-dependent decay, modulated lines and early reflections;
+// the processor's own instance can also render concert mode (its delay lines are only allocated when asked for)
+class ReverbKernel(concertCapable: Boolean = false) {
     @Volatile var settings: ReverbPrefs = ReverbPrefs()
+    // set off the audio thread when concert mode uses a measured room instead of the modelled one
+    @Volatile var measured: MeasuredRoom? = null
     val active: Boolean get() = rate > 0 && !idle
     val tailFrames: Int get() = if (active) tailLimit else 0
 
@@ -43,10 +46,23 @@ class ReverbKernel {
     private val filterState = DoubleArray(28)
     private val gain = DoubleArray(GAINS)
     private val gainTarget = DoubleArray(GAINS)
-    private val erDelay = DoubleArray(ER_TAPS)
-    private val erTarget = DoubleArray(ER_TAPS)
-    private val erStep = DoubleArray(ER_TAPS)
-    private var airL = 0.0; private var airR = 0.0
+    private val renderer = if (concertCapable) ConcertRenderer() else null
+    private val bandNow = DoubleArray(3)
+    private val bandTarget = DoubleArray(3)
+    private val loopMid = DoubleArray(LINES)
+    private val loopLow = DoubleArray(LINES)
+    private val loopHigh = DoubleArray(LINES)
+    private val lowState = DoubleArray(LINES)
+    private val highState = DoubleArray(LINES)
+    private var lowK = 0.0; private var highK = 0.0; private var sideK = 0.0
+    private var sideLow = 0.0
+    private var binaural = false
+    private var inUse: MeasuredRoom? = null
+    private var measuredGain = 0.0
+    private var directGain = 0.0
+    private val roomIn = DoubleArray(MeasuredRoom.BLOCK * 2)
+    private val roomOut = DoubleArray(MeasuredRoom.BLOCK * 2)
+    private var roomPos = 0
     private val squeeze = LiveCompressor()
     private var duck = 0.0
     private val pa = PaDrive()
@@ -91,7 +107,8 @@ class ReverbKernel {
             bandPass(EQ_FILTER + 5, 350.0)
             bandPass(EQ_FILTER + 10, 3000.0)
             biquad(EQ_FILTER + 15, min(10_000.0, rate * 0.4), highPass = true)
-            pa.configure(rate); crowd.configure(rate)
+            pa.configure(rate); crowd.configure(rate); renderer?.configure(rate)
+            lowK = 1 - exp(-2 * PI * 300.0 / rate); highK = 1 - exp(-2 * PI * 3000.0 / rate); sideK = 1 - exp(-2 * PI * 250.0 / rate)
         }
         reset()
     }
@@ -102,8 +119,9 @@ class ReverbKernel {
         absorbed.fill(0.0); filterState.fill(0.0)
         for (i in 0 until LINES) { oscCos[i] = cos(i * 0.77); oscSin[i] = sin(i * 0.77) }
         send = 0.0; dry = 1.0; silentFrames = 0
-        gain.fill(0.0); erDelay.fill(0.0); airL = 0.0; airR = 0.0; fade = 0.0
-        squeeze.reset(); duck = 0.0; pa.reset(); crowd.reset()
+        gain.fill(0.0); fade = 0.0; lowState.fill(0.0); highState.fill(0.0); sideLow = 0.0
+        squeeze.reset(); duck = 0.0; pa.reset(); crowd.reset(); renderer?.reset()
+        inUse?.convolver?.reset(); roomPos = 0; roomOut.fill(0.0); renderer?.taps = inUse == null
         applied = null; idle = true
     }
 
@@ -117,9 +135,11 @@ class ReverbKernel {
         previous.oscCos.copyInto(oscCos); previous.oscSin.copyInto(oscSin)
         send = previous.send; dry = previous.dry; wet = previous.wet; early = previous.early; width = previous.width
         scale = previous.scale; predelay = previous.predelay; silentFrames = previous.silentFrames; idle = false
-        previous.gain.copyInto(gain); previous.erDelay.copyInto(erDelay); airL = previous.airL; airR = previous.airR; fade = previous.fade
+        previous.gain.copyInto(gain); fade = previous.fade; previous.bandNow.copyInto(bandNow)
+        previous.lowState.copyInto(lowState); previous.highState.copyInto(highState); sideLow = previous.sideLow
         decayNow = previous.decayNow; hfNow = previous.hfNow
         squeeze.copyStateFrom(previous.squeeze); duck = previous.duck; pa.copyStateFrom(previous.pa); crowd.copyStateFrom(previous.crowd)
+        previous.renderer?.let { renderer?.copyStateFrom(it) }
     }
 
     fun process(block: AudioBlock) {
@@ -135,12 +155,18 @@ class ReverbKernel {
         val scaleStep = (scaleTarget - scale) * glide / frames
         val predelayStep = (predelayTarget - predelay) * glide / frames
         val live = concert || fade > FADE_FLOOR
+        val bands = concert
         if (!live) { fade = 0.0; decayNow = decaySec; hfNow = hfRatio }
         else {
-            for (t in 0 until ER_TAPS) erStep[t] = (erTarget[t] - erDelay[t]) * glide / frames
             decayNow += (decaySec - decayNow) * glide; hfNow += (hfRatio - hfNow) * glide
+            for (j in 0..2) bandNow[j] += (bandTarget[j] - bandNow[j]) * glide
         }
-        updateAbsorption(scale + scaleStep * frames * 0.5)
+        updateAbsorption(scale + scaleStep * frames * 0.5, bands)
+        val measuredNow = if (bands) measured else null
+        if (measuredNow !== inUse) {
+            inUse = measuredNow; roomPos = 0; roomOut.fill(0.0); measuredNow?.convolver?.reset(); renderer?.taps = measuredNow == null
+        }
+        measuredGain = directGain / (measuredNow?.peak ?: 1.0)
         val samples = block.samples
         val k = smoothing
         val r = rate.toDouble()
@@ -178,15 +204,9 @@ class ReverbKernel {
                 erL += ER_GAIN[tap] * linear(pre[tap and 1], preMask, prePos, predelay + ER_LEFT[tap] * erScale)
                 erR += ER_GAIN[tap] * linear(pre[(tap + 1) and 1], preMask, prePos, predelay + ER_RIGHT[tap] * erScale)
             }
-            var venueL = 0.0; var venueR = 0.0
             if (live) {
                 for (g in 0 until GAINS) gain[g] += (gainTarget[g] - gain[g]) * k
                 fade += (fadeTarget - fade) * k
-                for (t in 0 until ER_TAPS) {
-                    erDelay[t] += erStep[t]
-                    val v = linear(pre[t and 1], preMask, prePos, erDelay[t])
-                    venueL += gain[t] * v; venueR += gain[TAP_RIGHT + t] * v
-                }
             }
             val pl = linear(pre[0], preMask, prePos, predelay)
             val pr = linear(pre[1], preMask, prePos, predelay)
@@ -209,7 +229,11 @@ class ReverbKernel {
                 val c = oscCos[i] * stepCos[i] - oscSin[i] * stepSin[i]
                 oscSin[i] = oscSin[i] * stepCos[i] + oscCos[i] * stepSin[i]; oscCos[i] = c
                 val delayed = hermite(lines[i], lineMask, linePos, LINE_SEC[i] * scale * r + depth * oscSin[i])
-                val z = b0[i] * delayed + a1[i] * absorbed[i]
+                val z = if (!bands) b0[i] * delayed + a1[i] * absorbed[i] else {
+                    // three-band loss per line so lows, mids and highs each die at their own rt60
+                    lowState[i] += lowK * (delayed - lowState[i]); highState[i] += highK * (delayed - highState[i])
+                    loopMid[i] * (delayed + loopLow[i] * lowState[i] + loopHigh[i] * (delayed - highState[i]))
+                }
                 absorbed[i] = z; sum += z
                 outL += OUT_LEFT[i] * z; outR += OUT_RIGHT[i] * z
             }
@@ -228,14 +252,30 @@ class ReverbKernel {
                 samples[frame * 2] = inL * dry + (mid + side) * wet
                 samples[frame * 2 + 1] = inR * dry + (mid - side) * wet
             } else {
-                // concert: air-filtered pa stacks, image-source reflections and a boomy tail, crossfaded against the studio mix
-                val tm = (outL + outR) * 0.5 * wetNorm; val ts = (outL - outR) * 0.5 * wetNorm * width
+                // concert: every source and reflection placed around your head, a boomy tail, crossfaded against the studio mix
+                val tm = (outL + outR) * 0.5 * wetNorm; var ts = (outL - outR) * 0.5 * wetNorm * width
+                // at the ears a diffuse field is near mono below a few hundred hertz
+                if (binaural) { sideLow += sideK * (ts - sideLow); ts -= sideLow }
                 var tl = tm + ts; var tr = tm - ts
                 y = f[10] * tl + fs[8]; fs[8] = f[11] * tl - f[13] * y + fs[9]; fs[9] = f[12] * tl - f[14] * y; tl += y * gain[BOOM]
                 y = f[10] * tr + fs[10]; fs[10] = f[11] * tr - f[13] * y + fs[11]; fs[11] = f[12] * tr - f[14] * y; tr += y * gain[BOOM]
-                airL += gain[AIR] * (paL * send - airL); airR += gain[AIR] * (paR * send - airR)
-                val roomL = gain[DIRECT] * airL + gain[DIRECT + 1] * airR + venueL + tl * gain[LATE] + crowdL * send
-                val roomR = gain[DIRECT + 2] * airL + gain[DIRECT + 3] * airR + venueR + tr * gain[LATE] + crowdR * send
+                val venue = renderer!!
+                venue.render(paL * send, paR * send, inL * send, inR * send)
+                var roomL: Double; var roomR: Double
+                val measuredRoom = inUse
+                if (measuredRoom == null) { roomL = venue.left + tl * gain[LATE]; roomR = venue.right + tr * gain[LATE] }
+                else {
+                    // the measured response runs in fixed blocks, so its output never depends on how the host splits audio
+                    roomL = venue.left + roomOut[roomPos * 2] * measuredGain; roomR = venue.right + roomOut[roomPos * 2 + 1] * measuredGain
+                    val mono = (feedL + feedR) * 0.5 * send
+                    roomIn[roomPos * 2] = mono; roomIn[roomPos * 2 + 1] = mono
+                    if (++roomPos == MeasuredRoom.BLOCK) {
+                        measuredRoom.convolver.queueInput(roomIn, 0, MeasuredRoom.BLOCK)
+                        measuredRoom.convolver.readOutput(roomOut, 0, MeasuredRoom.BLOCK)
+                        roomPos = 0
+                    }
+                }
+                roomL += crowdL * send; roomR += crowdR * send
                 // the band's rig: parallel fixed bands with smoothed gains, so switching genre never jumps a coefficient
                 var venueOutL = roomL; var venueOutR = roomR
                 for (b in 0 until EQ_BANDS) {
@@ -256,7 +296,7 @@ class ReverbKernel {
 
     private fun apply(raw: ReverbPrefs, snap: Boolean) {
         val p = raw.clamped()
-        val venue = p.concertPrefs.takeIf { it.enabled }
+        val venue = p.concertPrefs.takeIf { it.enabled && renderer != null }
         val room = venue?.let { ConcertAcoustics.room(it) }
         val s = room?.late ?: p
         scaleTarget = 0.3 + 1.2 * s.size
@@ -269,37 +309,50 @@ class ReverbKernel {
         wetTarget = venue?.amount?.toDouble() ?: sin(p.mix * PI / 2)
         earlyTarget = s.early * ER_NORM
         widthTarget = s.width.toDouble()
-        tailLimit = ((decaySec * 1.25 + LINE_SEC.max() * MAX_SCALE + MAX_PREDELAY_SEC) * rate).toInt()
+        val longest = room?.decayBands?.max() ?: decaySec
+        tailLimit = ((longest * 1.25 + LINE_SEC.max() * MAX_SCALE + MAX_PREDELAY_SEC) * rate).toInt()
         biquad(0, s.lowCutHz.toDouble(), highPass = true)
         biquad(5, min(s.highCutHz.toDouble(), rate * 0.45), highPass = false)
         concert = room != null
         fadeTarget = if (concert) 1.0 else 0.0
         if (room != null) {
-            for (t in 0 until ER_TAPS) {
-                erTarget[t] = room.tapSec[t] * rate
-                gainTarget[t] = room.tapLeft[t]; gainTarget[TAP_RIGHT + t] = room.tapRight[t]
-            }
-            room.direct.copyInto(gainTarget, DIRECT)
-            gainTarget[AIR] = if (room.airHz >= rate * 0.45) 1.0 else 1.0 - exp(-2 * PI * room.airHz / rate)
+            renderer!!.setRoom(room, snap)
+            binaural = room.binaural
+            directGain = room.directGain
+            val b = room.decayBands
+            bandTarget[0] = (b[0] + b[1]) / 2; bandTarget[1] = (b[2] + b[3] + b[4]) / 3; bandTarget[2] = (b[5] + b[6]) / 2
             // the tail is normalised for white noise, music-like spectra ring about 4.5 dB hotter
             gainTarget[LATE] = room.lateGain * LATE_TRIM
             gainTarget[BOOM] = 10.0.pow(room.boomDb / 20) - 1
             for (b in 0 until EQ_BANDS) gainTarget[EQ + b] = 10.0.pow(room.eqDb[b] / 20) - 1
             squeeze.configure(rate, room.compRatio, room.compHeadroomDb, room.compReleaseSec, room.compMakeupDb)
             gainTarget[DRIVE] = room.drive; gainTarget[CROWD] = room.crowd
+            crowd.personality(room.rig)
         } else {
             gainTarget[DRIVE] = 0.0; gainTarget[CROWD] = 0.0
         }
         if (snap) {
             scale = scaleTarget; predelay = predelayTarget; wet = wetTarget; early = earlyTarget; width = widthTarget
-            fade = fadeTarget; gainTarget.copyInto(gain); erTarget.copyInto(erDelay); decayNow = decaySec; hfNow = hfRatio
+            fade = fadeTarget; gainTarget.copyInto(gain); bandTarget.copyInto(bandNow); decayNow = decaySec; hfNow = hfRatio
         }
         applied = raw
     }
 
 
-    private fun updateAbsorption(scaleNow: Double) {
+    private fun updateAbsorption(scaleNow: Double, bands: Boolean) {
         var loop = 0.0
+        if (bands) {
+            for (i in 0 until LINES) {
+                val length = LINE_SEC[i] * scaleNow
+                val mid = 10.0.pow(-3.0 * length / bandNow[1])
+                loopMid[i] = mid
+                loopLow[i] = 10.0.pow(-3.0 * length / bandNow[0]) / mid - 1
+                loopHigh[i] = 10.0.pow(-3.0 * length / bandNow[2]) / mid - 1
+                loop += mid * mid
+            }
+            wetNorm = OUTPUT_GAIN * sqrt(1.0 - loop / LINES)
+            return
+        }
         for (i in 0 until LINES) {
             val length = LINE_SEC[i] * scaleNow
             val g0 = 10.0.pow(-3.0 * length / decayNow)
@@ -393,18 +446,15 @@ class ReverbKernel {
         private const val GLIDE_SEC = 0.08
         private const val OUTPUT_GAIN = 2.1
         private const val ER_NORM = 0.55
-        private const val GAINS = 29
-        private const val TAP_RIGHT = 8
-        private const val DIRECT = 16
-        private const val AIR = 20
-        private const val LATE = 21
-        private const val BOOM = 22
-        private const val EQ = 23
+        private const val GAINS = 8
+        private const val LATE = 0
+        private const val BOOM = 1
+        private const val EQ = 2
         private const val EQ_BANDS = 4
         private const val EQ_FILTER = 15
         private const val EQ_STATE = 12
-        private const val DRIVE = 27
-        private const val CROWD = 28
+        private const val DRIVE = 6
+        private const val CROWD = 7
         private const val KNEE = 0.9
         private val DB_TO_LN = kotlin.math.ln(10.0) / 20
         private const val LATE_TRIM = 0.6

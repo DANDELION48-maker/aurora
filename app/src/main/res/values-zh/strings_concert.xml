@@ -67,4 +67,25 @@
     <string name="concert_stage_centre">"中央舞台"</string>
     <string name="concert_section_show">"演出"</string>
     <string name="concert_section_scenes">"场景"</string>
+    <string name="concert_audience">"观众"</string>
+    <string name="concert_audience_empty">"空场"</string>
+    <string name="concert_audience_packed">"爆满"</string>
+    <string name="concert_stage_sound">"舞台声"</string>
+    <string name="concert_stage_sound_value">"%1$s 分贝"</string>
+    <string name="concert_subs">"超低音"</string>
+    <string name="concert_subs_auto">"自动"</string>
+    <string name="concert_subs_split">"左右"</string>
+    <string name="concert_subs_centre">"中间"</string>
+    <string name="concert_subs_cardioid">"心形指向"</string>
+    <string name="concert_section_air">"空气"</string>
+    <string name="concert_temperature">"温度"</string>
+    <string name="concert_temperature_value">"%1$s °C"</string>
+    <string name="concert_humidity">"湿度"</string>
+    <string name="concert_listen">"收听方式"</string>
+    <string name="concert_listen_headphones">"耳机（3D）"</string>
+    <string name="concert_listen_speakers">"扬声器"</string>
+    <string name="concert_room">"空间"</string>
+    <string name="concert_room_modelled">"模拟"</string>
+    <string name="concert_room_hint">"在脉冲响应库中导入脉冲响应即可听到实测空间。"</string>
+    <string name="concert_decay">"混响时间"</string>
 </resources>

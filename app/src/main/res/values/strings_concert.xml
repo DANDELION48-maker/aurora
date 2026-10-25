@@ -67,4 +67,25 @@
     <string name="concert_stage_centre">"Centre stage"</string>
     <string name="concert_section_show">"The show"</string>
     <string name="concert_section_scenes">"Scenes"</string>
+    <string name="concert_audience">"Audience"</string>
+    <string name="concert_audience_empty">"Empty"</string>
+    <string name="concert_audience_packed">"Packed"</string>
+    <string name="concert_stage_sound">"Stage sound"</string>
+    <string name="concert_stage_sound_value">"%1$s dB"</string>
+    <string name="concert_subs">"Subwoofers"</string>
+    <string name="concert_subs_auto">"Auto"</string>
+    <string name="concert_subs_split">"Left and right"</string>
+    <string name="concert_subs_centre">"Centre"</string>
+    <string name="concert_subs_cardioid">"Cardioid"</string>
+    <string name="concert_section_air">"Air"</string>
+    <string name="concert_temperature">"Temperature"</string>
+    <string name="concert_temperature_value">"%1$s °C"</string>
+    <string name="concert_humidity">"Humidity"</string>
+    <string name="concert_listen">"Listening on"</string>
+    <string name="concert_listen_headphones">"Headphones (3D)"</string>
+    <string name="concert_listen_speakers">"Speakers"</string>
+    <string name="concert_room">"Room"</string>
+    <string name="concert_room_modelled">"Modelled"</string>
+    <string name="concert_room_hint">"Import impulse responses in the impulse library to hear a measured room."</string>
+    <string name="concert_decay">"Reverb time"</string>
 </resources>

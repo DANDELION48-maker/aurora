@@ -67,4 +67,25 @@
     <string name="concert_stage_centre">"Сцена в центре"</string>
     <string name="concert_section_show">"Концерт"</string>
     <string name="concert_section_scenes">"Сценарии"</string>
+    <string name="concert_audience">"Публика"</string>
+    <string name="concert_audience_empty">"Пусто"</string>
+    <string name="concert_audience_packed">"Битком"</string>
+    <string name="concert_stage_sound">"Звук со сцены"</string>
+    <string name="concert_stage_sound_value">"%1$s дБ"</string>
+    <string name="concert_subs">"Сабвуферы"</string>
+    <string name="concert_subs_auto">"Авто"</string>
+    <string name="concert_subs_split">"Слева и справа"</string>
+    <string name="concert_subs_centre">"По центру"</string>
+    <string name="concert_subs_cardioid">"Кардиоидные"</string>
+    <string name="concert_section_air">"Воздух"</string>
+    <string name="concert_temperature">"Температура"</string>
+    <string name="concert_temperature_value">"%1$s °C"</string>
+    <string name="concert_humidity">"Влажность"</string>
+    <string name="concert_listen">"Слушаю через"</string>
+    <string name="concert_listen_headphones">"Наушники (3D)"</string>
+    <string name="concert_listen_speakers">"Колонки"</string>
+    <string name="concert_room">"Зал"</string>
+    <string name="concert_room_modelled">"Модель"</string>
+    <string name="concert_room_hint">"Импортируйте импульсные характеристики в библиотеку, чтобы услышать измеренный зал."</string>
+    <string name="concert_decay">"Время реверберации"</string>
 </resources>

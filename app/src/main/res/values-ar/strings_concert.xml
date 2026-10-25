@@ -67,4 +67,25 @@
     <string name="concert_stage_centre">"مسرح في الوسط"</string>
     <string name="concert_section_show">"العرض"</string>
     <string name="concert_section_scenes">"مشاهد"</string>
+    <string name="concert_audience">"الجمهور"</string>
+    <string name="concert_audience_empty">"فارغ"</string>
+    <string name="concert_audience_packed">"مكتظ"</string>
+    <string name="concert_stage_sound">"صوت المسرح"</string>
+    <string name="concert_stage_sound_value">"%1$s ديسيبل"</string>
+    <string name="concert_subs">"مضخمات الجهير"</string>
+    <string name="concert_subs_auto">"تلقائي"</string>
+    <string name="concert_subs_split">"يسار ويمين"</string>
+    <string name="concert_subs_centre">"الوسط"</string>
+    <string name="concert_subs_cardioid">"قلبي الشكل"</string>
+    <string name="concert_section_air">"الهواء"</string>
+    <string name="concert_temperature">"درجة الحرارة"</string>
+    <string name="concert_temperature_value">"%1$s °م"</string>
+    <string name="concert_humidity">"الرطوبة"</string>
+    <string name="concert_listen">"الاستماع عبر"</string>
+    <string name="concert_listen_headphones">"سماعات رأس (ثلاثي الأبعاد)"</string>
+    <string name="concert_listen_speakers">"مكبرات صوت"</string>
+    <string name="concert_room">"القاعة"</string>
+    <string name="concert_room_modelled">"محاكاة"</string>
+    <string name="concert_room_hint">"استورد استجابات نبضية في مكتبة الاستجابات لسماع قاعة مقاسة."</string>
+    <string name="concert_decay">"زمن الصدى"</string>
 </resources>

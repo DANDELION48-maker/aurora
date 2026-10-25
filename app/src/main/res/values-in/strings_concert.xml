@@ -67,4 +67,25 @@
     <string name="concert_stage_centre">"Panggung tengah"</string>
     <string name="concert_section_show">"Pertunjukan"</string>
     <string name="concert_section_scenes">"Suasana"</string>
+    <string name="concert_audience">"Penonton"</string>
+    <string name="concert_audience_empty">"Kosong"</string>
+    <string name="concert_audience_packed">"Penuh"</string>
+    <string name="concert_stage_sound">"Suara panggung"</string>
+    <string name="concert_stage_sound_value">"%1$s dB"</string>
+    <string name="concert_subs">"Subwoofer"</string>
+    <string name="concert_subs_auto">"Otomatis"</string>
+    <string name="concert_subs_split">"Kiri dan kanan"</string>
+    <string name="concert_subs_centre">"Tengah"</string>
+    <string name="concert_subs_cardioid">"Kardioid"</string>
+    <string name="concert_section_air">"Udara"</string>
+    <string name="concert_temperature">"Suhu"</string>
+    <string name="concert_temperature_value">"%1$s °C"</string>
+    <string name="concert_humidity">"Kelembapan"</string>
+    <string name="concert_listen">"Mendengarkan lewat"</string>
+    <string name="concert_listen_headphones">"Headphone (3D)"</string>
+    <string name="concert_listen_speakers">"Speaker"</string>
+    <string name="concert_room">"Ruangan"</string>
+    <string name="concert_room_modelled">"Dimodelkan"</string>
+    <string name="concert_room_hint">"Impor respons impuls di pustaka impuls untuk mendengar ruangan terukur."</string>
+    <string name="concert_decay">"Waktu gema"</string>
 </resources>

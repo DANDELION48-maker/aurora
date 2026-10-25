@@ -67,4 +67,25 @@
     <string name="concert_stage_centre">"درمیان میں اسٹیج"</string>
     <string name="concert_section_show">"شو"</string>
     <string name="concert_section_scenes">"مناظر"</string>
+    <string name="concert_audience">"حاضرین"</string>
+    <string name="concert_audience_empty">"خالی"</string>
+    <string name="concert_audience_packed">"کھچا کھچ"</string>
+    <string name="concert_stage_sound">"اسٹیج کی آواز"</string>
+    <string name="concert_stage_sound_value">"%1$s dB"</string>
+    <string name="concert_subs">"سب ووفر"</string>
+    <string name="concert_subs_auto">"خودکار"</string>
+    <string name="concert_subs_split">"بائیں اور دائیں"</string>
+    <string name="concert_subs_centre">"درمیان"</string>
+    <string name="concert_subs_cardioid">"کارڈیوئڈ"</string>
+    <string name="concert_section_air">"ہوا"</string>
+    <string name="concert_temperature">"درجہ حرارت"</string>
+    <string name="concert_temperature_value">"%1$s °C"</string>
+    <string name="concert_humidity">"نمی"</string>
+    <string name="concert_listen">"سننے کا ذریعہ"</string>
+    <string name="concert_listen_headphones">"ہیڈ فون (3D)"</string>
+    <string name="concert_listen_speakers">"اسپیکر"</string>
+    <string name="concert_room">"ہال"</string>
+    <string name="concert_room_modelled">"ماڈل شدہ"</string>
+    <string name="concert_room_hint">"ناپا ہوا ہال سننے کے لیے امپلس لائبریری میں امپلس ریسپانس درآمد کریں۔"</string>
+    <string name="concert_decay">"گونج کا وقت"</string>
 </resources>

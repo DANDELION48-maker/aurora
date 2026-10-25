@@ -31,10 +31,11 @@ class PrecisionBlockProcessor {
     @Volatile private var rackEverRequested = false
     @Volatile private var rackManaged = false
     private val rackProcessor = ProductionRackProcessor()
-    private val reverb = com.aurora.music.playback.engine.ReverbKernel()
+    private val reverb = com.aurora.music.playback.engine.ReverbKernel(concertCapable = true)
     var reverbSettings: com.aurora.music.data.ReverbPrefs
         get() = reverb.settings
-        set(value) { reverb.settings = value }
+        set(value) { reverb.settings = value; requestMeasuredRoom() }
+    @Volatile private var measuredFor: Pair<ImpulseResponse, Int>? = null
     val reverbActive: Boolean get() = reverb.active
     @Volatile private var rackImpulses: Map<String, ImpulseResponse> = emptyMap()
     var relativeVolume: Double
@@ -46,6 +47,21 @@ class PrecisionBlockProcessor {
     fun setRackImpulses(impulses: Map<String, ImpulseResponse>) {
         rackImpulses = impulses.toMap()
         notifyRack()
+        requestMeasuredRoom()
+    }
+
+    // a measured concert room comes from the impulse library by id and is prepared off the audio thread
+    private fun requestMeasuredRoom() {
+        val impulse = reverb.settings.concertPrefs.takeIf { it.enabled }?.roomImpulse?.let { rackImpulses[it] }
+        val rate = format?.sampleRate ?: 0
+        if (impulse == null || rate <= 0) { measuredFor = null; reverb.measured = null; return }
+        val wanted = impulse to rate
+        if (measuredFor?.first === impulse && measuredFor?.second == rate) return
+        measuredFor = wanted
+        PREPARATION.execute {
+            val prepared = runCatching { com.aurora.music.playback.engine.MeasuredRoom.prepare(impulse, rate) }.getOrNull()
+            if (measuredFor === wanted) reverb.measured = prepared
+        }
     }
     val rackActive: Boolean get() = rackManaged && processingActive && rackProcessor.rackActive
     val processingChangesSamples: Boolean get() = reverb.active || if (rackManaged) rackProcessor.processingChangesSamples
@@ -162,6 +178,7 @@ class PrecisionBlockProcessor {
         format = nextFormat
         effects = PrecisionEffectsKernel(nextFormat)
         reverb.configure(sampleRate)
+        requestMeasuredRoom()
         stage = AudioBlock(nextFormat, INPUT_FRAMES)
         output = AudioBlock(nextFormat, OUTPUT_FRAMES)
         while (true) {

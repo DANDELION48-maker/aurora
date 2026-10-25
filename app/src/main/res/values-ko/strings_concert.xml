@@ -67,4 +67,25 @@
     <string name="concert_stage_centre">"센터 스테이지"</string>
     <string name="concert_section_show">"공연"</string>
     <string name="concert_section_scenes">"장면"</string>
+    <string name="concert_audience">"관객"</string>
+    <string name="concert_audience_empty">"텅 빔"</string>
+    <string name="concert_audience_packed">"꽉 참"</string>
+    <string name="concert_stage_sound">"무대 소리"</string>
+    <string name="concert_stage_sound_value">"%1$s dB"</string>
+    <string name="concert_subs">"서브우퍼"</string>
+    <string name="concert_subs_auto">"자동"</string>
+    <string name="concert_subs_split">"좌우"</string>
+    <string name="concert_subs_centre">"가운데"</string>
+    <string name="concert_subs_cardioid">"카디오이드"</string>
+    <string name="concert_section_air">"공기"</string>
+    <string name="concert_temperature">"기온"</string>
+    <string name="concert_temperature_value">"%1$s °C"</string>
+    <string name="concert_humidity">"습도"</string>
+    <string name="concert_listen">"듣는 장치"</string>
+    <string name="concert_listen_headphones">"헤드폰 (3D)"</string>
+    <string name="concert_listen_speakers">"스피커"</string>
+    <string name="concert_room">"공간"</string>
+    <string name="concert_room_modelled">"모델링"</string>
+    <string name="concert_room_hint">"측정된 공간을 들으려면 임펄스 라이브러리에 임펄스 응답을 가져오세요."</string>
+    <string name="concert_decay">"잔향 시간"</string>
 </resources>

@@ -1046,7 +1046,7 @@ class PlaybackService : MediaLibraryService() {
         } else if (lastRack?.enabled == true && ap?.dspMode == DspMode.CUSTOM) {
             unknown += "Processing rack requested; waiting for a supported stereo stream and prepared schedule"
         }
-        node(reverbPrefs.enabled, engine?.reverbActive == true, reverbPrefs.concertPrefs.takeIf { it.enabled }?.let { "Concert venue simulation (binary64 feedback delay network, ${com.aurora.music.data.ConcertVenue.ALL[it.venue].name}, ${com.aurora.music.data.ConcertSound.ALL[it.sound].name} rig at ${it.showDb.toInt()} dB, ${(it.amount * 100).toInt()}% amount)" }
+        node(reverbPrefs.enabled, engine?.reverbActive == true, reverbPrefs.concertPrefs.takeIf { it.enabled }?.let { "Concert venue simulation (${if (it.binaural) "binaural" else "stereo"}${if (it.roomImpulse != null) " in a measured room" else ""}, ${com.aurora.music.data.ConcertVenue.ALL[it.venue].name}, ${com.aurora.music.data.ConcertSound.ALL[it.sound].name} rig at ${it.showDb.toInt()} dB, ${(it.amount * 100).toInt()}% amount)" }
             ?: "Reverb (binary64 feedback delay network, ${(reverbPrefs.mix * 100).toInt()}% mix)")
         if ((processors || precise) && (ap?.dspConvEnabled == true || rackActive)) {
             when (engine?.preparationState) {

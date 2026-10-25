@@ -8,31 +8,37 @@ object ConcertLayout { const val END = 0; const val CENTRE = 1 }
 
 object ConcertEarplugs { const val NONE = 0; const val MUSICIAN = 1; const val FOAM = 2 }
 
-// sizes in metres and reverb times in seconds, each from smallest to biggest venue of its kind;
+// 0 follows the venue; left/right stacks give a power alley, a cardioid array keeps the bass off the stage
+object ConcertSubs { const val AUTO = 0; const val LEFT_RIGHT = 1; const val CENTRE = 2; const val CARDIOID = 3 }
+
+// sizes in metres, each from smallest to biggest venue of its kind; surfaces set how the room rings per frequency;
 // stands are raked seating along the sides set in standSides, starting tierBaseM above the floor
 class ConcertVenue(
     val name: String,
     private val width: ClosedFloatingPointRange<Float>,
     private val length: ClosedFloatingPointRange<Float>,
     private val height: ClosedFloatingPointRange<Float>,
-    private val decay: ClosedFloatingPointRange<Float>,
     private val stage: ClosedFloatingPointRange<Float>,
     val openness: Float,
     val directivity: Float,
     val speakerHeightM: Float,
-    val walls: Float,
+    val wallMaterial: ConcertMaterial,
+    val ceilingMaterial: ConcertMaterial,
+    val floorMaterial: ConcertMaterial,
     val boomDb: Float,
+    val seatMaterial: ConcertMaterial = ConcertMaterial.PLASTIC_SEATS,
     val layout: Int = ConcertLayout.END,
     private val stands: ClosedFloatingPointRange<Float> = 0f..0f,
     val standSides: Int = 0,
     val tierBaseM: Float = 0f,
     val rakeDeg: Float = 0f,
     val delayTowers: Boolean = false,
+    val subs: Int = ConcertSubs.LEFT_RIGHT,
+    val frontFills: Boolean = true,
 ) {
     fun widthM(size: Float) = lerp(width, size)
     fun lengthM(size: Float) = lerp(length, size)
     fun heightM(size: Float) = lerp(height, size)
-    fun decaySec(size: Float) = lerp(decay, size)
     fun stageWidthM(size: Float) = lerp(stage, size)
     fun standsM(size: Float) = lerp(stands, size)
 
@@ -63,34 +69,51 @@ class ConcertVenue(
         const val AMPHITHEATRE = 5; const val BASEMENT = 6; const val CHURCH = 7; const val WAREHOUSE = 8
         const val FRONT = 1; const val BACK = 2; const val LEFT = 4; const val RIGHT = 8
         val ALL = listOf(
-            ConcertVenue("club", 10f..26f, 14f..36f, 4f..8f, 0.5f..1.0f, 5f..10f, openness = 0f, directivity = 8f, speakerHeightM = 3f, walls = 0.7f, boomDb = 3f),
-            ConcertVenue("concert hall", 22f..38f, 30f..56f, 12f..20f, 0.9f..2.2f, 10f..18f, openness = 0f, directivity = 5f, speakerHeightM = 6f, walls = 0.8f, boomDb = 2f,
-                stands = 8f..14f, standSides = BACK, tierBaseM = 5f, rakeDeg = 22f),
-            ConcertVenue("arena", 70f..110f, 90f..140f, 25f..40f, 2.2f..3.6f, 20f..34f, openness = 0f, directivity = 10f, speakerHeightM = 14f, walls = 0.6f, boomDb = 5f,
-                stands = 18f..32f, standSides = BACK or LEFT or RIGHT, tierBaseM = 4f, rakeDeg = 30f),
+            ConcertVenue("club", 10f..26f, 14f..36f, 4f..8f, 5f..10f, openness = 0f, directivity = 8f, speakerHeightM = 3f,
+                wallMaterial = ConcertMaterial.TREATED, ceilingMaterial = ConcertMaterial.CONCRETE, floorMaterial = ConcertMaterial.CONCRETE, boomDb = 3f,
+                frontFills = false),
+            ConcertVenue("concert hall", 22f..38f, 30f..56f, 12f..20f, 10f..18f, openness = 0f, directivity = 5f, speakerHeightM = 6f,
+                wallMaterial = ConcertMaterial.PANELLED, ceilingMaterial = ConcertMaterial.PLASTER, floorMaterial = ConcertMaterial.WOOD_FLOOR, boomDb = 2f,
+                seatMaterial = ConcertMaterial.UPHOLSTERED_SEATS, stands = 8f..14f, standSides = BACK, tierBaseM = 5f, rakeDeg = 22f),
+            ConcertVenue("arena", 70f..110f, 90f..140f, 25f..40f, 20f..34f, openness = 0f, directivity = 10f, speakerHeightM = 14f,
+                wallMaterial = ConcertMaterial.CONCRETE, ceilingMaterial = ConcertMaterial.ARENA_ROOF, floorMaterial = ConcertMaterial.CONCRETE, boomDb = 5f,
+                stands = 18f..32f, standSides = BACK or LEFT or RIGHT, tierBaseM = 4f, rakeDeg = 30f, subs = ConcertSubs.CARDIOID),
             // a 105 x 68 m pitch ringed by stands, centre-hung pa and delay towers for the far seats
-            ConcertVenue("stadium", 140f..190f, 175f..225f, 40f..60f, 3f..5f, 34f..56f, openness = 0.55f, directivity = 12f, speakerHeightM = 20f, walls = 0.55f, boomDb = 5f,
-                layout = ConcertLayout.CENTRE, stands = 36f..60f, standSides = FRONT or BACK or LEFT or RIGHT, tierBaseM = 3f, rakeDeg = 32f, delayTowers = true),
-            ConcertVenue("festival", 70f..220f, 90f..300f, 20f..20f, 1f..1.6f, 24f..48f, openness = 1f, directivity = 10f, speakerHeightM = 12f, walls = 0.3f, boomDb = 0f,
+            ConcertVenue("stadium", 140f..190f, 175f..225f, 40f..60f, 34f..56f, openness = 0.55f, directivity = 12f, speakerHeightM = 20f,
+                wallMaterial = ConcertMaterial.CONCRETE, ceilingMaterial = ConcertMaterial.MEMBRANE, floorMaterial = ConcertMaterial.GRASS, boomDb = 5f,
+                layout = ConcertLayout.CENTRE, stands = 36f..60f, standSides = FRONT or BACK or LEFT or RIGHT, tierBaseM = 3f, rakeDeg = 32f,
+                delayTowers = true, subs = ConcertSubs.CENTRE),
+            ConcertVenue("festival", 70f..220f, 90f..300f, 20f..20f, 24f..48f, openness = 1f, directivity = 10f, speakerHeightM = 12f,
+                wallMaterial = ConcertMaterial.PLASTER, ceilingMaterial = ConcertMaterial.OPEN, floorMaterial = ConcertMaterial.GRASS, boomDb = 0f,
                 delayTowers = true),
-            ConcertVenue("amphitheatre", 50f..110f, 45f..95f, 15f..30f, 1f..1.8f, 14f..26f, openness = 0.6f, directivity = 6f, speakerHeightM = 8f, walls = 0.7f, boomDb = 2f,
-                stands = 30f..72f, standSides = BACK, tierBaseM = 0.5f, rakeDeg = 18f),
-            ConcertVenue("basement", 6f..12f, 8f..16f, 2.6f..3.4f, 0.35f..0.6f, 3f..5f, openness = 0f, directivity = 3f, speakerHeightM = 2f, walls = 0.85f, boomDb = 6f),
-            ConcertVenue("church", 14f..30f, 35f..75f, 14f..32f, 3f..6.5f, 6f..10f, openness = 0f, directivity = 3f, speakerHeightM = 5f, walls = 0.92f, boomDb = 2f),
-            ConcertVenue("warehouse", 25f..50f, 40f..90f, 8f..14f, 1.8f..3.2f, 12f..20f, openness = 0f, directivity = 8f, speakerHeightM = 7f, walls = 0.85f, boomDb = 6f),
+            ConcertVenue("amphitheatre", 50f..110f, 45f..95f, 15f..30f, 14f..26f, openness = 0.6f, directivity = 6f, speakerHeightM = 8f,
+                wallMaterial = ConcertMaterial.STONE, ceilingMaterial = ConcertMaterial.PANELLED, floorMaterial = ConcertMaterial.STONE, boomDb = 2f,
+                seatMaterial = ConcertMaterial.STONE_SEATS, stands = 30f..72f, standSides = BACK, tierBaseM = 0.5f, rakeDeg = 18f),
+            ConcertVenue("basement", 6f..12f, 8f..16f, 2.6f..3.4f, 3f..5f, openness = 0f, directivity = 3f, speakerHeightM = 2f,
+                wallMaterial = ConcertMaterial.BRICK, ceilingMaterial = ConcertMaterial.CONCRETE, floorMaterial = ConcertMaterial.CONCRETE, boomDb = 6f,
+                subs = ConcertSubs.CENTRE, frontFills = false),
+            ConcertVenue("church", 14f..30f, 35f..75f, 14f..32f, 6f..10f, openness = 0f, directivity = 3f, speakerHeightM = 5f,
+                wallMaterial = ConcertMaterial.STONE, ceilingMaterial = ConcertMaterial.STONE, floorMaterial = ConcertMaterial.PEWS, boomDb = 2f,
+                subs = ConcertSubs.CENTRE, frontFills = false),
+            ConcertVenue("warehouse", 25f..50f, 40f..90f, 8f..14f, 12f..20f, openness = 0f, directivity = 8f, speakerHeightM = 7f,
+                wallMaterial = ConcertMaterial.CONCRETE, ceilingMaterial = ConcertMaterial.METAL_ROOF, floorMaterial = ConcertMaterial.CONCRETE, boomDb = 6f),
         )
         val ORDER = listOf(BASEMENT, CLUB, THEATRE, CHURCH, WAREHOUSE, ARENA, STADIUM, FESTIVAL, AMPHITHEATRE)
     }
 }
 
 // how the band's rig is tuned: eq in dB (bass, low mids, presence, air), how hard it drives the room,
-// the desk compressor (headroom above the running level before it squashes), how hard the pa is pushed and how loud the show runs
+// the desk compressor (headroom above the running level before it squashes), how hard the pa is pushed and how loud the show runs;
+// stageDb is the backline and drums against the pa five metres out (acoustic bands are the stage), subDb the sub array over flat,
+// and the crowd's habits for this kind of show
 class ConcertSound(
     val name: String,
     val bassDb: Float, val lowMidDb: Float, val presenceDb: Float, val airDb: Float,
     val directivity: Float, val spread: Float, val wash: Float, val decay: Float, val boom: Float,
     val ratio: Float, val headroomDb: Float, val releaseMs: Float, val makeupDb: Float,
     val drive: Float, val showDb: Float,
+    val stageDb: Float = -10f, val subDb: Float = 2f, val acoustic: Boolean = false,
+    val chatter: Float = 0.5f, val cheer: Float = 0.8f, val singAlong: Float = 0.5f, val roar: Float = 0.5f, val movement: Float = 0.4f,
 ) {
     companion object {
         const val POP = 0; const val ROCK = 1; const val METAL = 2; const val SHOEGAZE = 3
@@ -98,29 +121,41 @@ class ConcertSound(
         const val INDIE = 8; const val PUNK = 9; const val POST_PUNK = 10; const val ACOUSTIC = 11
         val ALL = listOf(
             ConcertSound("pop", 1.5f, 0f, 1.5f, 1f, directivity = 1f, spread = 1f, wash = 1f, decay = 1f, boom = 1f,
-                ratio = 2.5f, headroomDb = 4f, releaseMs = 120f, makeupDb = 1f, drive = 0.25f, showDb = 99f),
+                ratio = 2.5f, headroomDb = 4f, releaseMs = 120f, makeupDb = 1f, drive = 0.25f, showDb = 99f,
+                stageDb = -14f, subDb = 3f, chatter = 0.5f, cheer = 1f, singAlong = 0.9f, roar = 0.5f, movement = 0.3f),
             ConcertSound("rock", 2f, 1f, 2f, 0.5f, directivity = 1f, spread = 1f, wash = 1.1f, decay = 1f, boom = 1.1f,
-                ratio = 3f, headroomDb = 3f, releaseMs = 150f, makeupDb = 1.5f, drive = 0.6f, showDb = 103f),
+                ratio = 3f, headroomDb = 3f, releaseMs = 150f, makeupDb = 1.5f, drive = 0.6f, showDb = 103f,
+                stageDb = -7f, subDb = 2f, chatter = 0.5f, cheer = 1f, singAlong = 0.6f, roar = 0.6f, movement = 0.5f),
             ConcertSound("metal", 3f, -2.5f, 3.5f, 1f, directivity = 1.1f, spread = 1.15f, wash = 1.25f, decay = 1f, boom = 1.3f,
-                ratio = 5f, headroomDb = 1.5f, releaseMs = 100f, makeupDb = 2f, drive = 0.9f, showDb = 108f),
+                ratio = 5f, headroomDb = 1.5f, releaseMs = 100f, makeupDb = 2f, drive = 0.9f, showDb = 108f,
+                stageDb = -5f, subDb = 3f, chatter = 0.3f, cheer = 1f, singAlong = 0.3f, roar = 1f, movement = 0.9f),
             ConcertSound("shoegaze", 3f, 2.5f, -3f, -4.5f, directivity = 0.8f, spread = 1.3f, wash = 1.5f, decay = 1.1f, boom = 1.3f,
-                ratio = 3.5f, headroomDb = 2f, releaseMs = 300f, makeupDb = 1.5f, drive = 0.75f, showDb = 105f),
+                ratio = 3.5f, headroomDb = 2f, releaseMs = 300f, makeupDb = 1.5f, drive = 0.75f, showDb = 105f,
+                stageDb = -6f, subDb = 2f, chatter = 0.25f, cheer = 0.5f, singAlong = 0.1f, roar = 0.2f, movement = 0.15f),
             ConcertSound("jazz", -1.5f, 1f, 0f, 0.5f, directivity = 0.4f, spread = 0.6f, wash = 0.9f, decay = 1f, boom = 0.4f,
-                ratio = 1.6f, headroomDb = 8f, releaseMs = 200f, makeupDb = 0f, drive = 0.05f, showDb = 88f),
-            ConcertSound("hip-hop", 6f, -1.5f, 2.5f, 0f, directivity = 1.2f, spread = 0.7f, wash = 0.7f, decay = 0.9f, boom = 1.6f,
-                ratio = 4f, headroomDb = 3f, releaseMs = 120f, makeupDb = 1.5f, drive = 0.45f, showDb = 104f),
-            ConcertSound("electronic", 5f, -1f, 0.5f, 2.5f, directivity = 1.2f, spread = 1.25f, wash = 1f, decay = 1f, boom = 1.6f,
-                ratio = 5f, headroomDb = 2f, releaseMs = 80f, makeupDb = 2f, drive = 0.4f, showDb = 104f),
+                ratio = 1.6f, headroomDb = 8f, releaseMs = 200f, makeupDb = 0f, drive = 0.05f, showDb = 88f,
+                stageDb = 2f, subDb = -6f, acoustic = true, chatter = 0.45f, cheer = 0.5f, singAlong = 0f, roar = 0f, movement = 0.05f),
+            ConcertSound("hip-hop", 4f, -1.5f, 2.5f, 0f, directivity = 1.2f, spread = 0.7f, wash = 0.7f, decay = 0.9f, boom = 1.6f,
+                ratio = 4f, headroomDb = 3f, releaseMs = 120f, makeupDb = 1.5f, drive = 0.45f, showDb = 104f,
+                stageDb = -30f, subDb = 6f, chatter = 0.5f, cheer = 1f, singAlong = 0.8f, roar = 0.8f, movement = 0.7f),
+            ConcertSound("electronic", 3f, -1f, 0.5f, 2.5f, directivity = 1.2f, spread = 1.25f, wash = 1f, decay = 1f, boom = 1.6f,
+                ratio = 5f, headroomDb = 2f, releaseMs = 80f, makeupDb = 2f, drive = 0.4f, showDb = 104f,
+                stageDb = -40f, subDb = 6f, chatter = 0.4f, cheer = 0.8f, singAlong = 0.2f, roar = 1f, movement = 0.6f),
             ConcertSound("classical", -2f, 0f, -0.5f, 0f, directivity = 0.3f, spread = 1.2f, wash = 1.15f, decay = 1.05f, boom = 0.3f,
-                ratio = 1f, headroomDb = 12f, releaseMs = 200f, makeupDb = 0f, drive = 0f, showDb = 86f),
+                ratio = 1f, headroomDb = 12f, releaseMs = 200f, makeupDb = 0f, drive = 0f, showDb = 86f,
+                stageDb = 30f, subDb = -20f, acoustic = true, chatter = 0.1f, cheer = 0.6f, singAlong = 0f, roar = 0f, movement = 0f),
             ConcertSound("indie", 1f, 1.5f, 1f, 0.5f, directivity = 0.9f, spread = 1.1f, wash = 1.2f, decay = 1.05f, boom = 1f,
-                ratio = 2.5f, headroomDb = 4f, releaseMs = 150f, makeupDb = 1f, drive = 0.45f, showDb = 100f),
+                ratio = 2.5f, headroomDb = 4f, releaseMs = 150f, makeupDb = 1f, drive = 0.45f, showDb = 100f,
+                stageDb = -8f, subDb = 1f, chatter = 0.5f, cheer = 0.8f, singAlong = 0.6f, roar = 0.3f, movement = 0.4f),
             ConcertSound("punk", 2f, 1.5f, 3f, 0f, directivity = 1f, spread = 0.9f, wash = 1.15f, decay = 0.95f, boom = 1.2f,
-                ratio = 4f, headroomDb = 2f, releaseMs = 90f, makeupDb = 2f, drive = 0.8f, showDb = 107f),
+                ratio = 4f, headroomDb = 2f, releaseMs = 90f, makeupDb = 2f, drive = 0.8f, showDb = 107f,
+                stageDb = -3f, subDb = 2f, chatter = 0.4f, cheer = 1f, singAlong = 0.7f, roar = 0.8f, movement = 1f),
             ConcertSound("post-punk", 1.5f, 0.5f, 2f, 1.5f, directivity = 0.9f, spread = 1.15f, wash = 1.4f, decay = 1.15f, boom = 1.1f,
-                ratio = 3f, headroomDb = 3f, releaseMs = 180f, makeupDb = 1.5f, drive = 0.55f, showDb = 101f),
+                ratio = 3f, headroomDb = 3f, releaseMs = 180f, makeupDb = 1.5f, drive = 0.55f, showDb = 101f,
+                stageDb = -7f, subDb = 2f, chatter = 0.4f, cheer = 0.7f, singAlong = 0.4f, roar = 0.4f, movement = 0.5f),
             ConcertSound("acoustic", -1f, 0.5f, 0.5f, 1f, directivity = 0.5f, spread = 0.8f, wash = 1f, decay = 1f, boom = 0.5f,
-                ratio = 2f, headroomDb = 6f, releaseMs = 200f, makeupDb = 0.5f, drive = 0.05f, showDb = 90f),
+                ratio = 2f, headroomDb = 6f, releaseMs = 200f, makeupDb = 0.5f, drive = 0.05f, showDb = 90f,
+                stageDb = 0f, subDb = -6f, acoustic = true, chatter = 0.3f, cheer = 0.7f, singAlong = 0.4f, roar = 0f, movement = 0.05f),
         )
         val ORDER = listOf(POP, ROCK, INDIE, PUNK, POST_PUNK, METAL, SHOEGAZE, HIP_HOP, ELECTRONIC, JAZZ, ACOUSTIC, CLASSICAL)
     }
@@ -148,13 +183,26 @@ data class ConcertPrefs(
     val showDb: Float = 100f,
     val crowd: Float = 0f,
     val earplugs: Int = ConcertEarplugs.NONE,
+    val binaural: Boolean = true,
+    val occupancy: Float = 0.8f,
+    val temperatureC: Float = 20f,
+    val humidity: Float = 50f,
+    val stageDb: Float = 0f,
+    val subLayout: Int = ConcertSubs.AUTO,
+    // impulse-library id of a measured room, null for the modelled one
+    val roomImpulse: String? = null,
 ) {
     fun clamped(): ConcertPrefs = copy(
         venue = venue.coerceIn(0, ConcertVenue.ALL.lastIndex), sound = sound.coerceIn(0, ConcertSound.ALL.lastIndex), amount = amount.unit(1f), size = size.unit(0.5f),
         openness = openness.unit(0f), stageX = stageX.unit(0.5f), stageY = stageY.unit(0.06f),
         listenerX = listenerX.unit(0.5f), listenerY = listenerY.unit(0.43f),
         showDb = (if (showDb.isFinite()) showDb else 100f).coerceIn(MIN_DB, MAX_DB), crowd = crowd.unit(0f), earplugs = earplugs.coerceIn(0, 2),
+        occupancy = occupancy.unit(0.8f), temperatureC = (if (temperatureC.isFinite()) temperatureC else 20f).coerceIn(-10f, 40f),
+        humidity = (if (humidity.isFinite()) humidity else 50f).coerceIn(5f, 100f), stageDb = (if (stageDb.isFinite()) stageDb else 0f).coerceIn(-12f, 12f),
+        subLayout = subLayout.coerceIn(ConcertSubs.AUTO, ConcertSubs.CARDIOID), roomImpulse = roomImpulse?.takeIf { it.isNotBlank() },
     )
+
+    fun subs(): Int = if (subLayout == ConcertSubs.AUTO) ConcertVenue.ALL[venue].subs else subLayout
 
     fun withVenue(id: Int): ConcertPrefs = ConcertVenue.ALL.getOrNull(id)?.let {
         copy(venue = id, size = 0.5f, openness = it.openness).withLayout(it.layout)
@@ -227,30 +275,35 @@ data class ConcertPrefs(
 }
 
 // one-tap setups: a venue, a band, a spot and how loud and busy it is
-class ConcertScene(val venue: Int, val sound: Int, val size: Float, val seat: Int, val showDb: Float, val crowd: Float, private val layout: Int = -1) {
+class ConcertScene(
+    val venue: Int, val sound: Int, val size: Float, val seat: Int, val showDb: Float, val crowd: Float, private val layout: Int = -1,
+    val occupancy: Float = 0.85f, val temperatureC: Float = 20f, val humidity: Float = 50f,
+) {
     private fun layoutFor() = if (layout >= 0) layout else ConcertVenue.ALL[venue].layout
 
     fun applyTo(p: ConcertPrefs): ConcertPrefs =
-        p.copy(venue = venue, sound = sound, size = size, openness = ConcertVenue.ALL[venue].openness, showDb = showDb, crowd = crowd, earplugs = ConcertEarplugs.NONE)
+        p.copy(venue = venue, sound = sound, size = size, openness = ConcertVenue.ALL[venue].openness, showDb = showDb, crowd = crowd,
+            earplugs = ConcertEarplugs.NONE, occupancy = occupancy, temperatureC = temperatureC, humidity = humidity, stageDb = 0f,
+            subLayout = ConcertSubs.AUTO, roomImpulse = null)
             .withLayout(layoutFor()).withSeat(seat)
 
     fun matches(p: ConcertPrefs) = p.venue == venue && p.sound == sound && abs(p.size - size) < 0.01f && abs(p.showDb - showDb) < 0.5f &&
-        abs(p.crowd - crowd) < 0.01f && p.layout() == layoutFor() && p.seat() == seat
+        abs(p.crowd - crowd) < 0.01f && abs(p.occupancy - occupancy) < 0.01f && p.layout() == layoutFor() && p.seat() == seat
 
     companion object {
         val ALL = listOf(
-            ConcertScene(ConcertVenue.BASEMENT, ConcertSound.PUNK, 0.4f, ConcertSeat.FRONT, 107f, 0.5f),
+            ConcertScene(ConcertVenue.BASEMENT, ConcertSound.PUNK, 0.4f, ConcertSeat.FRONT, 107f, 0.5f, occupancy = 1f),
             ConcertScene(ConcertVenue.CLUB, ConcertSound.ELECTRONIC, 0.6f, ConcertSeat.MIDDLE, 104f, 0.35f),
             ConcertScene(ConcertVenue.THEATRE, ConcertSound.SHOEGAZE, 0.1f, ConcertSeat.MIDDLE, 104f, 0.4f),
             ConcertScene(ConcertVenue.CLUB, ConcertSound.POST_PUNK, 0.45f, ConcertSeat.MIDDLE, 101f, 0.35f),
             ConcertScene(ConcertVenue.ARENA, ConcertSound.POP, 0.5f, ConcertSeat.MIDDLE, 101f, 0.35f),
-            ConcertScene(ConcertVenue.STADIUM, ConcertSound.ROCK, 0.6f, ConcertSeat.MIDDLE, 104f, 0.45f, ConcertLayout.CENTRE),
-            ConcertScene(ConcertVenue.STADIUM, ConcertSound.ROCK, 0.6f, ConcertSeat.UPPER, 103f, 0.45f, ConcertLayout.CENTRE),
-            ConcertScene(ConcertVenue.FESTIVAL, ConcertSound.ELECTRONIC, 0.6f, ConcertSeat.MIDDLE, 104f, 0.4f),
+            ConcertScene(ConcertVenue.STADIUM, ConcertSound.ROCK, 0.6f, ConcertSeat.MIDDLE, 104f, 0.45f, ConcertLayout.CENTRE, temperatureC = 18f, humidity = 60f),
+            ConcertScene(ConcertVenue.STADIUM, ConcertSound.ROCK, 0.6f, ConcertSeat.UPPER, 103f, 0.45f, ConcertLayout.CENTRE, temperatureC = 18f, humidity = 60f),
+            ConcertScene(ConcertVenue.FESTIVAL, ConcertSound.ELECTRONIC, 0.6f, ConcertSeat.MIDDLE, 104f, 0.4f, temperatureC = 16f, humidity = 75f),
             ConcertScene(ConcertVenue.WAREHOUSE, ConcertSound.METAL, 0.5f, ConcertSeat.FRONT, 109f, 0.45f),
-            ConcertScene(ConcertVenue.CHURCH, ConcertSound.ACOUSTIC, 0.4f, ConcertSeat.MIDDLE, 86f, 0.08f),
-            ConcertScene(ConcertVenue.CLUB, ConcertSound.JAZZ, 0.1f, ConcertSeat.FRONT, 88f, 0.25f),
-            ConcertScene(ConcertVenue.AMPHITHEATRE, ConcertSound.INDIE, 0.5f, ConcertSeat.STANDS, 99f, 0.3f),
+            ConcertScene(ConcertVenue.CHURCH, ConcertSound.ACOUSTIC, 0.4f, ConcertSeat.MIDDLE, 86f, 0.08f, occupancy = 0.35f),
+            ConcertScene(ConcertVenue.CLUB, ConcertSound.JAZZ, 0.1f, ConcertSeat.FRONT, 88f, 0.25f, occupancy = 0.6f),
+            ConcertScene(ConcertVenue.AMPHITHEATRE, ConcertSound.INDIE, 0.5f, ConcertSeat.STANDS, 99f, 0.3f, temperatureC = 24f, humidity = 40f),
             ConcertScene(ConcertVenue.THEATRE, ConcertSound.CLASSICAL, 0.9f, ConcertSeat.STANDS, 86f, 0.05f),
         )
     }

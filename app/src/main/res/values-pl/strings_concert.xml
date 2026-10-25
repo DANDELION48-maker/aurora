@@ -67,4 +67,25 @@
     <string name="concert_stage_centre">"Scena na środku"</string>
     <string name="concert_section_show">"Koncert"</string>
     <string name="concert_section_scenes">"Klimaty"</string>
+    <string name="concert_audience">"Publiczność"</string>
+    <string name="concert_audience_empty">"Pusto"</string>
+    <string name="concert_audience_packed">"Tłum"</string>
+    <string name="concert_stage_sound">"Dźwięk ze sceny"</string>
+    <string name="concert_stage_sound_value">"%1$s dB"</string>
+    <string name="concert_subs">"Subwoofery"</string>
+    <string name="concert_subs_auto">"Automatycznie"</string>
+    <string name="concert_subs_split">"Lewo i prawo"</string>
+    <string name="concert_subs_centre">"Środek"</string>
+    <string name="concert_subs_cardioid">"Kardioidalne"</string>
+    <string name="concert_section_air">"Powietrze"</string>
+    <string name="concert_temperature">"Temperatura"</string>
+    <string name="concert_temperature_value">"%1$s °C"</string>
+    <string name="concert_humidity">"Wilgotność"</string>
+    <string name="concert_listen">"Słuchasz przez"</string>
+    <string name="concert_listen_headphones">"Słuchawki (3D)"</string>
+    <string name="concert_listen_speakers">"Głośniki"</string>
+    <string name="concert_room">"Sala"</string>
+    <string name="concert_room_modelled">"Modelowana"</string>
+    <string name="concert_room_hint">"Zaimportuj odpowiedzi impulsowe do biblioteki, aby usłyszeć zmierzoną salę."</string>
+    <string name="concert_decay">"Czas pogłosu"</string>
 </resources>

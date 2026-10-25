@@ -29,6 +29,8 @@ import com.aurora.music.AuroraApplication
 import com.aurora.music.R
 import com.aurora.music.data.ReverbPrefs
 import com.aurora.music.localization.appString
+import com.aurora.music.ui.screens.player.ConcertAirControls
+import com.aurora.music.ui.screens.player.ConcertMeasuredRoom
 import com.aurora.music.ui.screens.player.ConcertPositionPicker
 import com.aurora.music.ui.screens.player.ConcertRoomSliders
 import com.aurora.music.ui.screens.player.ConcertSceneChips
@@ -50,6 +52,8 @@ fun ReverbSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
     fun save(next: ReverbPrefs) { scope.launch { store.setReverb(next) } }
     fun shape(edit: (ReverbPrefs) -> ReverbPrefs) = save(edit(prefs).copy(preset = -1))
     val concert = prefs.concertPrefs
+    val impulses by store.processingRackAssets.collectAsStateWithLifecycle(initialValue = emptyList())
+    val rooms = impulses.map { it.id to it.name }
     fun seconds(v: Float) = appString(R.string.reverb_value_seconds, "%.1f".format(v))
     fun millis(v: Float) = appString(R.string.reverb_value_ms, "%.0f".format(v))
     fun hertz(v: Float) = if (v < 1000f) appString(R.string.reverb_value_hz, "%.0f".format(v))
@@ -92,6 +96,10 @@ fun ReverbSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
                 item { SettingsGroup { ConcertPositionPicker(concert, Modifier.padding(16.dp), hint = true) { save(prefs.copy(concert = it)) } } }
                 item { SettingsSectionTitle(appString(R.string.concert_section_show)) }
                 item { SettingsGroup { ConcertShowControls(concert, Modifier.padding(horizontal = 16.dp, vertical = 8.dp), full = true) { save(prefs.copy(concert = it)) } } }
+                item { SettingsSectionTitle(appString(R.string.concert_section_air)) }
+                item { SettingsGroup { ConcertAirControls(concert, Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) { save(prefs.copy(concert = it)) } } }
+                item { SettingsSectionTitle(appString(R.string.concert_room)) }
+                item { SettingsGroup { ConcertMeasuredRoom(concert, rooms, Modifier.padding(16.dp)) { save(prefs.copy(concert = it)) } } }
             } else {
                 item { SettingsSectionTitle(appString(R.string.reverb_section_space)) }
                 item {

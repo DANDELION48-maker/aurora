@@ -58,6 +58,7 @@ import com.aurora.music.data.ConcertPrefs
 import com.aurora.music.data.ConcertScene
 import com.aurora.music.data.ConcertSeat
 import com.aurora.music.data.ConcertSound
+import com.aurora.music.data.ConcertSubs
 import com.aurora.music.data.ConcertVenue
 import com.aurora.music.localization.appString
 import com.aurora.music.playback.engine.ConcertAcoustics
@@ -170,6 +171,11 @@ internal fun ConcertRoomSliders(concert: ConcertPrefs, modifier: Modifier = Modi
         ConcertSlider(appString(R.string.concert_openness), concert.openness, label = {
             when { it < 0.03f -> appString(R.string.concert_enclosed); it > 0.97f -> appString(R.string.concert_open_air); else -> percent.format(it) }
         }) { onChange(concert.copy(openness = it)) }
+        val bands = remember(concert) { ConcertAcoustics.room(concert).decayBands }
+        Text(appString(R.string.concert_decay) + "  " + listOf(0 to "125", 2 to "500", 4 to "2k", 6 to "8k").joinToString("  ·  ") { (b, hz) ->
+            (if (hz.endsWith("k")) appString(R.string.reverb_value_khz, hz.dropLast(1)) else appString(R.string.reverb_value_hz, hz)) + " " +
+                appString(R.string.reverb_value_seconds, "%.1f".format(bands[b]))
+        }, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp, bottom = 8.dp))
     }
 }
 
@@ -182,10 +188,44 @@ internal fun ConcertShowControls(concert: ConcertPrefs, modifier: Modifier = Mod
             label = { appString(R.string.concert_loudness_value, "%.0f".format(it)) }) { onChange(concert.copy(showDb = it)) }
         if (full) {
             ConcertSlider(appString(R.string.concert_crowd), concert.crowd, label = percent::format) { onChange(concert.copy(crowd = it)) }
+            ConcertSlider(appString(R.string.concert_audience), concert.occupancy, label = {
+                when { it < 0.03f -> appString(R.string.concert_audience_empty); it > 0.97f -> appString(R.string.concert_audience_packed); else -> percent.format(it) }
+            }) { onChange(concert.copy(occupancy = it)) }
+            ConcertSlider(appString(R.string.concert_stage_sound), concert.stageDb, -12f..12f,
+                label = { appString(R.string.concert_stage_sound_value, (if (it > 0.5f) "+" else "") + "%.0f".format(it)) }) { onChange(concert.copy(stageDb = it)) }
+            ChipLabel(appString(R.string.concert_subs))
+            SegmentedChoice(listOf(appString(R.string.concert_subs_auto), appString(R.string.concert_subs_split), appString(R.string.concert_subs_centre),
+                appString(R.string.concert_subs_cardioid)), concert.subLayout, Modifier.padding(vertical = 8.dp)) {
+                onChange(concert.copy(subLayout = it.coerceIn(ConcertSubs.AUTO, ConcertSubs.CARDIOID)))
+            }
             ChipLabel(appString(R.string.concert_earplugs))
             SegmentedChoice(listOf(appString(R.string.concert_earplugs_none), appString(R.string.concert_earplugs_musician), appString(R.string.concert_earplugs_foam)),
                 concert.earplugs, Modifier.padding(vertical = 8.dp)) { onChange(concert.copy(earplugs = it.coerceIn(ConcertEarplugs.NONE, ConcertEarplugs.FOAM))) }
+            ChipLabel(appString(R.string.concert_listen))
+            SegmentedChoice(listOf(appString(R.string.concert_listen_headphones), appString(R.string.concert_listen_speakers)),
+                if (concert.binaural) 0 else 1, Modifier.padding(vertical = 8.dp)) { onChange(concert.copy(binaural = it == 0)) }
         }
+    }
+}
+
+// the weather out there: humidity and temperature change how much treble the air takes over distance
+@Composable
+internal fun ConcertAirControls(concert: ConcertPrefs, modifier: Modifier = Modifier, onChange: (ConcertPrefs) -> Unit) {
+    val percent = remember { NumberFormat.getPercentInstance() }
+    Column(modifier) {
+        ConcertSlider(appString(R.string.concert_temperature), concert.temperatureC, -10f..40f,
+            label = { appString(R.string.concert_temperature_value, "%.0f".format(it)) }) { onChange(concert.copy(temperatureC = it)) }
+        ConcertSlider(appString(R.string.concert_humidity), concert.humidity, 5f..100f, label = { percent.format(it / 100f) }) { onChange(concert.copy(humidity = it)) }
+    }
+}
+
+// a measured room from the impulse library replaces the modelled reflections and tail
+@Composable
+internal fun ConcertMeasuredRoom(concert: ConcertPrefs, rooms: List<Pair<String, String>>, modifier: Modifier = Modifier, onChange: (ConcertPrefs) -> Unit) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        ChoiceChips(listOf(appString(R.string.concert_room_modelled)) + rooms.map { it.second },
+            rooms.indexOfFirst { it.first == concert.roomImpulse } + 1) { onChange(concert.copy(roomImpulse = rooms.getOrNull(it - 1)?.first)) }
+        if (rooms.isEmpty()) Text(appString(R.string.concert_room_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 

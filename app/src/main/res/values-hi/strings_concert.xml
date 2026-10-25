@@ -67,4 +67,25 @@
     <string name="concert_stage_centre">"बीच में मंच"</string>
     <string name="concert_section_show">"शो"</string>
     <string name="concert_section_scenes">"दृश्य"</string>
+    <string name="concert_audience">"दर्शक"</string>
+    <string name="concert_audience_empty">"खाली"</string>
+    <string name="concert_audience_packed">"खचाखच"</string>
+    <string name="concert_stage_sound">"मंच की आवाज़"</string>
+    <string name="concert_stage_sound_value">"%1$s dB"</string>
+    <string name="concert_subs">"सबवूफ़र"</string>
+    <string name="concert_subs_auto">"अपने आप"</string>
+    <string name="concert_subs_split">"बाएँ और दाएँ"</string>
+    <string name="concert_subs_centre">"बीच में"</string>
+    <string name="concert_subs_cardioid">"कार्डियोइड"</string>
+    <string name="concert_section_air">"हवा"</string>
+    <string name="concert_temperature">"तापमान"</string>
+    <string name="concert_temperature_value">"%1$s °C"</string>
+    <string name="concert_humidity">"नमी"</string>
+    <string name="concert_listen">"सुनने का तरीका"</string>
+    <string name="concert_listen_headphones">"हेडफ़ोन (3D)"</string>
+    <string name="concert_listen_speakers">"स्पीकर"</string>
+    <string name="concert_room">"कमरा"</string>
+    <string name="concert_room_modelled">"मॉडल किया गया"</string>
+    <string name="concert_room_hint">"मापा गया कमरा सुनने के लिए इम्पल्स लाइब्रेरी में इम्पल्स रिस्पॉन्स आयात करें।"</string>
+    <string name="concert_decay">"गूँज का समय"</string>
 </resources>

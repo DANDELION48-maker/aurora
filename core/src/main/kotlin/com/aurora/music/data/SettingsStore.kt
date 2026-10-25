@@ -1019,6 +1019,10 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
                 stageX = p[Keys.CONCERT_STAGE_X] ?: c.stageX, stageY = p[Keys.CONCERT_STAGE_Y] ?: c.stageY,
                 listenerX = p[Keys.CONCERT_LISTENER_X] ?: c.listenerX, listenerY = p[Keys.CONCERT_LISTENER_Y] ?: c.listenerY,
                 showDb = p[Keys.CONCERT_SHOW_DB] ?: c.showDb, crowd = p[Keys.CONCERT_CROWD] ?: c.crowd, earplugs = p[Keys.CONCERT_EARPLUGS] ?: c.earplugs,
+                binaural = p[Keys.CONCERT_BINAURAL] ?: c.binaural, occupancy = p[Keys.CONCERT_OCCUPANCY] ?: c.occupancy,
+                temperatureC = p[Keys.CONCERT_TEMPERATURE] ?: c.temperatureC, humidity = p[Keys.CONCERT_HUMIDITY] ?: c.humidity,
+                stageDb = p[Keys.CONCERT_STAGE_DB] ?: c.stageDb, subLayout = p[Keys.CONCERT_SUBS] ?: c.subLayout,
+                roomImpulse = p[Keys.CONCERT_ROOM_IMPULSE],
             ),
         ).clamped()
     }.distinctUntilChanged()
@@ -1375,6 +1379,10 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
         p[Keys.CONCERT_STAGE_X] = c.stageX; p[Keys.CONCERT_STAGE_Y] = c.stageY
         p[Keys.CONCERT_LISTENER_X] = c.listenerX; p[Keys.CONCERT_LISTENER_Y] = c.listenerY
         p[Keys.CONCERT_SHOW_DB] = c.showDb; p[Keys.CONCERT_CROWD] = c.crowd; p[Keys.CONCERT_EARPLUGS] = c.earplugs
+        p[Keys.CONCERT_BINAURAL] = c.binaural; p[Keys.CONCERT_OCCUPANCY] = c.occupancy
+        p[Keys.CONCERT_TEMPERATURE] = c.temperatureC; p[Keys.CONCERT_HUMIDITY] = c.humidity
+        p[Keys.CONCERT_STAGE_DB] = c.stageDb; p[Keys.CONCERT_SUBS] = c.subLayout
+        c.roomImpulse?.let { p[Keys.CONCERT_ROOM_IMPULSE] = it } ?: p.remove(Keys.CONCERT_ROOM_IMPULSE)
     }
     suspend fun setAlarm(enabled: Boolean, hour: Int, minute: Int) = dataStore.edit {
         it[Keys.ALARM_ENABLED] = enabled; it[Keys.ALARM_HOUR] = hour; it[Keys.ALARM_MINUTE] = minute

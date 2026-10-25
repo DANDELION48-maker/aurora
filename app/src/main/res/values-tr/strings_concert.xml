@@ -67,4 +67,25 @@
     <string name="concert_stage_centre">"Ortada sahne"</string>
     <string name="concert_section_show">"Gösteri"</string>
     <string name="concert_section_scenes">"Ortamlar"</string>
+    <string name="concert_audience">"Seyirci"</string>
+    <string name="concert_audience_empty">"Boş"</string>
+    <string name="concert_audience_packed">"Tıklım tıklım"</string>
+    <string name="concert_stage_sound">"Sahne sesi"</string>
+    <string name="concert_stage_sound_value">"%1$s dB"</string>
+    <string name="concert_subs">"Subwoofer"</string>
+    <string name="concert_subs_auto">"Otomatik"</string>
+    <string name="concert_subs_split">"Sol ve sağ"</string>
+    <string name="concert_subs_centre">"Orta"</string>
+    <string name="concert_subs_cardioid">"Kardioid"</string>
+    <string name="concert_section_air">"Hava"</string>
+    <string name="concert_temperature">"Sıcaklık"</string>
+    <string name="concert_temperature_value">"%1$s °C"</string>
+    <string name="concert_humidity">"Nem"</string>
+    <string name="concert_listen">"Dinleme"</string>
+    <string name="concert_listen_headphones">"Kulaklık (3B)"</string>
+    <string name="concert_listen_speakers">"Hoparlör"</string>
+    <string name="concert_room">"Salon"</string>
+    <string name="concert_room_modelled">"Modellenmiş"</string>
+    <string name="concert_room_hint">"Ölçülmüş bir salonu duymak için dürtü yanıtlarını kütüphaneye aktar."</string>
+    <string name="concert_decay">"Yankı süresi"</string>
 </resources>
