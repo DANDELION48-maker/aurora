@@ -454,7 +454,7 @@ class MixPlaybackDeviceTest {
             }
             await("automatic transition updates normal player") { vm.state.value.currentIndex == 1 }
             assertEquals("Second track", vm.state.value.current.title)
-            assertTrue(vm.state.value.positionSec < 5f)
+            assertTrue(vm.position.value < 5f)
             main { vm.togglePlay() }
             await("normal pause stops mix") { !app.container.mixController.state.value.playing }
             val paused = app.container.mixController.state.value.positionSec
@@ -466,7 +466,7 @@ class MixPlaybackDeviceTest {
             await("previous returns to second track") { vm.state.value.currentIndex == 1 }
             main { vm.seekTo(.5f) }
             await("source relative seek") {
-                abs(vm.state.value.positionSec - 6f) < .2f &&
+                abs(vm.position.value - 6f) < .2f &&
                     abs(app.container.mixController.state.value.positionSec - (project.clips[1].startSec + 6f)) < .1f
             }
             assertEquals(project.clips[1].startSec + 6f, app.container.mixController.state.value.positionSec, .1f)

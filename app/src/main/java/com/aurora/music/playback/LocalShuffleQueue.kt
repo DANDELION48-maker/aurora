@@ -1,16 +1,19 @@
 package com.aurora.music.playback
 
+import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ShuffleOrder
 
+// crossfade swaps decks, so always act on the live one
 @UnstableApi
-internal class LocalShuffleQueue(private val player: ExoPlayer) {
+internal class LocalShuffleQueue(private val live: () -> ExoPlayer) {
     var originalOrder: List<String>? = null
 
     private var pendingNeutralize = false
 
     fun setShuffle(target: Int, providedOrder: List<String>?) {
+        val player = live()
         val enable = when (target) {
             1 -> true
             0 -> false
@@ -26,26 +29,22 @@ internal class LocalShuffleQueue(private val player: ExoPlayer) {
             return
         }
         if (enable) {
-            if (player.mediaItemCount <= 1) {
-                player.shuffleModeEnabled = true
-                originalOrder = currentIds()
-                return
+            val items = items(player)
+            originalOrder = items.map { it.mediaId }
+            if (items.size > 1) {
+                val current = player.currentMediaItemIndex
+                arrange(player, emptyList(), items.filterIndexed { i, _ -> i != current }.shuffled())
             }
-            val ids = currentIds()
-            originalOrder = ids
-            val currentId = player.currentMediaItem?.mediaId
-            val rest = ids.filter { it != currentId }.shuffled()
-            val desired = (if (currentId != null) listOf(currentId) else emptyList()) + rest
-            applyOrder(desired)
             player.shuffleModeEnabled = true
             pendingNeutralize = true
             maybeNeutralize()
         } else {
             val original = originalOrder
             if (original != null) {
-                val present = currentIds()
-                val restored = original.filter { it in present } + present.filter { it !in original }
-                applyOrder(restored)
+                val items = items(player)
+                val order = restoredOrder(items.map { it.mediaId }, original)
+                val at = order.indexOf(player.currentMediaItemIndex)
+                if (at >= 0) arrange(player, order.subList(0, at).map(items::get), order.subList(at + 1, order.size).map(items::get))
             }
             player.shuffleModeEnabled = false
             originalOrder = null
@@ -54,26 +53,34 @@ internal class LocalShuffleQueue(private val player: ExoPlayer) {
 
     fun maybeNeutralize() {
         if (!pendingNeutralize) return
+        val player = live()
         val count = player.mediaItemCount
         if (count <= 0) return
         runCatching { player.setShuffleOrder(ShuffleOrder.UnshuffledShuffleOrder(count)) }
         pendingNeutralize = false
     }
 
-    private fun currentIds(): List<String> =
-        (0 until player.mediaItemCount).map { player.getMediaItemAt(it).mediaId }
+    private fun items(player: ExoPlayer): List<MediaItem> = List(player.mediaItemCount, player::getMediaItemAt)
 
-    private fun applyOrder(target: List<String>) {
-        for (i in target.indices) {
-            if (i >= player.mediaItemCount) break
-            val want = target[i]
-            var current = -1
-            var j = i
-            while (j < player.mediaItemCount) {
-                if (player.getMediaItemAt(j).mediaId == want) { current = j; break }
-                j++
+    // two timeline changes at most, every change republishes the whole queue
+    private fun arrange(player: ExoPlayer, before: List<MediaItem>, after: List<MediaItem>) {
+        val current = player.currentMediaItemIndex
+        if (current + 1 < player.mediaItemCount || after.isNotEmpty()) player.replaceMediaItems(current + 1, player.mediaItemCount, after)
+        if (current > 0 || before.isNotEmpty()) player.replaceMediaItems(0, current, before)
+    }
+
+    companion object {
+        fun restoredOrder(queue: List<String>, original: List<String>): List<Int> {
+            val unused = queue.indices.groupByTo(HashMap(), queue::get)
+            val placed = BooleanArray(queue.size)
+            val order = ArrayList<Int>(queue.size)
+            for (id in original) {
+                val index = unused[id]?.removeFirstOrNull() ?: continue
+                placed[index] = true
+                order += index
             }
-            if (current in (i + 1) until player.mediaItemCount) player.moveMediaItem(current, i)
+            queue.indices.filterTo(order) { !placed[it] }
+            return order
         }
     }
 }

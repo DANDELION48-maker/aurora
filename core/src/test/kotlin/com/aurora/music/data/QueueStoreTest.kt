@@ -9,6 +9,7 @@ import org.junit.Test
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.CyclicBarrier
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -54,6 +55,27 @@ class QueueStoreTest {
         fail.set(false)
         store.flushNow()
         assertEquals(queue("a"), QueueStore(root).get("alice"))
+    }
+
+    @Test fun saveDoesNotWaitForASlowWrite() {
+        val writing = CountDownLatch(1)
+        val release = CountDownLatch(1)
+        val store = QueueStore(root) { target, bytes ->
+            writing.countDown()
+            release.await()
+            persistBackupFileAtomically(target, bytes)
+        }
+        store.save("alice", queue("a"))
+        val flush = Thread { store.flushNow() }.apply { start() }
+        assertTrue(writing.await(5, TimeUnit.SECONDS))
+        val saved = CountDownLatch(1)
+        Thread { store.save("alice", queue("b")); saved.countDown() }.start()
+        val returned = saved.await(2, TimeUnit.SECONDS)
+        release.countDown()
+        flush.join()
+        assertTrue("save must not wait for the write in progress", returned)
+        store.flushNow()
+        assertEquals(queue("b"), QueueStore(root).get("alice"))
     }
 
     @Test fun queuesSavedBeforeShuffleOrderExistedLoadWithoutOne() {

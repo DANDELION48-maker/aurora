@@ -81,7 +81,8 @@ class PlaybackService : MediaLibraryService() {
     private val container by lazy { (application as AuroraApplication).container }
     private val libraryBrowser by lazy { PlaybackLibraryBrowser(this, container.repository) }
     private lateinit var player: ExoPlayer
-    private val shuffleQueue by lazy { LocalShuffleQueue(player) }
+    private val shuffleQueue = LocalShuffleQueue { player }
+    private var platformQueueShown = true
     private var fadePlayer: ExoPlayer? = null
     private var castPlayer: androidx.media3.cast.CastPlayer? = null
     private var networkPlayer: NetworkQueuePlayer? = null
@@ -446,6 +447,10 @@ class PlaybackService : MediaLibraryService() {
     }
 
     private fun serviceListener(owner: ExoPlayer) = object : Player.Listener {
+            // added before the session's listener, so this runs before media3 republishes the queue
+            override fun onTimelineChanged(timeline: androidx.media3.common.Timeline, reason: Int) {
+                if (owner === mediaSession?.player) gatePlatformQueue(timeline.windowCount)
+            }
             override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
                 if (owner === player && bitPerfect && playWhenReady && player.playerError != null) player.prepare()
             }
@@ -1331,7 +1336,7 @@ class PlaybackService : MediaLibraryService() {
         xfadeActive = true
         preparedKey = null
         incoming.volume = 0f
-        mediaSession?.player = incoming
+        attach(incoming)
         incoming.play()
         android.util.Log.i("AuroraCrossfade", "begin durationMs=$xfadeDurationMs curve=$activeCurve protected=$activeHeadroom")
     }
@@ -1421,23 +1426,45 @@ class PlaybackService : MediaLibraryService() {
         return if (db.isFinite()) Math.pow(10.0, db / 20.0).toFloat().coerceIn(0.1f, 1f) else 1f
     }
 
+    // must keep library commands or android auto browser connection is refused
+    private val sessionCommands = MediaSession.ConnectionResult.DEFAULT_SESSION_AND_LIBRARY_COMMANDS.buildUpon()
+        .add(SessionCommand(CMD_SHUFFLE, Bundle.EMPTY))
+        .add(SessionCommand(CMD_REPEAT, Bundle.EMPTY))
+        .add(SessionCommand(CMD_SLEEP_FADE, Bundle.EMPTY))
+        .add(SessionCommand(CMD_EXIT_MIX, Bundle.EMPTY))
+        .add(SessionCommand(CMD_QUEUE_APPEND, Bundle.EMPTY))
+        .build()
+
+    private fun platformPlayerCommands(): Player.Commands = MediaSession.ConnectionResult.DEFAULT_PLAYER_COMMANDS.buildUpon()
+        .apply { if (!platformQueueShown) remove(Player.COMMAND_GET_TIMELINE) }.build()
+
+    // shortcut: every system listener copies each platform queue change (6k items ran bluetooth oom), so big queues are hidden; window them if media3 allows
+    private fun gatePlatformQueue(count: Int) {
+        val session = mediaSession ?: return
+        val shown = count <= PLATFORM_QUEUE_MAX
+        if (shown == platformQueueShown) return
+        val notification = session.mediaNotificationControllerInfo ?: return
+        platformQueueShown = shown
+        session.setAvailableCommands(notification, sessionCommands, platformPlayerCommands())
+    }
+
+    private fun attach(next: Player, count: Int = next.mediaItemCount) {
+        gatePlatformQueue(count)
+        mediaSession?.player = next
+    }
+
     private inner class MediaCallback : MediaLibrarySession.Callback {
         override fun onConnect(
             session: MediaSession,
             controller: MediaSession.ControllerInfo,
         ): MediaSession.ConnectionResult {
             if (controller.packageName == "com.google.android.projection.gearhead") androidAutoControllers += controller
-            // must keep library commands or android auto browser connection is refused
-            val sessionCommands = MediaSession.ConnectionResult.DEFAULT_SESSION_AND_LIBRARY_COMMANDS.buildUpon()
-                .add(SessionCommand(CMD_SHUFFLE, Bundle.EMPTY))
-                .add(SessionCommand(CMD_REPEAT, Bundle.EMPTY))
-                .add(SessionCommand(CMD_SLEEP_FADE, Bundle.EMPTY))
-                .add(SessionCommand(CMD_EXIT_MIX, Bundle.EMPTY))
-                .add(SessionCommand(CMD_QUEUE_APPEND, Bundle.EMPTY))
-                .build()
-            return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
-                .setAvailableSessionCommands(sessionCommands)
-                .build()
+            val result = MediaSession.ConnectionResult.AcceptedResultBuilder(session).setAvailableSessionCommands(sessionCommands)
+            if (session.isMediaNotificationController(controller)) {
+                platformQueueShown = session.player.mediaItemCount <= PLATFORM_QUEUE_MAX
+                result.setAvailablePlayerCommands(platformPlayerCommands())
+            }
+            return result.build()
         }
 
         override fun onDisconnected(session: MediaSession, controller: MediaSession.ControllerInfo) {
@@ -1650,7 +1677,7 @@ class PlaybackService : MediaLibraryService() {
         if (peer == null) {
             if (old == null) return
             remotePlayer = null
-            mediaSession?.player = player
+            attach(player)
             val remote = old.session.status.value
             val position = old.session.positionMs()
             scope.launch {
@@ -1692,7 +1719,7 @@ class PlaybackService : MediaLibraryService() {
         }
         if (behaviour != ConnectSwitch.KEEP) player.pause()
         remotePlayer = remote
-        mediaSession?.player = remote
+        attach(remote)
         remote.addListener(object : Player.Listener {
             override fun onEvents(player: Player, events: Player.Events) {
                 if (remotePlayer !== remote) return
@@ -1741,7 +1768,7 @@ class PlaybackService : MediaLibraryService() {
         from.pause()
         if (target == null) {
             networkPlayer = null
-            mediaSession?.player = player
+            attach(player, items.size)
             shuffleQueue.originalOrder = shuffleOrder
             player.repeatMode = repeat
             if (items.isNotEmpty()) { player.setMediaItems(items, index.coerceAtMost(items.lastIndex), position); player.prepare() }
@@ -1775,7 +1802,7 @@ class PlaybackService : MediaLibraryService() {
             }
         }
         networkPlayer = remote
-        mediaSession?.player = remote
+        attach(remote, items.size)
         container.networkOutput.update { it.copy(receiverName = receiver.name, receiverKind = receiver.kind, error = null) }
         remote.addListener(object : Player.Listener {
             override fun onEvents(player: Player, events: Player.Events) {
@@ -1937,7 +1964,7 @@ class PlaybackService : MediaLibraryService() {
         mix.addListener(object : Player.Listener {
             override fun onEvents(player: Player, events: Player.Events) { publishNowPlaying(); updateSignalPath() }
         })
-        mediaSession?.player = mix
+        attach(mix)
         mediaSession?.setCustomLayout(emptyList())
         updateSignalPath()
         mix.play()
@@ -1946,7 +1973,7 @@ class PlaybackService : MediaLibraryService() {
     private fun stopMix() {
         val mix = mixPlayer ?: return
         mix.pause()
-        mediaSession?.player = player
+        attach(player)
         mix.release()
         mixPlayer = null
         updateCustomLayout()
@@ -2106,6 +2133,7 @@ class PlaybackService : MediaLibraryService() {
         const val ACTION_RECEIVER_STOP = "com.aurora.music.action.RECEIVER_STOP"
         private const val NETWORK_NOTIFICATION_ID = 0xA15
         private const val MAX_YOUTUBE_SKIPS = 5
+        private const val PLATFORM_QUEUE_MAX = 500
         const val CMD_EXIT_MIX = "com.aurora.music.EXIT_MIX"
         const val CMD_QUEUE_APPEND = "com.aurora.music.QUEUE_APPEND"
         const val QUEUE_TOKEN = "aurora_queue_token"

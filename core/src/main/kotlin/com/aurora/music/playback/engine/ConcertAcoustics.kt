@@ -47,6 +47,7 @@ class ConcertRoom(
     val compMakeupDb: Double,
     val distanceM: Double,
     val listenerHeightM: Double,
+    val roomGain: Double = 0.0,
 )
 
 // geometric acoustics for one seat: line-array mains with real coverage, front fills, delay towers, a sub array that interferes,
@@ -306,6 +307,7 @@ object ConcertAcoustics {
             compMakeupDb = rig.makeupDb.toDouble(),
             distanceM = hypot(horizontal, sz - pz),
             listenerHeightM = raised,
+            roomGain = sqrt(taps.sumOf { it.gain * it.gain } / 2 + lateEnergy) * norm,
         )
     }
 

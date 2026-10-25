@@ -59,7 +59,7 @@ class ReverbKernel(concertCapable: Boolean = false) {
     private var binaural = false
     private var inUse: MeasuredRoom? = null
     private var measuredGain = 0.0
-    private var directGain = 0.0
+    private var roomGain = 0.0
     private val roomIn = DoubleArray(MeasuredRoom.BLOCK * 2)
     private val roomOut = DoubleArray(MeasuredRoom.BLOCK * 2)
     private var roomPos = 0
@@ -166,7 +166,7 @@ class ReverbKernel(concertCapable: Boolean = false) {
         if (measuredNow !== inUse) {
             inUse = measuredNow; roomPos = 0; roomOut.fill(0.0); measuredNow?.convolver?.reset(); renderer?.taps = measuredNow == null
         }
-        measuredGain = directGain / (measuredNow?.peak ?: 1.0)
+        measuredGain = roomGain / kotlin.math.sqrt(measuredNow?.energy ?: 1.0)
         val samples = block.samples
         val k = smoothing
         val r = rate.toDouble()
@@ -318,7 +318,7 @@ class ReverbKernel(concertCapable: Boolean = false) {
         if (room != null) {
             renderer!!.setRoom(room, snap)
             binaural = room.binaural
-            directGain = room.directGain
+            roomGain = room.roomGain
             val b = room.decayBands
             bandTarget[0] = (b[0] + b[1]) / 2; bandTarget[1] = (b[2] + b[3] + b[4]) / 3; bandTarget[2] = (b[5] + b[6]) / 2
             // the tail is normalised for white noise, music-like spectra ring about 4.5 dB hotter

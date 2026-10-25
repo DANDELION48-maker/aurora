@@ -131,6 +131,53 @@ class QueueReplacementDeviceTest {
         }
     }
 
+    @Test fun hugeQueueStaysResponsiveAndShuffleKeepsWorkingAfterIt() = withQueue(songCount = 5_000) { vm, controller, base ->
+        // distinct uris so the reorder replaces media sources instead of updating them in place
+        val songs = base.mapIndexed { i, song -> song.copy(streamUrl = "${song.streamUrl}?n=$i") }
+        val ids = songs.map { it.id }
+        fixture.main { vm.playAll(songs); controller.pause() }
+        val stall = worstMainStallMs { fixture.main { controller.mediaItemCount } == songs.size }
+        awaitQueue(controller, ids)
+        val started = SystemClock.elapsedRealtime()
+        shuffle(controller, 1)
+        val took = SystemClock.elapsedRealtime() - started
+        android.util.Log.i("AuroraQueueTest", "5000 tracks: worst main stall ${stall}ms, shuffle ${took}ms")
+        assertTrue("main thread stalled ${stall}ms while the queue loaded", stall < 1_000)
+        assertTrue("shuffling 5000 tracks took ${took}ms", took < 3_000)
+        val shuffled = queueIds(controller)
+        assertEquals(ids.first(), shuffled.first())
+        assertEquals(ids.toSet(), shuffled.toSet())
+        assertTrue(shuffled != ids)
+        shuffle(controller, 0)
+        awaitQueue(controller, ids)
+
+        val small = songs.take(4).map { it.copy(id = "small-${it.id}") }
+        fixture.main { vm.playAll(small); controller.pause() }
+        awaitQueue(controller, small.map { it.id })
+        fixture.main { vm.toggleShuffle() }
+        fixture.await("small queue shuffles", controller) { fixture.main { controller.shuffleModeEnabled } }
+        fixture.main { vm.toggleShuffle() }
+        fixture.await("small queue unshuffles", controller) { fixture.main { !controller.shuffleModeEnabled } }
+        awaitQueue(controller, small.map { it.id })
+    }
+
+    private fun shuffle(controller: MediaController, target: Int) {
+        val command = SessionCommand(PlaybackService.CMD_SHUFFLE, Bundle().apply { putInt("target", target) })
+        assertEquals(0, fixture.main { controller.sendCustomCommand(command, Bundle.EMPTY) }.get(10, TimeUnit.SECONDS).resultCode)
+    }
+
+    private fun worstMainStallMs(done: () -> Boolean): Long {
+        var worst = 0L
+        val deadline = SystemClock.elapsedRealtime() + 20_000
+        while (!done() && SystemClock.elapsedRealtime() < deadline) {
+            val posted = SystemClock.elapsedRealtime()
+            fixture.main { }
+            worst = maxOf(worst, SystemClock.elapsedRealtime() - posted)
+            SystemClock.sleep(16)
+        }
+        return worst
+    }
+
     private fun withQueue(songCount: Int = 2_400, block: (PlayerViewModel, MediaController, List<Song>) -> Unit) {
         fixture.withProcessingFixture(0) { controller, _ ->
             val audio = fixture.wav("queue-replacement", 48_000, 48_000 * 3) { _, _ -> 0 }

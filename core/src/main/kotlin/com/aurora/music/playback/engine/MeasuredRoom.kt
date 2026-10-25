@@ -1,13 +1,15 @@
 package com.aurora.music.playback.engine
 
 import com.aurora.music.playback.ImpulseResponse
+import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.exp
 import kotlin.math.max
 import kotlin.math.min
 
 // a measured room response in place of the modelled reflections and tail; its direct sound is cut (the model supplies that)
 // and it starts one convolver block after the peak, so the block latency lands every reflection where it was measured
-class MeasuredRoom private constructor(val convolver: PrecisionConvolver, val peak: Double) {
+class MeasuredRoom private constructor(val convolver: PrecisionConvolver, val energy: Double) {
     companion object {
         const val BLOCK = 128
 
@@ -24,7 +26,18 @@ class MeasuredRoom private constructor(val convolver: PrecisionConvolver, val pe
                 require(n > fade) { "Impulse response has no room after its direct sound" }
                 return DoubleArray(n) { i -> ch[start + i] * min(1.0, i.toDouble() / fade) }
             }
-            return MeasuredRoom(PrecisionConvolver(trim(left), trim(right), BLOCK), peak)
+            val l = trim(left); val r = trim(right)
+            val energy = (musicEnergy(l, rate) + musicEnergy(r, rate)) / 2
+            require(energy > 0) { "Impulse response has no room after its direct sound" }
+            return MeasuredRoom(PrecisionConvolver(l, r, BLOCK), energy)
+        }
+
+        // what a warm, music-like signal draws from the room, in white-noise terms, so the room plays as loud as the modelled one
+        private fun musicEnergy(ch: DoubleArray, rate: Int): Double {
+            val k = 1 - exp(-2 * PI * 1000.0 / rate)
+            var y = 0.0; var sum = 0.0
+            for (x in ch) { y += k * (x - y); sum += y * y }
+            return sum * (2 - k) / k
         }
     }
 }

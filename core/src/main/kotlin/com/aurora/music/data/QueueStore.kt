@@ -70,6 +70,8 @@ class QueueStore(filesDir: File, private val persist: (File, ByteArray) -> Unit 
     private val file = File(filesDir, "queue_state.json")
     private val gson = Gson()
     private val lock = Any()
+    // serializing a big queue takes long, so writes queue here instead of blocking save() on the ui thread
+    private val writeLock = Any()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val map: MutableMap<String, SavedQueue> = load()
@@ -82,10 +84,8 @@ class QueueStore(filesDir: File, private val persist: (File, ByteArray) -> Unit 
         pendingFlush = scope.launch {
             delay(3000)
             // clear first so a save landing during the write schedules its own flush
-            synchronized(lock) {
-                pendingFlush = null
-                flushNow()
-            }
+            synchronized(lock) { pendingFlush = null }
+            flushNow()
         }
     }
 
@@ -111,23 +111,27 @@ class QueueStore(filesDir: File, private val persist: (File, ByteArray) -> Unit 
     /** Await an atomic account restore/removal without letting an older queued flush overwrite it. */
     suspend fun restoreAccount(accountKey: String, queue: SavedQueue?) = withContext(Dispatchers.IO) {
         require(accountKey.isNotBlank())
-        synchronized(lock) {
-            val restored = HashMap(map)
-            if (queue == null) restored.remove(accountKey) else restored[accountKey] = queue
-            persist(file, gson.toJson(restored).toByteArray(Charsets.UTF_8))
-            // Publish only after the durable replacement succeeds, preserving every other account.
-            map.clear(); map.putAll(restored); dirty = false
+        synchronized(writeLock) {
+            synchronized(lock) {
+                val restored = HashMap(map)
+                if (queue == null) restored.remove(accountKey) else restored[accountKey] = queue
+                persist(file, gson.toJson(restored).toByteArray(Charsets.UTF_8))
+                // Publish only after the durable replacement succeeds, preserving every other account.
+                map.clear(); map.putAll(restored); dirty = false
+            }
         }
     }
 
     fun flushNow() {
-        synchronized(lock) {
-            if (!dirty) return
-            // Serialize the write as well as the snapshot. A failed ordinary write stays dirty.
-            runCatching {
-                persist(file, gson.toJson(map).toByteArray(Charsets.UTF_8))
+        // Snapshots are taken in write order, so the last write always holds the newest state. A failed write stays dirty.
+        synchronized(writeLock) {
+            val snapshot = synchronized(lock) {
+                if (!dirty) return
                 dirty = false
-            }.onFailure { scheduleFlush() }
+                HashMap(map)
+            }
+            runCatching { persist(file, gson.toJson(snapshot).toByteArray(Charsets.UTF_8)) }
+                .onFailure { synchronized(lock) { dirty = true; scheduleFlush() } }
         }
     }
 }

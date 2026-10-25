@@ -114,7 +114,7 @@ class LocalLibraryProfileDeviceTest {
                             "duration" to 120000L, "year" to 2026, "track" to i + 1, "date_added" to 1L,
                             "_display_name" to "$i.flac", "mime_type" to "audio/flac",
                             "_data" to "/storage/emulated/0/Music/$i.flac", "bitrate" to 900000, "genre" to "Electronic")
-                        addRow(columns.map { row[it] }.toTypedArray())
+                        addRow(columns.map { row[it] }.toTypedArray<Any?>())
                     }
                 }
             }
