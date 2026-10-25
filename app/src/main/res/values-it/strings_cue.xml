@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"Aggiungi cartella di file CUE"</string>
+    <string name="cue_folder_summary">"Scegli una cartella con file .cue per dividere in brani gli album salvati come un unico file."</string>
+    <string name="cue_folder_failed">"Impossibile aggiungere questa cartella."</string>
+    <string name="cue_folder_remove_failed">"Impossibile rimuovere questa cartella."</string>
+</resources>

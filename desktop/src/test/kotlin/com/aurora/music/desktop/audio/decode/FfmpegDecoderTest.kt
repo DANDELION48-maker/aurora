@@ -1,5 +1,6 @@
 package com.aurora.music.desktop.audio.decode
 
+import com.aurora.music.data.CueClip
 import com.sun.management.ThreadMXBean
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
@@ -32,6 +33,30 @@ class FfmpegDecoderTest {
             assertEquals(reference.size, samples.size)
             assertEquals(10_001L, decoder.positionFrames)
             assertMatchesReference(reference, samples, 0)
+        }
+    }
+
+    @Test fun aCueRangePlaysOnlyItsPartOfTheAlbumFile() {
+        val rate = 8_000
+        val album = File(temp.root, "album.wav").apply { writeBytes(wavBytes(rate, 2, 32, rate * 3) { frame, _ -> frame }) }
+        fun frameOf(sample: Double) = Math.round(sample * 2147483648.0)
+        val url = CueClip(album.toPath().toUri().toString(), 1_000, 2_000).url
+        FfmpegDecoder.open(url).use { decoder ->
+            assertEquals(1_000L, decoder.info.durationMs)
+            assertEquals(0L, decoder.positionFrames)
+            val samples = decodeAll(decoder, 333)
+            assertEquals(rate * 2, samples.size)
+            assertEquals(8_000L, frameOf(samples.first()))
+            assertEquals(15_999L, frameOf(samples.last()))
+            assertEquals(8_000L, decoder.positionFrames)
+            decoder.seek(500)
+            val block = DoubleArray(2)
+            assertEquals(1, decoder.read(block))
+            assertEquals(12_000L, frameOf(block[0]))
+        }
+        FfmpegDecoder.open(CueClip(album.toPath().toUri().toString(), 2_500, null).url).use { decoder ->
+            assertEquals(500L, decoder.info.durationMs)
+            assertEquals(4_000 * 2, decodeAll(decoder).size)
         }
     }
 

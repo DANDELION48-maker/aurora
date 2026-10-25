@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"إضافة مجلد ملفات CUE"</string>
+    <string name="cue_folder_summary">"اختر مجلدًا يحتوي على ملفات ‎.cue لتقسيم الألبومات المحفوظة كملف واحد إلى مقاطعها."</string>
+    <string name="cue_folder_failed">"تعذّرت إضافة هذا المجلد."</string>
+    <string name="cue_folder_remove_failed">"تعذّرت إزالة هذا المجلد."</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"Ajouter un dossier de fichiers CUE"</string>
+    <string name="cue_folder_summary">"Choisissez un dossier contenant des fichiers .cue pour découper en pistes les albums enregistrés en un seul fichier."</string>
+    <string name="cue_folder_failed">"Impossible d’ajouter ce dossier."</string>
+    <string name="cue_folder_remove_failed">"Impossible de retirer ce dossier."</string>
+</resources>

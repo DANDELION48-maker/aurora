@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"Add Cue Sheet Folder"</string>
+    <string name="cue_folder_summary">"Choose a folder with .cue files to split albums saved as one file into their tracks."</string>
+    <string name="cue_folder_failed">"This folder could not be added."</string>
+    <string name="cue_folder_remove_failed">"This folder could not be removed."</string>
+</resources>

@@ -145,6 +145,39 @@ class FolderLibraryTest {
         assertEquals(listOf("First", "Second"), backend.detail("album", precision.id)!!.tracks.map { it.title })
     }
 
+    @Test fun aCueSheetSplitsItsAlbumFileIntoTracks() = runBlocking {
+        val album = write("Concertos/Romantic Piano Concerto.wav", wav(seconds = 30))
+        write("Concertos/Romantic Piano Concerto.cue", """
+            REM DATE 1991
+            PERFORMER "Piers Lane"
+            TITLE "Romantic Piano Concerto"
+            FILE "Romantic Piano Concerto.flac" WAVE
+              TRACK 01 AUDIO
+                TITLE "Moderato"
+                INDEX 01 00:00:00
+              TRACK 02 AUDIO
+                TITLE "Andante"
+                INDEX 01 00:12:00
+              TRACK 03 AUDIO
+                TITLE "Scherzo"
+                INDEX 01 00:21:37
+        """.trimIndent().toByteArray(Charsets.ISO_8859_1))
+        val library = library(music)
+        library.ensureLoaded()
+        assertTrue(library.songs.none { it.title == "Romantic Piano Concerto" })
+        val albumId = library.songs.first { it.title == "Andante" }.albumId
+        val tracks = library.songsByAlbumId(albumId)
+        assertEquals(listOf("Moderato", "Andante", "Scherzo"), tracks.map { it.title })
+        assertEquals(listOf(12, 9, 9), tracks.map { it.durationSec })
+        assertTrue(tracks.all { it.artist == "Piers Lane" && it.album == "Romantic Piano Concerto" && it.path == album.path })
+        assertEquals(desktopFileUri(album.path) + "#t=12.000,21.493", tracks[1].streamUrl)
+        assertEquals(1991, library.albums.single { it.id == albumId }.year)
+
+        val reopened = library(music)
+        reopened.ensureLoaded()
+        assertEquals(tracks.map { it.id }, reopened.songsByAlbumId(albumId).map { it.id })
+    }
+
     @Test fun indexIsReusedAndInvalidatedByFileChanges() = runBlocking {
         val ids = library(music).run { ensureLoaded(); songs.map { it.id }.toSet() }
         probes.set(0)

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"CUE فائلوں کا فولڈر شامل کریں"</string>
+    <string name="cue_folder_summary">"ایک فائل میں محفوظ البمز کو ٹریکس میں تقسیم کرنے کے لیے ‎.cue فائلوں والا فولڈر منتخب کریں۔"</string>
+    <string name="cue_folder_failed">"یہ فولڈر شامل نہیں ہو سکا۔"</string>
+    <string name="cue_folder_remove_failed">"یہ فولڈر ہٹایا نہیں جا سکا۔"</string>
+</resources>

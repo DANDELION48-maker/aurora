@@ -1,6 +1,7 @@
 package com.aurora.music.desktop.library
 
 import com.aurora.music.data.ArtistSeparators
+import com.aurora.music.data.CueSheets
 import com.aurora.music.data.LocalArtistIndex
 import com.aurora.music.data.LocalCatalog
 import com.aurora.music.data.LocalCatalogIndex
@@ -60,6 +61,7 @@ class FolderLibrary(
 
     @Volatile private var loaded = false
     @Volatile private var tracks: List<IndexedTrack> = emptyList()
+    @Volatile private var cues: List<IndexedCue> = emptyList()
     @Volatile override var songs: List<Song> = emptyList(); private set
     @Volatile override var albums: List<Album> = emptyList(); private set
     @Volatile override var artists: List<Artist> = emptyList(); private set
@@ -87,13 +89,13 @@ class FolderLibrary(
             if (!loaded) {
                 val cached = withContext(Dispatchers.IO) { index.read() }
                 if (cached != null && cached.folders == configured()) {
-                    withContext(Dispatchers.IO) { publish(cached.tracks, current) }
+                    withContext(Dispatchers.IO) { publish(cached.tracks, cached.cues, current) }
                     loaded = true
                     scope.launch {
                         runCatching { refresh() }.onFailure { if (it !is CancellationException) AppLog.e(TAG, "Library refresh failed", it) }
                     }
                 } else {
-                    scan(cached?.tracks.orEmpty(), current)
+                    scan(cached?.tracks.orEmpty(), cached?.cues.orEmpty(), current)
                     loaded = true
                 }
             } else if (current != appliedSeparators) withContext(Dispatchers.Default) { indexArtists(current) }
@@ -101,8 +103,8 @@ class FolderLibrary(
     }
 
     suspend fun refresh() = mutex.withLock {
-        val previous = if (loaded) tracks else withContext(Dispatchers.IO) { index.read()?.tracks.orEmpty() }
-        scan(previous, separatorsProvider())
+        val cached = if (loaded) null else withContext(Dispatchers.IO) { index.read() }
+        scan(if (loaded) tracks else cached?.tracks.orEmpty(), if (loaded) cues else cached?.cues.orEmpty(), separatorsProvider())
         loaded = true
     }
 
@@ -131,13 +133,17 @@ class FolderLibrary(
     private suspend fun configured(): List<String> =
         folders().map { File(it).absoluteFile.normalize().path }.distinctBy { it.lowercase(Locale.ROOT) }
 
-    private suspend fun scan(previous: List<IndexedTrack>, separators: ArtistSeparators) {
+    private suspend fun scan(previous: List<IndexedTrack>, previousCues: List<IndexedCue>, separators: ArtistSeparators) {
         val roots = configured()
         val known = previous.associateBy { key(it.path) }
         _scan.value = LibraryScan(running = true)
         try {
             val (available, missing) = roots.partition { File(it).isDirectory }
-            val files = withContext(Dispatchers.IO) { available.flatMap(::audioFiles).distinctBy { key(it.first.path) } }
+            val sheets = ArrayList<File>()
+            val files = withContext(Dispatchers.IO) { available.flatMap { audioFiles(it, sheets) }.distinctBy { key(it.first.path) } }
+            val foundCues = withContext(Dispatchers.IO) {
+                sheets.distinctBy { key(it.path) }.mapNotNull { file -> runCatching { IndexedCue(file.path, CueSheets.decode(file.readBytes())) }.getOrNull() }
+            }
             _scan.value = LibraryScan(true, 0, files.size)
             val found = coroutineScope {
                 files.map { (file, attributes) ->
@@ -148,12 +154,13 @@ class FolderLibrary(
             }.filterNotNull()
             // keep tracks from unplugged drives until the drive returns
             val next = found + previous.filter { track -> missing.any { isUnder(track.path, it) } }
-            val changed = next.toSet() != tracks.toSet()
+            val nextCues = foundCues + previousCues.filter { cue -> missing.any { isUnder(cue.path, it) } }
+            val changed = next.toSet() != tracks.toSet() || nextCues.toSet() != cues.toSet()
             withContext(Dispatchers.IO) {
-                index.write(roots, next)
+                index.write(roots, next, nextCues)
                 val used = next.mapTo(HashSet()) { it.cover }
                 covers.listFiles()?.filter { it.isFile && it.name !in used }?.forEach(File::delete)
-                publish(next, separators)
+                publish(next, nextCues, separators)
             }
             if (changed) _revision.value++
         } finally {
@@ -161,14 +168,14 @@ class FolderLibrary(
         }
     }
 
-    private fun audioFiles(root: String): List<Pair<File, BasicFileAttributes>> {
+    private fun audioFiles(root: String, sheets: MutableList<File>): List<Pair<File, BasicFileAttributes>> {
         val out = ArrayList<Pair<File, BasicFileAttributes>>()
         Files.walkFileTree(Path.of(root), object : SimpleFileVisitor<Path>() {
             override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
                 val name = file.fileName.toString()
                 if (attrs.isRegularFile && !name.startsWith("._") && name.substringAfterLast('.', "").lowercase(Locale.ROOT) in EXTENSIONS) {
                     out += file.toFile() to attrs
-                }
+                } else if (attrs.isRegularFile && CueSheets.isCue(name) && attrs.size() in 1..MAX_CUE_BYTES) sheets += file.toFile()
                 return FileVisitResult.CONTINUE
             }
 
@@ -245,12 +252,21 @@ class FolderLibrary(
         return name.takeIf { target.isFile }
     }
 
-    private fun publish(entries: List<IndexedTrack>, separators: ArtistSeparators) {
+    private fun publish(entries: List<IndexedTrack>, sheets: List<IndexedCue>, separators: ArtistSeparators) {
         val folderArt = HashMap<String, String>()
-        val built = entries.map { it to song(it, folderArt) }.sortedBy { it.second.title.lowercase() }
+        val whole = entries.map { it to song(it, folderArt) }
+        val parts = CueSheets.split(whole.map { it.second }, sheets.groupBy({ CueSheets.dirKey(File(it.path).parent.orEmpty()) }) { CueSheets.parse(it.text) })
+        val split = parts.mapTo(HashSet()) { it.whole.id }
+        val trackOf = whole.filter { it.second.id in split }.associate { it.second.id to it.first }
+        val built = (whole.filter { it.second.id !in split } + parts.map { part ->
+            val track = trackOf.getValue(part.whole.id)
+            track.copy(year = part.year.takeIf { it > 0 } ?: track.year) to part.song.copy(accentArgb = accentArgbFor(part.song.id))
+        }).sortedBy { it.second.title.lowercase() }
+        val cueOrder = parts.associate { it.song.id to it.position }
         tracks = entries
+        cues = sheets
         rawSongs = built.map { it.second }
-        positions = built.associate { (track, song) -> song.id to track.disc * 10_000 + track.track }
+        positions = built.associate { (track, song) -> song.id to (cueOrder[song.id] ?: (track.disc * 10_000 + track.track)) }
         dirOf = built.associate { (_, song) -> song.id to dirKey(File(song.path).parent.orEmpty()) }
         folderRoot = LocalCatalogIndex.commonDir(dirOf.values)
         matchIndex = LocalCatalogIndex.matchIndex(rawSongs)
@@ -333,6 +349,7 @@ class FolderLibrary(
     private companion object {
         const val TAG = "FolderLibrary"
         const val CLOSE_TIMEOUT_NS = 3_000_000_000L
+        const val MAX_CUE_BYTES = 1L shl 20
         // virtual root so folders on different drives still share a parent
         const val ROOT = "Computer"
         const val UNKNOWN_ARTIST = "Unknown artist"

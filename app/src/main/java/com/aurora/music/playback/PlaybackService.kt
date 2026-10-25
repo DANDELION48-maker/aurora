@@ -337,7 +337,7 @@ class PlaybackService : MediaLibraryService() {
                     ?: throw YoutubeStreamException("This YouTube stream is unavailable. Please try again.")
                 dataSpec.withUri(android.net.Uri.parse(real))
             } else if (uri.scheme == "aurora-extension") dataSpec.withUri(container.extensions.resolve(uri))
-            else dataSpec
+            else cueSource(uri).let { if (it == uri) dataSpec else dataSpec.withUri(it) }
         }
         val resolvedDataSourceFactory = androidx.media3.datasource.ResolvingDataSource.Factory(
             androidx.media3.datasource.DefaultDataSource.Factory(this), ytResolver,
@@ -346,7 +346,7 @@ class PlaybackService : MediaLibraryService() {
         networkDataSource = dataSourceFactory
         val mediaSourceFactory = YoutubeMediaSourceFactory(
             androidx.media3.exoplayer.source.DefaultMediaSourceFactory(dataSourceFactory, DsdExtractorsFactory(rawOutput = dsdWire != null)), resolver,
-            preferred = { PreferredPlayback.resolve(this, container.repository, it) }, prepare = container.audioCache::prepare,
+            preferred = { PreferredPlayback.resolve(this, container.repository, it) }, prepare = { container.audioCache.prepare(cueClipped(it)) },
             soundcloud = container::resolveSoundCloud)
 
         musicSourceFactory = mediaSourceFactory

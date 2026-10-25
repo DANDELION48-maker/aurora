@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"Cue शीट फ़ोल्डर जोड़ें"</string>
+    <string name="cue_folder_summary">"एक फ़ाइल में सहेजे गए एल्बम को ट्रैक में बाँटने के लिए .cue फ़ाइलों वाला फ़ोल्डर चुनें।"</string>
+    <string name="cue_folder_failed">"यह फ़ोल्डर जोड़ा नहीं जा सका।"</string>
+    <string name="cue_folder_remove_failed">"यह फ़ोल्डर हटाया नहीं जा सका।"</string>
+</resources>

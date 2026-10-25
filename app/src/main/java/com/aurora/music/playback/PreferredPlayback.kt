@@ -37,7 +37,7 @@ object PreferredPlayback {
             val source = DefaultDataSource.Factory(context, DefaultHttpDataSource.Factory()
                 .setConnectTimeoutMs(2_000).setReadTimeoutMs(2_000)).createDataSource()
             val available = try {
-                source.open(DataSpec.Builder().setUri(Uri.parse(candidate.streamUrl)).setLength(1).build())
+                source.open(DataSpec.Builder().setUri(cueSource(Uri.parse(candidate.streamUrl))).setLength(1).build())
                 source.read(ByteArray(1), 0, 1) == 1
             } catch (_: Exception) { false }
             finally { runCatching { source.close() } }

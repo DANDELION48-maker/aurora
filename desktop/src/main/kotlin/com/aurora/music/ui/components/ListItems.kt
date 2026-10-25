@@ -186,7 +186,7 @@ fun SongRow(
             onClick = { close(); onGoToArtist() },
             leadingIcon = { Icon(Icons.Filled.Person, null) },
         )
-        if (onEditTags != null && (song.streamUrl.startsWith("file:") || serverTagEditing)) DropdownMenuItem(
+        if (onEditTags != null && (song.streamUrl.startsWith("file:") && com.aurora.music.data.CueClip.of(song.streamUrl) == null || serverTagEditing)) DropdownMenuItem(
             text = { Text(appString(R.string.text_edit_tags_d8a5fc)) },
             onClick = { close(); onEditTags() },
             leadingIcon = { Icon(Icons.Filled.Edit, null) },

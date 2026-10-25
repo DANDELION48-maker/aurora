@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"Adicionar pasta de ficheiros CUE"</string>
+    <string name="cue_folder_summary">"Escolha uma pasta com ficheiros .cue para dividir em faixas os álbuns guardados num só ficheiro."</string>
+    <string name="cue_folder_failed">"Não foi possível adicionar esta pasta."</string>
+    <string name="cue_folder_remove_failed">"Não foi possível remover esta pasta."</string>
+</resources>

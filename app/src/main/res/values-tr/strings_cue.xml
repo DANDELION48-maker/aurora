@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"Cue sayfası klasörü ekle"</string>
+    <string name="cue_folder_summary">"Tek dosya olarak kaydedilmiş albümleri parçalarına ayırmak için .cue dosyaları içeren bir klasör seçin."</string>
+    <string name="cue_folder_failed">"Bu klasör eklenemedi."</string>
+    <string name="cue_folder_remove_failed">"Bu klasör kaldırılamadı."</string>
+</resources>

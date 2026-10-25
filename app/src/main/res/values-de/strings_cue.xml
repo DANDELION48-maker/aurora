@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"Cue-Sheet-Ordner hinzufügen"</string>
+    <string name="cue_folder_summary">"Wähle einen Ordner mit .cue-Dateien, um Alben aus einer einzigen Datei in ihre Titel aufzuteilen."</string>
+    <string name="cue_folder_failed">"Dieser Ordner konnte nicht hinzugefügt werden."</string>
+    <string name="cue_folder_remove_failed">"Dieser Ordner konnte nicht entfernt werden."</string>
+</resources>

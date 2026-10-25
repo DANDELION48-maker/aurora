@@ -49,6 +49,7 @@ import org.bytedeco.ffmpeg.swresample.SwrContext
 import org.bytedeco.javacpp.DoublePointer
 import org.bytedeco.javacpp.Pointer
 import org.bytedeco.javacpp.PointerPointer
+import com.aurora.music.data.CueClip
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.min
@@ -57,15 +58,20 @@ class FfmpegDecoder private constructor(
     private val input: FfmpegInput,
     private val codec: AVCodecContext,
     private val interrupt: AtomicBoolean,
+    clip: CueClip? = null,
 ) : AutoCloseable {
-    val info: StreamInfo get() = input.info
+    private val rate = input.info.sampleRate
+    // a cue track is a range of the album file; positions and duration are reported relative to it
+    private val clipStart = (clip?.startMs ?: 0L) * rate / 1000
+    private val clipEnd = clip?.endMs?.let { it * rate / 1000 } ?: -1L
+    val info: StreamInfo = if (clip == null) input.info else input.info.copy(
+        durationMs = ((clip.endMs ?: input.info.durationMs.takeIf { it > 0 } ?: clip.startMs) - clip.startMs).coerceAtLeast(0))
     val tags: AudioTags get() = input.tags
     val decoderName: String = codec.codec().name().string
-    var positionFrames = 0L
-        private set
+    private var cursor = 0L
+    val positionFrames: Long get() = cursor - clipStart
     val positionMs: Long get() = positionFrames * 1000 / rate
 
-    private val rate = input.info.sampleRate
     private val again = AVERROR_EAGAIN()
     private val timeBaseNum: Long
     private val timeBaseDen: Long
@@ -105,13 +111,15 @@ class FfmpegDecoder private constructor(
         check(!closed) { "Decoder is closed" }
         require(maxFrames in 0..target.size / 2)
         if (interrupt.get()) throw DecoderInterruptedException()
+        val left = if (clipEnd >= 0) clipEnd - cursor else Long.MAX_VALUE
+        if (left <= 0) return -1
         while (pendingFrames == 0) if (!decode()) return -1
-        val frames = min(maxFrames, pendingFrames)
-        System.arraycopy(pending, pendingOffset * 2, target, 0, frames * 2)
-        pendingOffset += frames
-        pendingFrames -= frames
-        positionFrames += frames
-        return frames
+        val count = min(min(maxFrames, pendingFrames).toLong(), left).toInt()
+        System.arraycopy(pending, pendingOffset * 2, target, 0, count * 2)
+        pendingOffset += count
+        pendingFrames -= count
+        cursor += count
+        return count
     }
 
     fun seek(positionMs: Long) = seekToFrame(positionMs.coerceAtLeast(0) * rate / 1000)
@@ -119,7 +127,7 @@ class FfmpegDecoder private constructor(
     fun seekToFrame(frame: Long) {
         check(!closed) { "Decoder is closed" }
         if (interrupt.get()) throw DecoderInterruptedException()
-        val target = frame.coerceAtLeast(0)
+        val target = frame.coerceAtLeast(0) + clipStart
         var from = (target - preroll).coerceAtLeast(0)
         val timestamp = startPts + Math.floorDiv(from * timeBaseDen, rate * timeBaseNum)
         var result = input.io { av_seek_frame(input.format, input.streamIndex, timestamp, AVSEEK_FLAG_BACKWARD) }
@@ -135,7 +143,7 @@ class FfmpegDecoder private constructor(
         pendingFrames = 0
         nextFrame = from
         seekTarget = target
-        positionFrames = target
+        cursor = target
         ended = false
     }
 
@@ -219,7 +227,7 @@ class FfmpegDecoder private constructor(
         if (seekTarget >= 0) {
             skip = (seekTarget - start).coerceIn(0, frames.toLong()).toInt()
             if (skip == frames) return false
-            positionFrames = start + skip
+            cursor = start + skip
             seekTarget = -1
         }
         output.get(pending, 0, frames * 2)
@@ -277,7 +285,8 @@ class FfmpegDecoder private constructor(
     companion object {
         fun open(source: String, http: HttpOptions = HttpOptions(), interrupt: AtomicBoolean = AtomicBoolean()): FfmpegDecoder {
             FfmpegRuntime.init()
-            val input = FfmpegInput(source, http, interrupt)
+            val clip = CueClip.of(source)
+            val input = FfmpegInput(clip?.source ?: source, http, interrupt)
             try {
                 val decoder = avcodec_find_decoder(input.parameters.codec_id())
                     ?: throw DecoderException("No decoder for ${input.info.codec} in ${input.description}")
@@ -286,7 +295,14 @@ class FfmpegDecoder private constructor(
                     input.ok(avcodec_parameters_to_context(codec, input.parameters)) { "Could not configure the ${input.info.codec} decoder" }
                     codec.pkt_timebase(input.stream.time_base())
                     input.ok(avcodec_open2(codec, decoder, null as AVDictionary?)) { "Could not open the ${input.info.codec} decoder" }
-                    return FfmpegDecoder(input, codec, interrupt)
+                    val opened = FfmpegDecoder(input, codec, interrupt, clip)
+                    try {
+                        if (opened.clipStart > 0) opened.seekToFrame(0)
+                    } catch (e: Throwable) {
+                        opened.close()
+                        throw e
+                    }
+                    return opened
                 } catch (e: Throwable) {
                     avcodec_free_context(codec)
                     throw e

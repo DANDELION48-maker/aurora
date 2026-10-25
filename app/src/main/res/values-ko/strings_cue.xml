@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"CUE 시트 폴더 추가"</string>
+    <string name="cue_folder_summary">".cue 파일이 있는 폴더를 선택하면 하나의 파일로 저장된 앨범이 트랙별로 나뉩니다."</string>
+    <string name="cue_folder_failed">"이 폴더를 추가할 수 없습니다."</string>
+    <string name="cue_folder_remove_failed">"이 폴더를 삭제할 수 없습니다."</string>
+</resources>

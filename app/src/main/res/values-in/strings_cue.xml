@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"Tambah Folder Cue Sheet"</string>
+    <string name="cue_folder_summary">"Pilih folder berisi file .cue untuk membagi album yang disimpan sebagai satu file menjadi lagu-lagunya."</string>
+    <string name="cue_folder_failed">"Folder ini tidak dapat ditambahkan."</string>
+    <string name="cue_folder_remove_failed">"Folder ini tidak dapat dihapus."</string>
+</resources>

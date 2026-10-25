@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"Добавить папку с CUE-файлами"</string>
+    <string name="cue_folder_summary">"Выберите папку с файлами .cue, чтобы альбомы, сохранённые одним файлом, разделились на треки."</string>
+    <string name="cue_folder_failed">"Не удалось добавить эту папку."</string>
+    <string name="cue_folder_remove_failed">"Не удалось удалить эту папку."</string>
+</resources>

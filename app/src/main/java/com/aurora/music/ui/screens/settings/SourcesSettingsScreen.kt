@@ -43,6 +43,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.TextButton
 import com.aurora.music.data.SacdLibrary
 import com.aurora.music.data.SacdLibraryEntry
+import com.aurora.music.data.CueLibrary
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -95,6 +98,31 @@ fun SourcesSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onA
                 importStatus = failure.message ?: appString(R.string.text_image_could_not_be_imported_d64587)
             } finally { importBusy = false }
         }
+    }
+
+    val cue = remember { CueLibrary(ctx) }
+    var cueFolders by remember { mutableStateOf(cue.folders()) }
+    var cueBusy by remember { mutableStateOf(false) }
+    var cueStatus by remember { mutableStateOf<String?>(null) }
+    fun changeCueFolders(change: () -> Unit, failed: Int) {
+        scope.launch {
+            cueBusy = true
+            try {
+                withContext(Dispatchers.IO) { change() }
+                container.localLibrary.refresh()
+                cueFolders = cue.folders()
+                cueStatus = null
+            } catch (failure: Exception) {
+                if (failure is kotlinx.coroutines.CancellationException) throw failure
+                cueStatus = appString(failed)
+            } finally { cueBusy = false }
+        }
+    }
+    val pickCueFolder = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+        if (uri != null) changeCueFolders({
+            ctx.contentResolver.takePersistableUriPermission(uri, android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            cue.add(uri)
+        }, R.string.cue_folder_failed)
     }
 
     var rescanBusy by remember { mutableStateOf(false) }
@@ -160,6 +188,12 @@ fun SourcesSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onA
                     }
                     importStatus?.let { Text(it, style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)) }
+                    TextButton(onClick = { pickCueFolder.launch(null) }, enabled = !cueBusy, modifier = Modifier.padding(horizontal = 12.dp)) {
+                        Text(appString(R.string.cue_add_folder))
+                    }
+                    Text(cueStatus ?: appString(R.string.cue_folder_summary), style = MaterialTheme.typography.bodySmall,
+                        color = if (cueStatus != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 16.dp))
                 }
             }
             items(images, key = { it.uri }) { image ->
@@ -176,6 +210,14 @@ fun SourcesSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit, onA
                             importStatus = appString(R.string.text_image_could_not_be_removed_f91668)
                         } finally { importBusy = false }
                     } }) { Text(appString(R.string.text_remove_e96390)) }
+                }
+            }
+            items(cueFolders, key = { "cue:${it.uri}" }) { folder ->
+                Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(folder.name, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                    TextButton(enabled = !cueBusy, onClick = { changeCueFolders({ cue.remove(folder.uri) }, R.string.cue_folder_remove_failed) }) {
+                        Text(appString(R.string.text_remove_e96390))
+                    }
                 }
             }
 

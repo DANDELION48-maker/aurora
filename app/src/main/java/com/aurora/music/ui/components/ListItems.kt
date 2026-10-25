@@ -239,7 +239,7 @@ fun SongRow(
                     leadingIcon = { Icon(Icons.Filled.Person, null) },
                 )
                 // tag edit only on content:// files or backends with metadata write
-                if (onEditTags != null && (song.streamUrl.startsWith("content://") || serverTagEditing)) DropdownMenuItem(
+                if (onEditTags != null && (song.streamUrl.startsWith("content://") && com.aurora.music.data.CueClip.of(song.streamUrl) == null || serverTagEditing)) DropdownMenuItem(
                     text = { Text(appString(R.string.text_edit_tags_d8a5fc)) },
                     onClick = { menuOpen = false; onEditTags() },
                     leadingIcon = { Icon(Icons.Filled.Edit, null) },

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"Map met cue-sheets toevoegen"</string>
+    <string name="cue_folder_summary">"Kies een map met .cue-bestanden om albums die als één bestand zijn opgeslagen in nummers te splitsen."</string>
+    <string name="cue_folder_failed">"Deze map kan niet worden toegevoegd."</string>
+    <string name="cue_folder_remove_failed">"Deze map kan niet worden verwijderd."</string>
+</resources>

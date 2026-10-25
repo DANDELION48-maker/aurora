@@ -336,6 +336,21 @@ class LocalLibrary(
             albumDateAdded[albumId] = maxOf(albumDateAdded[albumId] ?: 0, song.dateAddedSec)
             (tags.releaseYear ?: tags.recordingYear)?.takeIf { it > 0 }?.let { albumYear[albumId] = it }
         }
+        val albumFiles = out.filter { it.durationSec >= CUE_MIN_SEC }.mapNotNull { dirs[it.id] }
+        val parts = if (albumFiles.isEmpty()) emptyList() else CueSheets.split(out, CueLibrary(context).sheets(albumFiles))
+        if (parts.isNotEmpty()) {
+            val wholes = parts.mapTo(HashSet()) { it.whole.id }
+            out.removeAll { it.id in wholes }
+            for (part in parts) {
+                val song = part.song.copy(accentArgb = accentArgbFor(part.song.id))
+                out += song
+                order[song.id] = part.position
+                dirs[part.whole.id]?.let { dirs[song.id] = it }
+                albumDateAdded[song.albumId] = maxOf(albumDateAdded[song.albumId] ?: 0L, song.dateAddedSec)
+                (part.year.takeIf { it > 0 } ?: albumYear[part.whole.albumId])?.let { albumYear[song.albumId] = it }
+            }
+            wholes.forEach(dirs::remove)
+        }
         out += SacdLibrary(context).songs()
         indexedSignature = signature
         positions = order
@@ -416,6 +431,8 @@ class LocalLibrary(
         const val SCAN_TIMEOUT_MS = 60_000L
         const val FULL_SCAN_TIMEOUT_MS = 300_000L
         const val MAX_LEGACY_SCAN_FILES = 20_000
+        // a whole album in one file; shorter files are not worth a folder lookup
+        const val CUE_MIN_SEC = 600
         val DSD_SELECTION = "${MediaStore.MediaColumns.DISPLAY_NAME} LIKE ? OR ${MediaStore.MediaColumns.DISPLAY_NAME} LIKE ?"
         val DSD_ARGS = arrayOf("%.dsf", "%.dff")
     }

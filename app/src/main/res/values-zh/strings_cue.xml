@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"添加 CUE 文件夹"</string>
+    <string name="cue_folder_summary">"选择包含 .cue 文件的文件夹，即可将保存为单个文件的专辑拆分为曲目。"</string>
+    <string name="cue_folder_failed">"无法添加此文件夹。"</string>
+    <string name="cue_folder_remove_failed">"无法移除此文件夹。"</string>
+</resources>

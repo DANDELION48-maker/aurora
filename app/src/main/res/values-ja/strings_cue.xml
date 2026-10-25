@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cue_add_folder">"CUE シートのフォルダを追加"</string>
+    <string name="cue_folder_summary">".cue ファイルのあるフォルダを選ぶと、1 つのファイルに保存されたアルバムがトラックごとに分かれます。"</string>
+    <string name="cue_folder_failed">"このフォルダを追加できませんでした。"</string>
+    <string name="cue_folder_remove_failed">"このフォルダを削除できませんでした。"</string>
+</resources>

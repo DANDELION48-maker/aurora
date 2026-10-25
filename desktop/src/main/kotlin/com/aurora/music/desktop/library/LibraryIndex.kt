@@ -28,10 +28,13 @@ internal data class IndexedTrack(
     val cover: String = "",
 )
 
+internal data class IndexedCue(val path: String = "", val text: String = "")
+
 internal data class IndexSnapshot(
     val version: Int = 0,
     val folders: List<String> = emptyList(),
     val tracks: List<IndexedTrack> = emptyList(),
+    val cues: List<IndexedCue> = emptyList(),
 )
 
 internal class LibraryIndex(private val file: File) {
@@ -40,9 +43,9 @@ internal class LibraryIndex(private val file: File) {
     fun read(): IndexSnapshot? = runCatching { gson.fromJson(file.readText(), IndexSnapshot::class.java) }.getOrNull()
         ?.takeIf { it.version == VERSION }
 
-    fun write(folders: List<String>, tracks: List<IndexedTrack>) {
+    fun write(folders: List<String>, tracks: List<IndexedTrack>, cues: List<IndexedCue>) {
         file.parentFile?.mkdirs()
-        persistBackupFileAtomically(file, gson.toJson(IndexSnapshot(VERSION, folders, tracks)).toByteArray())
+        persistBackupFileAtomically(file, gson.toJson(IndexSnapshot(VERSION, folders, tracks, cues)).toByteArray())
     }
 
     companion object {
