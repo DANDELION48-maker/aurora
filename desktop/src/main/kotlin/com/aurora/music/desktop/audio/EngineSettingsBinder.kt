@@ -45,7 +45,7 @@ fun PlaybackEngine.bindSettings(store: SettingsStore, scope: CoroutineScope): Jo
         store.reverbPrefs.collect { setReverb(it) }
     }
     launch {
-        store.processingRackAssets.collectLatest { entries ->
+        store.engineImpulseAssets.collectLatest { entries ->
             val loaded = withContext(Dispatchers.IO) {
                 entries.mapNotNull { entry ->
                     ImpulseLibraryFiles.validateAsset(entry, entry.prepared != null).getOrNull()

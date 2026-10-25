@@ -394,9 +394,9 @@ class PlaybackService : MediaLibraryService() {
         playbackReporting.observe(player)
 
         setupCast()
-        connectHost = com.aurora.music.playback.network.AndroidConnectHost(this, player, ::rendererRoute,
+        connectHost = com.aurora.music.playback.network.AndroidConnectHost(this, { player }, ::rendererRoute,
             { player.shuffleModeEnabled }, { on -> shuffleQueue.setShuffle(if (on) 1 else 0, null) })
-        networkBridge = NetworkPlaybackBridge(this, player, container.networkOutput,
+        networkBridge = NetworkPlaybackBridge(this, { player }, container.networkOutput,
             ::selectNetworkOutput, ::rendererRoute, ::setReceiverForeground, connectHost, ::selectRemote)
 
         startAudioObservers(audioAttributes)
@@ -557,7 +557,7 @@ class PlaybackService : MediaLibraryService() {
             }
         }
         scope.launch {
-            store.processingRackAssets.collectLatest { entries ->
+            store.engineImpulseAssets.collectLatest { entries ->
                 val loaded = kotlinx.coroutines.withContext(Dispatchers.IO) {
                     entries.mapNotNull { entry ->
                         val file = com.aurora.music.data.ir.ImpulseLibraryFiles.validateAsset(entry, entry.prepared != null).getOrNull()
@@ -1051,7 +1051,7 @@ class PlaybackService : MediaLibraryService() {
         } else if (lastRack?.enabled == true && ap?.dspMode == DspMode.CUSTOM) {
             unknown += "Processing rack requested; waiting for a supported stereo stream and prepared schedule"
         }
-        node(reverbPrefs.enabled, engine?.reverbActive == true, reverbPrefs.concertPrefs.takeIf { it.enabled }?.let { "Concert venue simulation (${if (it.binaural) "binaural" else "stereo"}${if (it.roomImpulse != null) " in a measured room" else ""}, ${com.aurora.music.data.ConcertVenue.ALL[it.venue].name}, ${com.aurora.music.data.ConcertSound.ALL[it.sound].name} rig at ${it.showDb.toInt()} dB, ${(it.amount * 100).toInt()}% amount)" }
+        node(reverbPrefs.enabled, engine?.reverbActive == true, reverbPrefs.concertPrefs.takeIf { it.enabled }?.let { "Concert venue simulation (${if (it.binaural) "binaural" else "stereo"}${if (engine?.measuredRoomLoaded == true) " in a measured room" else ""}, ${com.aurora.music.data.ConcertVenue.ALL[it.venue].name}, ${com.aurora.music.data.ConcertSound.ALL[it.sound].name} rig at ${it.showDb.toInt()} dB, ${(it.amount * 100).toInt()}% amount)" }
             ?: "Reverb (binary64 feedback delay network, ${(reverbPrefs.mix * 100).toInt()}% mix)")
         if ((processors || precise) && (ap?.dspConvEnabled == true || rackActive)) {
             when (engine?.preparationState) {
@@ -1451,6 +1451,7 @@ class PlaybackService : MediaLibraryService() {
     private fun attach(next: Player, count: Int = next.mediaItemCount) {
         gatePlatformQueue(count)
         mediaSession?.player = next
+        connectHost?.follow()
     }
 
     private inner class MediaCallback : MediaLibrarySession.Callback {

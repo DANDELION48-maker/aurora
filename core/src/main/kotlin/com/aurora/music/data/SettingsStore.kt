@@ -37,6 +37,7 @@ import java.io.OutputStream
 import java.security.MessageDigest
 import java.util.UUID
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
@@ -1025,6 +1026,12 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
                 roomImpulse = p[Keys.CONCERT_ROOM_IMPULSE],
             ),
         ).clamped()
+    }.distinctUntilChanged()
+
+    // the rack's impulses plus the library impulse a measured concert room plays through
+    val engineImpulseAssets: Flow<List<ImpulseLibraryEntry>> = combine(processingRackAssets, impulseLibrary,
+        reverbPrefs.map { r -> r.concertPrefs.takeIf { r.enabled && it.enabled }?.roomImpulse }.distinctUntilChanged()) { rack, library, room ->
+        rack + listOfNotNull(library.firstOrNull { it.id == room }?.takeIf { rack.none { r -> r.id == room } })
     }.distinctUntilChanged()
 
     val alarmPrefs: Flow<AlarmPrefs> = dataStore.data.map { p ->

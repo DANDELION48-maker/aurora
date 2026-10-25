@@ -52,7 +52,7 @@ fun ReverbSettingsScreen(contentPadding: PaddingValues, onBack: () -> Unit) {
     fun save(next: ReverbPrefs) { scope.launch { store.setReverb(next) } }
     fun shape(edit: (ReverbPrefs) -> ReverbPrefs) = save(edit(prefs).copy(preset = -1))
     val concert = prefs.concertPrefs
-    val impulses by store.processingRackAssets.collectAsStateWithLifecycle(initialValue = emptyList())
+    val impulses by store.impulseLibrary.collectAsStateWithLifecycle(initialValue = emptyList())
     val rooms = impulses.map { it.id to it.name }
     fun seconds(v: Float) = appString(R.string.reverb_value_seconds, "%.1f".format(v))
     fun millis(v: Float) = appString(R.string.reverb_value_ms, "%.0f".format(v))

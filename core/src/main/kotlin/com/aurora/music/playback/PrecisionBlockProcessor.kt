@@ -37,6 +37,7 @@ class PrecisionBlockProcessor {
         set(value) { reverb.settings = value; requestMeasuredRoom() }
     @Volatile private var measuredFor: Pair<ImpulseResponse, Int>? = null
     val reverbActive: Boolean get() = reverb.active
+    val measuredRoomLoaded: Boolean get() = reverb.measured != null
     @Volatile private var rackImpulses: Map<String, ImpulseResponse> = emptyMap()
     var relativeVolume: Double
         get() = rackProcessor.relativeVolume

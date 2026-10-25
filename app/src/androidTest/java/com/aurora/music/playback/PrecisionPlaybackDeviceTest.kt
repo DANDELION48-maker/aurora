@@ -29,6 +29,9 @@ import com.aurora.music.mix.MixController
 import com.aurora.music.mix.MixPlayer
 import com.aurora.music.mix.MixProject
 import com.aurora.music.model.Song
+import com.aurora.music.playback.network.AndroidConnectHost
+import com.aurora.music.playback.network.NetworkPlaybackBridge
+import com.aurora.music.playback.network.endpoint.ConnectCommand
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -327,6 +330,44 @@ class PrecisionPlaybackDeviceTest {
                 assertEquals("Unshuffle keeps the current track", shuffled[1].mediaId, controller.currentMediaItem?.mediaId)
                 controller.pause()
             }
+        }
+    }
+
+    @Test fun connectBridgeAndReportingFollowTheLiveDeckAcrossCrossfades() {
+        withProcessingFixture(crossfadeSeconds = 3) { controller, _ ->
+            val source = tone(44_100, 12)
+            val queue = (0..3).map { item("connect-crossfade-$it", source) }
+            main { controller.setMediaItems(queue); controller.prepare(); controller.play() }
+            await("fixture plays", controller) { main { controller.isPlaying } }
+            fun field(owner: Any, name: String): Any? = owner.javaClass.getDeclaredField(name).apply { isAccessible = true }.get(owner)
+            val bridge = main { field(container.networkOutput, "host") } as NetworkPlaybackBridge
+            val connect = main { field(bridge, "connectHost") } as AndroidConnectHost
+            val service = main { field(bridge, "context") } as PlaybackService
+            val reporting = main { requireNotNull((field(service, "playbackReporting\$delegate") as Lazy<*>).value) }
+            val first = main { field(service, "player") } as ExoPlayer
+            repeat(2) { hop ->
+                main { controller.seekTo(hop, 7_000) }
+                await("crossfade ${hop + 1} swaps decks", controller) {
+                    main { controller.currentMediaItemIndex == hop + 1 && controller.isPlaying &&
+                        (field(service, "player") === first) == (hop == 1) }
+                }
+                await("crossfade ${hop + 1} ends", controller) { main { field(service, "xfadeActive") == false } }
+                val live = main { field(service, "player") } as ExoPlayer
+                await("reporting observes deck ${hop + 1}") { main { field(reporting, "player") === live } }
+                main { assertSame("Connect listener follows the live deck", live, field(connect, "observed")) }
+                val status = connect.status()
+                assertEquals(hop + 1, status.index)
+                assertEquals(queue[hop + 1].mediaId, status.current?.id)
+                assertTrue("Connect sees the live deck playing", status.playing)
+                assertEquals(hop + 1, bridge.status().queueIndex)
+                if (hop == 0) {
+                    connect.execute(ConnectCommand.Seek(2_000))
+                    await("Connect seek reaches the live deck", controller) { main { controller.currentPosition in 2_000..5_000 } }
+                    connect.execute(ConnectCommand.Remove(3))
+                    await("Connect queue edit reaches the live deck", controller) { main { controller.mediaItemCount == 3 } }
+                }
+            }
+            main { controller.pause() }
         }
     }
 

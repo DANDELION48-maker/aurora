@@ -16,7 +16,7 @@ import kotlin.math.roundToInt
 @UnstableApi
 class NetworkPlaybackBridge(
     private val context: Context,
-    private val player: Player,
+    private val deck: () -> Player,
     private val manager: NetworkOutputManager,
     private val select: (NetworkTarget?) -> Unit,
     private val localRoute: () -> EndpointRoute,
@@ -24,6 +24,7 @@ class NetworkPlaybackBridge(
     private val connectHost: ConnectHost? = null,
     private val control: (PairedRenderer?) -> Unit = {},
 ) : NetworkOutputHost, RendererPlayback, Closeable {
+    private val player get() = deck()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val mediaCache = RendererMediaCache(context)
     @Volatile private var endpoint: RendererEndpoint? = null

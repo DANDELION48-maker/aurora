@@ -20,11 +20,13 @@ import kotlin.math.roundToInt
 
 class AndroidConnectHost(
     private val context: Context,
-    private val player: Player,
+    private val deck: () -> Player,
     private val localRoute: () -> EndpointRoute,
     private val shuffled: () -> Boolean,
     private val shuffle: (Boolean) -> Unit,
 ) : ConnectHost {
+    private val player get() = deck()
+    private var observed: Player? = null
     private val container = (context.applicationContext as AuroraApplication).container
     private val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -40,7 +42,14 @@ class AndroidConnectHost(
         }
     }
 
-    init { scope.launch { player.addListener(listener) } }
+    init { scope.launch { follow() } }
+
+    fun follow() {
+        val live = player
+        if (live === observed) return
+        observed?.removeListener(listener)
+        observed = live.apply { addListener(listener) }
+    }
 
     private fun <T> onMain(action: () -> T): T = runBlocking { withTimeout(5_000) { withContext(Dispatchers.Main.immediate) { action() } } }
 
@@ -187,7 +196,7 @@ class AndroidConnectHost(
     }
 
     fun close() {
-        scope.launch(NonCancellable) { player.removeListener(listener) }
+        scope.launch(NonCancellable) { observed?.removeListener(listener) }
         sleepJob?.cancel()
         scope.cancel()
     }
