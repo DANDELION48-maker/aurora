@@ -902,14 +902,12 @@
     <string name="text_imgur_client_id_f5e499" formatted="false">"Imgur istemci kimliği"</string>
     <string name="text_impedance_ohms_3727d3" formatted="false">"Empedans (ohm)"</string>
     <string name="text_import_1219ef">"%1$s içe aktar"</string>
-    <string name="text_import_an_m3u_file_3ae427" formatted="false">"Bir M3U dosyası içe aktar"</string>
     <string name="text_import_as_new_project_d6935b" formatted="false">"Yeni proje olarak içe aktar"</string>
     <string name="text_import_at_least_one_measurement_to_generate_a_correction_1ea427" formatted="false">"Düzeltme oluşturmak için en az bir ölçüm içe aktarın."</string>
     <string name="text_import_both_measurements_for_an_explicit_linked_average_aab3d2" formatted="false">"Açık bir bağlı ortalama için iki ölçümü de içe aktarın."</string>
     <string name="text_import_correction_curve_1f6dae" formatted="false">"Düzeltme eğrisini içe aktar"</string>
     <string name="text_import_custom_target_6450b5" formatted="false">"Özel hedef içe aktar"</string>
     <string name="text_import_eq_text_337ca7" formatted="false">"EQ metni içe aktar"</string>
-    <string name="text_import_failed_fbae89" formatted="false">"İçe aktarma başarısız oldu"</string>
     <string name="text_import_file_or_paste_3aaac6" formatted="false">"Dosya içe aktar veya yapıştır"</string>
     <string name="text_import_ief_neutral_or_other_targets_from_their_original_author_1ce32b" formatted="false">"IEF Neutral veya diğer hedefleri özgün yazarından içe aktarın."</string>
     <string name="text_import_parametric_eq_658f13" formatted="false">"Parametrik EQ içe aktar"</string>
@@ -932,7 +930,6 @@
     <string name="text_importing_correction_05d728" formatted="false">"Düzeltme içe aktarılıyor..."</string>
     <string name="text_importing_preset_21cb3f" formatted="false">"Ön ayar içe aktarılıyor…"</string>
     <string name="text_importing_project_5b661a" formatted="false">"Proje içe aktarılıyor…"</string>
-    <string name="text_importing_tracks_3abc1a">"%1$s parça içe aktarılıyor…"</string>
     <string name="text_importing_wav_5811f7" formatted="false">"WAV içe aktarılıyor…"</string>
     <string name="text_impulse_9ca8ac" formatted="false">"Dürtü"</string>
     <string name="text_impulse_library_ff955d" formatted="false">"Dürtü kitaplığı"</string>
@@ -1131,7 +1128,6 @@
     <string name="text_match_metadata_f9f1d7" formatted="false">"Meta verileri eşleştir"</string>
     <string name="text_match_pitch_to_speed_ccd7ca" formatted="false">"Perdeyi hıza eşleştir"</string>
     <string name="text_match_previous_track_s_tempo_70bf60" formatted="false">"Önceki parçanın temposuna eşleştir"</string>
-    <string name="text_matched_of_tracks_09b8b1">"%2$s parçadan %1$s tanesi eşleşti"</string>
     <string name="text_matches_current_playback_124000" formatted="false">"Geçerli oynatmayla eşleşiyor."</string>
     <string name="text_matches_ee2dbd" formatted="false">"Eşleşmeler"</string>
     <string name="text_matching_stereo_rms_over_the_same_selection_within_0_1_db_b1073d" formatted="false">"Eşleştirme: aynı seçim üzerinde stereo RMS, 0,1 dB içinde"</string>
@@ -1286,7 +1282,6 @@
     <string name="text_no_songs_found_try_another_search_or_check_your_library_connectio_b6d0ed" formatted="false">"Şarkı bulunamadı. Başka bir arama deneyin veya kitaplık bağlantınızı denetleyin."</string>
     <string name="text_no_stable_release_available_b2aba2" formatted="false">"Kararlı sürüm yok."</string>
     <string name="text_no_stations_found_173164" formatted="false">"İstasyon bulunamadı"</string>
-    <string name="text_no_tracks_found_in_that_file_754434" formatted="false">"Bu dosyada parça bulunamadı"</string>
     <string name="text_no_usb_dac_connected_446f5b" formatted="false">"Bağlı USB DAC yok"</string>
     <string name="text_noise_shaped_c7a434" formatted="false">"Gürültü şekillendirmeli"</string>
     <string name="text_none_6eef66" formatted="false">"Yok"</string>

@@ -5,6 +5,4 @@
     <string name="playlist_description_optional">"Description (facultative)"</string>
     <string name="playlist_local_hint">"Accueille des titres de toutes les sources fusionnées"</string>
     <string name="playlist_smart_hint">"Se remplit selon vos règles"</string>
-    <string name="playlist_import_title">"Importer un M3U"</string>
-    <string name="playlist_import_hint">"Reconstruire un fichier de playlist depuis votre bibliothèque"</string>
 </resources>

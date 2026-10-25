@@ -902,14 +902,12 @@
     <string name="text_imgur_client_id_f5e499" formatted="false">"ID client Imgur"</string>
     <string name="text_impedance_ohms_3727d3" formatted="false">"Impédance (ohms)"</string>
     <string name="text_import_1219ef">"Importer %1$s"</string>
-    <string name="text_import_an_m3u_file_3ae427" formatted="false">"Importer un fichier M3U"</string>
     <string name="text_import_as_new_project_d6935b" formatted="false">"Importer comme nouveau projet"</string>
     <string name="text_import_at_least_one_measurement_to_generate_a_correction_1ea427" formatted="false">"Importez au moins une mesure pour générer une correction."</string>
     <string name="text_import_both_measurements_for_an_explicit_linked_average_aab3d2" formatted="false">"Importez les deux mesures pour une moyenne liée explicite."</string>
     <string name="text_import_correction_curve_1f6dae" formatted="false">"Importer une courbe de correction"</string>
     <string name="text_import_custom_target_6450b5" formatted="false">"Importer une cible personnalisée"</string>
     <string name="text_import_eq_text_337ca7" formatted="false">"Importer un texte d\'égaliseur"</string>
-    <string name="text_import_failed_fbae89" formatted="false">"Échec de l\'importation"</string>
     <string name="text_import_file_or_paste_3aaac6" formatted="false">"Importer un fichier ou coller"</string>
     <string name="text_import_ief_neutral_or_other_targets_from_their_original_author_1ce32b" formatted="false">"Importez IEF Neutral ou d\'autres cibles auprès de leur auteur d\'origine."</string>
     <string name="text_import_parametric_eq_658f13" formatted="false">"Importer un égaliseur paramétrique"</string>
@@ -932,7 +930,6 @@
     <string name="text_importing_correction_05d728" formatted="false">"Importation de la correction..."</string>
     <string name="text_importing_preset_21cb3f" formatted="false">"Importation du préréglage…"</string>
     <string name="text_importing_project_5b661a" formatted="false">"Importation du projet…"</string>
-    <string name="text_importing_tracks_3abc1a">"Importation de %1$s pistes…"</string>
     <string name="text_importing_wav_5811f7" formatted="false">"Importation du WAV…"</string>
     <string name="text_impulse_9ca8ac" formatted="false">"Impulsion"</string>
     <string name="text_impulse_library_ff955d" formatted="false">"Bibliothèque d\'impulsions"</string>
@@ -1131,7 +1128,6 @@
     <string name="text_match_metadata_f9f1d7" formatted="false">"Rechercher les métadonnées"</string>
     <string name="text_match_pitch_to_speed_ccd7ca" formatted="false">"Accorder la hauteur à la vitesse"</string>
     <string name="text_match_previous_track_s_tempo_70bf60" formatted="false">"Accorder au tempo de la piste précédente"</string>
-    <string name="text_matched_of_tracks_09b8b1">"%1$s pistes sur %2$s associées"</string>
     <string name="text_matches_current_playback_124000" formatted="false">"Correspond à la lecture en cours."</string>
     <string name="text_matches_ee2dbd" formatted="false">"Correspondances"</string>
     <string name="text_matching_stereo_rms_over_the_same_selection_within_0_1_db_b1073d" formatted="false">"Égalisation : RMS stéréo sur la même sélection, à 0,1 dB près"</string>
@@ -1286,7 +1282,6 @@
     <string name="text_no_songs_found_try_another_search_or_check_your_library_connectio_b6d0ed" formatted="false">"Aucun titre trouvé. Essayez une autre recherche ou vérifiez la connexion à votre bibliothèque."</string>
     <string name="text_no_stable_release_available_b2aba2" formatted="false">"Aucune version stable disponible."</string>
     <string name="text_no_stations_found_173164" formatted="false">"Aucune station trouvée"</string>
-    <string name="text_no_tracks_found_in_that_file_754434" formatted="false">"Aucune piste trouvée dans ce fichier"</string>
     <string name="text_no_usb_dac_connected_446f5b" formatted="false">"Aucun DAC USB connecté"</string>
     <string name="text_noise_shaped_c7a434" formatted="false">"Mise en forme du bruit"</string>
     <string name="text_none_6eef66" formatted="false">"Aucun"</string>

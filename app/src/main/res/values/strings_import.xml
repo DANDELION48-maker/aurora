@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_title">"Import Playlist"</string>
+    <string name="import_hint">"Paste a link from Spotify, Apple Music, YouTube Music, SoundCloud, Deezer or Tidal, or choose a file exported from any app. Songs you already have play from your library; the rest play from YouTube Music or SoundCloud."</string>
+    <string name="import_link">"Playlist Link"</string>
+    <string name="import_start">"Import"</string>
+    <string name="import_file">"Choose File"</string>
+    <string name="import_reading">"Reading the playlist…"</string>
+    <string name="import_matching">"Finding songs · %1$d of %2$d"</string>
+    <string name="import_saving">"Saving the playlist…"</string>
+    <string name="import_count">"%1$d of %2$d songs added"</string>
+    <string name="import_from_library">"Your library"</string>
+    <string name="import_not_found">"Not found"</string>
+    <string name="import_own_only">"Only songs on this server were added. Turn on Merge all sources to fill the rest from YouTube Music and SoundCloud."</string>
+    <string name="import_limited">"Spotify links show the first 100 songs. Export the playlist to a file to bring the rest."</string>
+    <string name="import_open">"Open Playlist"</string>
+    <string name="import_done">"Done"</string>
+    <string name="import_failed_unsupported">"That link isn\'t from a supported app."</string>
+    <string name="import_failed_unreadable">"That playlist couldn\'t be read. Check that it\'s public."</string>
+    <string name="import_failed_empty">"No songs were found in that playlist."</string>
+    <string name="import_failed_offline">"Importing needs an internet connection."</string>
+    <string name="import_failed_save">"The playlist couldn\'t be saved."</string>
+    <string name="import_card_hint">"From Spotify, Apple Music, a file and more"</string>
+</resources>

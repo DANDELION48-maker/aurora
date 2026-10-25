@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_title">"Импортировать плейлист"</string>
+    <string name="import_hint">"Вставьте ссылку из Spotify, Apple Music, YouTube Music, SoundCloud, Deezer или Tidal или выберите файл, экспортированный из любого приложения. Песни, которые у вас уже есть, играют из медиатеки, остальные — из YouTube Music или SoundCloud."</string>
+    <string name="import_link">"Ссылка на плейлист"</string>
+    <string name="import_start">"Импортировать"</string>
+    <string name="import_file">"Выбрать файл"</string>
+    <string name="import_reading">"Чтение плейлиста…"</string>
+    <string name="import_matching">"Поиск песен · %1$d из %2$d"</string>
+    <string name="import_saving">"Сохранение плейлиста…"</string>
+    <string name="import_count">"Добавлено песен: %1$d из %2$d"</string>
+    <string name="import_from_library">"Ваша медиатека"</string>
+    <string name="import_not_found">"Не найдено"</string>
+    <string name="import_own_only">"Добавлены только песни с этого сервера. Включите объединение всех источников, чтобы добавить остальные из YouTube Music и SoundCloud."</string>
+    <string name="import_limited">"Ссылки Spotify показывают первые 100 песен. Экспортируйте плейлист в файл, чтобы перенести остальные."</string>
+    <string name="import_open">"Открыть плейлист"</string>
+    <string name="import_done">"Готово"</string>
+    <string name="import_failed_unsupported">"Эта ссылка не из поддерживаемого приложения."</string>
+    <string name="import_failed_unreadable">"Не удалось прочитать плейлист. Проверьте, что он открытый."</string>
+    <string name="import_failed_empty">"В этом плейлисте не найдено песен."</string>
+    <string name="import_failed_offline">"Для импорта нужно подключение к интернету."</string>
+    <string name="import_failed_save">"Не удалось сохранить плейлист."</string>
+    <string name="import_card_hint">"Из Spotify, Apple Music, файла и не только"</string>
+</resources>

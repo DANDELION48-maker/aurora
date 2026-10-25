@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_title">"プレイリストを読み込む"</string>
+    <string name="import_hint">"Spotify、Apple Music、YouTube Music、SoundCloud、Deezer、Tidal のリンクを貼り付けるか、ほかのアプリから書き出したファイルを選んでください。手元にある曲はライブラリから、それ以外は YouTube Music か SoundCloud から再生します。"</string>
+    <string name="import_link">"プレイリストのリンク"</string>
+    <string name="import_start">"読み込む"</string>
+    <string name="import_file">"ファイルを選択"</string>
+    <string name="import_reading">"プレイリストを読み込み中…"</string>
+    <string name="import_matching">"曲を検索中 · %1$d / %2$d"</string>
+    <string name="import_saving">"プレイリストを保存中…"</string>
+    <string name="import_count">"%2$d 曲中 %1$d 曲を追加しました"</string>
+    <string name="import_from_library">"ライブラリ"</string>
+    <string name="import_not_found">"見つからない曲"</string>
+    <string name="import_own_only">"このサーバーにある曲だけを追加しました。残りを YouTube Music と SoundCloud で補うには「すべてのソースを統合」をオンにしてください。"</string>
+    <string name="import_limited">"Spotify のリンクでは最初の 100 曲だけが表示されます。残りも取り込むにはプレイリストをファイルに書き出してください。"</string>
+    <string name="import_open">"プレイリストを開く"</string>
+    <string name="import_done">"完了"</string>
+    <string name="import_failed_unsupported">"対応しているアプリのリンクではありません。"</string>
+    <string name="import_failed_unreadable">"プレイリストを読み込めませんでした。公開されているか確認してください。"</string>
+    <string name="import_failed_empty">"このプレイリストに曲が見つかりませんでした。"</string>
+    <string name="import_failed_offline">"読み込みにはインターネット接続が必要です。"</string>
+    <string name="import_failed_save">"プレイリストを保存できませんでした。"</string>
+    <string name="import_card_hint">"Spotify、Apple Music、ファイルなどから"</string>
+</resources>

@@ -516,32 +516,28 @@ class MusicRepository(
     suspend fun exportPlaylist(kind: String, id: String): String? =
         detail(kind, id)?.tracks?.takeIf { it.isNotEmpty() }?.let { M3u.write(it) }
 
-    suspend fun importPlaylist(name: String, entries: List<M3u.Entry>): Pair<Int, Int>? {
-        if (offline || entries.isEmpty() || name.isBlank()) return null
-        val source = backend ?: return null
-        val matched = entries.mapNotNull { matchEntry(it) }
-        if (backend !== source || offline) return null
-        val id = source.createPlaylistWithId(name, matched.map { it.id }) ?: return null
+    // each track is looked for in your own sources first, then the catalogues; a mixed local playlist keeps every match
+    suspend fun importTracks(list: ImportedPlaylist, extra: List<ImportStage>, onProgress: (ImportProgress) -> Unit = {}): ImportResult {
+        if (offline) throw ImportException(ImportFailure.OFFLINE)
+        if (list.tracks.isEmpty()) throw ImportException(ImportFailure.EMPTY)
+        val source = backend ?: throw ImportException(ImportFailure.NOT_SAVED)
+        val own = source.importStages()
+        val stages = own + extra.filter { e -> own.none { it.source == e.source } }
+        val matches = PlaylistMatcher.matchAll(list.tracks, stages) { done, total -> onProgress(ImportProgress.Matching(done, total)) }
+        if (backend !== source || offline) throw ImportException(ImportFailure.NOT_SAVED)
+        onProgress(ImportProgress.Saving)
+        val name = list.name.trim()
+        var kept = matches.filter { it.song != null }
+        var ownOnly = false
+        val id = source.createMixedPlaylist(name, kept.map { it.song!! }) ?: run {
+            ownOnly = kept.any { it.stage != 0 }
+            kept = kept.filter { it.stage == 0 }
+            source.createPlaylistWithId(name, kept.map { it.song!!.id })
+        } ?: throw ImportException(ImportFailure.NOT_SAVED)
         playlistChangeEvents.tryEmit(id)
-        return matched.size to entries.size
-    }
-
-    private fun norm(s: String) = s.lowercase().replace(Regex("[^a-z0-9]+"), " ").trim()
-
-    private suspend fun matchEntry(e: M3u.Entry): Song? {
-        val query = listOf(e.artist, e.title).filter { it.isNotBlank() }.joinToString(" ")
-        if (query.isBlank()) return null
-        val candidates = search(query).songs.ifEmpty { search(e.title).songs }
-        val titleN = norm(e.title)
-        val artistN = norm(e.artist)
-        return candidates.map { s ->
-            var score = 0
-            val st = norm(s.title)
-            if (st == titleN) score += 3 else if (st.contains(titleN) || titleN.contains(st)) score += 1
-            if (artistN.isNotBlank() && norm(s.artist).contains(artistN)) score += 2
-            if (e.durationSec > 0 && kotlin.math.abs(s.durationSec - e.durationSec) <= 5) score += 2
-            s to score
-        }.filter { it.second >= 3 }.maxByOrNull { it.second }?.first
+        val found = kept.groupingBy { it.source ?: ImportSource.OTHER }.eachCount()
+        val missing = matches.filter { m -> kept.none { it === m } }.map { it.track }
+        return ImportResult(id, name, list.tracks.size, found, missing, ownOnly)
     }
 
     suspend fun updatePlaylist(id: String, name: String?, comment: String?): Boolean {

@@ -19,7 +19,7 @@ class LocalBackend(
         return trackIds.orEmpty().mapNotNull { library.song(it) ?: others[it]?.toSong() }
     }
 
-    // the list counts songs from merged sources too; only the merged library can open those
+    // the list counts songs from merged sources too; only the merged library can open those, apart from catalogue songs that stream on their own
     private fun LocalPlaylist.toPlaylist(): Playlist {
         val tracks = entries()
         return Playlist(
@@ -126,7 +126,7 @@ class LocalBackend(
             }
             "playlist" -> {
                 val pl = store.playlist(id) ?: return null
-                val tracks = pl.trackIds.orEmpty().mapNotNull { library.song(it) }
+                val tracks = pl.entries().filter { MERGE_NAMESPACE_SEP !in it.id || it.streamUrl.startsWith("aurora-yt://") || it.streamUrl.startsWith("aurora-sc://") }
                 DetailData(
                     info = DetailInfo(pl.title ?: "", "${tracks.size} song${if (tracks.size == 1) "" else "s"}", tracks.firstOrNull { it.artworkUrl.isNotBlank() }?.artworkUrl ?: "", accentArgbFor(id), false, tracks.size, "Playlist",
                         editableDescription = pl.subtitle.orEmpty(), description = pl.subtitle.orEmpty()),
@@ -161,6 +161,10 @@ class LocalBackend(
     override suspend fun addSongsToPlaylist(playlistId: String, songs: List<Song>): Boolean {
         store.addTracks(playlistId, songs.map { it.id }, songs.filter { MERGE_NAMESPACE_SEP in it.id }.map { it.toSavedTrack() })
         return true
+    }
+    override suspend fun createMixedPlaylist(name: String, songs: List<Song>): String? {
+        val id = store.createPlaylist(name.trim())
+        return id.takeIf { addSongsToPlaylist(it, songs) }
     }
     override suspend fun playlistEntries(id: String): List<Song>? = store.playlist(id)?.entries()
     override suspend fun removeFromPlaylist(playlistId: String, trackIds: List<String>): Boolean { store.removeTracks(playlistId, trackIds); return true }

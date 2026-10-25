@@ -902,14 +902,12 @@
     <string name="text_imgur_client_id_f5e499" formatted="false">"Imgur-Client-ID"</string>
     <string name="text_impedance_ohms_3727d3" formatted="false">"Impedanz (Ohm)"</string>
     <string name="text_import_1219ef">"%1$s importieren"</string>
-    <string name="text_import_an_m3u_file_3ae427" formatted="false">"M3U-Datei importieren"</string>
     <string name="text_import_as_new_project_d6935b" formatted="false">"Als neues Projekt importieren"</string>
     <string name="text_import_at_least_one_measurement_to_generate_a_correction_1ea427" formatted="false">"Importiere mindestens eine Messung, um eine Korrektur zu erzeugen."</string>
     <string name="text_import_both_measurements_for_an_explicit_linked_average_aab3d2" formatted="false">"Importiere beide Messungen für einen expliziten verknüpften Mittelwert."</string>
     <string name="text_import_correction_curve_1f6dae" formatted="false">"Korrekturkurve importieren"</string>
     <string name="text_import_custom_target_6450b5" formatted="false">"Benutzerdefiniertes Ziel importieren"</string>
     <string name="text_import_eq_text_337ca7" formatted="false">"EQ-Text importieren"</string>
-    <string name="text_import_failed_fbae89" formatted="false">"Import fehlgeschlagen"</string>
     <string name="text_import_file_or_paste_3aaac6" formatted="false">"Datei importieren oder einfügen"</string>
     <string name="text_import_ief_neutral_or_other_targets_from_their_original_author_1ce32b" formatted="false">"Importiere IEF Neutral oder andere Ziele von ihrem ursprünglichen Autor."</string>
     <string name="text_import_parametric_eq_658f13" formatted="false">"Parametrischen EQ importieren"</string>
@@ -932,7 +930,6 @@
     <string name="text_importing_correction_05d728" formatted="false">"Korrektur wird importiert..."</string>
     <string name="text_importing_preset_21cb3f" formatted="false">"Preset wird importiert…"</string>
     <string name="text_importing_project_5b661a" formatted="false">"Projekt wird importiert…"</string>
-    <string name="text_importing_tracks_3abc1a">"%1$s Titel werden importiert…"</string>
     <string name="text_importing_wav_5811f7" formatted="false">"WAV wird importiert…"</string>
     <string name="text_impulse_9ca8ac" formatted="false">"Impuls"</string>
     <string name="text_impulse_library_ff955d" formatted="false">"Impulsbibliothek"</string>
@@ -1131,7 +1128,6 @@
     <string name="text_match_metadata_f9f1d7" formatted="false">"Metadaten abgleichen"</string>
     <string name="text_match_pitch_to_speed_ccd7ca" formatted="false">"Tonhöhe an Geschwindigkeit anpassen"</string>
     <string name="text_match_previous_track_s_tempo_70bf60" formatted="false">"Tempo des vorherigen Titels übernehmen"</string>
-    <string name="text_matched_of_tracks_09b8b1">"%1$s von %2$s Titeln zugeordnet"</string>
     <string name="text_matches_current_playback_124000" formatted="false">"Stimmt mit der aktuellen Wiedergabe überein."</string>
     <string name="text_matches_ee2dbd" formatted="false">"Treffer"</string>
     <string name="text_matching_stereo_rms_over_the_same_selection_within_0_1_db_b1073d" formatted="false">"Abgleich: Stereo-RMS über dieselbe Auswahl, auf 0,1 dB genau"</string>
@@ -1286,7 +1282,6 @@
     <string name="text_no_songs_found_try_another_search_or_check_your_library_connectio_b6d0ed" formatted="false">"Keine Titel gefunden. Versuch eine andere Suche oder prüfe die Verbindung zu deiner Bibliothek."</string>
     <string name="text_no_stable_release_available_b2aba2" formatted="false">"Kein stabiles Release verfügbar."</string>
     <string name="text_no_stations_found_173164" formatted="false">"Keine Sender gefunden"</string>
-    <string name="text_no_tracks_found_in_that_file_754434" formatted="false">"In dieser Datei wurden keine Titel gefunden"</string>
     <string name="text_no_usb_dac_connected_446f5b" formatted="false">"Kein USB-DAC verbunden"</string>
     <string name="text_noise_shaped_c7a434" formatted="false">"Mit Rauschformung"</string>
     <string name="text_none_6eef66" formatted="false">"Keine"</string>

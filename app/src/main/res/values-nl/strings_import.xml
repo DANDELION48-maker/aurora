@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_title">"Playlist importeren"</string>
+    <string name="import_hint">"Plak een link van Spotify, Apple Music, YouTube Music, SoundCloud, Deezer of Tidal, of kies een bestand dat uit een andere app is geëxporteerd. Nummers die je al hebt spelen uit je bibliotheek, de rest uit YouTube Music of SoundCloud."</string>
+    <string name="import_link">"Playlistlink"</string>
+    <string name="import_start">"Importeren"</string>
+    <string name="import_file">"Bestand kiezen"</string>
+    <string name="import_reading">"Playlist wordt gelezen…"</string>
+    <string name="import_matching">"Nummers zoeken · %1$d van %2$d"</string>
+    <string name="import_saving">"Playlist wordt opgeslagen…"</string>
+    <string name="import_count">"%1$d van %2$d nummers toegevoegd"</string>
+    <string name="import_from_library">"Je bibliotheek"</string>
+    <string name="import_not_found">"Niet gevonden"</string>
+    <string name="import_own_only">"Alleen nummers op deze server zijn toegevoegd. Zet Alle bronnen samenvoegen aan om de rest aan te vullen uit YouTube Music en SoundCloud."</string>
+    <string name="import_limited">"Spotify-links tonen de eerste 100 nummers. Exporteer de playlist naar een bestand om de rest mee te nemen."</string>
+    <string name="import_open">"Playlist openen"</string>
+    <string name="import_done">"Klaar"</string>
+    <string name="import_failed_unsupported">"Die link komt niet van een ondersteunde app."</string>
+    <string name="import_failed_unreadable">"De playlist kon niet worden gelezen. Controleer of hij openbaar is."</string>
+    <string name="import_failed_empty">"Er zijn geen nummers gevonden in die playlist."</string>
+    <string name="import_failed_offline">"Importeren vereist een internetverbinding."</string>
+    <string name="import_failed_save">"De playlist kon niet worden opgeslagen."</string>
+    <string name="import_card_hint">"Uit Spotify, Apple Music, een bestand en meer"</string>
+</resources>

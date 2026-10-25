@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_title">"导入播放列表"</string>
+    <string name="import_hint">"粘贴来自 Spotify、Apple Music、YouTube Music、SoundCloud、Deezer 或 Tidal 的链接，或选择从任意应用导出的文件。你已有的歌曲从你的音乐库播放，其余的从 YouTube Music 或 SoundCloud 播放。"</string>
+    <string name="import_link">"播放列表链接"</string>
+    <string name="import_start">"导入"</string>
+    <string name="import_file">"选择文件"</string>
+    <string name="import_reading">"正在读取播放列表…"</string>
+    <string name="import_matching">"正在查找歌曲 · 第 %1$d 首，共 %2$d 首"</string>
+    <string name="import_saving">"正在保存播放列表…"</string>
+    <string name="import_count">"已添加 %2$d 首中的 %1$d 首"</string>
+    <string name="import_from_library">"你的音乐库"</string>
+    <string name="import_not_found">"未找到"</string>
+    <string name="import_own_only">"只添加了此服务器上的歌曲。开启“合并所有来源”可用 YouTube Music 和 SoundCloud 补全其余歌曲。"</string>
+    <string name="import_limited">"Spotify 链接只显示前 100 首歌曲。将播放列表导出为文件即可导入其余歌曲。"</string>
+    <string name="import_open">"打开播放列表"</string>
+    <string name="import_done">"完成"</string>
+    <string name="import_failed_unsupported">"该链接不是来自受支持的应用。"</string>
+    <string name="import_failed_unreadable">"无法读取该播放列表。请确认它是公开的。"</string>
+    <string name="import_failed_empty">"该播放列表中没有找到歌曲。"</string>
+    <string name="import_failed_offline">"导入需要联网。"</string>
+    <string name="import_failed_save">"无法保存播放列表。"</string>
+    <string name="import_card_hint">"来自 Spotify、Apple Music、文件等"</string>
+</resources>

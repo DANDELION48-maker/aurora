@@ -163,7 +163,7 @@ internal fun CreatePlaylistSheet(
             Row(Modifier.fillMaxWidth().padding(top = 18.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 ShortcutCard(Icons.Outlined.AutoAwesome, appString(R.string.text_smart_playlist_f77ad7), appString(R.string.playlist_smart_hint),
                     enabled = !saving, onClick = onCreateSmart, modifier = Modifier.weight(1f))
-                ShortcutCard(Icons.Outlined.FileOpen, appString(R.string.playlist_import_title), appString(R.string.playlist_import_hint),
+                ShortcutCard(Icons.Outlined.FileOpen, appString(R.string.import_title), appString(R.string.import_card_hint),
                     enabled = !saving, onClick = onImportM3u, modifier = Modifier.weight(1f))
             }
         }

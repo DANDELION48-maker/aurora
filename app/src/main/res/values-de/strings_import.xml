@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_title">"Playlist importieren"</string>
+    <string name="import_hint">"Füge einen Link von Spotify, Apple Music, YouTube Music, SoundCloud, Deezer oder Tidal ein oder wähle eine aus einer beliebigen App exportierte Datei. Songs, die du schon hast, kommen aus deiner Mediathek, der Rest von YouTube Music oder SoundCloud."</string>
+    <string name="import_link">"Playlist-Link"</string>
+    <string name="import_start">"Importieren"</string>
+    <string name="import_file">"Datei wählen"</string>
+    <string name="import_reading">"Playlist wird gelesen…"</string>
+    <string name="import_matching">"Songs werden gesucht · %1$d von %2$d"</string>
+    <string name="import_saving">"Playlist wird gespeichert…"</string>
+    <string name="import_count">"%1$d von %2$d Songs hinzugefügt"</string>
+    <string name="import_from_library">"Deine Mediathek"</string>
+    <string name="import_not_found">"Nicht gefunden"</string>
+    <string name="import_own_only">"Nur Songs auf diesem Server wurden hinzugefügt. Aktiviere „Alle Quellen zusammenführen“, um den Rest aus YouTube Music und SoundCloud zu ergänzen."</string>
+    <string name="import_limited">"Spotify-Links zeigen die ersten 100 Songs. Exportiere die Playlist als Datei, um den Rest zu übernehmen."</string>
+    <string name="import_open">"Playlist öffnen"</string>
+    <string name="import_done">"Fertig"</string>
+    <string name="import_failed_unsupported">"Dieser Link stammt nicht aus einer unterstützten App."</string>
+    <string name="import_failed_unreadable">"Die Playlist konnte nicht gelesen werden. Prüfe, ob sie öffentlich ist."</string>
+    <string name="import_failed_empty">"In dieser Playlist wurden keine Songs gefunden."</string>
+    <string name="import_failed_offline">"Zum Importieren ist eine Internetverbindung nötig."</string>
+    <string name="import_failed_save">"Die Playlist konnte nicht gespeichert werden."</string>
+    <string name="import_card_hint">"Aus Spotify, Apple Music, einer Datei und mehr"</string>
+</resources>

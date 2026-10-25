@@ -902,14 +902,12 @@
     <string name="text_imgur_client_id_f5e499" formatted="false">"Imgur-client-ID"</string>
     <string name="text_impedance_ohms_3727d3" formatted="false">"Impedantie (ohm)"</string>
     <string name="text_import_1219ef">"%1$s importeren"</string>
-    <string name="text_import_an_m3u_file_3ae427" formatted="false">"Een M3U-bestand importeren"</string>
     <string name="text_import_as_new_project_d6935b" formatted="false">"Importeren als nieuw project"</string>
     <string name="text_import_at_least_one_measurement_to_generate_a_correction_1ea427" formatted="false">"Importeer minstens één meting om een correctie te genereren."</string>
     <string name="text_import_both_measurements_for_an_explicit_linked_average_aab3d2" formatted="false">"Importeer beide metingen voor een expliciet gekoppeld gemiddelde."</string>
     <string name="text_import_correction_curve_1f6dae" formatted="false">"Correctiecurve importeren"</string>
     <string name="text_import_custom_target_6450b5" formatted="false">"Aangepast doel importeren"</string>
     <string name="text_import_eq_text_337ca7" formatted="false">"EQ-tekst importeren"</string>
-    <string name="text_import_failed_fbae89" formatted="false">"Importeren mislukt"</string>
     <string name="text_import_file_or_paste_3aaac6" formatted="false">"Bestand importeren of plakken"</string>
     <string name="text_import_ief_neutral_or_other_targets_from_their_original_author_1ce32b" formatted="false">"Importeer IEF Neutral of andere doelen van hun oorspronkelijke maker."</string>
     <string name="text_import_parametric_eq_658f13" formatted="false">"Parametrische EQ importeren"</string>
@@ -932,7 +930,6 @@
     <string name="text_importing_correction_05d728" formatted="false">"Correctie importeren..."</string>
     <string name="text_importing_preset_21cb3f" formatted="false">"Preset importeren…"</string>
     <string name="text_importing_project_5b661a" formatted="false">"Project importeren…"</string>
-    <string name="text_importing_tracks_3abc1a">"%1$s nummers importeren…"</string>
     <string name="text_importing_wav_5811f7" formatted="false">"WAV importeren…"</string>
     <string name="text_impulse_9ca8ac" formatted="false">"Impuls"</string>
     <string name="text_impulse_library_ff955d" formatted="false">"Impulsbibliotheek"</string>
@@ -1131,7 +1128,6 @@
     <string name="text_match_metadata_f9f1d7" formatted="false">"Metadata matchen"</string>
     <string name="text_match_pitch_to_speed_ccd7ca" formatted="false">"Toonhoogte aan snelheid aanpassen"</string>
     <string name="text_match_previous_track_s_tempo_70bf60" formatted="false">"Tempo van vorig nummer volgen"</string>
-    <string name="text_matched_of_tracks_09b8b1">"%1$s van %2$s nummers gematcht"</string>
     <string name="text_matches_current_playback_124000" formatted="false">"Komt overeen met het huidige afspelen."</string>
     <string name="text_matches_ee2dbd" formatted="false">"Overeenkomsten"</string>
     <string name="text_matching_stereo_rms_over_the_same_selection_within_0_1_db_b1073d" formatted="false">"Gelijktrekken: stereo-RMS over dezelfde selectie, binnen 0,1 dB"</string>
@@ -1286,7 +1282,6 @@
     <string name="text_no_songs_found_try_another_search_or_check_your_library_connectio_b6d0ed" formatted="false">"Geen nummers gevonden. Probeer een andere zoekopdracht of controleer de verbinding met je bibliotheek."</string>
     <string name="text_no_stable_release_available_b2aba2" formatted="false">"Geen stabiele release beschikbaar."</string>
     <string name="text_no_stations_found_173164" formatted="false">"Geen zenders gevonden"</string>
-    <string name="text_no_tracks_found_in_that_file_754434" formatted="false">"Geen nummers gevonden in dat bestand"</string>
     <string name="text_no_usb_dac_connected_446f5b" formatted="false">"Geen USB-DAC verbonden"</string>
     <string name="text_noise_shaped_c7a434" formatted="false">"Met noise shaping"</string>
     <string name="text_none_6eef66" formatted="false">"Geen"</string>

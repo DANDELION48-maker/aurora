@@ -5,6 +5,4 @@
     <string name="playlist_description_optional">"Descripción (opcional)"</string>
     <string name="playlist_local_hint">"Admite canciones de todas las fuentes combinadas"</string>
     <string name="playlist_smart_hint">"Se llena sola con las reglas que elijas"</string>
-    <string name="playlist_import_title">"Importar M3U"</string>
-    <string name="playlist_import_hint">"Reconstruye un archivo de lista con tu biblioteca"</string>
 </resources>

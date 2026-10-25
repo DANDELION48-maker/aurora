@@ -182,8 +182,7 @@ class AppContainer(context: Context) {
     // soundcloud previews and drm-only tracks play from a youtube match instead
     suspend fun resolveSoundCloud(item: androidx.media3.common.MediaItem): com.aurora.music.playback.YoutubeResolver.PlaybackStream? {
         val id = item.localConfiguration?.uri?.lastPathSegment?.takeIf { it.matches(Regex("[0-9]+")) } ?: return null
-        val source = backend as? SoundCloudBackend ?: settingsStore.savedSessions.first()
-            .firstOrNull { it.type == ServerType.SOUNDCLOUD }?.let { buildBackend(it) as? SoundCloudBackend }
+        val source = backend as? SoundCloudBackend ?: catalogue(ServerType.SOUNDCLOUD) as? SoundCloudBackend
         source?.playbackUrl(id)?.let { return com.aurora.music.playback.YoutubeResolver.PlaybackStream(it) }
         val meta = item.mediaMetadata
         val query = java.net.URLEncoder.encode("${meta.title ?: ""} ${meta.artist ?: ""}".trim(), "UTF-8")
@@ -191,6 +190,12 @@ class AppContainer(context: Context) {
         return youtubeResolver.resolveSentinel(android.net.Uri.parse("aurora-yt://sc$id?q=$query&dur=$duration"))
             ?.let { com.aurora.music.playback.YoutubeResolver.PlaybackStream(it) }
     }
+
+    // youtube music and soundcloud as you added them, signed out when you have not
+    private suspend fun catalogue(type: ServerType): MediaBackend =
+        buildBackend(settingsStore.savedSessions.first().firstOrNull { it.type == type && !it.isGuest } ?: Session.guest(type, "Guest"))
+
+    val playlistImporter by lazy { PlaylistImporter(repository, PlaylistLinks(http), ::catalogue) }
 
     suspend fun verifySoundCloud(session: Session): Boolean = (buildBackend(session) as? SoundCloudBackend)?.verify() == true
     fun soundCloudWaiting(session: Session): Int = soundcloudPendingLikes.waiting(session.userId)

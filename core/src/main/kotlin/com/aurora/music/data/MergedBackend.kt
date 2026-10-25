@@ -554,6 +554,24 @@ class MergedBackend(
         return src.addToPlaylist(oPid, ids.map { it.second })
     }
 
+    // your own sources together first, then each catalogue on its own
+    override fun importStages(): List<ImportStage> = buildList {
+        add(ImportStage(ImportSource.LIBRARY) { search(it, "library").songs })
+        listOf(youtubeIndex, spotifyIndex, soundcloudIndex).filter { it >= 0 }.forEach { i ->
+            sources[i].importStages().forEach { stage -> add(ImportStage(stage.source) { q -> stage.search(q).map { it.wrap(i) } }) }
+        }
+    }
+
+    // the on-device library holds mixed playlists; songs from sources outside this merge keep their own namespace
+    override suspend fun createMixedPlaylist(name: String, songs: List<Song>): String? {
+        val home = sources.indexOfFirst { it.session.type == ServerType.LOCAL && it.acceptsForeignTracks }.takeIf { it >= 0 } ?: return null
+        val own = songs.mapNotNull { song ->
+            val (i, original) = unwrap(song.id) ?: return@mapNotNull song.takeIf { SEP in it.id }
+            if (i == home) song.copy(id = original) else song
+        }
+        return sources[home].createMixedPlaylist(name, own)?.let { wrapId(home, it) }
+    }
+
     override suspend fun addSongsToPlaylist(playlistId: String, songs: List<Song>): Boolean {
         val (i, oPid) = unwrap(playlistId) ?: return false
         val src = sources.getOrNull(i) ?: return false
@@ -610,8 +628,10 @@ class MergedBackend(
 
 const val MERGE_NAMESPACE_SEP = '\u0001'   // same control char as MergedBackend.SEP
 
-// the prefix a merged library puts on a source's ids; likes are filed per account under the same key
+// the prefix a merged library puts on a source's ids; likes are filed per account under the same key,
+// and songs from a source outside the merge are wrapped the same way
 fun mergeNamespace(session: Session): String = "s" + PlaybackSourceIdentity.fromSession(session, "").providerId!!.removePrefix("provider:")
+fun Song.inNamespace(session: Session): Song = if (MERGE_NAMESPACE_SEP in id) this else copy(id = "${mergeNamespace(session)}$MERGE_NAMESPACE_SEP$id")
 
 // liked songs id for every source's likes together, beside the per-view ids
 const val ALL_LIKED_ID = "all"

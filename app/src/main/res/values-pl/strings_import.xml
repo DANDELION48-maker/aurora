@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_title">"Importuj playlistę"</string>
+    <string name="import_hint">"Wklej link ze Spotify, Apple Music, YouTube Music, SoundCloud, Deezera lub Tidala albo wybierz plik wyeksportowany z dowolnej aplikacji. Utwory, które już masz, grają z Twojej biblioteki, a reszta z YouTube Music lub SoundCloud."</string>
+    <string name="import_link">"Link do playlisty"</string>
+    <string name="import_start">"Importuj"</string>
+    <string name="import_file">"Wybierz plik"</string>
+    <string name="import_reading">"Odczytywanie playlisty…"</string>
+    <string name="import_matching">"Szukanie utworów · %1$d z %2$d"</string>
+    <string name="import_saving">"Zapisywanie playlisty…"</string>
+    <string name="import_count">"Dodano %1$d z %2$d utworów"</string>
+    <string name="import_from_library">"Twoja biblioteka"</string>
+    <string name="import_not_found">"Nie znaleziono"</string>
+    <string name="import_own_only">"Dodano tylko utwory z tego serwera. Włącz Połącz wszystkie źródła, aby uzupełnić resztę z YouTube Music i SoundCloud."</string>
+    <string name="import_limited">"Linki Spotify pokazują pierwsze 100 utworów. Wyeksportuj playlistę do pliku, aby przenieść resztę."</string>
+    <string name="import_open">"Otwórz playlistę"</string>
+    <string name="import_done">"Gotowe"</string>
+    <string name="import_failed_unsupported">"Ten link nie pochodzi z obsługiwanej aplikacji."</string>
+    <string name="import_failed_unreadable">"Nie udało się odczytać playlisty. Sprawdź, czy jest publiczna."</string>
+    <string name="import_failed_empty">"W tej playliście nie znaleziono utworów."</string>
+    <string name="import_failed_offline">"Import wymaga połączenia z internetem."</string>
+    <string name="import_failed_save">"Nie udało się zapisać playlisty."</string>
+    <string name="import_card_hint">"Ze Spotify, Apple Music, pliku i innych"</string>
+</resources>

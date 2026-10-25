@@ -1110,31 +1110,10 @@ fun AuroraApp() {
                                 }
                             }
                         }
-                        val importM3uLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-                            if (uri != null) scope.launch {
-                                val (text, displayName) = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                                    val t = runCatching { context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() } }.getOrNull()
-                                    // saf uris carry opaque doc ids the human file name needs a query
-                                    val n = runCatching {
-                                        context.contentResolver.query(uri, null, null, null, null)?.use { c ->
-                                            val idx = c.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
-                                            if (idx >= 0 && c.moveToFirst()) c.getString(idx) else null
-                                        }
-                                    }.getOrNull()
-                                    t to n
-                                }
-                                val entries = text?.let { com.aurora.music.data.M3u.parse(it) }.orEmpty()
-                                if (entries.isEmpty()) { confirm(appString(R.string.text_no_tracks_found_in_that_file_754434)) } else {
-                                    val name = displayName?.substringBeforeLast('.')?.takeIf { it.isNotBlank() } ?: appString(R.string.text_imported_playlist_37a186)
-                                    confirm(appString(R.string.text_importing_tracks_3abc1a, (entries.size)))
-                                    val result = container.repository.importPlaylist(name, entries)
-                                    if (result == null) confirm(appString(R.string.text_import_failed_fbae89)) else {
-                                        confirm(appString(R.string.text_matched_of_tracks_09b8b1, (result.first), (result.second)))
-                                        libraryVM.load()
-                                    }
-                                }
-                            }
-                        }
+                        var showImport by rememberSaveable { mutableStateOf(false) }
+                        if (showImport) com.aurora.music.ui.screens.library.ImportPlaylistSheet(container.playlistImporter,
+                            onOpen = { id -> navController.navigate(Routes.detail("playlist", id)) },
+                            onImported = { libraryVM.load() }, onDismiss = { showImport = false })
                         var librarySelection by rememberSaveable { mutableStateOf<String?>(null) }
                         androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxSize()) {
                         val split = rail && maxWidth >= 960.dp
@@ -1174,7 +1153,7 @@ fun AuroraApp() {
                                 onCreateSmart = { navController.navigate(Routes.smartEdit()) },
                                 onEditSmart = { id -> navController.navigate(Routes.smartEdit(id)) },
                                 onDeleteSmart = { id -> scope.launch { container.settingsStore.deleteSmartPlaylist(id) } },
-                                onImportM3u = { importM3uLauncher.launch(arrayOf("*/*")) },
+                                onImportM3u = { showImport = true },
                                 onExportPlaylist = { id, kind, title -> scope.launch {
                                     val text = container.repository.exportPlaylist(kind, id)
                                     if (text == null) confirm(appString(R.string.text_nothing_to_export_7faf33)) else {

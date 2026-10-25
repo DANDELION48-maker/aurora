@@ -902,14 +902,12 @@
     <string name="text_imgur_client_id_f5e499" formatted="false">"ID de cliente de Imgur"</string>
     <string name="text_impedance_ohms_3727d3" formatted="false">"Impedancia (ohmios)"</string>
     <string name="text_import_1219ef">"Importar %1$s"</string>
-    <string name="text_import_an_m3u_file_3ae427" formatted="false">"Importar un archivo M3U"</string>
     <string name="text_import_as_new_project_d6935b" formatted="false">"Importar como proyecto nuevo"</string>
     <string name="text_import_at_least_one_measurement_to_generate_a_correction_1ea427" formatted="false">"Importa al menos una medición para generar una corrección."</string>
     <string name="text_import_both_measurements_for_an_explicit_linked_average_aab3d2" formatted="false">"Importa ambas mediciones para un promedio vinculado explícito."</string>
     <string name="text_import_correction_curve_1f6dae" formatted="false">"Importar curva de corrección"</string>
     <string name="text_import_custom_target_6450b5" formatted="false">"Importar objetivo personalizado"</string>
     <string name="text_import_eq_text_337ca7" formatted="false">"Importar texto de ecualizador"</string>
-    <string name="text_import_failed_fbae89" formatted="false">"Error al importar"</string>
     <string name="text_import_file_or_paste_3aaac6" formatted="false">"Importar archivo o pegar"</string>
     <string name="text_import_ief_neutral_or_other_targets_from_their_original_author_1ce32b" formatted="false">"Importa IEF Neutral u otros objetivos de su autor original."</string>
     <string name="text_import_parametric_eq_658f13" formatted="false">"Importar ecualizador paramétrico"</string>
@@ -932,7 +930,6 @@
     <string name="text_importing_correction_05d728" formatted="false">"Importando corrección..."</string>
     <string name="text_importing_preset_21cb3f" formatted="false">"Importando preajuste…"</string>
     <string name="text_importing_project_5b661a" formatted="false">"Importando proyecto…"</string>
-    <string name="text_importing_tracks_3abc1a">"Importando %1$s pistas…"</string>
     <string name="text_importing_wav_5811f7" formatted="false">"Importando WAV…"</string>
     <string name="text_impulse_9ca8ac" formatted="false">"Impulso"</string>
     <string name="text_impulse_library_ff955d" formatted="false">"Biblioteca de impulsos"</string>
@@ -1131,7 +1128,6 @@
     <string name="text_match_metadata_f9f1d7" formatted="false">"Buscar metadatos"</string>
     <string name="text_match_pitch_to_speed_ccd7ca" formatted="false">"Ajustar el tono a la velocidad"</string>
     <string name="text_match_previous_track_s_tempo_70bf60" formatted="false">"Igualar el tempo de la pista anterior"</string>
-    <string name="text_matched_of_tracks_09b8b1">"%1$s de %2$s pistas coincidentes"</string>
     <string name="text_matches_current_playback_124000" formatted="false">"Coincide con la reproducción actual."</string>
     <string name="text_matches_ee2dbd" formatted="false">"Coincidencias"</string>
     <string name="text_matching_stereo_rms_over_the_same_selection_within_0_1_db_b1073d" formatted="false">"Igualación: RMS estéreo sobre la misma selección, dentro de 0,1 dB"</string>
@@ -1286,7 +1282,6 @@
     <string name="text_no_songs_found_try_another_search_or_check_your_library_connectio_b6d0ed" formatted="false">"No se encontraron canciones. Prueba otra búsqueda o revisa la conexión con tu biblioteca."</string>
     <string name="text_no_stable_release_available_b2aba2" formatted="false">"No hay ninguna versión estable disponible."</string>
     <string name="text_no_stations_found_173164" formatted="false">"No se encontraron emisoras"</string>
-    <string name="text_no_tracks_found_in_that_file_754434" formatted="false">"No se encontraron pistas en ese archivo"</string>
     <string name="text_no_usb_dac_connected_446f5b" formatted="false">"Ningún DAC USB conectado"</string>
     <string name="text_noise_shaped_c7a434" formatted="false">"Con modelado de ruido"</string>
     <string name="text_none_6eef66" formatted="false">"Ninguno"</string>

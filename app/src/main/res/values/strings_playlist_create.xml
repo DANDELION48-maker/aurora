@@ -5,6 +5,4 @@
     <string name="playlist_description_optional">"Description (optional)"</string>
     <string name="playlist_local_hint">"Holds songs from every merged source"</string>
     <string name="playlist_smart_hint">"Fills itself from rules you set"</string>
-    <string name="playlist_import_title">"Import M3U"</string>
-    <string name="playlist_import_hint">"Rebuild a playlist file from your library"</string>
 </resources>

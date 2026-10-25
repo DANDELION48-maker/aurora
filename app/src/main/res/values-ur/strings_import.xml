@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_title">"پلے لسٹ امپورٹ کریں"</string>
+    <string name="import_hint">"Spotify، Apple Music، YouTube Music، SoundCloud، Deezer یا Tidal کا لنک پیسٹ کریں، یا کسی بھی ایپ سے ایکسپورٹ کی گئی فائل منتخب کریں۔ جو گانے آپ کے پاس ہیں وہ آپ کی لائبریری سے چلیں گے، باقی YouTube Music یا SoundCloud سے۔"</string>
+    <string name="import_link">"پلے لسٹ کا لنک"</string>
+    <string name="import_start">"امپورٹ کریں"</string>
+    <string name="import_file">"فائل منتخب کریں"</string>
+    <string name="import_reading">"پلے لسٹ پڑھی جا رہی ہے…"</string>
+    <string name="import_matching">"گانے تلاش ہو رہے ہیں · %2$d میں سے %1$d"</string>
+    <string name="import_saving">"پلے لسٹ محفوظ ہو رہی ہے…"</string>
+    <string name="import_count">"%2$d میں سے %1$d گانے شامل ہوئے"</string>
+    <string name="import_from_library">"آپ کی لائبریری"</string>
+    <string name="import_not_found">"نہیں ملے"</string>
+    <string name="import_own_only">"صرف اس سرور کے گانے شامل کیے گئے۔ باقی کو YouTube Music اور SoundCloud سے پورا کرنے کے لیے تمام ذرائع یکجا کریں آن کریں۔"</string>
+    <string name="import_limited">"Spotify لنکس پہلے 100 گانے دکھاتے ہیں۔ باقی لانے کے لیے پلے لسٹ کو فائل میں ایکسپورٹ کریں۔"</string>
+    <string name="import_open">"پلے لسٹ کھولیں"</string>
+    <string name="import_done">"ہو گیا"</string>
+    <string name="import_failed_unsupported">"یہ لنک کسی معاون ایپ کا نہیں ہے۔"</string>
+    <string name="import_failed_unreadable">"پلے لسٹ پڑھی نہیں جا سکی۔ دیکھیں کہ وہ عوامی ہے۔"</string>
+    <string name="import_failed_empty">"اس پلے لسٹ میں کوئی گانا نہیں ملا۔"</string>
+    <string name="import_failed_offline">"امپورٹ کے لیے انٹرنیٹ کنکشن درکار ہے۔"</string>
+    <string name="import_failed_save">"پلے لسٹ محفوظ نہیں ہو سکی۔"</string>
+    <string name="import_card_hint">"Spotify، Apple Music، فائل اور مزید سے"</string>
+</resources>

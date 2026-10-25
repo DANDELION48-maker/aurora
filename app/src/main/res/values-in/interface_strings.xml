@@ -902,14 +902,12 @@
     <string name="text_imgur_client_id_f5e499" formatted="false">"ID klien Imgur"</string>
     <string name="text_impedance_ohms_3727d3" formatted="false">"Impedansi (ohm)"</string>
     <string name="text_import_1219ef">"Impor %1$s"</string>
-    <string name="text_import_an_m3u_file_3ae427" formatted="false">"Impor file M3U"</string>
     <string name="text_import_as_new_project_d6935b" formatted="false">"Impor sebagai proyek baru"</string>
     <string name="text_import_at_least_one_measurement_to_generate_a_correction_1ea427" formatted="false">"Impor setidaknya satu pengukuran untuk membuat koreksi."</string>
     <string name="text_import_both_measurements_for_an_explicit_linked_average_aab3d2" formatted="false">"Impor kedua pengukuran untuk rata-rata tertaut yang eksplisit."</string>
     <string name="text_import_correction_curve_1f6dae" formatted="false">"Impor kurva koreksi"</string>
     <string name="text_import_custom_target_6450b5" formatted="false">"Impor target kustom"</string>
     <string name="text_import_eq_text_337ca7" formatted="false">"Impor teks EQ"</string>
-    <string name="text_import_failed_fbae89" formatted="false">"Impor gagal"</string>
     <string name="text_import_file_or_paste_3aaac6" formatted="false">"Impor file atau tempel"</string>
     <string name="text_import_ief_neutral_or_other_targets_from_their_original_author_1ce32b" formatted="false">"Impor IEF Neutral atau target lain dari pembuat aslinya."</string>
     <string name="text_import_parametric_eq_658f13" formatted="false">"Impor EQ parametrik"</string>
@@ -932,7 +930,6 @@
     <string name="text_importing_correction_05d728" formatted="false">"Mengimpor koreksi..."</string>
     <string name="text_importing_preset_21cb3f" formatted="false">"Mengimpor preset…"</string>
     <string name="text_importing_project_5b661a" formatted="false">"Mengimpor proyek…"</string>
-    <string name="text_importing_tracks_3abc1a">"Mengimpor %1$s lagu…"</string>
     <string name="text_importing_wav_5811f7" formatted="false">"Mengimpor WAV…"</string>
     <string name="text_impulse_9ca8ac" formatted="false">"Impuls"</string>
     <string name="text_impulse_library_ff955d" formatted="false">"Pustaka Impuls"</string>
@@ -1131,7 +1128,6 @@
     <string name="text_match_metadata_f9f1d7" formatted="false">"Cocokkan metadata"</string>
     <string name="text_match_pitch_to_speed_ccd7ca" formatted="false">"Sesuaikan nada dengan kecepatan"</string>
     <string name="text_match_previous_track_s_tempo_70bf60" formatted="false">"Ikuti tempo lagu sebelumnya"</string>
-    <string name="text_matched_of_tracks_09b8b1">"%1$s dari %2$s lagu cocok"</string>
     <string name="text_matches_current_playback_124000" formatted="false">"Cocok dengan pemutaran saat ini."</string>
     <string name="text_matches_ee2dbd" formatted="false">"Kecocokan"</string>
     <string name="text_matching_stereo_rms_over_the_same_selection_within_0_1_db_b1073d" formatted="false">"Penyamaan: RMS stereo pada pilihan yang sama, dalam 0,1 dB"</string>
@@ -1286,7 +1282,6 @@
     <string name="text_no_songs_found_try_another_search_or_check_your_library_connectio_b6d0ed" formatted="false">"Lagu tidak ditemukan. Coba pencarian lain atau periksa koneksi pustakamu."</string>
     <string name="text_no_stable_release_available_b2aba2" formatted="false">"Tidak ada rilis stabil."</string>
     <string name="text_no_stations_found_173164" formatted="false">"Stasiun tidak ditemukan"</string>
-    <string name="text_no_tracks_found_in_that_file_754434" formatted="false">"Tidak ada lagu di file itu"</string>
     <string name="text_no_usb_dac_connected_446f5b" formatted="false">"Tidak ada DAC USB tersambung"</string>
     <string name="text_noise_shaped_c7a434" formatted="false">"Dengan noise shaping"</string>
     <string name="text_none_6eef66" formatted="false">"Tidak ada"</string>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_title">"Impor Playlist"</string>
+    <string name="import_hint">"Tempel link dari Spotify, Apple Music, YouTube Music, SoundCloud, Deezer, atau Tidal, atau pilih file yang diekspor dari aplikasi apa pun. Lagu yang sudah Anda punya diputar dari pustaka Anda; sisanya dari YouTube Music atau SoundCloud."</string>
+    <string name="import_link">"Link Playlist"</string>
+    <string name="import_start">"Impor"</string>
+    <string name="import_file">"Pilih File"</string>
+    <string name="import_reading">"Membaca playlist…"</string>
+    <string name="import_matching">"Mencari lagu · %1$d dari %2$d"</string>
+    <string name="import_saving">"Menyimpan playlist…"</string>
+    <string name="import_count">"%1$d dari %2$d lagu ditambahkan"</string>
+    <string name="import_from_library">"Pustaka Anda"</string>
+    <string name="import_not_found">"Tidak ditemukan"</string>
+    <string name="import_own_only">"Hanya lagu di server ini yang ditambahkan. Aktifkan Gabungkan semua sumber untuk melengkapi sisanya dari YouTube Music dan SoundCloud."</string>
+    <string name="import_limited">"Link Spotify hanya menampilkan 100 lagu pertama. Ekspor playlist ke file untuk membawa sisanya."</string>
+    <string name="import_open">"Buka Playlist"</string>
+    <string name="import_done">"Selesai"</string>
+    <string name="import_failed_unsupported">"Link itu bukan dari aplikasi yang didukung."</string>
+    <string name="import_failed_unreadable">"Playlist tidak dapat dibaca. Pastikan playlist bersifat publik."</string>
+    <string name="import_failed_empty">"Tidak ada lagu di playlist itu."</string>
+    <string name="import_failed_offline">"Impor memerlukan koneksi internet."</string>
+    <string name="import_failed_save">"Playlist tidak dapat disimpan."</string>
+    <string name="import_card_hint">"Dari Spotify, Apple Music, file, dan lainnya"</string>
+</resources>

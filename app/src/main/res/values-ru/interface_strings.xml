@@ -902,14 +902,12 @@
     <string name="text_imgur_client_id_f5e499" formatted="false">"Client ID Imgur"</string>
     <string name="text_impedance_ohms_3727d3" formatted="false">"Импеданс (Ом)"</string>
     <string name="text_import_1219ef">"Импортировать: %1$s"</string>
-    <string name="text_import_an_m3u_file_3ae427" formatted="false">"Импортировать файл M3U"</string>
     <string name="text_import_as_new_project_d6935b" formatted="false">"Импортировать как новый проект"</string>
     <string name="text_import_at_least_one_measurement_to_generate_a_correction_1ea427" formatted="false">"Для расчёта коррекции нужно хотя бы одно измерение."</string>
     <string name="text_import_both_measurements_for_an_explicit_linked_average_aab3d2" formatted="false">"Для общего среднего импортируйте оба измерения."</string>
     <string name="text_import_correction_curve_1f6dae" formatted="false">"Импортировать кривую коррекции"</string>
     <string name="text_import_custom_target_6450b5" formatted="false">"Импортировать свою цель"</string>
     <string name="text_import_eq_text_337ca7" formatted="false">"Импортировать текст эквалайзера"</string>
-    <string name="text_import_failed_fbae89" formatted="false">"Не удалось импортировать"</string>
     <string name="text_import_file_or_paste_3aaac6" formatted="false">"Импортировать файл или вставить текст"</string>
     <string name="text_import_ief_neutral_or_other_targets_from_their_original_author_1ce32b" formatted="false">"Импортируйте IEF Neutral и другие целевые кривые из публикаций их авторов."</string>
     <string name="text_import_parametric_eq_658f13" formatted="false">"Импорт параметрического эквалайзера"</string>
@@ -932,7 +930,6 @@
     <string name="text_importing_correction_05d728" formatted="false">"Импортируем коррекцию…"</string>
     <string name="text_importing_preset_21cb3f" formatted="false">"Импортируем пресет…"</string>
     <string name="text_importing_project_5b661a" formatted="false">"Импортируем проект…"</string>
-    <string name="text_importing_tracks_3abc1a">"Импортируем треки: %1$s…"</string>
     <string name="text_importing_wav_5811f7" formatted="false">"Импортируем WAV…"</string>
     <string name="text_impulse_9ca8ac" formatted="false">"Импульс"</string>
     <string name="text_impulse_library_ff955d" formatted="false">"Библиотека импульсов"</string>
@@ -1131,7 +1128,6 @@
     <string name="text_match_metadata_f9f1d7" formatted="false">"Найти метаданные"</string>
     <string name="text_match_pitch_to_speed_ccd7ca" formatted="false">"Менять высоту тона вместе со скоростью"</string>
     <string name="text_match_previous_track_s_tempo_70bf60" formatted="false">"Подогнать под темп предыдущего трека"</string>
-    <string name="text_matched_of_tracks_09b8b1">"Найдено треков: %1$s из %2$s"</string>
     <string name="text_matches_current_playback_124000" formatted="false">"Подходит к текущему воспроизведению."</string>
     <string name="text_matches_ee2dbd" formatted="false">"Совпадает"</string>
     <string name="text_matching_stereo_rms_over_the_same_selection_within_0_1_db_b1073d" formatted="false">"Выравнивание: стерео RMS одного фрагмента с точностью 0,1 дБ"</string>
@@ -1286,7 +1282,6 @@
     <string name="text_no_songs_found_try_another_search_or_check_your_library_connectio_b6d0ed" formatted="false">"Треки не найдены. Измените запрос или проверьте подключение к медиатеке."</string>
     <string name="text_no_stable_release_available_b2aba2" formatted="false">"Стабильная версия пока недоступна."</string>
     <string name="text_no_stations_found_173164" formatted="false">"Радиостанции не найдены"</string>
-    <string name="text_no_tracks_found_in_that_file_754434" formatted="false">"В этом файле не найдено треков"</string>
     <string name="text_no_usb_dac_connected_446f5b" formatted="false">"USB-ЦАП не подключён"</string>
     <string name="text_noise_shaped_c7a434" formatted="false">"С формированием шума"</string>
     <string name="text_none_6eef66" formatted="false">"Нет"</string>

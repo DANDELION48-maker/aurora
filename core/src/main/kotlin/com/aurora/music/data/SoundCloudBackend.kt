@@ -207,6 +207,16 @@ class SoundCloudBackend(
         SearchResults(remember(tracks.await()), albums.await(), users.await(), sets.await())
     }
 
+    // matching an imported track only needs tracks, not the albums, people and sets a search also fetches
+    override fun importStages(): List<ImportStage> = listOf(ImportStage(ImportSource.SOUNDCLOUD) { query ->
+        if (query.isBlank()) emptyList() else remember(list("/search/tracks?q=${URLEncoder.encode(query.trim(), "UTF-8")}&limit=20").mapNotNull(::song))
+    })
+
+    suspend fun resolvePlaylist(url: String): DetailData? {
+        val item = api.get("/resolve?url=${URLEncoder.encode(url, "UTF-8")}").asJsonObject
+        return if (item.string("kind") == "playlist") detail("playlist", item.string("id")) else null
+    }
+
     override suspend fun songFor(id: String): Song? {
         songs[id]?.let { return it }
         if (!id.matches(Regex("[0-9]+"))) return null

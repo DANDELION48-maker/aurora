@@ -5,6 +5,4 @@
     <string name="playlist_description_optional">"Descrição (opcional)"</string>
     <string name="playlist_local_hint">"Aceita músicas de todas as fontes mescladas"</string>
     <string name="playlist_smart_hint">"Preenche-se sozinha com as suas regras"</string>
-    <string name="playlist_import_title">"Importar M3U"</string>
-    <string name="playlist_import_hint">"Recriar um arquivo de playlist com a sua biblioteca"</string>
 </resources>

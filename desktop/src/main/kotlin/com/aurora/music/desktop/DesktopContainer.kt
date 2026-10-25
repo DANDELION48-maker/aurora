@@ -154,10 +154,15 @@ class DesktopContainer(
     fun soundCloudWaiting(session: Session): Int = soundcloudPendingLikes.waiting(session.userId)
 
     // soundcloud previews and drm-only tracks play from a youtube match instead
+    // youtube music and soundcloud as you added them, signed out when you have not
+    private suspend fun catalogue(type: ServerType): MediaBackend? =
+        buildBackend(settingsStore.savedSessions.first().firstOrNull { it.type == type && !it.isGuest } ?: Session.guest(type, "Guest"))
+
+    val playlistImporter by lazy { com.aurora.music.data.PlaylistImporter(repository, com.aurora.music.data.PlaylistLinks(http), ::catalogue) }
+
     fun resolveSoundCloud(song: Song): String? {
         val id = song.streamUrl.substringAfterLast('/').substringBefore('?').takeIf { it.matches(Regex("[0-9]+")) } ?: return null
-        val source = backend as? com.aurora.music.data.SoundCloudBackend ?: runBlocking { settingsStore.savedSessions.first() }
-            .firstOrNull { it.type == ServerType.SOUNDCLOUD }?.let { buildBackend(it) as? com.aurora.music.data.SoundCloudBackend }
+        val source = backend as? com.aurora.music.data.SoundCloudBackend ?: runBlocking { catalogue(ServerType.SOUNDCLOUD) } as? com.aurora.music.data.SoundCloudBackend
         runCatching { runBlocking { source?.playbackUrl(id) } }.getOrNull()?.let { return it }
         val query = java.net.URLEncoder.encode("${song.title} ${song.artist}".trim(), "UTF-8")
         return youtubeResolver.resolveSentinel("aurora-yt://sc$id?q=$query&dur=${song.durationSec}")

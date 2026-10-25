@@ -902,14 +902,12 @@
     <string name="text_imgur_client_id_f5e499" formatted="false">"\u2067Imgur کلائنٹ ID\u2069"</string>
     <string name="text_impedance_ohms_3727d3" formatted="false">"\u2067امپیڈنس (اوہم)\u2069"</string>
     <string name="text_import_1219ef">"\u2067%1$s امپورٹ کریں\u2069"</string>
-    <string name="text_import_an_m3u_file_3ae427" formatted="false">"\u2067M3U فائل امپورٹ کریں\u2069"</string>
     <string name="text_import_as_new_project_d6935b" formatted="false">"\u2067نئے پروجیکٹ کے طور پر امپورٹ کریں\u2069"</string>
     <string name="text_import_at_least_one_measurement_to_generate_a_correction_1ea427" formatted="false">"\u2067تصحیح تیار کرنے کے لیے کم از کم ایک پیمائش امپورٹ کریں۔\u2069"</string>
     <string name="text_import_both_measurements_for_an_explicit_linked_average_aab3d2" formatted="false">"\u2067واضح لنکڈ اوسط کے لیے دونوں پیمائشیں امپورٹ کریں۔\u2069"</string>
     <string name="text_import_correction_curve_1f6dae" formatted="false">"\u2067تصحیحی کَرو امپورٹ کریں\u2069"</string>
     <string name="text_import_custom_target_6450b5" formatted="false">"\u2067حسب ضرورت ٹارگٹ امپورٹ کریں\u2069"</string>
     <string name="text_import_eq_text_337ca7" formatted="false">"\u2067EQ ٹیکسٹ امپورٹ کریں\u2069"</string>
-    <string name="text_import_failed_fbae89" formatted="false">"\u2067امپورٹ ناکام\u2069"</string>
     <string name="text_import_file_or_paste_3aaac6" formatted="false">"\u2067فائل امپورٹ کریں یا پیسٹ کریں\u2069"</string>
     <string name="text_import_ief_neutral_or_other_targets_from_their_original_author_1ce32b" formatted="false">"\u2067IEF Neutral یا دیگر ٹارگٹس ان کے اصل مصنف سے امپورٹ کریں۔\u2069"</string>
     <string name="text_import_parametric_eq_658f13" formatted="false">"\u2067پیرامیٹرک EQ امپورٹ کریں\u2069"</string>
@@ -932,7 +930,6 @@
     <string name="text_importing_correction_05d728" formatted="false">"\u2067تصحیح امپورٹ ہو رہی ہے...\u2069"</string>
     <string name="text_importing_preset_21cb3f" formatted="false">"\u2067پری سیٹ امپورٹ ہو رہا ہے…\u2069"</string>
     <string name="text_importing_project_5b661a" formatted="false">"\u2067پروجیکٹ امپورٹ ہو رہا ہے…\u2069"</string>
-    <string name="text_importing_tracks_3abc1a">"\u2067%1$s ٹریک امپورٹ ہو رہے ہیں…\u2069"</string>
     <string name="text_importing_wav_5811f7" formatted="false">"\u2067WAV امپورٹ ہو رہی ہے…\u2069"</string>
     <string name="text_impulse_9ca8ac" formatted="false">"\u2067امپلس\u2069"</string>
     <string name="text_impulse_library_ff955d" formatted="false">"\u2067امپلس لائبریری\u2069"</string>
@@ -1131,7 +1128,6 @@
     <string name="text_match_metadata_f9f1d7" formatted="false">"\u2067میٹا ڈیٹا ملائیں\u2069"</string>
     <string name="text_match_pitch_to_speed_ccd7ca" formatted="false">"\u2067پچ کو رفتار کے مطابق رکھیں\u2069"</string>
     <string name="text_match_previous_track_s_tempo_70bf60" formatted="false">"\u2067پچھلے ٹریک کے ٹیمپو سے ملائیں\u2069"</string>
-    <string name="text_matched_of_tracks_09b8b1">"\u2067%2$s میں سے %1$s ٹریک مماثل\u2069"</string>
     <string name="text_matches_current_playback_124000" formatted="false">"\u2067موجودہ پلے بیک سے مماثل ہے۔\u2069"</string>
     <string name="text_matches_ee2dbd" formatted="false">"\u2067مماثلتیں\u2069"</string>
     <string name="text_matching_stereo_rms_over_the_same_selection_within_0_1_db_b1073d" formatted="false">"\u2067مماثلت: اسی انتخاب پر اسٹیریو RMS، 0.1 dB کے اندر\u2069"</string>
@@ -1286,7 +1282,6 @@
     <string name="text_no_songs_found_try_another_search_or_check_your_library_connectio_b6d0ed" formatted="false">"\u2067کوئی گانا نہیں ملا۔ کوئی اور تلاش آزمائیں یا اپنا لائبریری کنکشن چیک کریں۔\u2069"</string>
     <string name="text_no_stable_release_available_b2aba2" formatted="false">"\u2067کوئی مستحکم ریلیز دستیاب نہیں۔\u2069"</string>
     <string name="text_no_stations_found_173164" formatted="false">"\u2067کوئی اسٹیشن نہیں ملا\u2069"</string>
-    <string name="text_no_tracks_found_in_that_file_754434" formatted="false">"\u2067اس فائل میں کوئی ٹریک نہیں ملا\u2069"</string>
     <string name="text_no_usb_dac_connected_446f5b" formatted="false">"\u2067کوئی USB DAC جڑا ہوا نہیں\u2069"</string>
     <string name="text_noise_shaped_c7a434" formatted="false">"\u2067نوائز شیپڈ\u2069"</string>
     <string name="text_none_6eef66" formatted="false">"\u2067کوئی نہیں\u2069"</string>

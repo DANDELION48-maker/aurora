@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_title">"Importar lista"</string>
+    <string name="import_hint">"Pega un enlace de Spotify, Apple Music, YouTube Music, SoundCloud, Deezer o Tidal, o elige un archivo exportado desde cualquier app. Las canciones que ya tienes suenan desde tu biblioteca; el resto, desde YouTube Music o SoundCloud."</string>
+    <string name="import_link">"Enlace de la lista"</string>
+    <string name="import_start">"Importar"</string>
+    <string name="import_file">"Elegir archivo"</string>
+    <string name="import_reading">"Leyendo la lista…"</string>
+    <string name="import_matching">"Buscando canciones · %1$d de %2$d"</string>
+    <string name="import_saving">"Guardando la lista…"</string>
+    <string name="import_count">"%1$d de %2$d canciones añadidas"</string>
+    <string name="import_from_library">"Tu biblioteca"</string>
+    <string name="import_not_found">"No encontradas"</string>
+    <string name="import_own_only">"Solo se añadieron las canciones de este servidor. Activa Unir todas las fuentes para completar el resto con YouTube Music y SoundCloud."</string>
+    <string name="import_limited">"Los enlaces de Spotify muestran las primeras 100 canciones. Exporta la lista a un archivo para traer el resto."</string>
+    <string name="import_open">"Abrir lista"</string>
+    <string name="import_done">"Listo"</string>
+    <string name="import_failed_unsupported">"Ese enlace no es de una app compatible."</string>
+    <string name="import_failed_unreadable">"No se pudo leer la lista. Comprueba que sea pública."</string>
+    <string name="import_failed_empty">"No se encontraron canciones en esa lista."</string>
+    <string name="import_failed_offline">"Para importar hace falta conexión a internet."</string>
+    <string name="import_failed_save">"No se pudo guardar la lista."</string>
+    <string name="import_card_hint">"Desde Spotify, Apple Music, un archivo y más"</string>
+</resources>

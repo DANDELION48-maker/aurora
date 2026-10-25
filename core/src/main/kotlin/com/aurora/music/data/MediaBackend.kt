@@ -98,6 +98,11 @@ interface MediaBackend {
 
     // local playlists also keep songs from other merged sources, whose ids stay namespaced
     val acceptsForeignTracks: Boolean get() = false
+
+    // where an imported track is looked for, in order
+    fun importStages(): List<ImportStage> = listOf(ImportStage(ImportSource.of(session.type)) { search(it).songs })
+    // a playlist that may hold songs from any source; null where only the source's own songs fit
+    suspend fun createMixedPlaylist(name: String, songs: List<Song>): String? = null
     suspend fun playlistEntries(id: String): List<Song>? = null
     suspend fun removeFromPlaylist(playlistId: String, trackIds: List<String>): Boolean = false
     suspend fun playlistsForSong(songId: String): List<Playlist> = allPlaylists()

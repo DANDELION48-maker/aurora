@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_title">"प्लेलिस्ट इंपोर्ट करें"</string>
+    <string name="import_hint">"Spotify, Apple Music, YouTube Music, SoundCloud, Deezer या Tidal का लिंक पेस्ट करें, या किसी भी ऐप से एक्सपोर्ट की गई फ़ाइल चुनें। जो गाने आपके पास हैं वे आपकी लाइब्रेरी से चलेंगे, बाकी YouTube Music या SoundCloud से।"</string>
+    <string name="import_link">"प्लेलिस्ट लिंक"</string>
+    <string name="import_start">"इंपोर्ट करें"</string>
+    <string name="import_file">"फ़ाइल चुनें"</string>
+    <string name="import_reading">"प्लेलिस्ट पढ़ी जा रही है…"</string>
+    <string name="import_matching">"गाने खोजे जा रहे हैं · %2$d में से %1$d"</string>
+    <string name="import_saving">"प्लेलिस्ट सेव हो रही है…"</string>
+    <string name="import_count">"%2$d में से %1$d गाने जोड़े गए"</string>
+    <string name="import_from_library">"आपकी लाइब्रेरी"</string>
+    <string name="import_not_found">"नहीं मिले"</string>
+    <string name="import_own_only">"सिर्फ़ इस सर्वर के गाने जोड़े गए। बाकी को YouTube Music और SoundCloud से भरने के लिए सभी सोर्स मर्ज करें चालू करें।"</string>
+    <string name="import_limited">"Spotify लिंक पहले 100 गाने दिखाते हैं। बाकी लाने के लिए प्लेलिस्ट को फ़ाइल में एक्सपोर्ट करें।"</string>
+    <string name="import_open">"प्लेलिस्ट खोलें"</string>
+    <string name="import_done">"हो गया"</string>
+    <string name="import_failed_unsupported">"यह लिंक किसी समर्थित ऐप का नहीं है।"</string>
+    <string name="import_failed_unreadable">"प्लेलिस्ट पढ़ी नहीं जा सकी। देखें कि वह सार्वजनिक है।"</string>
+    <string name="import_failed_empty">"इस प्लेलिस्ट में कोई गाना नहीं मिला।"</string>
+    <string name="import_failed_offline">"इंपोर्ट के लिए इंटरनेट कनेक्शन चाहिए।"</string>
+    <string name="import_failed_save">"प्लेलिस्ट सेव नहीं हो सकी।"</string>
+    <string name="import_card_hint">"Spotify, Apple Music, फ़ाइल और बहुत कुछ से"</string>
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_title">"Importer une playlist"</string>
+    <string name="import_hint">"Collez un lien Spotify, Apple Music, YouTube Music, SoundCloud, Deezer ou Tidal, ou choisissez un fichier exporté depuis n’importe quelle app. Les morceaux que vous avez déjà sont lus depuis votre bibliothèque, le reste depuis YouTube Music ou SoundCloud."</string>
+    <string name="import_link">"Lien de la playlist"</string>
+    <string name="import_start">"Importer"</string>
+    <string name="import_file">"Choisir un fichier"</string>
+    <string name="import_reading">"Lecture de la playlist…"</string>
+    <string name="import_matching">"Recherche des morceaux · %1$d sur %2$d"</string>
+    <string name="import_saving">"Enregistrement de la playlist…"</string>
+    <string name="import_count">"%1$d morceaux sur %2$d ajoutés"</string>
+    <string name="import_from_library">"Votre bibliothèque"</string>
+    <string name="import_not_found">"Introuvables"</string>
+    <string name="import_own_only">"Seuls les morceaux de ce serveur ont été ajoutés. Activez Fusionner toutes les sources pour compléter avec YouTube Music et SoundCloud."</string>
+    <string name="import_limited">"Les liens Spotify affichent les 100 premiers morceaux. Exportez la playlist dans un fichier pour récupérer le reste."</string>
+    <string name="import_open">"Ouvrir la playlist"</string>
+    <string name="import_done">"Terminé"</string>
+    <string name="import_failed_unsupported">"Ce lien ne vient pas d’une app prise en charge."</string>
+    <string name="import_failed_unreadable">"Impossible de lire cette playlist. Vérifiez qu’elle est publique."</string>
+    <string name="import_failed_empty">"Aucun morceau trouvé dans cette playlist."</string>
+    <string name="import_failed_offline">"L’importation nécessite une connexion internet."</string>
+    <string name="import_failed_save">"Impossible d’enregistrer la playlist."</string>
+    <string name="import_card_hint">"Depuis Spotify, Apple Music, un fichier et plus"</string>
+</resources>

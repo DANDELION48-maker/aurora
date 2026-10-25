@@ -5,6 +5,4 @@
     <string name="playlist_description_optional">"تفصیل (اختیاری)"</string>
     <string name="playlist_local_hint">"ہر ضم شدہ ذریعے کے گانے رکھ سکتی ہے"</string>
     <string name="playlist_smart_hint">"آپ کے اصولوں سے خود بھرتی ہے"</string>
-    <string name="playlist_import_title">"M3U درآمد کریں"</string>
-    <string name="playlist_import_hint">"اپنی لائبریری سے پلے لسٹ فائل دوبارہ بنائیں"</string>
 </resources>

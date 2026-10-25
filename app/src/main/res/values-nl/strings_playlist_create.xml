@@ -5,6 +5,4 @@
     <string name="playlist_description_optional">"Beschrijving (optioneel)"</string>
     <string name="playlist_local_hint">"Kan nummers uit elke samengevoegde bron bevatten"</string>
     <string name="playlist_smart_hint">"Vult zichzelf met jouw regels"</string>
-    <string name="playlist_import_title">"M3U importeren"</string>
-    <string name="playlist_import_hint">"Een playlistbestand opnieuw opbouwen uit je bibliotheek"</string>
 </resources>

@@ -902,14 +902,12 @@
     <string name="text_imgur_client_id_f5e499" formatted="false">"Imgur 클라이언트 ID"</string>
     <string name="text_impedance_ohms_3727d3" formatted="false">"임피던스 (옴)"</string>
     <string name="text_import_1219ef">"%1$s 가져오기"</string>
-    <string name="text_import_an_m3u_file_3ae427" formatted="false">"M3U 파일 가져오기"</string>
     <string name="text_import_as_new_project_d6935b" formatted="false">"새 프로젝트로 가져오기"</string>
     <string name="text_import_at_least_one_measurement_to_generate_a_correction_1ea427" formatted="false">"보정을 생성하려면 측정값을 하나 이상 가져오세요."</string>
     <string name="text_import_both_measurements_for_an_explicit_linked_average_aab3d2" formatted="false">"명시적 연결 평균을 쓰려면 두 측정값을 모두 가져오세요."</string>
     <string name="text_import_correction_curve_1f6dae" formatted="false">"보정 곡선 가져오기"</string>
     <string name="text_import_custom_target_6450b5" formatted="false">"사용자 지정 목표 가져오기"</string>
     <string name="text_import_eq_text_337ca7" formatted="false">"EQ 텍스트 가져오기"</string>
-    <string name="text_import_failed_fbae89" formatted="false">"가져오기 실패"</string>
     <string name="text_import_file_or_paste_3aaac6" formatted="false">"파일 가져오기 또는 붙여넣기"</string>
     <string name="text_import_ief_neutral_or_other_targets_from_their_original_author_1ce32b" formatted="false">"IEF Neutral 등 다른 목표는 원작자에게서 가져오세요."</string>
     <string name="text_import_parametric_eq_658f13" formatted="false">"파라메트릭 EQ 가져오기"</string>
@@ -932,7 +930,6 @@
     <string name="text_importing_correction_05d728" formatted="false">"보정 가져오는 중..."</string>
     <string name="text_importing_preset_21cb3f" formatted="false">"프리셋 가져오는 중…"</string>
     <string name="text_importing_project_5b661a" formatted="false">"프로젝트 가져오는 중…"</string>
-    <string name="text_importing_tracks_3abc1a">"%1$s곡 가져오는 중…"</string>
     <string name="text_importing_wav_5811f7" formatted="false">"WAV 가져오는 중…"</string>
     <string name="text_impulse_9ca8ac" formatted="false">"임펄스"</string>
     <string name="text_impulse_library_ff955d" formatted="false">"임펄스 라이브러리"</string>
@@ -1131,7 +1128,6 @@
     <string name="text_match_metadata_f9f1d7" formatted="false">"메타데이터 맞추기"</string>
     <string name="text_match_pitch_to_speed_ccd7ca" formatted="false">"피치를 속도에 맞추기"</string>
     <string name="text_match_previous_track_s_tempo_70bf60" formatted="false">"이전 곡 템포에 맞추기"</string>
-    <string name="text_matched_of_tracks_09b8b1">"%2$s곡 중 %1$s곡 일치"</string>
     <string name="text_matches_current_playback_124000" formatted="false">"현재 재생과 일치합니다."</string>
     <string name="text_matches_ee2dbd" formatted="false">"일치 항목"</string>
     <string name="text_matching_stereo_rms_over_the_same_selection_within_0_1_db_b1073d" formatted="false">"맞춤: 같은 구간의 스테레오 RMS, 0.1 dB 이내"</string>
@@ -1286,7 +1282,6 @@
     <string name="text_no_songs_found_try_another_search_or_check_your_library_connectio_b6d0ed" formatted="false">"곡을 찾을 수 없습니다. 다른 검색어를 사용하거나 보관함 연결을 확인하세요."</string>
     <string name="text_no_stable_release_available_b2aba2" formatted="false">"안정 릴리스가 없습니다."</string>
     <string name="text_no_stations_found_173164" formatted="false">"방송국을 찾을 수 없음"</string>
-    <string name="text_no_tracks_found_in_that_file_754434" formatted="false">"해당 파일에서 곡을 찾을 수 없습니다"</string>
     <string name="text_no_usb_dac_connected_446f5b" formatted="false">"연결된 USB DAC 없음"</string>
     <string name="text_noise_shaped_c7a434" formatted="false">"노이즈 셰이핑"</string>
     <string name="text_none_6eef66" formatted="false">"없음"</string>

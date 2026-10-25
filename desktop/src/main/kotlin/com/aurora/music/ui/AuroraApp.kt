@@ -100,7 +100,6 @@ import androidx.savedstate.read
 import com.aurora.music.R
 import com.aurora.music.data.DownloadState
 import com.aurora.music.data.GesturePrefs
-import com.aurora.music.data.M3u
 import com.aurora.music.data.Pin
 import com.aurora.music.data.RecapPeriod
 import com.aurora.music.data.RecapWindow
@@ -264,6 +263,7 @@ private fun Shell(
     val store = container.settingsStore
     val desktopSettings = container.desktopSettings
     val repository = container.repository
+    var showImport by remember { mutableStateOf(false) }
     val authVM = viewModel(viewModelStoreOwner = rootOwner) { AuthViewModel(container) }
 
     val playerState by remember(player) { player.settledState }.collectAsStateWithLifecycle(player.state.value.settled())
@@ -1074,6 +1074,9 @@ private fun Shell(
                                 val libraryState by libraryVM.state.collectAsStateWithLifecycle()
                                 LaunchedEffect(libraryState.songs.size) { player.checkLiked(libraryState.songs) }
                                 var librarySelection by rememberSaveable { mutableStateOf<String?>(null) }
+                                if (showImport) com.aurora.music.ui.screens.library.ImportPlaylistDialog(container.playlistImporter,
+                                    onOpen = { id -> openDetail("playlist", id) },
+                                    onImported = { libraryVM.load(); playlistsVersion++ }, onDismiss = { showImport = false })
                                 BoxWithConstraints(Modifier.fillMaxSize()) {
                                     val split = rail && maxWidth >= 960.dp
                                     val selected = librarySelection?.split(":", limit = 2)?.takeIf { split && it.size == 2 }
@@ -1122,26 +1125,7 @@ private fun Shell(
                                                 onCreateSmart = { navController.navigate(Routes.smartEdit()) },
                                                 onEditSmart = { id -> navController.navigate(Routes.smartEdit(id)) },
                                                 onDeleteSmart = { id -> scope.launch { store.deleteSmartPlaylist(id) } },
-                                                onImportM3u = {
-                                                    FilePickers.openFile(appString(R.string.text_import_an_m3u_file_3ae427), listOf("m3u", "m3u8"))?.let { file ->
-                                                        scope.launch {
-                                                            val text = withContext(Dispatchers.IO) { runCatching { file.readText() }.getOrNull() }
-                                                            val entries = text?.let { M3u.parse(it) }.orEmpty()
-                                                            if (entries.isEmpty()) {
-                                                                confirm(appString(R.string.text_no_tracks_found_in_that_file_754434))
-                                                            } else {
-                                                                val name = file.nameWithoutExtension.ifBlank { appString(R.string.text_imported_playlist_37a186) }
-                                                                confirm(appString(R.string.text_importing_tracks_3abc1a, entries.size))
-                                                                val result = repository.importPlaylist(name, entries)
-                                                                if (result == null) confirm(appString(R.string.text_import_failed_fbae89)) else {
-                                                                    confirm(appString(R.string.text_matched_of_tracks_09b8b1, result.first, result.second))
-                                                                    libraryVM.load()
-                                                                    playlistsVersion++
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                },
+                                                onImportM3u = { showImport = true },
                                                 onExportPlaylist = { id, kind, title ->
                                                     scope.launch {
                                                         val text = repository.exportPlaylist(kind, id)

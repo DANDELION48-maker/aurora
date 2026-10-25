@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_title">"Çalma listesini içe aktar"</string>
+    <string name="import_hint">"Spotify, Apple Music, YouTube Music, SoundCloud, Deezer veya Tidal bağlantısı yapıştırın ya da herhangi bir uygulamadan dışa aktarılmış bir dosya seçin. Zaten sizde olan şarkılar kitaplığınızdan, kalanlar YouTube Music veya SoundCloud\'dan çalar."</string>
+    <string name="import_link">"Çalma listesi bağlantısı"</string>
+    <string name="import_start">"İçe aktar"</string>
+    <string name="import_file">"Dosya seç"</string>
+    <string name="import_reading">"Çalma listesi okunuyor…"</string>
+    <string name="import_matching">"Şarkılar aranıyor · %1$d / %2$d"</string>
+    <string name="import_saving">"Çalma listesi kaydediliyor…"</string>
+    <string name="import_count">"%2$d şarkıdan %1$d tanesi eklendi"</string>
+    <string name="import_from_library">"Kitaplığınız"</string>
+    <string name="import_not_found">"Bulunamadı"</string>
+    <string name="import_own_only">"Yalnızca bu sunucudaki şarkılar eklendi. Kalanları YouTube Music ve SoundCloud\'dan tamamlamak için Tüm kaynakları birleştir\'i açın."</string>
+    <string name="import_limited">"Spotify bağlantıları ilk 100 şarkıyı gösterir. Kalanını almak için çalma listesini bir dosyaya aktarın."</string>
+    <string name="import_open">"Çalma listesini aç"</string>
+    <string name="import_done">"Tamam"</string>
+    <string name="import_failed_unsupported">"Bu bağlantı desteklenen bir uygulamadan değil."</string>
+    <string name="import_failed_unreadable">"Çalma listesi okunamadı. Herkese açık olduğunu kontrol edin."</string>
+    <string name="import_failed_empty">"Bu çalma listesinde şarkı bulunamadı."</string>
+    <string name="import_failed_offline">"İçe aktarma için internet bağlantısı gerekir."</string>
+    <string name="import_failed_save">"Çalma listesi kaydedilemedi."</string>
+    <string name="import_card_hint">"Spotify, Apple Music, dosya ve daha fazlasından"</string>
+</resources>

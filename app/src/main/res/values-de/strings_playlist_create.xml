@@ -5,6 +5,4 @@
     <string name="playlist_description_optional">"Beschreibung (optional)"</string>
     <string name="playlist_local_hint">"Enthält Songs aus allen zusammengeführten Quellen"</string>
     <string name="playlist_smart_hint">"Füllt sich nach deinen Regeln"</string>
-    <string name="playlist_import_title">"M3U importieren"</string>
-    <string name="playlist_import_hint">"Eine Playlist-Datei aus deiner Mediathek nachbauen"</string>
 </resources>

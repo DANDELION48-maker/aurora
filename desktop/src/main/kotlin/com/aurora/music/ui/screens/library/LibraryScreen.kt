@@ -1142,7 +1142,7 @@ private fun CreatePlaylistDialog(
                     Text(appString(R.string.text_create_a_smart_playlist_instead_f73978))
                 }
                 TextButton(onClick = onImportM3u, enabled = !saving) {
-                    Text(appString(R.string.text_import_an_m3u_file_3ae427))
+                    Text(appString(R.string.import_title))
                 }
             }
         },
