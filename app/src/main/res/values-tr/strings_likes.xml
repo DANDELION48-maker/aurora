@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"Beğeni kaydedilemedi. Tekrar dene."</string>
+    <string name="like_on">"Şurada beğen"</string>
+    <string name="like_now_playing">"Şimdi çalıyor"</string>
+    <string name="like_no_match">"Eşleşme yok"</string>
+    <string name="like_guest">"Beğenmek için oturum aç"</string>
+    <string name="like_more_sources">"Diğer kaynaklarda beğen"</string>
+</resources>

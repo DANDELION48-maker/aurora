@@ -38,7 +38,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -135,10 +137,8 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     @Volatile private var autoplayEnabled = false
     @Volatile private var privateSession = false
 
-    // likes merge server stars + local playlist likes
-    private var serverLikedIds: Set<String> = emptySet()
+    private val likes = com.aurora.music.data.Likes(viewModelScope, container.repository, container.settingsStore::setPlaylistLiked)
     @Volatile private var mergeFeatures = com.aurora.music.data.MergeFeatures()
-    private var likedPlaylistIds: Set<String> = emptySet()
     private var lastRecordedId: String? = null
     private var lastNowPlayingId: String? = null
     // account the live queue belongs to so it persists/restores under the right key
@@ -255,6 +255,13 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             container.sessionReady.collect { ready -> if (ready == true) refreshLikes() }
         }
+        viewModelScope.launch { likes.likedIds.collect { ids -> _state.update { it.copy(likedIds = ids) } } }
+        viewModelScope.launch { likes.failures.collect { android.widget.Toast.makeText(getApplication(), appString(R.string.like_failed), android.widget.Toast.LENGTH_SHORT).show() } }
+        // the playing song's heart counts likes on every account, found by recording
+        viewModelScope.launch {
+            _state.map { it.current }.distinctUntilChanged { a, b -> a.id == b.id && a.title == b.title && a.artist == b.artist }
+                .collect { if (it.id.isNotEmpty()) likes.check(listOf(it)) }
+        }
         // merge options apply to the song on screen right away
         viewModelScope.launch {
             container.settingsStore.mergeFeatures.collect {
@@ -266,16 +273,12 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         // a song downloaded after likes were loaded still belongs in the offline liked songs
         viewModelScope.launch {
             container.downloadManager.downloads.collect { downloads ->
-                container.repository.markDownloadsLiked(downloads.values.filter { it.liked != true && it.id in serverLikedIds }.map { it.id }, true)
+                val liked = likes.likedIds.value
+                container.repository.markDownloadsLiked(downloads.values.filter { it.liked != true && it.id in liked }.map { it.id }, true)
             }
         }
         // subsonic can't star playlists so locally-liked ones merge into the same set
-        viewModelScope.launch {
-            container.settingsStore.likedPlaylists.collect { ids ->
-                likedPlaylistIds = ids
-                recomputeLikes()
-            }
-        }
+        viewModelScope.launch { container.settingsStore.likedPlaylists.collect(likes::setLikedPlaylists) }
         viewModelScope.launch {
             container.settingsStore.privateSession.collect { privateSession = it }
         }
@@ -291,10 +294,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             container.accountEpoch.drop(1).collect {
                 // likes belong to the account and session readiness doesn't change on a switch, so reload them here
-                serverLikedIds = emptySet()
-                likeChecked.clear()
-                recomputeLikes()
-                refreshLikes()
+                likes.reset()
                 persistQueue(force = true)
                 container.queueStore.requestFlush()
                 suppressPersist = true         // clearing below must not wipe what we just saved
@@ -418,10 +418,10 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         )
     }
 
-    private fun syncRemote(remote: com.aurora.music.playback.network.endpoint.ConnectStatus) = _state.update {
-        val id = remote.current?.id ?: return@update it
-        it.copy(speed = remote.speed, sleepTimerMinutes = remote.sleepMinutes, sleepEndOfTrack = remote.sleepEndOfTrack,
-            likedIds = if (remote.liked) it.likedIds + id else it.likedIds - id)
+    private fun syncRemote(remote: com.aurora.music.playback.network.endpoint.ConnectStatus) {
+        val id = remote.current?.id ?: return
+        _state.update { it.copy(speed = remote.speed, sleepTimerMinutes = remote.sleepMinutes, sleepEndOfTrack = remote.sleepEndOfTrack) }
+        likes.remote(id, remote.liked)
     }
 
     fun setSleepTimer(minutes: Int) {
@@ -1039,7 +1039,7 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     fun toggleLikeCurrent() {
         val remote = remoteSession?.status?.value
         if (remote != null) container.networkOutput.command(com.aurora.music.playback.network.endpoint.ConnectCommand.Like(!remote.liked))
-        else toggleLike(_state.value.current.id)
+        else likes.toggle(_state.value.current)
     }
 
     private var commentsFor: String? = null
@@ -1081,62 +1081,16 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    private fun recomputeLikes() {
-        _state.update { it.copy(likedIds = serverLikedIds + likedPlaylistIds) }
-    }
+    fun refreshLikes() = likes.refresh()
 
-    private val likeChecked = java.util.Collections.synchronizedSet(HashSet<String>())
+    fun checkLiked(songs: List<Song>) = likes.check(songs)
 
-    fun refreshLikes() {
-        viewModelScope.launch {
-            val fresh = runCatching { container.repository.starredIds() }.getOrNull() ?: return@launch
-            // starred sets can be partial (spotify's newest likes only), so likes confirmed one by one are rechecked, not dropped
-            val recheck = (serverLikedIds - fresh).filter { it in likeChecked }
-            serverLikedIds = fresh + recheck
-            recomputeLikes()
-            container.repository.markDownloadsLiked(fresh, true)
-            if (recheck.isEmpty()) return@launch
-            val still = runCatching { container.repository.likedSongIds(recheck) }.getOrNull() ?: return@launch
-            val gone = recheck.toSet() - still
-            if (gone.isNotEmpty()) {
-                serverLikedIds = serverLikedIds - gone
-                recomputeLikes()
-            }
-        }
-    }
+    // songs toggle on the source they play from; the heart's menu reaches the other accounts
+    fun toggleLike(id: String, kind: String = "song") = likes.toggle(id, kind)
 
-    fun checkLiked(ids: List<String>) {
-        val toCheck = ids.filter { it.isNotEmpty() && it !in serverLikedIds && it !in likeChecked }.distinct()
-        if (toCheck.isEmpty()) return
-        viewModelScope.launch {
-            val liked = runCatching { container.repository.likedSongIds(toCheck) }.getOrNull() ?: return@launch
-            likeChecked.addAll(toCheck)
-            container.repository.markDownloadsLiked(liked, true)
-            if (liked.isNotEmpty()) {
-                serverLikedIds = serverLikedIds + liked
-                recomputeLikes()
-            }
-        }
-    }
-
-    // song/album/artist persist to the server playlist persists locally
-    fun toggleLike(id: String, kind: String = "song") {
-        if (id.startsWith("aurora-mix:")) return
-        if (id.isEmpty() || !container.repository.canLike(id)) return
-        val nowLiked = !_state.value.likedIds.contains(id)
-        if (kind == "playlist") {
-            likedPlaylistIds = if (nowLiked) likedPlaylistIds + id else likedPlaylistIds - id
-            recomputeLikes()
-            viewModelScope.launch { runCatching { container.settingsStore.setPlaylistLiked(id, nowLiked) } }
-            // also sync to backend no-op for backends that can't star playlists
-            viewModelScope.launch { runCatching { container.repository.setStarred(id, nowLiked, "playlist") } }
-        } else {
-            serverLikedIds = if (nowLiked) serverLikedIds + id else serverLikedIds - id
-            recomputeLikes()
-            container.repository.markDownloadsLiked(listOf(id), nowLiked)
-            viewModelScope.launch { runCatching { container.repository.setStarred(id, nowLiked, kind) } }
-        }
-    }
+    // a connected device keeps its own likes, so its songs get no per-account menu
+    suspend fun likeOptions(song: Song): List<com.aurora.music.data.LikeOption> = if (remoteSession != null) emptyList() else likes.options(song)
+    suspend fun setLikedOn(song: Song, option: com.aurora.music.data.LikeOption, liked: Boolean) = likes.set(song, option, liked)
 
     fun setExpanded(value: Boolean) = _state.update { it.copy(expanded = value) }
 

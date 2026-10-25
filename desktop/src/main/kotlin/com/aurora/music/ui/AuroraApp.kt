@@ -603,7 +603,7 @@ private fun Shell(
             LaunchedEffect(kind, id) { detailVM.load(kind, id) }
             val detailState by detailVM.state.collectAsStateWithLifecycle()
             LaunchedEffect(detailState.data?.tracks?.size) {
-                detailState.data?.tracks?.let { ts -> player.checkLiked(ts.map { it.id }) }
+                detailState.data?.tracks?.let { ts -> player.checkLiked(ts) }
             }
             DetailScreen(
                 contentPadding = padding,
@@ -825,6 +825,7 @@ private fun Shell(
     CompositionLocalProvider(
         com.aurora.music.ui.components.LocalStartRadio provides startRadio,
         com.aurora.music.ui.components.LocalCanLike provides container.repository::canLike,
+        com.aurora.music.ui.components.LocalLikeMenu provides remember(player) { com.aurora.music.ui.components.LikeMenu(player::likeOptions, player::setLikedOn) },
         com.aurora.music.ui.screens.player.LocalPlayerPanes provides
             if (exploreAvailable) PlayerPane.entries else listOf(PlayerPane.LYRICS, PlayerPane.QUEUE),
     ) {
@@ -1042,7 +1043,7 @@ private fun Shell(
                                 val searchState by searchVM.state.collectAsStateWithLifecycle()
                                 val recentSearches by searchVM.recentSearches.collectAsStateWithLifecycle()
                                 LaunchedEffect(searchState.results.songs.size) {
-                                    player.checkLiked(searchState.results.songs.map { it.id })
+                                    player.checkLiked(searchState.results.songs)
                                 }
                                 SearchScreen(
                                     contentPadding = inner,
@@ -1071,6 +1072,7 @@ private fun Shell(
                             composable(Routes.LIBRARY) {
                                 val libraryVM = viewModel { LibraryViewModel(container) }
                                 val libraryState by libraryVM.state.collectAsStateWithLifecycle()
+                                LaunchedEffect(libraryState.songs.size) { player.checkLiked(libraryState.songs) }
                                 var librarySelection by rememberSaveable { mutableStateOf<String?>(null) }
                                 BoxWithConstraints(Modifier.fillMaxSize()) {
                                     val split = rail && maxWidth >= 960.dp
@@ -1233,7 +1235,7 @@ private fun Shell(
                                 LaunchedEffect(fid) { folderVM.load(fid) }
                                 val folderState by folderVM.state.collectAsStateWithLifecycle()
                                 LaunchedEffect(folderState.content?.songs?.size) {
-                                    folderState.content?.songs?.let { ss -> player.checkLiked(ss.map { it.id }) }
+                                    folderState.content?.songs?.let { ss -> player.checkLiked(ss) }
                                 }
                                 FolderScreen(
                                     contentPadding = inner,

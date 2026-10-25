@@ -41,6 +41,7 @@ class SpotifyWebBackend(
     private class Page(val songs: List<Song>, val consumed: Int, val total: Int)
 
     @Volatile private var likedCache: List<Song>? = null
+    @Volatile private var likedTotal = -1
     // album track pages carry no album so the header's name and art fill them in
     private val albumRefs = ConcurrentHashMap<String, AlbumRef>()
     // skipped podcast and local items make the app's song offsets drift from the server's item offsets
@@ -162,14 +163,15 @@ class SpotifyWebBackend(
     }.getOrDefault(emptyList())
 
     override suspend fun starredSongs(): List<Song> {
-        likedCache?.let { return it }
-        val all = runCatching { loadAllLiked() }.getOrDefault(emptyList())
-        if (all.isNotEmpty()) likedCache = all
+        val first = runCatching { likedPage(0, TRACK_PAGE) }.getOrNull() ?: return likedCache.orEmpty()
+        // the newest page shows whether likes changed on another device since the whole list was loaded
+        likedCache?.let { cached -> if (first.total == likedTotal && first.songs.map { it.id } == cached.take(first.songs.size).map { it.id }) return cached }
+        val all = runCatching { loadAllLiked(first) }.getOrDefault(emptyList())
+        if (all.isNotEmpty()) { likedCache = all; likedTotal = first.total }
         return all
     }
 
-    private suspend fun loadAllLiked(): List<Song> = coroutineScope {
-        val first = likedPage(0, TRACK_PAGE)
+    private suspend fun loadAllLiked(first: Page): List<Song> = coroutineScope {
         val gate = Semaphore(PARALLEL)
         val rest = (TRACK_PAGE until minOf(first.total, LIKED_CAP) step TRACK_PAGE).map { offset ->
             async { gate.withPermit { runCatching { likedPage(offset, TRACK_PAGE).songs }.getOrDefault(emptyList()) } }

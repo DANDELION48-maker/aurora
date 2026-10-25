@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"Couldn't save this like. Try again."</string>
+    <string name="like_on">"Like on"</string>
+    <string name="like_now_playing">"Now playing"</string>
+    <string name="like_no_match">"No match found"</string>
+    <string name="like_guest">"Sign in to like"</string>
+    <string name="like_more_sources">"Like on other sources"</string>
+</resources>

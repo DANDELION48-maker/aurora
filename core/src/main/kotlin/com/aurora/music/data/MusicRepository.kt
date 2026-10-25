@@ -82,6 +82,8 @@ class MusicRepository(
     private val smartEngine: SmartPlaylistEngine? = null,
     private val cachedSongsProvider: () -> List<Song> = { emptyList() },
     private val coverUrl: (String, String, String, String, Int) -> String = { original, _, _, _, _ -> original },
+    // every account a song can be liked on; the app adds signed-in accounts outside the library
+    private val likeSourcesProvider: suspend () -> List<MediaBackend> = { backendProvider()?.let { (it as? MergedBackend)?.sources ?: listOf(it) }.orEmpty() },
 ) {
     private val backend: MediaBackend? get() = backendProvider()
     private val offline: Boolean get() = offlineProvider() && backend?.supportsOfflineBrowsing != true
@@ -363,6 +365,9 @@ class MusicRepository(
     suspend fun starredCount(view: String? = null): Int = if (offline) offlineLiked(view).size else (viewOf(view)?.starredCount() ?: 0)
 
     suspend fun starredIds(): Set<String> = backend?.starredIds() ?: emptySet()
+
+    suspend fun likeSources(): List<MediaBackend> = if (offline) emptyList() else likeSourcesProvider()
+    val activeSession: Session? get() = backend?.session
 
     fun supportsCanvas(song: Song): Boolean = !offline && backend?.supportsCanvas(song) == true
     suspend fun canvasUrl(song: Song): String? = if (offline) null else backend?.canvasUrl(song)

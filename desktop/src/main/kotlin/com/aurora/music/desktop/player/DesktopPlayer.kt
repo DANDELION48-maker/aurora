@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
@@ -154,11 +155,7 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
 
     private var autoplayEnabled = false
     private var privateSession = false
-    private var serverLikedIds: Set<String> = emptySet()
-    private var likedPlaylistIds: Set<String> = emptySet()
-    private val likeChecked = HashSet<String>()
-    private var likeEdits = 0
-    private val likesInFlight = mutableListOf<String>()
+    private val likes = com.aurora.music.data.Likes(scope, deps.repository, deps.settingsStore::setPlaylistLiked)
     private var lastRecordedId: String? = null
     private var lastNowPlayingId: String? = null
     // account the live queue belongs to so it persists/restores under the right key
@@ -217,11 +214,13 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
             }
         }
         // subsonic can't star playlists so locally-liked ones merge into the same set
+        scope.launch { deps.settingsStore.likedPlaylists.collect(likes::setLikedPlaylists) }
+        scope.launch { likes.likedIds.collect { ids -> _state.update { it.copy(likedIds = ids) } } }
+        scope.launch { likes.failures.collect { _messages.tryEmit(appString(R.string.like_failed)) } }
+        // the playing song's heart counts likes on every account, found by recording
         scope.launch {
-            deps.settingsStore.likedPlaylists.collect { ids ->
-                likedPlaylistIds = ids
-                recomputeLikes()
-            }
+            _state.map { it.current }.distinctUntilChanged { a, b -> a.id == b.id && a.title == b.title && a.artist == b.artist }
+                .collect { if (it.id.isNotEmpty()) likes.check(listOf(it)) }
         }
         scope.launch {
             deps.settingsStore.privateSession.collect {
@@ -256,11 +255,7 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
         // account change saves the outgoing queue then restores the incoming one
         scope.launch {
             deps.accountEpoch.drop(1).collect {
-                // likes belong to the account, so the incoming one starts from its own
-                serverLikedIds = emptySet()
-                likeChecked.clear()
-                recomputeLikes()
-                refreshLikes()
+                likes.reset()
                 persistQueue(engine.state.value)
                 deps.queueStore.requestFlush()
                 stopPlayback()
@@ -776,65 +771,18 @@ class DesktopPlayer(private val engine: PlaybackEngine, private val deps: Player
         _state.update { it.copy(repeat = mode) }
     }
 
-    override fun toggleLikeCurrent() = toggleLike(_state.value.current.id)
+    override fun toggleLikeCurrent() = likes.toggle(_state.value.current)
 
-    private fun recomputeLikes() {
-        _state.update { it.copy(likedIds = serverLikedIds + likedPlaylistIds) }
-    }
+    override fun refreshLikes() = likes.refresh()
 
-    override fun refreshLikes() {
-        scope.launch {
-            val edits = likeEdits
-            val fetched = runCatching { deps.repository.starredIds() }.getOrNull() ?: return@launch
-            // a like toggled mid-fetch makes the fetched set stale
-            if (edits != likeEdits) return@launch
-            serverLikedIds = fetched - likesInFlight + likesInFlight.filter { it in serverLikedIds }
-            recomputeLikes()
-            runCatching { deps.repository.markDownloadsLiked(fetched, true) }
-        }
-    }
+    override fun checkLiked(songs: List<Song>) = likes.check(songs)
 
-    override fun checkLiked(ids: List<String>) {
-        val toCheck = ids.filter { it.isNotEmpty() && it !in serverLikedIds && it !in likeChecked }.distinct()
-        if (toCheck.isEmpty()) return
-        scope.launch {
-            val liked = runCatching { deps.repository.likedSongIds(toCheck) }.getOrNull() ?: return@launch
-            likeChecked.addAll(toCheck)
-            runCatching { deps.repository.markDownloadsLiked(liked, true) }
-            if (liked.isNotEmpty()) {
-                serverLikedIds = serverLikedIds + liked
-                recomputeLikes()
-            }
-        }
-    }
+    // songs toggle on the source they play from; the heart's menu reaches the other accounts
+    override fun toggleLike(id: String, kind: String) = likes.toggle(id, kind)
 
-    // song/album/artist persist to the server playlist persists locally
-    override fun toggleLike(id: String, kind: String) {
-        if (id.isEmpty() || id.startsWith("aurora-mix:") || !deps.repository.canLike(id)) return
-        val nowLiked = !_state.value.likedIds.contains(id)
-        if (kind == "playlist") {
-            likedPlaylistIds = if (nowLiked) likedPlaylistIds + id else likedPlaylistIds - id
-            recomputeLikes()
-            scope.launch { runCatching { deps.settingsStore.setPlaylistLiked(id, nowLiked) } }
-            // also sync to backend no-op for backends that can't star playlists
-            scope.launch { runCatching { deps.repository.setStarred(id, nowLiked, "playlist") } }
-        } else {
-            serverLikedIds = if (nowLiked) serverLikedIds + id else serverLikedIds - id
-            likeEdits++
-            likesInFlight += id
-            recomputeLikes()
-            runCatching { deps.repository.markDownloadsLiked(listOf(id), nowLiked) }
-            scope.launch {
-                if (runCatching { deps.repository.setStarred(id, nowLiked, kind) }.isFailure && serverLikedIds.contains(id) == nowLiked) {
-                    serverLikedIds = if (nowLiked) serverLikedIds - id else serverLikedIds + id
-                    runCatching { deps.repository.markDownloadsLiked(listOf(id), !nowLiked) }
-                    recomputeLikes()
-                }
-                likeEdits++
-                likesInFlight -= id
-            }
-        }
-    }
+    override suspend fun likeOptions(song: Song) = likes.options(song)
+
+    override suspend fun setLikedOn(song: Song, option: com.aurora.music.data.LikeOption, liked: Boolean) = likes.set(song, option, liked)
 
     override fun setExpanded(value: Boolean) = _state.update { it.copy(expanded = value) }
 

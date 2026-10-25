@@ -87,7 +87,7 @@ internal class AuditPlayer : PlayerController {
     override fun seekTo(fraction: Float) = Unit
     override fun toggleShuffle() = Unit
     override fun cycleRepeat() = Unit
-    override fun checkLiked(ids: List<String>) = Unit
+    override fun checkLiked(songs: List<com.aurora.music.model.Song>) = Unit
     override fun toggleLike(id: String, kind: String) = Unit
     override fun setSpeed(value: Float) = Unit
     override fun resetSpeedPitch() = Unit

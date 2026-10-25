@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"Tidak dapat menyimpan suka ini. Coba lagi."</string>
+    <string name="like_on">"Sukai di"</string>
+    <string name="like_now_playing">"Sedang diputar"</string>
+    <string name="like_no_match">"Tidak ada yang cocok"</string>
+    <string name="like_guest">"Masuk untuk menyukai"</string>
+    <string name="like_more_sources">"Sukai di sumber lain"</string>
+</resources>

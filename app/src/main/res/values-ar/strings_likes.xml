@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"تعذّر حفظ الإعجاب. حاول مرة أخرى."</string>
+    <string name="like_on">"إعجاب على"</string>
+    <string name="like_now_playing">"قيد التشغيل الآن"</string>
+    <string name="like_no_match">"لا يوجد تطابق"</string>
+    <string name="like_guest">"سجّل الدخول للإعجاب"</string>
+    <string name="like_more_sources">"إعجاب على مصادر أخرى"</string>
+</resources>

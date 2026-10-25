@@ -176,7 +176,7 @@ fun PlaybackDock(
                     }
                 }
                 val likeTint by animateColorAsState(if (state.isCurrentLiked) colors.primary else colors.onSurfaceVariant, label = "dockLike")
-                if (!compact && LocalCanLike.current(song.id)) IconButton(onClick = onToggleLike) {
+                if (!compact && LocalCanLike.current(song.id)) LikeHeart(song, onToggleLike, Modifier.size(48.dp).clip(CircleShape)) {
                     Icon(if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                         appString(R.string.text_like_c7e02c), tint = likeTint, modifier = Modifier.size(22.dp))
                 }

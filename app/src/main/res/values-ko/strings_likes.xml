@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"좋아요를 저장하지 못했어요. 다시 시도해 주세요."</string>
+    <string name="like_on">"좋아요 표시할 곳"</string>
+    <string name="like_now_playing">"재생 중"</string>
+    <string name="like_no_match">"일치하는 곡 없음"</string>
+    <string name="like_guest">"좋아요하려면 로그인하세요"</string>
+    <string name="like_more_sources">"다른 소스에서 좋아요"</string>
+</resources>

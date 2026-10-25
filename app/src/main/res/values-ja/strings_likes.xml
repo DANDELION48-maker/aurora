@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"いいねを保存できませんでした。もう一度お試しください。"</string>
+    <string name="like_on">"いいねする場所"</string>
+    <string name="like_now_playing">"再生中"</string>
+    <string name="like_no_match">"一致する曲がありません"</string>
+    <string name="like_guest">"いいねするにはサインインしてください"</string>
+    <string name="like_more_sources">"他のソースでいいね"</string>
+</resources>

@@ -28,6 +28,7 @@ private fun unsupported(): MediaBackend = Proxy.newProxyInstance(MediaBackend::c
 class DesktopPlayerLikesTest {
     private class LikesBackend : MediaBackend by unsupported() {
         override val session = Session("http://127.0.0.1:9", "alice", "salt", "token")
+        override val signedIn = true
         override fun signedIn(id: String) = true
         @Volatile var starred = CompletableDeferred<Set<String>>()
         @Volatile var stored = CompletableDeferred<Unit>()

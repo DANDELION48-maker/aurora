@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"Das „Gefällt mir“ wurde nicht gespeichert. Versuch es noch mal."</string>
+    <string name="like_on">"Gefällt mir auf"</string>
+    <string name="like_now_playing">"Läuft gerade"</string>
+    <string name="like_no_match">"Kein Treffer"</string>
+    <string name="like_guest">"Zum Liken anmelden"</string>
+    <string name="like_more_sources">"Auf anderen Quellen liken"</string>
+</resources>

@@ -17,7 +17,7 @@ import kotlinx.coroutines.sync.withLock
 
 // composite backend merging several live backends ids namespaced per source so calls route back
 class MergedBackend(
-    private val sources: List<MediaBackend>,
+    val sources: List<MediaBackend>,
     override val session: Session,
     private val priority: () -> List<String> = { DEFAULT_SOURCE_PRIORITY },
     private val downloads: () -> List<Song> = { emptyList() },
@@ -136,14 +136,10 @@ class MergedBackend(
             .map { song.withPlaybackFrom(it) }
     }
 
-    // a differently spelled artist still counts when the title and the length agree closely
-    private fun sameLength(song: Song, copy: Song) = recordingTitlesMatch(song, copy) && song.durationSec > 0 && copy.durationSec > 0 &&
-        kotlin.math.abs(song.durationSec - copy.durationSec) <= RELAXED_DURATION_SEC
-
     private val primary: MediaBackend? = sources.firstOrNull { it.session.accountKey() == session.accountKey() }
         ?: sources.firstOrNull { it.session.type != ServerType.LOCAL } ?: sources.firstOrNull()
 
-    private val namespaces = sources.map { "s" + PlaybackSourceIdentity.fromSession(it.session, "").providerId!!.removePrefix("provider:") }
+    private val namespaces = sources.map { mergeNamespace(it.session) }
     private fun wrapId(idx: Int, id: String): String = if (id.isBlank()) "" else "${namespaces[idx]}$SEP$id"
     private fun unwrap(wrapped: String): Pair<Int, String>? {
         val i = wrapped.indexOf(SEP)
@@ -450,13 +446,6 @@ class MergedBackend(
         return twin
     }
 
-    // uploads often carry "artist - title" in the title, posted by a label or fan account
-    private fun twinMatches(song: Song, candidate: Song): Boolean {
-        val parts = candidate.title.split(" - ", " \u2013 ", limit = 2)
-        val split = if (parts.size == 2) candidate.copy(artist = parts[0], title = parts[1]) else candidate
-        return listOf(candidate, split).any { recordingMatches(song, it) || sameLength(song, it) }
-    }
-
     override fun sourceType(song: Song): ServerType = unwrap(song.id)?.let { sources[it.first].session.type } ?: session.type
 
     private fun borrows(catalogue: Int, owner: Int, song: Song) = catalogue >= 0 && owner != catalogue && !song.isRadio() && !song.isPodcast()
@@ -616,11 +605,13 @@ class MergedBackend(
         val VIEW_IDS = setOf("library", "youtube", "spotify", "soundcloud")
         val PLAYLIST_HOMES = setOf(ServerType.LOCAL, ServerType.SUBSONIC, ServerType.JELLYFIN, ServerType.PLEX)
         val LOSSLESS = setOf("flac", "alac", "wav", "aiff", "aif", "ape", "wv", "dsf", "dff")
-        const val RELAXED_DURATION_SEC = 2
     }
 }
 
 const val MERGE_NAMESPACE_SEP = '\u0001'   // same control char as MergedBackend.SEP
+
+// the prefix a merged library puts on a source's ids; likes are filed per account under the same key
+fun mergeNamespace(session: Session): String = "s" + PlaybackSourceIdentity.fromSession(session, "").providerId!!.removePrefix("provider:")
 
 // liked songs id for every source's likes together, beside the per-view ids
 const val ALL_LIKED_ID = "all"

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"यह पसंद सहेजी नहीं जा सकी। फिर से कोशिश करें।"</string>
+    <string name="like_on">"यहाँ पसंद करें"</string>
+    <string name="like_now_playing">"अभी चल रहा है"</string>
+    <string name="like_no_match">"कोई मिलान नहीं मिला"</string>
+    <string name="like_guest">"पसंद करने के लिए साइन इन करें"</string>
+    <string name="like_more_sources">"अन्य स्रोतों पर पसंद करें"</string>
+</resources>

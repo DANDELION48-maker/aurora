@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"یہ پسند محفوظ نہیں ہو سکی۔ دوبارہ کوشش کریں۔"</string>
+    <string name="like_on">"یہاں پسند کریں"</string>
+    <string name="like_now_playing">"ابھی چل رہا ہے"</string>
+    <string name="like_no_match">"کوئی مماثلت نہیں ملی"</string>
+    <string name="like_guest">"پسند کرنے کے لیے سائن ان کریں"</string>
+    <string name="like_more_sources">"دوسرے ذرائع پر پسند کریں"</string>
+</resources>

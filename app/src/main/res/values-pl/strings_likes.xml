@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"Nie udało się zapisać polubienia. Spróbuj ponownie."</string>
+    <string name="like_on">"Polub w"</string>
+    <string name="like_now_playing">"Teraz odtwarzane"</string>
+    <string name="like_no_match">"Brak dopasowania"</string>
+    <string name="like_guest">"Zaloguj się, aby polubić"</string>
+    <string name="like_more_sources">"Polub w innych źródłach"</string>
+</resources>

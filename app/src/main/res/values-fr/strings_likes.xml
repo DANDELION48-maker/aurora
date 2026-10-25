@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"Impossible d'enregistrer ce j'aime. Réessaie."</string>
+    <string name="like_on">"J'aime sur"</string>
+    <string name="like_now_playing">"En cours de lecture"</string>
+    <string name="like_no_match">"Aucune correspondance"</string>
+    <string name="like_guest">"Connecte-toi pour aimer"</string>
+    <string name="like_more_sources">"J'aime sur d'autres sources"</string>
+</resources>

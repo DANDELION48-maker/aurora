@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"Kon deze like niet opslaan. Probeer het opnieuw."</string>
+    <string name="like_on">"Vind ik leuk op"</string>
+    <string name="like_now_playing">"Speelt nu"</string>
+    <string name="like_no_match">"Geen overeenkomst"</string>
+    <string name="like_guest">"Log in om te liken"</string>
+    <string name="like_more_sources">"Leuk vinden op andere bronnen"</string>
+</resources>

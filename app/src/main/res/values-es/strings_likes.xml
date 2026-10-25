@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"No se pudo guardar el Me gusta. Inténtalo de nuevo."</string>
+    <string name="like_on">"Me gusta en"</string>
+    <string name="like_now_playing">"Sonando ahora"</string>
+    <string name="like_no_match">"Sin coincidencias"</string>
+    <string name="like_guest">"Inicia sesión para dar Me gusta"</string>
+    <string name="like_more_sources">"Me gusta en otras fuentes"</string>
+</resources>

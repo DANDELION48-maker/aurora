@@ -122,12 +122,14 @@ fun MiniPlayer(
                 )
             }
             if (showLike) {
-                Icon(
-                    imageVector = if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                    contentDescription = appString(R.string.text_like_c7e02c),
-                    tint = likeTint,
-                    modifier = Modifier.size(40.dp).clip(CircleShape).clickable(onClick = onToggleLike).padding(8.dp),
-                )
+                LikeHeart(song, onToggleLike, Modifier.size(40.dp).clip(CircleShape)) {
+                    Icon(
+                        imageVector = if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                        contentDescription = appString(R.string.text_like_c7e02c),
+                        tint = likeTint,
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
             }
             Icon(
                 imageVector = if (state.isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
@@ -213,8 +215,10 @@ private fun GlassMiniPlayer(
             Text(song.artist, style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant,
                 maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
-        if (ui.miniStyle != MiniStyle.COMPACT && !isMix && LocalCanLike.current(song.id)) GlassGlyph(
-            if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder, appString(R.string.text_like_c7e02c), likeTint, 24.dp, onToggleLike)
+        if (ui.miniStyle != MiniStyle.COMPACT && !isMix && LocalCanLike.current(song.id)) LikeHeart(song, onToggleLike, Modifier.size(44.dp).clip(CircleShape)) {
+            Icon(if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder, appString(R.string.text_like_c7e02c),
+                tint = likeTint, modifier = Modifier.size(24.dp))
+        }
         GlassGlyph(if (state.isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow, appString(R.string.text_play_pause_14a1d0), colors.onSurface, 32.dp, onTogglePlay)
         if (!isMix) GlassGlyph(Icons.Filled.SkipNext, appString(R.string.text_next_bc9819), colors.onSurface, 32.dp, onNext)
     }

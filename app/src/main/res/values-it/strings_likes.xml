@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"Impossibile salvare il Mi piace. Riprova."</string>
+    <string name="like_on">"Mi piace su"</string>
+    <string name="like_now_playing">"In riproduzione"</string>
+    <string name="like_no_match">"Nessuna corrispondenza"</string>
+    <string name="like_guest">"Accedi per mettere Mi piace"</string>
+    <string name="like_more_sources">"Mi piace su altre fonti"</string>
+</resources>

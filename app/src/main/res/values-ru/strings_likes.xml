@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"Не удалось сохранить отметку. Попробуйте ещё раз."</string>
+    <string name="like_on">"В избранное в"</string>
+    <string name="like_now_playing">"Сейчас играет"</string>
+    <string name="like_no_match">"Нет совпадений"</string>
+    <string name="like_guest">"Войдите, чтобы добавлять в избранное"</string>
+    <string name="like_more_sources">"В избранное в других источниках"</string>
+</resources>

@@ -545,7 +545,7 @@ fun AuroraApp() {
             val detailState by detailVM.state.collectAsStateWithLifecycle()
             // resolve liked state for visible tracks so hearts show beyond page 1
             androidx.compose.runtime.LaunchedEffect(detailState.data?.tracks?.size) {
-                detailState.data?.tracks?.let { ts -> playerVM.checkLiked(ts.map { it.id }) }
+                detailState.data?.tracks?.let { ts -> playerVM.checkLiked(ts) }
             }
             DetailScreen(
                 contentPadding = padding,
@@ -860,6 +860,7 @@ fun AuroraApp() {
         com.aurora.music.ui.screens.player.LocalPlayerPanes provides playerPanes,
         com.aurora.music.ui.components.LocalStartRadio provides remember(playerVM) { { song: com.aurora.music.model.Song -> playerVM.startSonicRadio(song) { confirm(it) } } },
         com.aurora.music.ui.components.LocalCanLike provides container.repository::canLike,
+        com.aurora.music.ui.components.LocalLikeMenu provides remember(playerVM) { com.aurora.music.ui.components.LikeMenu(playerVM::likeOptions, playerVM::setLikedOn) },
     ) {
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -1062,7 +1063,7 @@ fun AuroraApp() {
                         val searchState by searchVM.state.collectAsStateWithLifecycle()
                         val recentSearches by searchVM.recentSearches.collectAsStateWithLifecycle()
                         androidx.compose.runtime.LaunchedEffect(searchState.results.songs.size) {
-                            playerVM.checkLiked(searchState.results.songs.map { it.id })
+                            playerVM.checkLiked(searchState.results.songs)
                         }
                         SearchScreen(
                             contentPadding = inner,
@@ -1093,7 +1094,7 @@ fun AuroraApp() {
                         val libraryVM: LibraryViewModel = viewModel(viewModelStoreOwner = activityOwner)
                         val libraryState by libraryVM.state.collectAsStateWithLifecycle()
                         androidx.compose.runtime.LaunchedEffect(libraryState.songs.size) {
-                            playerVM.checkLiked(libraryState.songs.map { it.id })
+                            playerVM.checkLiked(libraryState.songs)
                         }
                         // m3u export staged here written once the user picks a file
                         var pendingM3u by remember { mutableStateOf<String?>(null) }
@@ -1250,7 +1251,7 @@ fun AuroraApp() {
                         androidx.compose.runtime.LaunchedEffect(fid) { folderVM.load(fid) }
                         val folderState by folderVM.state.collectAsStateWithLifecycle()
                         androidx.compose.runtime.LaunchedEffect(folderState.content?.songs?.size) {
-                            folderState.content?.songs?.let { ss -> playerVM.checkLiked(ss.map { it.id }) }
+                            folderState.content?.songs?.let { ss -> playerVM.checkLiked(ss) }
                         }
                         com.aurora.music.ui.screens.library.FolderScreen(
                             contentPadding = inner,

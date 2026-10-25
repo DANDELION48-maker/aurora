@@ -140,7 +140,7 @@ internal class RemotePlayerController(
     }))
     override fun toggleLikeCurrent() = send(ConnectCommand.Like(!mutableState.value.isCurrentLiked))
     override fun refreshLikes() = Unit
-    override fun checkLiked(ids: List<String>) = Unit
+    override fun checkLiked(songs: List<com.aurora.music.model.Song>) = Unit
     override fun toggleLike(id: String, kind: String) { if (kind == "song" && id == mutableState.value.current.id) toggleLikeCurrent() }
     override fun setExpanded(value: Boolean) = mutableState.update { it.copy(expanded = value) }
     override fun setSpeed(value: Float) = send(ConnectCommand.Speed((Math.round(value / 0.05f) * 0.05f).coerceIn(0.5f, 2f)))

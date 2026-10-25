@@ -291,7 +291,10 @@ class DesktopContainer(
         smartEngine = smartEngine,
         coverUrl = ArtworkUrls::cover,
         cachedSongsProvider = { audioCache.songs.value },
+        likeSourcesProvider = { likeAccounts.of(backend, settingsStore.savedSessions.first()) },
     )
+
+    private val likeAccounts = com.aurora.music.data.LikeAccounts { if (AccountAuthenticator.supports(it)) buildBackend(it) else null }
 
     private val _sessionReady = MutableStateFlow<Boolean?>(null)
     val sessionReady: StateFlow<Boolean?> = _sessionReady.asStateFlow()

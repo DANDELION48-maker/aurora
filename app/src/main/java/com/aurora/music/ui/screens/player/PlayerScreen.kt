@@ -587,12 +587,16 @@ fun PlayerScreen(
                 val likeTint by animateColorAsState(
                     if (state.isCurrentLiked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant, label = "like",
                 )
-                if (com.aurora.music.ui.components.LocalCanLike.current(song.id)) Icon(
-                    imageVector = if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                    contentDescription = appString(R.string.text_like_c7e02c),
-                    tint = likeTint,
-                    modifier = Modifier.size(48.dp).clip(CircleShape).clickable(onClick = onToggleLike).padding(8.dp),
-                )
+                if (com.aurora.music.ui.components.LocalCanLike.current(song.id)) {
+                    com.aurora.music.ui.components.LikeHeart(song, onToggleLike, Modifier.size(48.dp).clip(CircleShape)) {
+                        Icon(
+                            imageVector = if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                            contentDescription = appString(R.string.text_like_c7e02c),
+                            tint = likeTint,
+                            modifier = Modifier.size(32.dp),
+                        )
+                    }
+                }
             }
 
             // youtube music and spotify carry no file facts, so the decoder's view of the stream fills in
@@ -967,11 +971,12 @@ private fun CoverOverlay(
                                 MarqueeTitle(song.title, MaterialTheme.typography.headlineSmall)
                                 MarqueeTitle(song.artist, MaterialTheme.typography.titleMedium, MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = null)
                             }
-                            if (com.aurora.music.ui.components.LocalCanLike.current(song.id)) Icon(
-                                if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                                appString(R.string.text_like_c7e02c),
-                                modifier = Modifier.size(48.dp).clip(CircleShape).clickable(onClick = onToggleLike).padding(10.dp),
-                            )
+                            if (com.aurora.music.ui.components.LocalCanLike.current(song.id)) {
+                                com.aurora.music.ui.components.LikeHeart(song, onToggleLike, Modifier.size(48.dp).clip(CircleShape)) {
+                                    Icon(if (state.isCurrentLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                                        appString(R.string.text_like_c7e02c), Modifier.size(28.dp))
+                                }
+                            }
                         }
                         Spacer(Modifier.height(16.dp))
                         SeekBar(state.durationSec, state.isLive, Color.White, song.id.hashCode(), ui.playerSeekStyle, ui.playerWaveBars, onSeek)

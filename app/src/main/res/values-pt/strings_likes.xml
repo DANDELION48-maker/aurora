@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"Não foi possível salvar a curtida. Tente de novo."</string>
+    <string name="like_on">"Curtir em"</string>
+    <string name="like_now_playing">"Tocando agora"</string>
+    <string name="like_no_match">"Nenhuma correspondência"</string>
+    <string name="like_guest">"Entre para curtir"</string>
+    <string name="like_more_sources">"Curtir em outras fontes"</string>
+</resources>

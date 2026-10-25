@@ -162,16 +162,14 @@ fun SongRow(
             Icon(Icons.Filled.DownloadDone, appString(R.string.text_downloaded_c61970), tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
             Spacer(Modifier.width(6.dp))
         }
-        if (canLike) Icon(
-            imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-            contentDescription = appString(if (isLiked) R.string.text_remove_from_liked_9d1568 else R.string.text_add_to_liked_b99f26),
-            tint = if (isLiked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier
-                .size(target)
-                .clip(CircleShape)
-                .clickable(onClick = onToggleLike)
-                .padding(if (tablet) 12.dp else 6.dp),
-        )
+        if (canLike) LikeHeart(song, onToggleLike, Modifier.size(target).clip(CircleShape)) {
+            Icon(
+                imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                contentDescription = appString(if (isLiked) R.string.text_remove_from_liked_9d1568 else R.string.text_add_to_liked_b99f26),
+                tint = if (isLiked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(if (tablet) 12.dp else 6.dp),
+            )
+        }
         Text(
             if (song.durationSec > 0) formatTime(song.durationSec) else "—",
             style = MaterialTheme.typography.labelMedium,

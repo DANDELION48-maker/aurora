@@ -425,7 +425,11 @@ class AppContainer(context: Context) {
         smartEngine = smartEngine,
         cachedSongsProvider = { audioCache.songs.value },
         coverUrl = com.aurora.music.data.artwork.ArtworkUrls::cover,
+        likeSourcesProvider = { likeAccounts.of(backend, settingsStore.savedSessions.first()) },
     )
+
+    // an oauth spotify login refreshes the active session's token, so only the web player one joins as a second account
+    private val likeAccounts = LikeAccounts { s -> if (s.type == ServerType.SPOTIFY && s.salt != SpotifyWebBackend.WEB_PLAYER) null else buildBackend(s) }
 
     private fun recomputeOffline() {
         // local-files mode never needs the network so it's never offline

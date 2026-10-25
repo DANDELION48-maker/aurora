@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="like_failed">"无法保存此喜欢，请重试。"</string>
+    <string name="like_on">"喜欢到"</string>
+    <string name="like_now_playing">"正在播放"</string>
+    <string name="like_no_match">"未找到匹配"</string>
+    <string name="like_guest">"登录后才能喜欢"</string>
+    <string name="like_more_sources">"在其他来源上喜欢"</string>
+</resources>

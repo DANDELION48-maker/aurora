@@ -13,6 +13,23 @@ fun recordingTitle(title: String): String = title
     .replace(Regex("\\s*[\\[(](?:feat\\.?|ft\\.?|featuring)\\s+[^)\\]]*[)\\]]", RegexOption.IGNORE_CASE), "")
     .replace(Regex("\\s+(?:feat\\.?|ft\\.?|featuring)\\s+.*$", RegexOption.IGNORE_CASE), "").trim()
 
+// the title a recording is filed under, for finding it among another source's songs
+fun recordingKey(title: String): String = normalized(recordingTitle(title))
+
+// a differently spelled artist still counts when the title and the length agree closely
+fun sameLength(song: Song, copy: Song) = recordingTitlesMatch(song, copy) && song.durationSec > 0 && copy.durationSec > 0 &&
+    kotlin.math.abs(song.durationSec - copy.durationSec) <= RELAXED_DURATION_SEC
+
+// uploads often carry "artist - title" in the title, posted by a label or fan account
+fun recordingVariants(song: Song): List<Song> {
+    val parts = song.title.split(" - ", " \u2013 ", limit = 2)
+    return if (parts.size == 2) listOf(song, song.copy(artist = parts[0], title = parts[1])) else listOf(song)
+}
+
+fun twinMatches(song: Song, candidate: Song): Boolean = recordingVariants(candidate).any { recordingMatches(song, it) || sameLength(song, it) }
+
+private const val RELAXED_DURATION_SEC = 2
+
 // services disagree on accents and on a leading "the", so "The Soft Walls" is still "Soft Walls"
 private fun normalized(value: String) = Normalizer.normalize(value, Normalizer.Form.NFD)
     .replace(Regex("\\p{M}+"), "").lowercase(Locale.ROOT)
