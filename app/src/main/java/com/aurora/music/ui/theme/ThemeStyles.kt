@@ -176,13 +176,13 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawGlassBackdrop(p
     fun glow(color: Color, alpha: Float, x: Float, y: Float, r: Float) = drawRect(Brush.radialGradient(
         listOf(color.copy(alpha = alpha), color.copy(alpha = alpha * .35f), Color.Transparent), Offset(w * x, h * y), w * r))
     if (dark) {
-        glow(Color(0xFF0B3BB8), .55f, .95f, .78f, 1.25f)
-        glow(tertiary, .32f, .55f, 1.02f, .8f)
-        glow(primary, .26f, .1f, .55f, .7f)
-        glow(Color(0xFF2B1C7A), .3f, 1f, .12f, .9f)
+        glow(Color(0xFF0369A1), .50f, .95f, .78f, 1.25f)
+        glow(Color(0xFFFBBF24), .28f, .55f, 1.02f, .8f)
+        glow(primary, .32f, .1f, .55f, .7f)
+        glow(Color(0xFF6366F1), .35f, 1f, .12f, .9f)
     } else {
-        glow(primary, .14f, .95f, .85f, 1.1f)
+        glow(primary, .18f, .95f, .85f, 1.1f)
         glow(tertiary, .16f, .1f, .95f, .9f)
-        glow(Color(0xFFFF6FB1), .08f, .9f, .08f, .9f)
+        glow(Color(0xFFFBBF24), .14f, .9f, .08f, .9f)
     }
 }

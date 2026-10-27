@@ -145,10 +145,10 @@ compose.desktop {
         if (hostLinux) jvmArgs += "--add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED"
         nativeDistributions {
             if (hostWindows) targetFormats(TargetFormat.Msi, TargetFormat.Exe)
-            packageName = "Aurora"
+            packageName = "Aetheria"
             packageVersion = appVersion.getProperty("versionName")
-            description = "Aurora music player"
-            vendor = "Aurora"
+            description = "Aetheria music player"
+            vendor = "Aetheria"
             appResourcesRootDir.set(appResources)
             modules("java.instrument", "java.management", "java.naming", "java.net.http", "java.sql", "jdk.crypto.ec", "jdk.dynalink", "jdk.httpserver", "jdk.unsupported")
             if (hostLinux) modules("jdk.security.auth")
@@ -156,9 +156,9 @@ compose.desktop {
                 // the msi product code follows the version, so every build needs its own to replace the installed one
                 packageVersion = appVersion.getProperty("versionName").substringBeforeLast('.') + "." +
                     Duration.between(Instant.parse("2026-01-01T00:00:00Z"), Instant.now()).toMinutes() % 65_536
-                // the uninstaller wipes its whole folder, so keep it apart from the data in %LOCALAPPDATA%\Aurora
-                installationPath = "Aurora Music"
-                menuGroup = "Aurora"
+                // the uninstaller wipes its whole folder, so keep it apart from the data in %LOCALAPPDATA%\Aetheria
+                installationPath = "Aetheria Music"
+                menuGroup = "Aetheria"
                 upgradeUuid = "67dc3d5a-e732-4a4a-b9a6-d1126d48bca5"
                 perUserInstall = true
                 dirChooser = true

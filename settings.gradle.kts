@@ -20,7 +20,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Aurora"
+rootProject.name = "Aetheria"
 include(":app")
 include(":core", ":desktop")
 include(":extension-sdk", ":extension-example")

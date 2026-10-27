@@ -1,3 +1,3 @@
 <inset xmlns:android="http://schemas.android.com/apk/res/android"
-    android:drawable="@drawable/ic_aurora_logo"
-    android:inset="23.3333%" />
+    android:drawable="@drawable/ic_aetheria_logo"
+    android:inset="12%" />

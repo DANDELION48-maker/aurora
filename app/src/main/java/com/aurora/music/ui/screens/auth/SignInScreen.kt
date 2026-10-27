@@ -131,10 +131,10 @@ fun SignInScreen(
     BackHandler(enabled = state.step != AuthStep.TYPE) { if (!state.loading) onBack() }
     val scroll = rememberScrollState()
     LaunchedEffect(state.step) { scroll.scrollTo(0) }
-    val palette = darkColorScheme(primary = AuroraRose, onPrimary = Color(0xFF281019),
-        background = Color(0xFF111216), surface = Color(0xFF1B1D23), surfaceContainerHigh = Color(0xFF24262D),
-        onBackground = Color(0xFFF6F2F3), onSurface = Color(0xFFF6F2F3), onSurfaceVariant = Color(0xFFB5B0BA),
-        outline = Color(0xFF45434C), outlineVariant = Color(0xFF303139))
+    val palette = darkColorScheme(primary = AuroraRose, onPrimary = Color(0xFF0B101E),
+        background = Color(0xFF0B101E), surface = Color(0xFF131B2E), surfaceContainerHigh = Color(0xFF223150),
+        onBackground = Color(0xFFF1F5F9), onSurface = Color(0xFFF1F5F9), onSurfaceVariant = Color(0xFF94A3B8),
+        outline = Color(0xFF2D3F66), outlineVariant = Color(0xFF1A2640))
     MaterialTheme(colorScheme = palette) {
         Box(Modifier.fillMaxSize().background(palette.background)) {
             Box(Modifier.fillMaxWidth().height(280.dp).background(Brush.verticalGradient(listOf(AuroraRose.copy(alpha = .09f), Color.Transparent))))

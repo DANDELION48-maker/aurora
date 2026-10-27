@@ -29,13 +29,13 @@ import com.aurora.music.util.rememberDominantColor
 
 private val DarkColors = darkColorScheme(
     primary = AuroraRose,
-    onPrimary = Color.White,
+    onPrimary = Color(0xFF0B101E),
     primaryContainer = AuroraRoseDeep,
     onPrimaryContainer = Color.White,
     secondary = AuroraCoral,
-    onSecondary = Color(0xFF2A0E06),
+    onSecondary = Color(0xFF1E1102),
     tertiary = AuroraMagenta,
-    onTertiary = Color.White,
+    onTertiary = Color(0xFF0B101E),
     background = DarkBackground,
     onBackground = TextPrimaryDark,
     surface = DarkSurface,
@@ -56,7 +56,7 @@ private val LightColors = lightColorScheme(
     primaryContainer = AuroraBlush,
     onPrimaryContainer = TextPrimaryLight,
     secondary = AuroraCoral,
-    onSecondary = Color.White,
+    onSecondary = Color(0xFF1E1102),
     tertiary = AuroraMagenta,
     background = LightBackground,
     onBackground = TextPrimaryLight,
@@ -109,7 +109,7 @@ fun glassSheen(): Brush {
     return Brush.verticalGradient(listOf(Color.White.copy(alpha = frost * 2f), Color.White.copy(alpha = frost * 0.75f)))
 }
 
-private fun onAccent(seed: Color): Color = if (seed.luminance() > 0.5f) Color(0xFF1A1016) else Color.White
+private fun onAccent(seed: Color): Color = if (seed.luminance() > 0.5f) Color(0xFF0B101E) else Color.White
 
 private fun ColorScheme.withAccent(seed: Color, dark: Boolean): ColorScheme {
     val on = onAccent(seed)
