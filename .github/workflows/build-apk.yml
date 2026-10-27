@@ -30,6 +30,9 @@ jobs:
       - name: Make Gradlew Executable
         run: chmod +x ./gradlew
 
+      - name: Setup FLAC
+        run: bash decent/decent-media3-decoder-flac/setup.sh
+
       - name: Build Debug APK
         run: ./gradlew :app:assembleDebug --no-daemon
 
