@@ -16,9 +16,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.expandHorizontally
@@ -988,13 +991,35 @@ fun AuroraApp() {
                     navController = navController,
                     startDestination = startDestination,
                     modifier = Modifier.widthIn(max = pageWidth).fillMaxSize(),
-                    // A drawer action followed quickly by Back interrupts Navigation
-                    // 2.8's default 700 ms fade and can leave the returned page invisible.
-                    // The drawer and player animate independently; route content stays visible.
-                    enterTransition = { EnterTransition.None },
-                    exitTransition = { ExitTransition.None },
-                    popEnterTransition = { EnterTransition.None },
-                    popExitTransition = { ExitTransition.None },
+                    // Smoother, Spotify-like page transitions optimized for performance
+                    enterTransition = {
+                        fadeIn(animationSpec = tween(200)) +
+                            slideInHorizontally(
+                                initialOffsetX = { it / 12 },
+                                animationSpec = tween(220, easing = androidx.compose.animation.core.FastOutSlowInEasing)
+                            )
+                    },
+                    exitTransition = {
+                        fadeOut(animationSpec = tween(160)) +
+                            slideOutHorizontally(
+                                targetOffsetX = { -it / 16 },
+                                animationSpec = tween(180, easing = androidx.compose.animation.core.FastOutSlowInEasing)
+                            )
+                    },
+                    popEnterTransition = {
+                        fadeIn(animationSpec = tween(200)) +
+                            slideInHorizontally(
+                                initialOffsetX = { -it / 12 },
+                                animationSpec = tween(220, easing = androidx.compose.animation.core.FastOutSlowInEasing)
+                            )
+                    },
+                    popExitTransition = {
+                        fadeOut(animationSpec = tween(160)) +
+                            slideOutHorizontally(
+                                targetOffsetX = { it / 16 },
+                                animationSpec = tween(180, easing = androidx.compose.animation.core.FastOutSlowInEasing)
+                            )
+                    },
                 ) {
                     composable(Routes.SETUP) { setupUi() }
                     composable(Routes.SIGN_IN) {
@@ -1191,10 +1216,21 @@ fun AuroraApp() {
                                 },
                                 onPlaySong = { song ->
                                     scope.launch {
-                                        val all = libraryVM.fullSortedSongs()
-                                        val idx = all.indexOfFirst { it.id == song.id }
-                                        // fall back to the single track if the full list somehow lacks it (never play the wrong index)
-                                        if (idx >= 0) playerVM.playAll(all, idx) else playerVM.playAll(listOf(song), 0)
+                                        val all = runCatching { libraryVM.fullSortedSongs() }.getOrDefault(emptyList())
+                                        if (all.isNotEmpty()) {
+                                            val idx = all.indexOfFirst { it.id == song.id }
+                                            if (idx >= 0) {
+                                                playerVM.playAll(all, idx)
+                                            } else {
+                                                val sorted = runCatching {
+                                                    com.aurora.music.viewmodel.sortLibrarySongs(all, com.aurora.music.model.LibrarySort.RECENT, libraryState.localPlayCounts)
+                                                }.getOrDefault(all)
+                                                val idx2 = sorted.indexOfFirst { it.id == song.id }
+                                                if (idx2 >= 0) playerVM.playAll(sorted, idx2) else playerVM.playAll(listOf(song), 0)
+                                            }
+                                        } else {
+                                            playerVM.playAll(listOf(song), 0)
+                                        }
                                     }
                                 },
                                 selectedItem = if (split) librarySelection else null,

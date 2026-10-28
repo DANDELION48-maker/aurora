@@ -1,9 +1,13 @@
 package com.aurora.music.ui.components
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -162,6 +166,11 @@ internal fun TrackSwipeActions(
             }
         }
         Box(Modifier.graphicsLayer { translationX = offset }
-            .then(if (abs(offset) > .5f) Modifier.background(colors.background) else Modifier)) { content() }
+            .then(if (abs(offset) > .5f) Modifier.background(colors.background) else Modifier)) { 
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn(tween(120)) + scaleIn(initialScale = 0.98f, animationSpec = tween(120)),
+                ) { content() }
+            }
     }
 }

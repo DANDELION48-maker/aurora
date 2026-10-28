@@ -55,11 +55,32 @@ data class LibraryUiState(
 
 // single source of truth for library song order so the on-screen list and the queue built on Play match
 fun sortLibrarySongs(songs: List<Song>, sort: LibrarySort, localPlayCounts: Map<String, Int>): List<Song> = when (sort) {
-    LibrarySort.ALPHABETICAL -> songs.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
-    LibrarySort.CREATOR -> songs.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.artist })
+    LibrarySort.ALPHABETICAL -> songs.sortedWith(
+        compareBy<String.CASE_INSENSITIVE_ORDER, String>(String.CASE_INSENSITIVE_ORDER) { it.title }
+            .thenBy(String.CASE_INSENSITIVE_ORDER) { it.artist }
+            .thenBy { it.album }
+            .thenBy { it.id }
+    )
+    LibrarySort.CREATOR -> songs.sortedWith(
+        compareBy<String.CASE_INSENSITIVE_ORDER, String>(String.CASE_INSENSITIVE_ORDER) { it.artist }
+            .thenBy(String.CASE_INSENSITIVE_ORDER) { it.album }
+            .thenBy { it.title }
+            .thenBy { it.id }
+    )
     // server play count wins when reported; local history fills the gap for local files/spotify
-    LibrarySort.MOST_PLAYED -> songs.sortedByDescending { maxOf(it.playCount, localPlayCounts[it.id] ?: 0) }
-    LibrarySort.RECENT -> songs.sortedByDescending { it.dateAddedSec }
+    LibrarySort.MOST_PLAYED -> songs.sortedWith(
+        compareByDescending<Song> { maxOf(it.playCount, localPlayCounts[it.id] ?: 0) }
+            .thenByDescending { it.dateAddedSec }
+            .thenBy(String.CASE_INSENSITIVE_ORDER) { it.title }
+            .thenBy { it.id }
+    )
+    LibrarySort.RECENT -> songs.sortedWith(
+        compareByDescending<Song> { it.dateAddedSec }
+            .thenBy(String.CASE_INSENSITIVE_ORDER) { it.artist }
+            .thenBy(String.CASE_INSENSITIVE_ORDER) { it.album }
+            .thenBy { it.title }
+            .thenBy { it.id }
+    )
 }
 
 class LibraryViewModel(app: Application) : AndroidViewModel(app) {

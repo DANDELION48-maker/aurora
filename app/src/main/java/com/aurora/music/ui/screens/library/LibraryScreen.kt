@@ -719,7 +719,7 @@ private fun SongsTab(
 
     Box(Modifier.fillMaxSize()) {
         LazyColumn(Modifier.fillMaxSize().padding(horizontal = 8.dp), state = listState, contentPadding = PaddingValues(bottom = bottom)) {
-            items(songs.size, contentType = { "song" }) { i ->
+            items(songs.size, key = { i -> songs[i].id }, contentType = { "song" }) { i ->
                 val s = songs[i]
                 SongRow(
                     s, isPlaying = s.id == currentSongId && isPlaying, isLiked = likedIds.contains(s.id),
