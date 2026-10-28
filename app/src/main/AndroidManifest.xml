@@ -40,7 +40,7 @@
         android:localeConfig="@xml/locales_config"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
-        android:theme="@style/Theme.Aurora">
+        android:theme="@style/Theme.Aetheria">
 
         <service android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
             android:enabled="false" android:exported="false">
@@ -77,7 +77,7 @@
             android:launchMode="singleTask"
             android:configChanges="orientation|screenSize|smallestScreenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Aurora"
+            android:theme="@style/Theme.Aetheria"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
@@ -164,7 +164,7 @@
             android:launchMode="singleInstance"
             android:showWhenLocked="true"
             android:turnScreenOn="true"
-            android:theme="@style/Theme.Aurora" />
+            android:theme="@style/Theme.Aetheria" />
 
         <receiver
             android:name=".playback.AlarmReceiver"
