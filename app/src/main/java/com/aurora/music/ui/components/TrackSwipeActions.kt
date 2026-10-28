@@ -166,11 +166,6 @@ internal fun TrackSwipeActions(
             }
         }
         Box(Modifier.graphicsLayer { translationX = offset }
-            .then(if (abs(offset) > .5f) Modifier.background(colors.background) else Modifier)) { 
-                AnimatedVisibility(
-                    visible = true,
-                    enter = fadeIn(tween(120)) + scaleIn(initialScale = 0.98f, animationSpec = tween(120)),
-                ) { content() }
-            }
+            .then(if (abs(offset) > .5f) Modifier.background(colors.background) else Modifier)) { content() }
     }
 }
