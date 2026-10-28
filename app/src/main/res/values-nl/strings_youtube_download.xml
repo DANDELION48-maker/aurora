@@ -3,11 +3,11 @@
     <string name="youtube_download_title">Downloaden van YouTube</string>
     <string name="youtube_download_tile_detail">Nummers op dit apparaat opslaan</string>
     <string name="youtube_download_search_hint">Nummers zoeken op YouTube Music</string>
-    <string name="youtube_download_intro">Zoek een nummer en sla het op als bestand. Downloads komen in Music/Aurora en verschijnen in je lokale bibliotheek.</string>
+    <string name="youtube_download_intro">Zoek een nummer en sla het op als bestand. Downloads komen in Music/Aetheria en verschijnen in je lokale bibliotheek.</string>
     <string name="youtube_download_no_results">Geen nummers gevonden. Probeer een andere zoekopdracht.</string>
     <string name="youtube_download_search_failed">Zoeken mislukt. Controleer je verbinding en probeer het opnieuw.</string>
     <string name="youtube_download_action">Downloaden</string>
-    <string name="youtube_download_saved">Opgeslagen in Music/Aurora</string>
+    <string name="youtube_download_saved">Opgeslagen in Music/Aetheria</string>
     <string name="youtube_download_failed">Download mislukt. Tik om het opnieuw te proberen.</string>
     <string name="youtube_download_saving">Opslaan…</string>
     <string name="youtube_download_settings">YouTube-downloads</string>

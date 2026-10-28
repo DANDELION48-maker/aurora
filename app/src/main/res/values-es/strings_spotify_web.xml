@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="spotify_web_intro">Inicia sesión con tu cuenta de Spotify. Aurora lee tu biblioteca a través del reproductor web de Spotify y reproduce tu música mediante YouTube, así que no necesitas una app de desarrollador.</string>
+    <string name="spotify_web_intro">Inicia sesión con tu cuenta de Spotify. Aetheria lee tu biblioteca a través del reproductor web de Spotify y reproduce tu música mediante YouTube, así que no necesitas una app de desarrollador.</string>
     <string name="spotify_web_login">Iniciar sesión con Spotify</string>
     <string name="spotify_web_login_note">Es posible que el inicio de sesión con Google, Apple o Facebook no funcione aquí. Usa tu correo y contraseña o un código de inicio de sesión.</string>
-    <string name="spotify_web_browser_hint">Inicia sesión en Spotify. Aurora se conecta en cuanto se abre el reproductor web.</string>
+    <string name="spotify_web_browser_hint">Inicia sesión en Spotify. Aetheria se conecta en cuanto se abre el reproductor web.</string>
     <string name="spotify_web_failed">No se pudo conectar tu cuenta de Spotify. Intenta iniciar sesión de nuevo.</string>
     <string name="spotify_web_unsupported">El inicio de sesión de Spotify necesita una versión más reciente de Android System WebView. Actualízala desde Play Store e inténtalo de nuevo.</string>
 </resources>

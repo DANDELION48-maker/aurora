@@ -2,7 +2,7 @@
 <resources>
     <string name="storage_description">Скачанное, кэш, анализ и история</string>
     <string name="storage_summary">Занято %1$s · скачанное, кэш и история</string>
-    <string name="storage_used">Aurora занимает %1$s</string>
+    <string name="storage_used">Aetheria занимает %1$s</string>
     <string name="storage_free">Свободно на устройстве: %1$s</string>
     <string name="storage_measuring">Подсчёт занятого места…</string>
     <string name="storage_part_downloads">Скачанное</string>
@@ -11,7 +11,7 @@
     <string name="storage_part_other">Данные приложения</string>
     <string name="storage_clear_caches">Очистить весь кэш</string>
     <string name="storage_clear_caches_title">Очистить весь кэш?</string>
-    <string name="storage_clear_caches_message">Будут удалены аудиокэш, кэш обложек, изображений и карт, синхронизация с вокалом, разделённые дорожки, сведения об исполнителях и временные файлы. Скачанное, результаты анализа, история и настройки сохранятся. Кэш снова заполнится по мере использования Aurora.</string>
+    <string name="storage_clear_caches_message">Будут удалены аудиокэш, кэш обложек, изображений и карт, синхронизация с вокалом, разделённые дорожки, сведения об исполнителях и временные файлы. Скачанное, результаты анализа, история и настройки сохранятся. Кэш снова заполнится по мере использования Aetheria.</string>
     <string name="storage_caches_cleared">Кэш очищен</string>
     <string name="storage_stems_busy">Сейчас идёт выделение вокала, поэтому его файлы сохранены</string>
     <string name="storage_cleared">Очищено</string>
@@ -29,7 +29,7 @@
     <string name="storage_remove_source_title">Удалить скачанное из %1$s?</string>
     <string name="storage_remove_source_message">Треки, скачанные из этого источника, будут удалены с устройства. Скачанное из других источников сохранится.</string>
     <string name="storage_source_unknown">Другие источники</string>
-    <string name="storage_youtube_note">Скачанное с YouTube сохраняется на телефоне в папке Music/Aurora, и управлять им можно в файловом менеджере.</string>
+    <string name="storage_youtube_note">Скачанное с YouTube сохраняется на телефоне в папке Music/Aetheria, и управлять им можно в файловом менеджере.</string>
 
     <string name="storage_section_images">Обложки и изображения</string>
     <string name="storage_cover_cache">Кэш поиска обложек</string>

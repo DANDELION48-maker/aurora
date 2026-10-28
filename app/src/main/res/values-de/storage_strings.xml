@@ -2,7 +2,7 @@
 <resources>
     <string name="storage_description">Downloads, Caches, Analysen und Verlauf</string>
     <string name="storage_summary">%1$s belegt · Downloads, Caches und Verlauf</string>
-    <string name="storage_used">Aurora belegt %1$s</string>
+    <string name="storage_used">Aetheria belegt %1$s</string>
     <string name="storage_free">%1$s frei auf diesem Gerät</string>
     <string name="storage_measuring">Speicher wird gemessen…</string>
     <string name="storage_part_downloads">Downloads</string>
@@ -11,7 +11,7 @@
     <string name="storage_part_other">App-Daten</string>
     <string name="storage_clear_caches">Alle Caches leeren</string>
     <string name="storage_clear_caches_title">Alle Caches leeren?</string>
-    <string name="storage_clear_caches_message">Dadurch werden der Audio-Cache, die Cover-, Bild- und Karten-Caches, das Gesangs-Timing, getrennte Spuren, Künstlerinformationen und temporäre Dateien entfernt. Downloads, Analysen, Verlauf und Einstellungen bleiben erhalten. Die Caches füllen sich wieder, während du Aurora nutzt.</string>
+    <string name="storage_clear_caches_message">Dadurch werden der Audio-Cache, die Cover-, Bild- und Karten-Caches, das Gesangs-Timing, getrennte Spuren, Künstlerinformationen und temporäre Dateien entfernt. Downloads, Analysen, Verlauf und Einstellungen bleiben erhalten. Die Caches füllen sich wieder, während du Aetheria nutzt.</string>
     <string name="storage_caches_cleared">Caches geleert</string>
     <string name="storage_stems_busy">Die Gesangstrennung läuft gerade, daher wurden ihre Dateien behalten</string>
     <string name="storage_cleared">Geleert</string>
@@ -29,7 +29,7 @@
     <string name="storage_remove_source_title">Downloads von %1$s entfernen?</string>
     <string name="storage_remove_source_message">Von dieser Quelle heruntergeladene Titel werden von diesem Gerät gelöscht. Downloads aus deinen anderen Quellen bleiben erhalten.</string>
     <string name="storage_source_unknown">Andere Quellen</string>
-    <string name="storage_youtube_note">Downloads von YouTube werden auf deinem Telefon unter Music/Aurora gespeichert und über deinen Dateimanager verwaltet.</string>
+    <string name="storage_youtube_note">Downloads von YouTube werden auf deinem Telefon unter Music/Aetheria gespeichert und über deinen Dateimanager verwaltet.</string>
 
     <string name="storage_section_images">Cover &amp; Bilder</string>
     <string name="storage_cover_cache">Cache der Cover-Suche</string>

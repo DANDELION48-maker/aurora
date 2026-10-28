@@ -3,11 +3,11 @@
     <string name="youtube_download_title">Scarica da YouTube</string>
     <string name="youtube_download_tile_detail">Salva brani su questo dispositivo</string>
     <string name="youtube_download_search_hint">Cerca brani su YouTube Music</string>
-    <string name="youtube_download_intro">Cerca un brano e salvalo come file. I download vanno in Music/Aurora e compaiono nella libreria locale.</string>
+    <string name="youtube_download_intro">Cerca un brano e salvalo come file. I download vanno in Music/Aetheria e compaiono nella libreria locale.</string>
     <string name="youtube_download_no_results">Nessun brano trovato. Prova un\'altra ricerca.</string>
     <string name="youtube_download_search_failed">Ricerca non riuscita. Controlla la connessione e riprova.</string>
     <string name="youtube_download_action">Scarica</string>
-    <string name="youtube_download_saved">Salvato in Music/Aurora</string>
+    <string name="youtube_download_saved">Salvato in Music/Aetheria</string>
     <string name="youtube_download_failed">Download non riuscito. Tocca per riprovare.</string>
     <string name="youtube_download_saving">Salvataggio…</string>
     <string name="youtube_download_settings">Download da YouTube</string>

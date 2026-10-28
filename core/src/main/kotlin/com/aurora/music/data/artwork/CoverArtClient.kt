@@ -74,5 +74,5 @@ class CoverArtClient(
 
     private fun JsonObject.text(name: String): String = get(name)?.takeUnless { it.isJsonNull }?.asString.orEmpty()
     private fun isMbid(value: String) = Regex("[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}").matches(value)
-    companion object { const val USER_AGENT = "Aurora/1.0 ( https://github.com/nessli420/aurora )" }
+    companion object { const val USER_AGENT = "Aetheria/1.0 ( https://github.com/DANDELION48-maker/aurora )" }
 }

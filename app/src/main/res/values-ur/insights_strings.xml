@@ -3,7 +3,7 @@
     <string name="insights_title">تفصیلی اعداد و شمار</string>
     <string name="insights_description">اختیاری سننے کا سیاق و سباق جو اسی آلے پر رہتا ہے</string>
     <string name="insights_intro_title">بطورِ طے شدہ بند</string>
-    <string name="insights_intro_body">ہر بار سننے کے بارے میں مزید معلومات ریکارڈ کرنے کے لیے اسے آن کریں، تاکہ Aurora دکھا سکے کہ آپ کب، کیسے اور کس پر سنتے ہیں۔ یہ سیٹ اپ مکمل ہونے تک کچھ بھی ریکارڈ نہیں ہوتا۔</string>
+    <string name="insights_intro_body">ہر بار سننے کے بارے میں مزید معلومات ریکارڈ کرنے کے لیے اسے آن کریں، تاکہ Aetheria دکھا سکے کہ آپ کب، کیسے اور کس پر سنتے ہیں۔ یہ سیٹ اپ مکمل ہونے تک کچھ بھی ریکارڈ نہیں ہوتا۔</string>
     <string name="insights_guide_title">فوری رہنما</string>
     <string name="insights_step_recorded_title">کیا ریکارڈ ہوتا ہے</string>
     <string name="insights_step_recorded_body">آپ کب اور کتنی دیر سنتے ہیں، ٹریک مکمل سنا گیا یا چھوڑ دیا گیا، اس کی صنف اور ماخذ، اور شفل آن تھا یا نہیں۔</string>
@@ -84,9 +84,9 @@
     <string name="insights_open">بصیرتیں کھولیں</string>
     <string name="insights_places_toggle">مقامات ریکارڈ کریں</string>
     <string name="insights_places_desc">ہر پلے کو گھر، کام یا باہر کا نشان دیں</string>
-    <string name="insights_places_guide">موسیقی چلتے وقت Aurora زیادہ سے زیادہ ہر 10 منٹ میں ایک بار آپ کا مقام دیکھتا ہے، اسے گھر اور کام سے ملاتا ہے اور صرف لیبل رکھتا ہے۔ گھر اور کام کے مقامات اسی فون پر رہتے ہیں اور کسی بیک اپ میں شامل نہیں ہوتے۔</string>
+    <string name="insights_places_guide">موسیقی چلتے وقت Aetheria زیادہ سے زیادہ ہر 10 منٹ میں ایک بار آپ کا مقام دیکھتا ہے، اسے گھر اور کام سے ملاتا ہے اور صرف لیبل رکھتا ہے۔ گھر اور کام کے مقامات اسی فون پر رہتے ہیں اور کسی بیک اپ میں شامل نہیں ہوتے۔</string>
     <string name="insights_radius">رداس</string>
-    <string name="insights_background_needed">Aurora بند ہونے پر شروع ہونے والے پلے کو نشان دینے کے لیے مقام تک ہر وقت رسائی کی اجازت دیں۔</string>
+    <string name="insights_background_needed">Aetheria بند ہونے پر شروع ہونے والے پلے کو نشان دینے کے لیے مقام تک ہر وقت رسائی کی اجازت دیں۔</string>
     <string name="insights_allow_background">ہر وقت اجازت دیں</string>
     <string name="insights_location_failed">آپ کا مقام معلوم نہیں ہو سکا۔ وائی فائی یا مقام آن کر کے دوبارہ کوشش کریں۔</string>
     <string name="insights_location_denied">مقام تک رسائی نہیں دی گئی، اس لیے مقامات بند رہیں گے۔</string>

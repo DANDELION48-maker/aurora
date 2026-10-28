@@ -3,5 +3,5 @@
     <string name="perm_location">位置</string>
     <string name="perm_location_desc">详细统计中的地点和收听地图</string>
     <string name="perm_location_background">始终允许位置</string>
-    <string name="perm_location_background_desc">在 Aurora 处于后台时记录播放地点</string>
+    <string name="perm_location_background_desc">在 Aetheria 处于后台时记录播放地点</string>
 </resources>

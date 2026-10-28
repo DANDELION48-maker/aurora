@@ -219,6 +219,7 @@ object ThemeStyle {
     const val RETRO = 1
     const val AERO = 2
     const val GLASS = 3
+    const val BLOOM = 4
 }
 
 object AppTypeface {

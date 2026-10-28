@@ -3,7 +3,7 @@
     <string name="insights_title">Statistik terperinci</string>
     <string name="insights_description">Konteks mendengarkan opsional yang tetap di perangkat ini</string>
     <string name="insights_intro_title">Nonaktif secara default</string>
-    <string name="insights_intro_body">Aktifkan untuk mencatat lebih banyak tentang setiap pemutaran, sehingga Aurora dapat menunjukkan kapan, bagaimana, dan dengan apa Anda mendengarkan. Tidak ada yang dicatat sampai penyiapan ini selesai.</string>
+    <string name="insights_intro_body">Aktifkan untuk mencatat lebih banyak tentang setiap pemutaran, sehingga Aetheria dapat menunjukkan kapan, bagaimana, dan dengan apa Anda mendengarkan. Tidak ada yang dicatat sampai penyiapan ini selesai.</string>
     <string name="insights_guide_title">Panduan singkat</string>
     <string name="insights_step_recorded_title">Apa yang dicatat</string>
     <string name="insights_step_recorded_body">Kapan dan berapa lama Anda mendengarkan, apakah lagu didengar sampai habis atau dilewati, genre dan sumbernya, serta apakah acak sedang aktif.</string>
@@ -84,9 +84,9 @@
     <string name="insights_open">Buka wawasan</string>
     <string name="insights_places_toggle">Catat tempat</string>
     <string name="insights_places_desc">Beri label setiap pemutaran sebagai Rumah, Kantor, atau Di luar</string>
-    <string name="insights_places_guide">Saat musik diputar, Aurora memeriksa lokasi Anda paling sering setiap 10 menit, membandingkannya dengan Rumah dan Kantor, lalu hanya menyimpan labelnya. Lokasi Rumah dan Kantor tetap di ponsel ini dan tidak ikut dalam cadangan apa pun.</string>
+    <string name="insights_places_guide">Saat musik diputar, Aetheria memeriksa lokasi Anda paling sering setiap 10 menit, membandingkannya dengan Rumah dan Kantor, lalu hanya menyimpan labelnya. Lokasi Rumah dan Kantor tetap di ponsel ini dan tidak ikut dalam cadangan apa pun.</string>
     <string name="insights_radius">Radius</string>
-    <string name="insights_background_needed">Untuk memberi label pemutaran yang dimulai saat Aurora ditutup, izinkan akses lokasi sepanjang waktu.</string>
+    <string name="insights_background_needed">Untuk memberi label pemutaran yang dimulai saat Aetheria ditutup, izinkan akses lokasi sepanjang waktu.</string>
     <string name="insights_allow_background">Izinkan sepanjang waktu</string>
     <string name="insights_location_failed">Lokasi Anda tidak bisa didapatkan. Coba lagi dengan Wi-Fi atau lokasi aktif.</string>
     <string name="insights_location_denied">Akses lokasi tidak diberikan, jadi tempat tetap nonaktif.</string>

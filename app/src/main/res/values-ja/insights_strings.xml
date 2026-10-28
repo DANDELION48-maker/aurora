@@ -3,7 +3,7 @@
     <string name="insights_title">詳細な統計</string>
     <string name="insights_description">端末内にだけ保存される任意の再生コンテキスト</string>
     <string name="insights_intro_title">初期状態ではオフ</string>
-    <string name="insights_intro_body">オンにすると再生ごとの情報をより多く記録し、いつ・どのように・何で聴いているかを Aurora が表示できるようになります。この設定を完了するまで何も記録されません。</string>
+    <string name="insights_intro_body">オンにすると再生ごとの情報をより多く記録し、いつ・どのように・何で聴いているかを Aetheria が表示できるようになります。この設定を完了するまで何も記録されません。</string>
     <string name="insights_guide_title">クイックガイド</string>
     <string name="insights_step_recorded_title">記録される内容</string>
     <string name="insights_step_recorded_body">聴いた時間帯と長さ、曲を最後まで聴いたかスキップしたか、ジャンルと提供元、シャッフルがオンだったかどうか。</string>
@@ -84,9 +84,9 @@
     <string name="insights_open">インサイトを開く</string>
     <string name="insights_places_toggle">場所を記録</string>
     <string name="insights_places_desc">再生ごとに自宅・職場・外出先のラベルを付ける</string>
-    <string name="insights_places_guide">音楽の再生中、Aurora は最大 10 分に 1 回位置を確認し、自宅と職場と比べてラベルだけを残します。自宅と職場の位置そのものはこのスマホにのみ保存され、どのバックアップにも含まれません。</string>
+    <string name="insights_places_guide">音楽の再生中、Aetheria は最大 10 分に 1 回位置を確認し、自宅と職場と比べてラベルだけを残します。自宅と職場の位置そのものはこのスマホにのみ保存され、どのバックアップにも含まれません。</string>
     <string name="insights_radius">半径</string>
-    <string name="insights_background_needed">Aurora を閉じているときに始まった再生にもラベルを付けるには、位置情報へのアクセスを常に許可してください。</string>
+    <string name="insights_background_needed">Aetheria を閉じているときに始まった再生にもラベルを付けるには、位置情報へのアクセスを常に許可してください。</string>
     <string name="insights_allow_background">常に許可</string>
     <string name="insights_location_failed">位置情報を取得できませんでした。Wi-Fi または位置情報をオンにしてもう一度お試しください。</string>
     <string name="insights_location_denied">位置情報へのアクセスが許可されなかったため、場所はオフのままです。</string>

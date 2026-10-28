@@ -17,9 +17,9 @@
     <string name="connect_preset">"Preset"</string>
     <string name="connect_sources_note">"Nummers spelen af vanuit de bronnen van dat apparaat."</string>
     <string name="connect_reachable_at">"Bereikbaar op"</string>
-    <string name="connect_none_found">"Geen andere Aurora-apparaten gevonden. Zet daar bediening op afstand aan en zoek opnieuw."</string>
-    <string name="connect_settings_title">"Aurora Connect"</string>
-    <string name="connect_settings_summary">"Bedien andere Aurora-apparaten of laat ze dit apparaat bedienen"</string>
+    <string name="connect_none_found">"Geen andere Aetheria-apparaten gevonden. Zet daar bediening op afstand aan en zoek opnieuw."</string>
+    <string name="connect_settings_title">"Aetheria Connect"</string>
+    <string name="connect_settings_summary">"Bedien andere Aetheria-apparaten of laat ze dit apparaat bedienen"</string>
     <string name="connect_continue">"Doorgaan"</string>
     <string name="connect_this_key">"Sleutel van dit apparaat: %1$s"</string>
 </resources>

@@ -4,12 +4,12 @@
     <string name="soundcloud_connect_title">"Connect SoundCloud"</string>
     <string name="soundcloud_connect_subtitle">"Your likes, playlists and the artists you follow"</string>
     <string name="soundcloud_sign_in">"Sign in to SoundCloud"</string>
-    <string name="soundcloud_sign_in_hint">"Sign in on SoundCloud\'s page. Aurora connects as soon as you\'re in."</string>
+    <string name="soundcloud_sign_in_hint">"Sign in on SoundCloud\'s page. Aetheria connects as soon as you\'re in."</string>
     <string name="soundcloud_waiting">"Sign in to continue. If Google sign-in is refused here, sign in with your email instead."</string>
-    <string name="soundcloud_details">"Aurora uses SoundCloud\'s unofficial web interface and keeps your sign-in encrypted on this device."</string>
+    <string name="soundcloud_details">"Aetheria uses SoundCloud\'s unofficial web interface and keeps your sign-in encrypted on this device."</string>
     <string name="soundcloud_connect_failed">"Could not connect SoundCloud. Please try again."</string>
     <string name="soundcloud_page_failed">"The sign-in page could not load. Check your connection and reload."</string>
-    <string name="soundcloud_captcha_hint">"SoundCloud wants to check you\'re human before saving this change. Solve it once and Aurora finishes the change."</string>
+    <string name="soundcloud_captcha_hint">"SoundCloud wants to check you\'re human before saving this change. Solve it once and Aetheria finishes the change."</string>
     <string name="player_comments">"Comments"</string>
     <string name="player_soundcloud_comments">"SoundCloud Comments"</string>
     <string name="comments_empty">"No comments yet. Be the first."</string>

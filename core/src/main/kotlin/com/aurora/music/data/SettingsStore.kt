@@ -91,7 +91,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     val uiPrefs: Flow<UiPrefs> = dataStore.data.map { p ->
         UiPrefs(
             themeMode = p[Keys.UI_THEME_MODE] ?: ThemeMode.DARK,
-            themeStyle = (p[Keys.UI_THEME_STYLE] ?: ThemeStyle.AURORA).coerceIn(ThemeStyle.AURORA, ThemeStyle.GLASS),
+            themeStyle = (p[Keys.UI_THEME_STYLE] ?: ThemeStyle.AURORA).coerceIn(ThemeStyle.AURORA, ThemeStyle.BLOOM),
             accentMode = p[Keys.UI_ACCENT_MODE] ?: AccentMode.PRESET,
             accentPreset = p[Keys.UI_ACCENT_PRESET] ?: 0,
             accentColor = p[Keys.UI_ACCENT_COLOR] ?: 0xFFFF2E7EL,
@@ -1498,7 +1498,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>, private val f
     suspend fun setDspTrimRight(v: Float) = editManualProcessing { it[Keys.DSP_TRIM_R] = v }
 
     suspend fun setThemeMode(v: Int) = dataStore.edit { it[Keys.UI_THEME_MODE] = v }
-    suspend fun setThemeStyle(v: Int) = dataStore.edit { it[Keys.UI_THEME_STYLE] = v.coerceIn(ThemeStyle.AURORA, ThemeStyle.GLASS) }
+    suspend fun setThemeStyle(v: Int) = dataStore.edit { it[Keys.UI_THEME_STYLE] = v.coerceIn(ThemeStyle.AURORA, ThemeStyle.BLOOM) }
     suspend fun setAccentMode(v: Int) = dataStore.edit { it[Keys.UI_ACCENT_MODE] = v }
     suspend fun setAccentPreset(v: Int) = dataStore.edit { it[Keys.UI_ACCENT_PRESET] = v }
     suspend fun setAccentColor(v: Long) = dataStore.edit { it[Keys.UI_ACCENT_COLOR] = v }

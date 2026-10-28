@@ -28,5 +28,5 @@
     <string name="reverb_value_ms">"%1$s ms"</string>
     <string name="reverb_value_hz">"%1$s Hz"</string>
     <string name="reverb_value_khz">"%1$s kHz"</string>
-    <string name="reverb_note">"La réverbération s\'exécute dans le moteur audio d\'Aurora ; elle fonctionne donc avec tous les modes d\'égaliseur et avec les changements de vitesse et de hauteur. Elle est ignorée pour la sortie USB bit-perfect et la diffusion directe."</string>
+    <string name="reverb_note">"La réverbération s\'exécute dans le moteur audio d\'Aetheria ; elle fonctionne donc avec tous les modes d\'égaliseur et avec les changements de vitesse et de hauteur. Elle est ignorée pour la sortie USB bit-perfect et la diffusion directe."</string>
 </resources>

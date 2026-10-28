@@ -28,5 +28,5 @@
     <string name="reverb_value_ms">"%1$s ms"</string>
     <string name="reverb_value_hz">"%1$s Hz"</string>
     <string name="reverb_value_khz">"%1$s kHz"</string>
-    <string name="reverb_note">"混响在 Aurora 的音频引擎内运行，因此可与所有均衡器模式以及速度和音调调整配合使用。在比特完美 USB 输出和直接投放时会被跳过。"</string>
+    <string name="reverb_note">"混响在 Aetheria 的音频引擎内运行，因此可与所有均衡器模式以及速度和音调调整配合使用。在比特完美 USB 输出和直接投放时会被跳过。"</string>
 </resources>

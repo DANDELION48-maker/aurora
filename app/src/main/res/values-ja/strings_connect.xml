@@ -17,9 +17,9 @@
     <string name="connect_preset">"プリセット"</string>
     <string name="connect_sources_note">"曲はそのデバイス自身のソースから再生されます。"</string>
     <string name="connect_reachable_at">"接続先"</string>
-    <string name="connect_none_found">"他の Aurora デバイスが見つかりません。相手側でリモート操作をオンにして、もう一度検索してください。"</string>
-    <string name="connect_settings_title">"Aurora Connect"</string>
-    <string name="connect_settings_summary">"他の Aurora デバイスを操作したり、このデバイスを操作させたりします"</string>
+    <string name="connect_none_found">"他の Aetheria デバイスが見つかりません。相手側でリモート操作をオンにして、もう一度検索してください。"</string>
+    <string name="connect_settings_title">"Aetheria Connect"</string>
+    <string name="connect_settings_summary">"他の Aetheria デバイスを操作したり、このデバイスを操作させたりします"</string>
     <string name="connect_continue">"続行"</string>
     <string name="connect_this_key">"このデバイスのキー: %1$s"</string>
 </resources>

@@ -17,9 +17,9 @@
     <string name="connect_preset">"프리셋"</string>
     <string name="connect_sources_note">"노래는 그 기기의 자체 소스에서 재생됩니다."</string>
     <string name="connect_reachable_at">"접속 주소"</string>
-    <string name="connect_none_found">"다른 Aurora 기기를 찾지 못했습니다. 그 기기에서 원격 제어를 켠 다음 다시 검색하세요."</string>
-    <string name="connect_settings_title">"Aurora Connect"</string>
-    <string name="connect_settings_summary">"다른 Aurora 기기를 제어하거나 이 기기를 제어하도록 허용합니다"</string>
+    <string name="connect_none_found">"다른 Aetheria 기기를 찾지 못했습니다. 그 기기에서 원격 제어를 켠 다음 다시 검색하세요."</string>
+    <string name="connect_settings_title">"Aetheria Connect"</string>
+    <string name="connect_settings_summary">"다른 Aetheria 기기를 제어하거나 이 기기를 제어하도록 허용합니다"</string>
     <string name="connect_continue">"계속"</string>
     <string name="connect_this_key">"이 기기의 키: %1$s"</string>
 </resources>

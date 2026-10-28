@@ -17,9 +17,9 @@
     <string name="connect_preset">"प्रीसेट"</string>
     <string name="connect_sources_note">"गाने उस डिवाइस के अपने स्रोतों से चलते हैं।"</string>
     <string name="connect_reachable_at">"यहाँ उपलब्ध"</string>
-    <string name="connect_none_found">"कोई दूसरा Aurora डिवाइस नहीं मिला। वहाँ रिमोट कंट्रोल चालू करें, फिर दोबारा खोजें।"</string>
-    <string name="connect_settings_title">"Aurora Connect"</string>
-    <string name="connect_settings_summary">"दूसरे Aurora डिवाइस नियंत्रित करें या उन्हें इसे नियंत्रित करने दें"</string>
+    <string name="connect_none_found">"कोई दूसरा Aetheria डिवाइस नहीं मिला। वहाँ रिमोट कंट्रोल चालू करें, फिर दोबारा खोजें।"</string>
+    <string name="connect_settings_title">"Aetheria Connect"</string>
+    <string name="connect_settings_summary">"दूसरे Aetheria डिवाइस नियंत्रित करें या उन्हें इसे नियंत्रित करने दें"</string>
     <string name="connect_continue">"जारी रखें"</string>
     <string name="connect_this_key">"इस डिवाइस की कुंजी: %1$s"</string>
 </resources>

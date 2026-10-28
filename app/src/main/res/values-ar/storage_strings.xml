@@ -2,7 +2,7 @@
 <resources>
     <string name="storage_description">\u2067التنزيلات والذاكرة المؤقتة والتحليل والسجل\u2069</string>
     <string name="storage_summary">\u2067المستخدم %1$s · التنزيلات والذاكرة المؤقتة والسجل\u2069</string>
-    <string name="storage_used">\u2067يشغل Aurora مساحة %1$s\u2069</string>
+    <string name="storage_used">\u2067يشغل Aetheria مساحة %1$s\u2069</string>
     <string name="storage_free">\u2067المساحة المتاحة على هذا الجهاز: %1$s\u2069</string>
     <string name="storage_measuring">\u2067جارٍ قياس مساحة التخزين…\u2069</string>
     <string name="storage_part_downloads">\u2067التنزيلات\u2069</string>
@@ -11,7 +11,7 @@
     <string name="storage_part_other">\u2067بيانات التطبيق\u2069</string>
     <string name="storage_clear_caches">\u2067مسح كل الذاكرة المؤقتة\u2069</string>
     <string name="storage_clear_caches_title">\u2067مسح كل الذاكرة المؤقتة؟\u2069</string>
-    <string name="storage_clear_caches_message">\u2067يؤدي ذلك إلى إزالة ذاكرة الصوت المؤقتة وذاكرة الأغلفة والصور والخرائط المؤقتة وتوقيت الغناء والمسارات المفصولة ومعلومات الفنانين والملفات المؤقتة. تبقى التنزيلات والتحليل والسجل والإعدادات. تمتلئ الذاكرة المؤقتة مجددًا أثناء استخدامك Aurora.\u2069</string>
+    <string name="storage_clear_caches_message">\u2067يؤدي ذلك إلى إزالة ذاكرة الصوت المؤقتة وذاكرة الأغلفة والصور والخرائط المؤقتة وتوقيت الغناء والمسارات المفصولة ومعلومات الفنانين والملفات المؤقتة. تبقى التنزيلات والتحليل والسجل والإعدادات. تمتلئ الذاكرة المؤقتة مجددًا أثناء استخدامك Aetheria.\u2069</string>
     <string name="storage_caches_cleared">\u2067تم مسح الذاكرة المؤقتة\u2069</string>
     <string name="storage_stems_busy">\u2067فصل الغناء قيد التشغيل، لذا احتُفظ بملفاته\u2069</string>
     <string name="storage_cleared">\u2067تم المسح\u2069</string>
@@ -29,7 +29,7 @@
     <string name="storage_remove_source_title">\u2067إزالة التنزيلات من %1$s؟\u2069</string>
     <string name="storage_remove_source_message">\u2067تُحذف المقاطع المنزّلة من هذا المصدر من هذا الجهاز. تبقى التنزيلات من مصادرك الأخرى.\u2069</string>
     <string name="storage_source_unknown">\u2067مصادر أخرى\u2069</string>
-    <string name="storage_youtube_note">\u2067تُحفظ التنزيلات من YouTube في Music/Aurora على هاتفك، وتُدار من مدير الملفات.\u2069</string>
+    <string name="storage_youtube_note">\u2067تُحفظ التنزيلات من YouTube في Music/Aetheria على هاتفك، وتُدار من مدير الملفات.\u2069</string>
 
     <string name="storage_section_images">\u2067الأغلفة والصور\u2069</string>
     <string name="storage_cover_cache">\u2067ذاكرة البحث عن الأغلفة\u2069</string>

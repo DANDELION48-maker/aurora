@@ -17,9 +17,9 @@
     <string name="connect_preset">"Preset"</string>
     <string name="connect_sources_note">"I brani vengono riprodotti dalle sorgenti di quel dispositivo."</string>
     <string name="connect_reachable_at">"Raggiungibile a"</string>
-    <string name="connect_none_found">"Nessun altro dispositivo Aurora trovato. Attiva lì il controllo remoto e cerca di nuovo."</string>
-    <string name="connect_settings_title">"Aurora Connect"</string>
-    <string name="connect_settings_summary">"Controlla altri dispositivi Aurora o lascia che controllino questo"</string>
+    <string name="connect_none_found">"Nessun altro dispositivo Aetheria trovato. Attiva lì il controllo remoto e cerca di nuovo."</string>
+    <string name="connect_settings_title">"Aetheria Connect"</string>
+    <string name="connect_settings_summary">"Controlla altri dispositivi Aetheria o lascia che controllino questo"</string>
     <string name="connect_continue">"Continua"</string>
     <string name="connect_this_key">"Chiave di questo dispositivo: %1$s"</string>
 </resources>

@@ -28,5 +28,5 @@
     <string name="reverb_value_ms">"%1$s ms"</string>
     <string name="reverb_value_hz">"%1$s Hz"</string>
     <string name="reverb_value_khz">"%1$s kHz"</string>
-    <string name="reverb_note">"Galm draait in de audio-engine van Aurora en werkt dus met elke equalizermodus en met snelheids- en toonhoogtewijzigingen. Bij bit-perfect USB-uitvoer en direct casten wordt galm overgeslagen."</string>
+    <string name="reverb_note">"Galm draait in de audio-engine van Aetheria en werkt dus met elke equalizermodus en met snelheids- en toonhoogtewijzigingen. Bij bit-perfect USB-uitvoer en direct casten wordt galm overgeslagen."</string>
 </resources>

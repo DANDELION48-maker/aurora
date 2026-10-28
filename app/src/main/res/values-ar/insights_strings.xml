@@ -3,7 +3,7 @@
     <string name="insights_title">إحصاءات مفصّلة</string>
     <string name="insights_description">سياق استماع اختياري يبقى على هذا الجهاز</string>
     <string name="insights_intro_title">متوقف افتراضيًا</string>
-    <string name="insights_intro_body">فعّل هذا الخيار لتسجيل مزيد من التفاصيل عن كل تشغيل، كي يعرض Aurora متى وكيف وعلى أي جهاز تستمع. لا يُسجَّل شيء حتى تُكمل هذا الإعداد.</string>
+    <string name="insights_intro_body">فعّل هذا الخيار لتسجيل مزيد من التفاصيل عن كل تشغيل، كي يعرض Aetheria متى وكيف وعلى أي جهاز تستمع. لا يُسجَّل شيء حتى تُكمل هذا الإعداد.</string>
     <string name="insights_guide_title">دليل سريع</string>
     <string name="insights_step_recorded_title">ما الذي يُسجَّل</string>
     <string name="insights_step_recorded_body">متى وكم من الوقت تستمع، وهل أُكمل المقطع أم تم تخطيه، ونوعه ومصدره، وهل كان التشغيل العشوائي مفعّلًا.</string>
@@ -84,9 +84,9 @@
     <string name="insights_open">فتح الرؤى</string>
     <string name="insights_places_toggle">تسجيل الأماكن</string>
     <string name="insights_places_desc">وسم كل تشغيل بالمنزل أو العمل أو خارجًا</string>
-    <string name="insights_places_guide">أثناء تشغيل الموسيقى يتحقق Aurora من موقعك مرة كل 10 دقائق على الأكثر، ويقارنه بالمنزل والعمل، ويحتفظ بالوسم فقط. يبقى موقعا المنزل والعمل على هذا الهاتف ولا يدخلان في أي نسخة احتياطية.</string>
+    <string name="insights_places_guide">أثناء تشغيل الموسيقى يتحقق Aetheria من موقعك مرة كل 10 دقائق على الأكثر، ويقارنه بالمنزل والعمل، ويحتفظ بالوسم فقط. يبقى موقعا المنزل والعمل على هذا الهاتف ولا يدخلان في أي نسخة احتياطية.</string>
     <string name="insights_radius">نصف القطر</string>
-    <string name="insights_background_needed">لوسم التشغيلات التي تبدأ وAurora مغلق، اسمح بالوصول إلى الموقع طوال الوقت.</string>
+    <string name="insights_background_needed">لوسم التشغيلات التي تبدأ وAetheria مغلق، اسمح بالوصول إلى الموقع طوال الوقت.</string>
     <string name="insights_allow_background">السماح طوال الوقت</string>
     <string name="insights_location_failed">تعذّر تحديد موقعك. حاول مجددًا مع تشغيل Wi-Fi أو الموقع.</string>
     <string name="insights_location_denied">لم يُمنح الوصول إلى الموقع، لذا تبقى الأماكن متوقفة.</string>

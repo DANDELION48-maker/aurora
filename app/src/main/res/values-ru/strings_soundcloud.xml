@@ -4,12 +4,12 @@
     <string name="soundcloud_connect_title">"Подключить SoundCloud"</string>
     <string name="soundcloud_connect_subtitle">"Ваши лайки, плейлисты и исполнители, на которых вы подписаны"</string>
     <string name="soundcloud_sign_in">"Войти в SoundCloud"</string>
-    <string name="soundcloud_sign_in_hint">"Войдите на странице SoundCloud. Aurora подключится сразу после входа."</string>
+    <string name="soundcloud_sign_in_hint">"Войдите на странице SoundCloud. Aetheria подключится сразу после входа."</string>
     <string name="soundcloud_waiting">"Войдите, чтобы продолжить. Если вход через Google здесь отклонён, войдите по электронной почте."</string>
-    <string name="soundcloud_details">"Aurora использует неофициальный веб-интерфейс SoundCloud и хранит данные входа в зашифрованном виде на этом устройстве."</string>
+    <string name="soundcloud_details">"Aetheria использует неофициальный веб-интерфейс SoundCloud и хранит данные входа в зашифрованном виде на этом устройстве."</string>
     <string name="soundcloud_connect_failed">"Не удалось подключить SoundCloud. Попробуйте ещё раз."</string>
     <string name="soundcloud_page_failed">"Не удалось загрузить страницу входа. Проверьте подключение и обновите страницу."</string>
-    <string name="soundcloud_captcha_hint">"SoundCloud хочет убедиться, что вы человек, прежде чем сохранить это изменение. Пройдите проверку один раз, и Aurora завершит изменение."</string>
+    <string name="soundcloud_captcha_hint">"SoundCloud хочет убедиться, что вы человек, прежде чем сохранить это изменение. Пройдите проверку один раз, и Aetheria завершит изменение."</string>
     <string name="player_comments">"Комментарии"</string>
     <string name="player_soundcloud_comments">"Комментарии SoundCloud"</string>
     <string name="comments_empty">"Комментариев пока нет. Будьте первым."</string>

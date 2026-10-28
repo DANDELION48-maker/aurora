@@ -27,7 +27,7 @@ class AppReleaseTest {
     @Test fun parsesPublishedAuroraReleaseAndChecksum() {
         val release = GitHubRelease.parse(releaseJson())
         assertEquals("V2.6.0", release.tag)
-        assertEquals("https://github.com/nessli420/aurora/releases/tag/V2.6.0", release.pageUrl)
+        assertEquals("https://github.com/DANDELION48-maker/aurora/releases/tag/V2.6.0", release.pageUrl)
         assertEquals(123L, release.apk?.size)
         assertEquals("a".repeat(64), release.apk?.sha256)
     }
@@ -55,10 +55,10 @@ class AppReleaseTest {
 
     @Test fun rejectsApksOutsideTheOfficialRelease() {
         listOf(
-            "http://github.com/nessli420/aurora/releases/download/V2.6.0/Aurora.apk",
-            "https://example.com/nessli420/aurora/releases/download/V2.6.0/Aurora.apk",
+            "http://github.com/DANDELION48-maker/aurora/releases/download/V2.6.0/Aurora.apk",
+            "https://example.com/DANDELION48-maker/aurora/releases/download/V2.6.0/Aurora.apk",
             "https://github.com/someone/aurora/releases/download/V2.6.0/Aurora.apk",
-            "https://github.com/nessli420/aurora/releases/download/V2.5.0/Aurora.apk",
+            "https://github.com/DANDELION48-maker/aurora/releases/download/V2.5.0/Aurora.apk",
         ).forEach { url ->
             assertTrue(runCatching { GitHubRelease.parse(releaseJson(url)) }.isFailure)
         }
@@ -74,7 +74,7 @@ class AppReleaseTest {
     }
 
     private fun version(text: String) = requireNotNull(AppVersion.parse(text))
-    private fun asset(name: String) = """{"name":"$name","size":123,"browser_download_url":"https://github.com/nessli420/aurora/releases/download/V2.6.0/$name"}"""
-    private fun releaseJson(url: String = "https://github.com/nessli420/aurora/releases/download/V2.6.0/Aurora.apk") =
+    private fun asset(name: String) = """{"name":"$name","size":123,"browser_download_url":"https://github.com/DANDELION48-maker/aurora/releases/download/V2.6.0/$name"}"""
+    private fun releaseJson(url: String = "https://github.com/DANDELION48-maker/aurora/releases/download/V2.6.0/Aurora.apk") =
         """{"tag_name":"V2.6.0","draft":false,"prerelease":false,"assets":[{"name":"Aurora.apk","size":123,"browser_download_url":"$url","digest":"sha256:${"a".repeat(64)}"}]}"""
 }

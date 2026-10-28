@@ -28,5 +28,5 @@
     <string name="reverb_value_ms">"%1$s ms"</string>
     <string name="reverb_value_hz">"%1$s Hz"</string>
     <string name="reverb_value_khz">"%1$s kHz"</string>
-    <string name="reverb_note">"リバーブはAuroraのオーディオエンジン内で動作するため、すべてのイコライザーモードや速度・ピッチ変更と併用できます。ビットパーフェクトUSB出力とダイレクトキャスト時はスキップされます。"</string>
+    <string name="reverb_note">"リバーブはAetheriaのオーディオエンジン内で動作するため、すべてのイコライザーモードや速度・ピッチ変更と併用できます。ビットパーフェクトUSB出力とダイレクトキャスト時はスキップされます。"</string>
 </resources>

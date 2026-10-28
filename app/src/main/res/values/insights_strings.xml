@@ -3,7 +3,7 @@
     <string name="insights_title">Detailed statistics</string>
     <string name="insights_description">Opt-in listening context that stays on this device</string>
     <string name="insights_intro_title">Off by default</string>
-    <string name="insights_intro_body">Turn this on to record more about each play, so Aurora can show when, how and on what you listen. Nothing is recorded until you finish this setup.</string>
+    <string name="insights_intro_body">Turn this on to record more about each play, so Aetheria can show when, how and on what you listen. Nothing is recorded until you finish this setup.</string>
     <string name="insights_guide_title">Quick guide</string>
     <string name="insights_step_recorded_title">What gets recorded</string>
     <string name="insights_step_recorded_body">When and how long you listen, whether a track was finished or skipped, its genre and source, and whether shuffle was on.</string>
@@ -84,9 +84,9 @@
     <string name="insights_open">Open insights</string>
     <string name="insights_places_toggle">Record places</string>
     <string name="insights_places_desc">Label each play Home, Work or Away</string>
-    <string name="insights_places_guide">Aurora checks your location at most every 10 minutes while music plays, compares it with Home and Work, and keeps only the label. Home and Work themselves stay on this phone and are left out of every backup.</string>
+    <string name="insights_places_guide">Aetheria checks your location at most every 10 minutes while music plays, compares it with Home and Work, and keeps only the label. Home and Work themselves stay on this phone and are left out of every backup.</string>
     <string name="insights_radius">Radius</string>
-    <string name="insights_background_needed">To label plays started while Aurora is closed, allow location access all the time.</string>
+    <string name="insights_background_needed">To label plays started while Aetheria is closed, allow location access all the time.</string>
     <string name="insights_allow_background">Allow all the time</string>
     <string name="insights_location_failed">Couldn’t get your location. Try again with Wi-Fi or location turned on.</string>
     <string name="insights_location_denied">Location access wasn’t granted, so places stay off.</string>

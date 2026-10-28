@@ -51,7 +51,7 @@
     <string name="text_a_source_is_unavailable_reconnect_to_its_library_and_reopen_this_217820" formatted="false">"A source is unavailable. Reconnect to its library and reopen this mix."</string>
     <string name="text_a_track_downloaded_inside_the_app_8619cd" formatted="false">"A track downloaded inside the app"</string>
     <string name="text_about_6b21fb" formatted="false">"About"</string>
-    <string name="text_about_aurora_b4ed8c" formatted="false">"About Aurora"</string>
+    <string name="text_about_aurora_b4ed8c" formatted="false">"About Aetheria"</string>
     <string name="text_accent_233064" formatted="false">"Accent"</string>
     <string name="text_access_delivery_270b49" formatted="false">"Access &amp; Delivery"</string>
     <string name="text_access_granted_for_8fb83b">"Access granted for %1$s"</string>
@@ -129,9 +129,9 @@
     <string name="text_all_tone_shaping_bypassed_a7e684" formatted="false">"All tone shaping bypassed."</string>
     <string name="text_all_tracks_d1ccb9">"All %1$s tracks"</string>
     <string name="text_allow_access_in_the_browser_then_return_here_4c48b2" formatted="false">"Allow access in the browser, then return here"</string>
-    <string name="text_allow_aurora_to_install_updates_then_return_here_38efd8" formatted="false">"Allow Aurora to install updates, then return here."</string>
-    <string name="text_allow_music_access_in_settings_apps_aurora_permissions_to_use_fil_1503ac" formatted="false">"Allow music access in Settings → Apps → Aurora → Permissions to use files on this device."</string>
-    <string name="text_allow_other_apps_to_play_audio_calls_will_not_pause_aurora_1aac7c" formatted="false">"Allow other apps to play audio. Calls will not pause Aurora."</string>
+    <string name="text_allow_aurora_to_install_updates_then_return_here_38efd8" formatted="false">"Allow Aetheria to install updates, then return here."</string>
+    <string name="text_allow_music_access_in_settings_apps_aurora_permissions_to_use_fil_1503ac" formatted="false">"Allow music access in Settings → Apps → Aetheria → Permissions to use files on this device."</string>
+    <string name="text_allow_other_apps_to_play_audio_calls_will_not_pause_aurora_1aac7c" formatted="false">"Allow other apps to play audio. Calls will not pause Aetheria."</string>
     <string name="text_allow_remote_control_0f0d85" formatted="false">"Allow Remote Control"</string>
     <string name="text_alphabetical_9d1260" formatted="false">"Alphabetical"</string>
     <string name="text_already_downloaded_8acc8a" formatted="false">"Already downloaded"</string>
@@ -184,7 +184,7 @@
     <string name="text_applied_3d3cce">"Applied %1$s."</string>
     <string name="text_applied_60aafc">"Applied: %1$s"</string>
     <string name="text_applied_bands_db_preamp_cf3937">"Applied %1$s · %2$s bands, %3$s dB preamp"</string>
-    <string name="text_applies_aurora_s_effects_before_sending_audio_a462ad" formatted="false">"Applies Aurora\'s effects before sending audio."</string>
+    <string name="text_applies_aurora_s_effects_before_sending_audio_a462ad" formatted="false">"Applies Aetheria\'s effects before sending audio."</string>
     <string name="text_applies_to_this_session_check_signal_path_for_the_active_route_81fa8c" formatted="false">"Applies to this session. Check Signal Path for the active route."</string>
     <string name="text_applies_when_replaygain_is_set_to_track_or_album_in_equalizer_vol_1cf41c" formatted="false">"Applies when ReplayGain is set to Track or Album in Equalizer → Volume leveling."</string>
     <string name="text_apply_app_processing_and_software_volume_crossfade_speed_pitch_an_1dad19" formatted="false">"Apply app processing and software volume. Crossfade, speed/pitch and silence skipping are unavailable."</string>
@@ -201,7 +201,7 @@
     <string name="text_artist_from_your_music_10b0e0" formatted="false">"Artist from your music"</string>
     <string name="text_artist_indexing_and_scrobbling_file_tags_stay_unchanged_def5b6" formatted="false">"Artist indexing and scrobbling. File tags stay unchanged."</string>
     <string name="text_artist_information_d5c3fc" formatted="false">"Artist Information"</string>
-    <string name="text_artist_names_are_sent_to_the_metadata_providers_only_when_aurora_2f1daa" formatted="false">"Artist names are sent to the metadata providers only when Aurora needs the extra information."</string>
+    <string name="text_artist_names_are_sent_to_the_metadata_providers_only_when_aurora_2f1daa" formatted="false">"Artist names are sent to the metadata providers only when Aetheria needs the extra information."</string>
     <string name="text_artist_replacement_rules_ff8fa3" formatted="false">"Artist Replacement Rules"</string>
     <string name="text_artist_separators_4a3dc4" formatted="false">"Artist Separators"</string>
     <string name="text_artists_1528d8" formatted="false">"Artists"</string>
@@ -216,15 +216,15 @@
     <string name="text_audio_presets_fbf3f8" formatted="false">"Audio presets"</string>
     <string name="text_audio_presets_library_sources_and_metadata_4155ea" formatted="false">"Audio presets, library sources and metadata"</string>
     <string name="text_audiotrack_underruns_6c9f5b">"AudioTrack underruns: %1$s"</string>
-    <string name="text_aurora_currently_applies_attenuation_only_missing_or_positive_gai_20c829" formatted="false">" Aurora currently applies attenuation only. Missing or positive gain values leave volume unchanged. Availability depends on the active playback path."</string>
-    <string name="text_aurora_eeee9b" formatted="false">"Aurora"</string>
-    <string name="text_aurora_players_373351" formatted="false">"Aurora Players"</string>
-    <string name="text_aurora_signal_path_b2764e" formatted="false">"Aurora Signal Path"</string>
-    <string name="text_aurora_software_dsp_works_on_any_device_overrides_bit_perfect_out_c3a42d" formatted="false">"Aurora software DSP — works on any device. Overrides bit-perfect output. Restart playback after switching engines."</string>
-    <string name="text_aurora_streams_your_spotify_library_through_youtube_so_it_needs_y_23d0ad" formatted="false">"Aurora streams your Spotify library through YouTube, so it needs your own free Spotify app:"</string>
-    <string name="text_aurora_tuning_5ee0b6" formatted="false">"Aurora tuning"</string>
-    <string name="text_aurora_uses_youtube_music_s_unofficial_web_interface_and_stores_y_28fcb3" formatted="false">"Aurora uses YouTube Music’s unofficial web interface and stores your session encrypted on this device. Streams are lossy; uploaded and account-restricted tracks may not play."</string>
-    <string name="text_aurora_your_recap_a6f4df">"AURORA / YOUR %1$s RECAP"</string>
+    <string name="text_aurora_currently_applies_attenuation_only_missing_or_positive_gai_20c829" formatted="false">" Aetheria currently applies attenuation only. Missing or positive gain values leave volume unchanged. Availability depends on the active playback path."</string>
+    <string name="text_aurora_eeee9b" formatted="false">"Aetheria"</string>
+    <string name="text_aurora_players_373351" formatted="false">"Aetheria Players"</string>
+    <string name="text_aurora_signal_path_b2764e" formatted="false">"Aetheria Signal Path"</string>
+    <string name="text_aurora_software_dsp_works_on_any_device_overrides_bit_perfect_out_c3a42d" formatted="false">"Aetheria software DSP — works on any device. Overrides bit-perfect output. Restart playback after switching engines."</string>
+    <string name="text_aurora_streams_your_spotify_library_through_youtube_so_it_needs_y_23d0ad" formatted="false">"Aetheria streams your Spotify library through YouTube, so it needs your own free Spotify app:"</string>
+    <string name="text_aurora_tuning_5ee0b6" formatted="false">"Aetheria tuning"</string>
+    <string name="text_aurora_uses_youtube_music_s_unofficial_web_interface_and_stores_y_28fcb3" formatted="false">"Aetheria uses YouTube Music’s unofficial web interface and stores your session encrypted on this device. Streams are lossy; uploaded and account-restricted tracks may not play."</string>
+    <string name="text_aurora_your_recap_a6f4df">"AETHERIA / YOUR %1$s RECAP"</string>
     <string name="text_authorization_is_not_ready_allow_access_then_try_again_99dd5c" formatted="false">"Authorization is not ready. Allow access, then try again."</string>
     <string name="text_authorize_your_discord_account_a1f52f" formatted="false">"Authorize your Discord account"</string>
     <string name="text_auto_50c3f1" formatted="false">"AUTO"</string>
@@ -297,7 +297,7 @@
     <string name="text_bottom_utilities_8b97ef" formatted="false">"Bottom Utilities"</string>
     <string name="text_bpm_tempo_estimate_db_rms_652fe5">"≈ %1$s BPM · %2$s tempo estimate · %3$s dB RMS"</string>
     <string name="text_brightness_e1a2b6" formatted="false">"Brightness"</string>
-    <string name="text_bring_your_playlists_and_saved_music_into_aurora_df697e" formatted="false">"Bring your playlists and saved music into Aurora."</string>
+    <string name="text_bring_your_playlists_and_saved_music_into_aurora_df697e" formatted="false">"Bring your playlists and saved music into Aetheria."</string>
     <string name="text_browse_files_524932" formatted="false">"Browse files"</string>
     <string name="text_build_007156">"Build %1$s%2$s"</string>
     <string name="text_built_with_jetpack_compose_material_3_6a2228" formatted="false">"Built with Jetpack Compose &amp; Material 3."</string>
@@ -322,7 +322,7 @@
     <string name="text_cannot_read_this_image_9a45ce" formatted="false">"Cannot read this image."</string>
     <string name="text_cap_streaming_to_96_kbps_on_mobile_data_4a7eaa" formatted="false">"Cap streaming to ~96 kbps on mobile data"</string>
     <string name="text_cast_60745a" formatted="false">"Cast"</string>
-    <string name="text_cast_dlna_and_paired_aurora_devices_364cee" formatted="false">"Cast, DLNA and paired Aurora devices"</string>
+    <string name="text_cast_dlna_and_paired_aurora_devices_364cee" formatted="false">"Cast, DLNA and paired Aetheria devices"</string>
     <string name="text_cast_to_a_device_1c0bd6" formatted="false">"Cast to a device"</string>
     <string name="text_ceiling_e29db9" formatted="false">"Ceiling"</string>
     <string name="text_ceiling_ef2e49">"Ceiling %1$s"</string>
@@ -415,7 +415,7 @@
     <string name="text_connection_details_ab30a5" formatted="false">"Connection details"</string>
     <string name="text_connection_timed_out_647bf9" formatted="false">"Connection timed out."</string>
     <string name="text_connections_8f3509" formatted="false">"Connections"</string>
-    <string name="text_connections_are_optional_aurora_s_own_library_playback_history_an_d7c6c7" formatted="false">"Connections are optional. Aurora’s own library, playback history and recaps work without them."</string>
+    <string name="text_connections_are_optional_aurora_s_own_library_playback_history_an_d7c6c7" formatted="false">"Connections are optional. Aetheria’s own library, playback history and recaps work without them."</string>
     <string name="text_constellation_785bdc" formatted="false">"Constellation"</string>
     <string name="text_container_e6443a" formatted="false">"Container"</string>
     <string name="text_context_cc11b3" formatted="false">"Context"</string>
@@ -605,7 +605,7 @@
     <string name="text_device_presets_ca72d3" formatted="false">"Device presets"</string>
     <string name="text_digital_sample_levels_eed86c" formatted="false">"Digital sample levels"</string>
     <string name="text_direct_bc8152" formatted="false">"Direct"</string>
-    <string name="text_direct_usb_bypasses_aurora_s_processing_switch_to_processed_mode_4a9301" formatted="false">"Direct USB bypasses Aurora\'s processing. Switch to Processed mode to bind presets to this DAC."</string>
+    <string name="text_direct_usb_bypasses_aurora_s_processing_switch_to_processed_mode_4a9301" formatted="false">"Direct USB bypasses Aetheria\'s processing. Switch to Processed mode to bind presets to this DAC."</string>
     <string name="text_direct_usb_requested_fe8923" formatted="false">"Direct USB requested"</string>
     <string name="text_discard_36fff6" formatted="false">"Discard"</string>
     <string name="text_disconnect_discord_0939de" formatted="false">"Disconnect Discord"</string>
@@ -751,7 +751,7 @@
     <string name="text_exporting_preset_f23e43" formatted="false">"Exporting preset…"</string>
     <string name="text_exporting_project_89978a" formatted="false">"Exporting project…"</string>
     <string name="text_exporting_wav_501d1a" formatted="false">"Exporting WAV…"</string>
-    <string name="text_exports_aurora_eq_json_for_these_filter_types_368863" formatted="false">"Exports Aurora EQ JSON for these filter types."</string>
+    <string name="text_exports_aurora_eq_json_for_these_filter_types_368863" formatted="false">"Exports Aetheria EQ JSON for these filter types."</string>
     <string name="text_exports_parametric_filters_with_preamp_0_db_0ec77d">"Exports %1$s parametric filters with Preamp: 0 dB."</string>
     <string name="text_extension_659087" formatted="false">"Extension"</string>
     <string name="text_extension_f88c4d" formatted="false">"EXTENSION"</string>
@@ -838,7 +838,7 @@
     <string name="text_gradient_36463c" formatted="false">"Gradient"</string>
     <string name="text_gradient_intensity_84a1f5" formatted="false">"Gradient Intensity"</string>
     <string name="text_grant_c02329" formatted="false">"Grant"</string>
-    <string name="text_grant_what_you_use_aurora_works_without_any_of_these_but_each_unl_7a03fb" formatted="false">"Grant what you use. Aurora works without any of these, but each unlocks a feature."</string>
+    <string name="text_grant_what_you_use_aurora_works_without_any_of_these_but_each_unl_7a03fb" formatted="false">"Grant what you use. Aetheria works without any of these, but each unlocks a feature."</string>
     <string name="text_granted_43b11e" formatted="false">"Granted"</string>
     <string name="text_graphic_and_parametric_eq_including_this_stage_s_wet_dry_and_bypa_5f1367" formatted="false">"Graphic and parametric EQ, including this stage\'s wet/dry and bypass settings."</string>
     <string name="text_graphic_eq_3df203" formatted="false">"Graphic EQ"</string>
@@ -1059,7 +1059,7 @@
     <string name="text_listening_levels_c1db13" formatted="false">"Listening Levels"</string>
     <string name="text_listening_sharing_ecf6a1" formatted="false">"Listening &amp; Sharing"</string>
     <string name="text_listening_stats_a760b2" formatted="false">"Listening Statistics"</string>
-    <string name="text_listening_to_aurora_24a92c" formatted="false">"Listening to Aurora"</string>
+    <string name="text_listening_to_aurora_24a92c" formatted="false">"Listening to Aetheria"</string>
     <string name="text_listening_to_midnight_drive_35328b" formatted="false">"Listening to Midnight Drive"</string>
     <string name="text_live_65c821" formatted="false">"Live"</string>
     <string name="text_live_6990f0" formatted="false">"LIVE"</string>
@@ -1087,7 +1087,7 @@
     <string name="text_local_mode_doesn_t_use_this_form_78c2dc" formatted="false">"Local mode doesn\'t use this form"</string>
     <string name="text_local_network_0a1fc0" formatted="false">"Local network"</string>
     <string name="text_local_playback_f3fe4f" formatted="false">"Local playback"</string>
-    <string name="text_log_in_to_discord_below_aurora_reads_your_token_locally_to_set_ri_8ae4f4" formatted="false">"Log in to Discord below — Aurora reads your token locally to set Rich Presence (never sent anywhere but Discord). If the page stays blank, paste a token instead."</string>
+    <string name="text_log_in_to_discord_below_aurora_reads_your_token_locally_to_set_ri_8ae4f4" formatted="false">"Log in to Discord below — Aetheria reads your token locally to set Rich Presence (never sent anywhere but Discord). If the page stays blank, paste a token instead."</string>
     <string name="text_log_out_6e78c9" formatted="false">"Log Out"</string>
     <string name="text_login_rejected_3f73ee" formatted="false">"Login rejected"</string>
     <string name="text_longest_day_4ebbeb">"Longest: %1$s day%2$s"</string>
@@ -1146,7 +1146,7 @@
     <string name="text_maximum_treble_boost_db_bfd6e9" formatted="false">"Maximum treble boost · dB"</string>
     <string name="text_maximum_treble_cut_db_384290" formatted="false">"Maximum treble cut · dB"</string>
     <string name="text_maximum_treble_q_659c12" formatted="false">"Maximum treble Q"</string>
-    <string name="text_may_re_ask_on_reconnect_aurora_re_requests_automatically_when_bit_23facf" formatted="false">"may re-ask on reconnect — Aurora re-requests automatically when bit-perfect is on."</string>
+    <string name="text_may_re_ask_on_reconnect_aurora_re_requests_automatically_when_bit_23facf" formatted="false">"may re-ask on reconnect — Aetheria re-requests automatically when bit-perfect is on."</string>
     <string name="text_me_b4d362" formatted="false">"ME"</string>
     <string name="text_measure_loudness_ebu_r128_to_level_playback_volume_30f01c" formatted="false">"Measure loudness (EBU R128) to level playback volume"</string>
     <string name="text_measured_955037" formatted="false">"Measured"</string>
@@ -1202,7 +1202,7 @@
     <string name="text_mono_c5c553" formatted="false">"Mono"</string>
     <string name="text_monthly_d31edb" formatted="false">"Monthly"</string>
     <string name="text_more_4bab2d" formatted="false">"More"</string>
-    <string name="text_more_music_same_aurora_3ae62e" formatted="false">"More music. Same Aurora."</string>
+    <string name="text_more_music_same_aurora_3ae62e" formatted="false">"More music. Same Aetheria."</string>
     <string name="text_more_recommendations_5fd054" formatted="false">"More recommendations"</string>
     <string name="text_more_than_f9c07b" formatted="false">"more than"</string>
     <string name="text_most_minutes_0d8b47" formatted="false">"Most minutes"</string>
@@ -1325,7 +1325,7 @@
     <string name="text_only_show_play_downloaded_music_c36019" formatted="false">"Only show &amp; play downloaded music"</string>
     <string name="text_open_a_project_with_measurements_first_5f1e78" formatted="false">"Open a project with measurements first."</string>
     <string name="text_open_eq_text_file_33f801" formatted="false">"Open EQ text file"</string>
-    <string name="text_open_equalizer_apo_text_autoeq_peq_json_or_aurora_eq_json_9a6150" formatted="false">"Open Equalizer APO text, AutoEq PEQ JSON or Aurora EQ JSON."</string>
+    <string name="text_open_equalizer_apo_text_autoeq_peq_json_or_aurora_eq_json_9a6150" formatted="false">"Open Equalizer APO text, AutoEq PEQ JSON or Aetheria EQ JSON."</string>
     <string name="text_open_full_processing_presets_8abd2a" formatted="false">"Open full processing presets"</string>
     <string name="text_open_measurement_file_30741a" formatted="false">"Open measurement file"</string>
     <string name="text_open_mix_studio_9ddf16" formatted="false">"Open mix studio"</string>
@@ -1362,7 +1362,7 @@
     <string name="text_overwrites_current_settings_playlists_40eadc" formatted="false">"Overwrites current settings &amp; playlists"</string>
     <string name="text_packet_errors_timeouts_e3e49f">"Packet errors: %1$s · Timeouts: %2$s"</string>
     <string name="text_pair_2537f8" formatted="false">"Pair"</string>
-    <string name="text_pair_an_aurora_player_de78d4" formatted="false">"Pair an Aurora Player"</string>
+    <string name="text_pair_an_aurora_player_de78d4" formatted="false">"Pair an Aetheria Player"</string>
     <string name="text_paired_devices_can_control_playback_86f484" formatted="false">"Paired devices can control playback."</string>
     <string name="text_pairing_address_0a7563" formatted="false">"Pairing address"</string>
     <string name="text_pairing_code_309e30" formatted="false">"Pairing code"</string>
@@ -1608,8 +1608,8 @@
     <string name="text_reset_graphic_eq_ace461" formatted="false">"Reset graphic EQ"</string>
     <string name="text_reset_to_default_39c90e" formatted="false">"Reset to default"</string>
     <string name="text_response_6e617e" formatted="false">"Response"</string>
-    <string name="text_restart_aurora_to_activate_the_changed_output_or_engine_settings_b7046b" formatted="false">" Restart Aurora to activate the changed output or engine settings."</string>
-    <string name="text_restart_aurora_to_apply_usb_settings_2757a4" formatted="false">"Restart Aurora to apply USB settings."</string>
+    <string name="text_restart_aurora_to_activate_the_changed_output_or_engine_settings_b7046b" formatted="false">" Restart Aetheria to activate the changed output or engine settings."</string>
+    <string name="text_restart_aurora_to_apply_usb_settings_2757a4" formatted="false">"Restart Aetheria to apply USB settings."</string>
     <string name="text_restore_backup_a65eaa" formatted="false">"Restore backup"</string>
     <string name="text_result_exported_771e11" formatted="false">"Result exported."</string>
     <string name="text_results_612e12" formatted="false">"Results"</string>
@@ -1754,7 +1754,7 @@
     <string name="text_setting_saved_ac1563" formatted="false">"Setting saved."</string>
     <string name="text_settings_c7f73b" formatted="false">"Settings"</string>
     <string name="text_settings_racks_presets_impulse_responses_playlists_and_history_22c4f0" formatted="false">"Settings, racks, presets, impulse responses, playlists and history"</string>
-    <string name="text_shape_your_sound_with_aurora_s_eq_and_audio_effects_0b9ed1" formatted="false">"Shape your sound with Aurora’s EQ and audio effects."</string>
+    <string name="text_shape_your_sound_with_aurora_s_eq_and_audio_effects_0b9ed1" formatted="false">"Shape your sound with Aetheria’s EQ and audio effects."</string>
     <string name="text_share_your_current_track_and_artwork_11d20a" formatted="false">"Share your current track and artwork"</string>
     <string name="text_shared_secret_4e19fd" formatted="false">"Shared secret"</string>
     <string name="text_sharp_cf3e9a" formatted="false">"Sharp"</string>
@@ -1917,7 +1917,7 @@
     <string name="text_text_6fc726" formatted="false">"Text…"</string>
     <string name="text_that_token_could_not_be_verified_check_it_and_try_again_6668f1" formatted="false">"That token could not be verified. Check it and try again."</string>
     <string name="text_the_android_volume_range_is_unavailable_577138" formatted="false">"The Android volume range is unavailable."</string>
-    <string name="text_the_apk_is_not_from_aurora_s_releases_d728ee" formatted="false">"The APK is not from Aurora\'s releases."</string>
+    <string name="text_the_apk_is_not_from_aurora_s_releases_d728ee" formatted="false">"The APK is not from Aetheria\'s releases."</string>
     <string name="text_the_download_could_not_be_verified_please_try_again_95c71d" formatted="false">"The download could not be verified. Please try again."</string>
     <string name="text_the_download_is_incomplete_please_try_again_96c9cd" formatted="false">"The download is incomplete. Please try again."</string>
     <string name="text_the_download_isn_t_a_valid_app_update_d50721" formatted="false">"The download isn\'t a valid app update."</string>
@@ -1929,7 +1929,7 @@
     <string name="text_the_rack_does_not_have_enough_space_reduce_the_fit_s_band_budget_f8764d" formatted="false">"The rack does not have enough space. Reduce the fit\'s band budget or remove rack stages first."</string>
     <string name="text_the_rack_is_still_loading_0720e5" formatted="false">"The rack is still loading."</string>
     <string name="text_the_rack_stays_inactive_until_you_select_rack_mode_44737b" formatted="false">"The rack stays inactive until you select Rack mode."</string>
-    <string name="text_the_receiver_plays_the_source_aurora_s_effects_are_bypassed_e273f5" formatted="false">"The receiver plays the source. Aurora\'s effects are bypassed."</string>
+    <string name="text_the_receiver_plays_the_source_aurora_s_effects_are_bypassed_e273f5" formatted="false">"The receiver plays the source. Aetheria\'s effects are bypassed."</string>
     <string name="text_the_release_apk_is_empty_38a3c2" formatted="false">"The release APK is empty."</string>
     <string name="text_the_release_has_no_version_745070" formatted="false">"The release has no version."</string>
     <string name="text_the_release_version_is_not_supported_0ce4b4" formatted="false">"The release version is not supported."</string>
@@ -1947,7 +1947,7 @@
     <string name="text_this_collection_exceeds_the_10_000_track_mix_limit_b8885f" formatted="false">"This collection exceeds the 10,000-track mix limit."</string>
     <string name="text_this_collection_needs_at_least_two_tracks_to_mix_142509" formatted="false">"This collection needs at least two tracks to mix."</string>
     <string name="text_this_device_fa5a6d" formatted="false">"This Device"</string>
-    <string name="text_this_file_is_not_a_valid_preset_archive_or_it_is_damaged_choose_a_fc090e" formatted="false">"This file is not a valid preset archive, or it is damaged. Choose an Aurora preset export."</string>
+    <string name="text_this_file_is_not_a_valid_preset_archive_or_it_is_damaged_choose_a_fc090e" formatted="false">"This file is not a valid preset archive, or it is damaged. Choose an Aetheria preset export."</string>
     <string name="text_this_ir_is_no_longer_in_the_library_7118f3" formatted="false">"This IR is no longer in the library."</string>
     <string name="text_this_is_the_eq_s_group_delay_it_does_not_measure_device_or_playba_31e689" formatted="false">"This is the EQ\'s group delay; it does not measure device or playback latency."</string>
     <string name="text_this_link_cannot_open_here_finish_verification_using_another_meth_0d1c6a" formatted="false">"This link cannot open here. Finish verification using another method, then tap Continue to YouTube Music."</string>
@@ -1962,7 +1962,7 @@
     <string name="text_this_removes_the_stage_and_its_settings_from_this_rack_03575f" formatted="false">"This removes the stage and its settings from this rack."</string>
     <string name="text_this_replaces_the_current_rack_saved_presets_stay_available_19c825" formatted="false">"This replaces the current rack. Saved presets stay available."</string>
     <string name="text_this_stage_has_nonzero_graphic_eq_settings_that_the_text_file_wil_878b50" formatted="false">"This stage has nonzero graphic EQ settings that the text file will omit."</string>
-    <string name="text_this_style_includes_its_own_colors_and_corners_your_aurora_custom_9b4b82" formatted="false">"This style includes its own colors and corners. Your Aurora customizations are saved."</string>
+    <string name="text_this_style_includes_its_own_colors_and_corners_your_aurora_custom_9b4b82" formatted="false">"This style includes its own colors and corners. Your Aetheria customizations are saved."</string>
     <string name="text_this_update_doesn_t_match_the_installed_app_s_signing_key_install_5af2e9" formatted="false">"This update doesn\'t match the installed app\'s signing key. Install updates from the same source."</string>
     <string name="text_three_linked_stereo_bands_8f36e9" formatted="false">"Three linked stereo bands"</string>
     <string name="text_threshold_c51f7b" formatted="false">"Threshold"</string>
@@ -2074,7 +2074,7 @@
     <string name="text_use_current_701bc0" formatted="false">"Use current"</string>
     <string name="text_use_current_track_5c31d5" formatted="false">"Use current track"</string>
     <string name="text_use_flat_ed2b5f" formatted="false">"Use flat"</string>
-    <string name="text_use_float32_when_supported_restart_aurora_to_apply_79edcd" formatted="false">"Use float32 when supported. Restart Aurora to apply."</string>
+    <string name="text_use_float32_when_supported_restart_aurora_to_apply_79edcd" formatted="false">"Use float32 when supported. Restart Aetheria to apply."</string>
     <string name="text_use_lrclib_1d1cb5" formatted="false">"Use LRCLIB"</string>
     <string name="text_use_notes_415641" formatted="false">"Use notes"</string>
     <string name="text_use_settings_39966a" formatted="false">"Use settings"</string>
@@ -2133,7 +2133,7 @@
     <string name="text_wet_1df0cd">"%1$s · %2$s%% wet"</string>
     <string name="text_wet_76d013">"%1$s%% wet"</string>
     <string name="text_wet_dry_6769a1" formatted="false">"Wet / Dry"</string>
-    <string name="text_when_a_track_is_available_from_more_than_one_place_aurora_plays_i_99eef3" formatted="false">"When a track is available from more than one place, Aurora plays it from the first "</string>
+    <string name="text_when_a_track_is_available_from_more_than_one_place_aurora_plays_i_99eef3" formatted="false">"When a track is available from more than one place, Aetheria plays it from the first "</string>
     <string name="text_whole_word_6171b6" formatted="false">"Whole word"</string>
     <string name="text_width_2f_276839" formatted="false">"Width %.2f×"</string>
     <string name="text_windows_7_inspired_blue_glass_glossy_panels_27d09a" formatted="false">"Windows 7 inspired · blue glass · glossy panels"</string>

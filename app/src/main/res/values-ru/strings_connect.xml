@@ -17,9 +17,9 @@
     <string name="connect_preset">"Пресет"</string>
     <string name="connect_sources_note">"Песни воспроизводятся из источников того устройства."</string>
     <string name="connect_reachable_at">"Доступно по адресу"</string>
-    <string name="connect_none_found">"Другие устройства Aurora не найдены. Включите там удалённое управление и повторите поиск."</string>
-    <string name="connect_settings_title">"Aurora Connect"</string>
-    <string name="connect_settings_summary">"Управляйте другими устройствами Aurora или позвольте им управлять этим"</string>
+    <string name="connect_none_found">"Другие устройства Aetheria не найдены. Включите там удалённое управление и повторите поиск."</string>
+    <string name="connect_settings_title">"Aetheria Connect"</string>
+    <string name="connect_settings_summary">"Управляйте другими устройствами Aetheria или позвольте им управлять этим"</string>
     <string name="connect_continue">"Продолжить"</string>
     <string name="connect_this_key">"Ключ этого устройства: %1$s"</string>
 </resources>

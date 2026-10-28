@@ -17,9 +17,9 @@
     <string name="connect_preset">"⁧الإعداد المسبق⁩"</string>
     <string name="connect_sources_note">"⁧تُشغَّل الأغاني من مصادر ذلك الجهاز.⁩"</string>
     <string name="connect_reachable_at">"⁧متاح على⁩"</string>
-    <string name="connect_none_found">"⁧لم يتم العثور على أجهزة Aurora أخرى. فعّل التحكم عن بُعد هناك ثم ابحث مجددًا.⁩"</string>
-    <string name="connect_settings_title">"⁧Aurora Connect⁩"</string>
-    <string name="connect_settings_summary">"⁧تحكم في أجهزة Aurora الأخرى أو اسمح لها بالتحكم في هذا الجهاز⁩"</string>
+    <string name="connect_none_found">"⁧لم يتم العثور على أجهزة Aetheria أخرى. فعّل التحكم عن بُعد هناك ثم ابحث مجددًا.⁩"</string>
+    <string name="connect_settings_title">"⁧Aetheria Connect⁩"</string>
+    <string name="connect_settings_summary">"⁧تحكم في أجهزة Aetheria الأخرى أو اسمح لها بالتحكم في هذا الجهاز⁩"</string>
     <string name="connect_continue">"⁧متابعة⁩"</string>
     <string name="connect_this_key">"⁧مفتاح هذا الجهاز: %1$s⁩"</string>
 </resources>

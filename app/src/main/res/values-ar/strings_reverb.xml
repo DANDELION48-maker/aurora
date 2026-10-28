@@ -28,5 +28,5 @@
     <string name="reverb_value_ms">"%1$s ms"</string>
     <string name="reverb_value_hz">"%1$s Hz"</string>
     <string name="reverb_value_khz">"%1$s kHz"</string>
-    <string name="reverb_note">"⁧يعمل الصدى داخل محرك الصوت في Aurora، لذا يتوافق مع جميع أوضاع المعادل ومع تغيير السرعة والنغمة. يتم تخطيه في خرج USB بدقة بت مثالية (Bit-perfect) وفي البث المباشر.⁩"</string>
+    <string name="reverb_note">"⁧يعمل الصدى داخل محرك الصوت في Aetheria، لذا يتوافق مع جميع أوضاع المعادل ومع تغيير السرعة والنغمة. يتم تخطيه في خرج USB بدقة بت مثالية (Bit-perfect) وفي البث المباشر.⁩"</string>
 </resources>

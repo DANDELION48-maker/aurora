@@ -2,7 +2,7 @@
 <resources>
     <string name="storage_description">Unduhan, cache, analisis, dan riwayat</string>
     <string name="storage_summary">%1$s terpakai · unduhan, cache, dan riwayat</string>
-    <string name="storage_used">Aurora memakai %1$s</string>
+    <string name="storage_used">Aetheria memakai %1$s</string>
     <string name="storage_free">%1$s kosong di perangkat ini</string>
     <string name="storage_measuring">Mengukur penyimpanan…</string>
     <string name="storage_part_downloads">Unduhan</string>
@@ -11,7 +11,7 @@
     <string name="storage_part_other">Data aplikasi</string>
     <string name="storage_clear_caches">Hapus semua cache</string>
     <string name="storage_clear_caches_title">Hapus semua cache?</string>
-    <string name="storage_clear_caches_message">Ini menghapus cache audio, cache sampul, gambar, dan peta, timing vokal, stem terpisah, info artis, dan file sementara. Unduhan, analisis, riwayat, dan pengaturan tetap ada. Cache akan terisi lagi saat kamu memakai Aurora.</string>
+    <string name="storage_clear_caches_message">Ini menghapus cache audio, cache sampul, gambar, dan peta, timing vokal, stem terpisah, info artis, dan file sementara. Unduhan, analisis, riwayat, dan pengaturan tetap ada. Cache akan terisi lagi saat kamu memakai Aetheria.</string>
     <string name="storage_caches_cleared">Cache dihapus</string>
     <string name="storage_stems_busy">Pemisahan vokal sedang berjalan, jadi file-nya tetap disimpan</string>
     <string name="storage_cleared">Dihapus</string>
@@ -29,7 +29,7 @@
     <string name="storage_remove_source_title">Hapus unduhan dari %1$s?</string>
     <string name="storage_remove_source_message">Lagu yang diunduh dari sumber ini akan dihapus dari perangkat ini. Unduhan dari sumber lainnya tetap ada.</string>
     <string name="storage_source_unknown">Sumber lain</string>
-    <string name="storage_youtube_note">Unduhan dari YouTube disimpan ke Music/Aurora di ponselmu dan dikelola lewat pengelola file.</string>
+    <string name="storage_youtube_note">Unduhan dari YouTube disimpan ke Music/Aetheria di ponselmu dan dikelola lewat pengelola file.</string>
 
     <string name="storage_section_images">Sampul &amp; gambar</string>
     <string name="storage_cover_cache">Cache pencarian sampul</string>

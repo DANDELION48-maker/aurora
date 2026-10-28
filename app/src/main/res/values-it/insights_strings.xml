@@ -3,7 +3,7 @@
     <string name="insights_title">Statistiche dettagliate</string>
     <string name="insights_description">Contesto di ascolto facoltativo che resta su questo dispositivo</string>
     <string name="insights_intro_title">Disattivato per impostazione predefinita</string>
-    <string name="insights_intro_body">Attivalo per registrare più informazioni su ogni ascolto, così Aurora può mostrarti quando, come e con cosa ascolti. Non viene registrato nulla finché non completi questa configurazione.</string>
+    <string name="insights_intro_body">Attivalo per registrare più informazioni su ogni ascolto, così Aetheria può mostrarti quando, come e con cosa ascolti. Non viene registrato nulla finché non completi questa configurazione.</string>
     <string name="insights_guide_title">Guida rapida</string>
     <string name="insights_step_recorded_title">Cosa viene registrato</string>
     <string name="insights_step_recorded_body">Quando e per quanto ascolti, se un brano è stato ascoltato fino alla fine o saltato, il suo genere e la sua origine, e se la riproduzione casuale era attiva.</string>
@@ -84,9 +84,9 @@
     <string name="insights_open">Apri approfondimenti</string>
     <string name="insights_places_toggle">Registra luoghi</string>
     <string name="insights_places_desc">Etichetta ogni ascolto come Casa, Lavoro o Fuori</string>
-    <string name="insights_places_guide">Mentre la musica suona, Aurora controlla la posizione al massimo ogni 10 minuti, la confronta con Casa e Lavoro e conserva solo l’etichetta. Casa e Lavoro restano su questo telefono e sono esclusi da ogni backup.</string>
+    <string name="insights_places_guide">Mentre la musica suona, Aetheria controlla la posizione al massimo ogni 10 minuti, la confronta con Casa e Lavoro e conserva solo l’etichetta. Casa e Lavoro restano su questo telefono e sono esclusi da ogni backup.</string>
     <string name="insights_radius">Raggio</string>
-    <string name="insights_background_needed">Per etichettare gli ascolti avviati con Aurora chiusa, consenti sempre l’accesso alla posizione.</string>
+    <string name="insights_background_needed">Per etichettare gli ascolti avviati con Aetheria chiusa, consenti sempre l’accesso alla posizione.</string>
     <string name="insights_allow_background">Consenti sempre</string>
     <string name="insights_location_failed">Impossibile ottenere la posizione. Riprova con Wi-Fi o localizzazione attivi.</string>
     <string name="insights_location_denied">L’accesso alla posizione non è stato concesso, quindi i luoghi restano disattivati.</string>

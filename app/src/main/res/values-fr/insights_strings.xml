@@ -3,7 +3,7 @@
     <string name="insights_title">Statistiques détaillées</string>
     <string name="insights_description">Contexte d’écoute facultatif qui reste sur cet appareil</string>
     <string name="insights_intro_title">Désactivé par défaut</string>
-    <string name="insights_intro_body">Activez-le pour enregistrer davantage d’informations sur chaque écoute, afin qu’Aurora puisse montrer quand, comment et sur quoi vous écoutez. Rien n’est enregistré tant que cette configuration n’est pas terminée.</string>
+    <string name="insights_intro_body">Activez-le pour enregistrer davantage d’informations sur chaque écoute, afin qu’Aetheria puisse montrer quand, comment et sur quoi vous écoutez. Rien n’est enregistré tant que cette configuration n’est pas terminée.</string>
     <string name="insights_guide_title">Guide rapide</string>
     <string name="insights_step_recorded_title">Ce qui est enregistré</string>
     <string name="insights_step_recorded_body">Quand et combien de temps vous écoutez, si un morceau a été écouté jusqu’au bout ou passé, son genre et sa source, et si la lecture aléatoire était activée.</string>
@@ -84,9 +84,9 @@
     <string name="insights_open">Ouvrir les analyses</string>
     <string name="insights_places_toggle">Enregistrer les lieux</string>
     <string name="insights_places_desc">Associer chaque écoute à Domicile, Travail ou Ailleurs</string>
-    <string name="insights_places_guide">Pendant la lecture, Aurora vérifie votre position au plus toutes les 10 minutes, la compare à Domicile et Travail et ne garde que l’étiquette. Domicile et Travail restent sur ce téléphone et sont exclus de toutes les sauvegardes.</string>
+    <string name="insights_places_guide">Pendant la lecture, Aetheria vérifie votre position au plus toutes les 10 minutes, la compare à Domicile et Travail et ne garde que l’étiquette. Domicile et Travail restent sur ce téléphone et sont exclus de toutes les sauvegardes.</string>
     <string name="insights_radius">Rayon</string>
-    <string name="insights_background_needed">Pour étiqueter les écoutes lancées quand Aurora est fermé, autorisez l’accès à la position tout le temps.</string>
+    <string name="insights_background_needed">Pour étiqueter les écoutes lancées quand Aetheria est fermé, autorisez l’accès à la position tout le temps.</string>
     <string name="insights_allow_background">Toujours autoriser</string>
     <string name="insights_location_failed">Impossible d’obtenir votre position. Réessayez avec le Wi-Fi ou la localisation activés.</string>
     <string name="insights_location_denied">L’accès à la position n’a pas été accordé, les lieux restent donc désactivés.</string>

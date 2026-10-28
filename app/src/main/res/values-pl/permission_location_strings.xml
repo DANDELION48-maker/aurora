@@ -3,5 +3,5 @@
     <string name="perm_location">Lokalizacja</string>
     <string name="perm_location_desc">Miejsca i mapa słuchania w szczegółowych statystykach</string>
     <string name="perm_location_background">Lokalizacja zawsze</string>
-    <string name="perm_location_background_desc">Zapisuje, gdzie słuchasz muzyki, gdy Aurora działa w tle</string>
+    <string name="perm_location_background_desc">Zapisuje, gdzie słuchasz muzyki, gdy Aetheria działa w tle</string>
 </resources>

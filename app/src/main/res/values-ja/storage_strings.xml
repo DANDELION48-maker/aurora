@@ -2,7 +2,7 @@
 <resources>
     <string name="storage_description">ダウンロード、キャッシュ、解析、履歴</string>
     <string name="storage_summary">%1$s 使用中 · ダウンロード、キャッシュ、履歴</string>
-    <string name="storage_used">Aurora の使用量：%1$s</string>
+    <string name="storage_used">Aetheria の使用量：%1$s</string>
     <string name="storage_free">この端末の空き容量：%1$s</string>
     <string name="storage_measuring">ストレージを計測中…</string>
     <string name="storage_part_downloads">ダウンロード</string>
@@ -11,7 +11,7 @@
     <string name="storage_part_other">アプリデータ</string>
     <string name="storage_clear_caches">すべてのキャッシュを消去</string>
     <string name="storage_clear_caches_title">すべてのキャッシュを消去しますか？</string>
-    <string name="storage_clear_caches_message">音声キャッシュ、カバー・画像・地図のキャッシュ、ボーカルのタイミング、分離したステム、アーティスト情報、一時ファイルを削除します。ダウンロード、解析、履歴、設定はそのまま残ります。キャッシュは Aurora を使ううちに再び貯まります。</string>
+    <string name="storage_clear_caches_message">音声キャッシュ、カバー・画像・地図のキャッシュ、ボーカルのタイミング、分離したステム、アーティスト情報、一時ファイルを削除します。ダウンロード、解析、履歴、設定はそのまま残ります。キャッシュは Aetheria を使ううちに再び貯まります。</string>
     <string name="storage_caches_cleared">キャッシュを消去しました</string>
     <string name="storage_stems_busy">ボーカル分離を実行中のため、そのファイルは残しました</string>
     <string name="storage_cleared">消去しました</string>
@@ -29,7 +29,7 @@
     <string name="storage_remove_source_title">%1$s からのダウンロードを削除しますか？</string>
     <string name="storage_remove_source_message">このソースからダウンロードした曲がこの端末から削除されます。ほかのソースのダウンロードは残ります。</string>
     <string name="storage_source_unknown">その他のソース</string>
-    <string name="storage_youtube_note">YouTube からのダウンロードはスマートフォンの Music/Aurora に保存され、ファイルマネージャーで管理します。</string>
+    <string name="storage_youtube_note">YouTube からのダウンロードはスマートフォンの Music/Aetheria に保存され、ファイルマネージャーで管理します。</string>
 
     <string name="storage_section_images">カバーと画像</string>
     <string name="storage_cover_cache">カバー検索キャッシュ</string>

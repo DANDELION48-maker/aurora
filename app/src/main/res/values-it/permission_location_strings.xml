@@ -3,5 +3,5 @@
     <string name="perm_location">Posizione</string>
     <string name="perm_location_desc">Luoghi e mappa degli ascolti nelle statistiche dettagliate</string>
     <string name="perm_location_background">Posizione sempre</string>
-    <string name="perm_location_background_desc">Registra dove avvengono gli ascolti mentre Aurora è in background</string>
+    <string name="perm_location_background_desc">Registra dove avvengono gli ascolti mentre Aetheria è in background</string>
 </resources>

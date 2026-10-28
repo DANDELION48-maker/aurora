@@ -3,7 +3,7 @@
     <string name="insights_title">Gedetailleerde statistieken</string>
     <string name="insights_description">Optionele luistercontext die op dit apparaat blijft</string>
     <string name="insights_intro_title">Standaard uit</string>
-    <string name="insights_intro_body">Zet dit aan om meer over elke keer luisteren vast te leggen, zodat Aurora kan laten zien wanneer, hoe en waarop je luistert. Er wordt niets vastgelegd tot je deze instelling hebt afgerond.</string>
+    <string name="insights_intro_body">Zet dit aan om meer over elke keer luisteren vast te leggen, zodat Aetheria kan laten zien wanneer, hoe en waarop je luistert. Er wordt niets vastgelegd tot je deze instelling hebt afgerond.</string>
     <string name="insights_guide_title">Snelle uitleg</string>
     <string name="insights_step_recorded_title">Wat er wordt vastgelegd</string>
     <string name="insights_step_recorded_body">Wanneer en hoe lang je luistert, of een nummer is uitgeluisterd of overgeslagen, het genre en de bron, en of shuffle aan stond.</string>
@@ -84,9 +84,9 @@
     <string name="insights_open">Inzichten openen</string>
     <string name="insights_places_toggle">Plekken vastleggen</string>
     <string name="insights_places_desc">Markeer elke keer luisteren als Thuis, Werk of Onderweg</string>
-    <string name="insights_places_guide">Terwijl er muziek speelt, controleert Aurora je locatie hooguit elke 10 minuten, vergelijkt die met Thuis en Werk en bewaart alleen het label. Thuis en Werk zelf blijven op deze telefoon en gaan nooit mee in een back-up.</string>
+    <string name="insights_places_guide">Terwijl er muziek speelt, controleert Aetheria je locatie hooguit elke 10 minuten, vergelijkt die met Thuis en Werk en bewaart alleen het label. Thuis en Werk zelf blijven op deze telefoon en gaan nooit mee in een back-up.</string>
     <string name="insights_radius">Straal</string>
-    <string name="insights_background_needed">Sta locatietoegang altijd toe om ook keren te markeren die starten terwijl Aurora gesloten is.</string>
+    <string name="insights_background_needed">Sta locatietoegang altijd toe om ook keren te markeren die starten terwijl Aetheria gesloten is.</string>
     <string name="insights_allow_background">Altijd toestaan</string>
     <string name="insights_location_failed">Je locatie kon niet worden bepaald. Probeer het opnieuw met wifi of locatie aan.</string>
     <string name="insights_location_denied">Locatietoegang is niet verleend, dus plekken blijven uit.</string>

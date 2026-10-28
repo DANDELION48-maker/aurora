@@ -3,5 +3,5 @@
     <string name="perm_location">Locatie</string>
     <string name="perm_location_desc">Plekken en de luisterkaart in gedetailleerde statistieken</string>
     <string name="perm_location_background">Altijd locatie</string>
-    <string name="perm_location_background_desc">Legt vast waar je luistert terwijl Aurora op de achtergrond draait</string>
+    <string name="perm_location_background_desc">Legt vast waar je luistert terwijl Aetheria op de achtergrond draait</string>
 </resources>

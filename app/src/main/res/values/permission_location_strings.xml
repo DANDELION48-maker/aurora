@@ -3,5 +3,5 @@
     <string name="perm_location">Location</string>
     <string name="perm_location_desc">Places and the listening map in detailed statistics</string>
     <string name="perm_location_background">Location all the time</string>
-    <string name="perm_location_background_desc">Records where plays happen while Aurora is in the background</string>
+    <string name="perm_location_background_desc">Records where plays happen while Aetheria is in the background</string>
 </resources>

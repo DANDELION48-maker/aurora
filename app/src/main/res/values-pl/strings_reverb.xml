@@ -28,5 +28,5 @@
     <string name="reverb_value_ms">"%1$s ms"</string>
     <string name="reverb_value_hz">"%1$s Hz"</string>
     <string name="reverb_value_khz">"%1$s kHz"</string>
-    <string name="reverb_note">"Pogłos działa w silniku audio Aurora, więc współpracuje ze wszystkimi trybami equalizera oraz ze zmianą tempa i wysokości dźwięku. Jest pomijany przy wyjściu USB bit-perfect i bezpośrednim przesyłaniu."</string>
+    <string name="reverb_note">"Pogłos działa w silniku audio Aetheria, więc współpracuje ze wszystkimi trybami equalizera oraz ze zmianą tempa i wysokości dźwięku. Jest pomijany przy wyjściu USB bit-perfect i bezpośrednim przesyłaniu."</string>
 </resources>

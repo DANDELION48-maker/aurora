@@ -2,7 +2,7 @@
 <resources>
     <string name="storage_description">\u2067ڈاؤن لوڈز، کیش، تجزیہ اور ہسٹری\u2069</string>
     <string name="storage_summary">\u2067%1$s استعمال میں · ڈاؤن لوڈز، کیش اور ہسٹری\u2069</string>
-    <string name="storage_used">\u2067Aurora %1$s استعمال کر رہا ہے\u2069</string>
+    <string name="storage_used">\u2067Aetheria %1$s استعمال کر رہا ہے\u2069</string>
     <string name="storage_free">\u2067اس آلے پر %1$s خالی\u2069</string>
     <string name="storage_measuring">\u2067اسٹوریج کی پیمائش ہو رہی ہے…\u2069</string>
     <string name="storage_part_downloads">\u2067ڈاؤن لوڈز\u2069</string>
@@ -11,7 +11,7 @@
     <string name="storage_part_other">\u2067ایپ ڈیٹا\u2069</string>
     <string name="storage_clear_caches">\u2067تمام کیش صاف کریں\u2069</string>
     <string name="storage_clear_caches_title">\u2067تمام کیش صاف کریں؟\u2069</string>
-    <string name="storage_clear_caches_message">\u2067اس سے آڈیو کیش، کور، تصویر اور نقشے کے کیش، ووکل ٹائمنگ، الگ کیے گئے اسٹیمز، فنکار کی معلومات اور عارضی فائلیں ہٹ جاتی ہیں۔ ڈاؤن لوڈز، تجزیہ، ہسٹری اور ترتیبات برقرار رہتی ہیں۔ Aurora استعمال کرتے وقت کیش دوبارہ بھر جاتا ہے۔\u2069</string>
+    <string name="storage_clear_caches_message">\u2067اس سے آڈیو کیش، کور، تصویر اور نقشے کے کیش، ووکل ٹائمنگ، الگ کیے گئے اسٹیمز، فنکار کی معلومات اور عارضی فائلیں ہٹ جاتی ہیں۔ ڈاؤن لوڈز، تجزیہ، ہسٹری اور ترتیبات برقرار رہتی ہیں۔ Aetheria استعمال کرتے وقت کیش دوبارہ بھر جاتا ہے۔\u2069</string>
     <string name="storage_caches_cleared">\u2067کیش صاف ہو گیا\u2069</string>
     <string name="storage_stems_busy">\u2067ووکل علیحدگی جاری ہے، اس لیے اس کی فائلیں رکھی گئیں\u2069</string>
     <string name="storage_cleared">\u2067صاف ہو گیا\u2069</string>
@@ -29,7 +29,7 @@
     <string name="storage_remove_source_title">\u2067%1$s سے ڈاؤن لوڈز ہٹائیں؟\u2069</string>
     <string name="storage_remove_source_message">\u2067اس ذریعے سے ڈاؤن لوڈ کیے گئے ٹریک اس آلے سے حذف ہو جاتے ہیں۔ آپ کے دوسرے ذرائع کے ڈاؤن لوڈز برقرار رہتے ہیں۔\u2069</string>
     <string name="storage_source_unknown">\u2067دیگر ذرائع\u2069</string>
-    <string name="storage_youtube_note">\u2067YouTube سے ڈاؤن لوڈز آپ کے فون پر Music/Aurora میں محفوظ ہوتے ہیں اور آپ کے فائل مینیجر سے منظم ہوتے ہیں۔\u2069</string>
+    <string name="storage_youtube_note">\u2067YouTube سے ڈاؤن لوڈز آپ کے فون پر Music/Aetheria میں محفوظ ہوتے ہیں اور آپ کے فائل مینیجر سے منظم ہوتے ہیں۔\u2069</string>
 
     <string name="storage_section_images">\u2067کور اور تصاویر\u2069</string>
     <string name="storage_cover_cache">\u2067کور تلاش کیش\u2069</string>

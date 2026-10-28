@@ -3,11 +3,11 @@
     <string name="youtube_download_title">\u2067YouTube سے ڈاؤن لوڈ کریں\u2069</string>
     <string name="youtube_download_tile_detail">\u2067گانے اس آلے پر محفوظ کریں\u2069</string>
     <string name="youtube_download_search_hint">\u2067YouTube Music پر گانے تلاش کریں\u2069</string>
-    <string name="youtube_download_intro">\u2067کوئی گانا تلاش کریں اور اسے فائل کے طور پر محفوظ کریں۔ ڈاؤن لوڈز Music/Aurora میں جاتے ہیں اور آپ کی مقامی لائبریری میں نظر آتے ہیں۔\u2069</string>
+    <string name="youtube_download_intro">\u2067کوئی گانا تلاش کریں اور اسے فائل کے طور پر محفوظ کریں۔ ڈاؤن لوڈز Music/Aetheria میں جاتے ہیں اور آپ کی مقامی لائبریری میں نظر آتے ہیں۔\u2069</string>
     <string name="youtube_download_no_results">\u2067کوئی گانا نہیں ملا۔ کوئی اور تلاش آزمائیں۔\u2069</string>
     <string name="youtube_download_search_failed">\u2067تلاش ناکام رہی۔ اپنا کنکشن چیک کریں اور دوبارہ کوشش کریں۔\u2069</string>
     <string name="youtube_download_action">\u2067ڈاؤن لوڈ کریں\u2069</string>
-    <string name="youtube_download_saved">\u2067Music/Aurora میں محفوظ ہو گیا\u2069</string>
+    <string name="youtube_download_saved">\u2067Music/Aetheria میں محفوظ ہو گیا\u2069</string>
     <string name="youtube_download_failed">\u2067ڈاؤن لوڈ ناکام رہا۔ دوبارہ کوشش کے لیے تھپتھپائیں۔\u2069</string>
     <string name="youtube_download_saving">\u2067محفوظ ہو رہا ہے…\u2069</string>
     <string name="youtube_download_settings">\u2067YouTube ڈاؤن لوڈز\u2069</string>

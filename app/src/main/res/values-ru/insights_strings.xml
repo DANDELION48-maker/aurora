@@ -3,7 +3,7 @@
     <string name="insights_title">Подробная статистика</string>
     <string name="insights_description">Контекст прослушивания по желанию, хранится только на устройстве</string>
     <string name="insights_intro_title">По умолчанию выключено</string>
-    <string name="insights_intro_body">Включите, чтобы записывать больше о каждом прослушивании — так Aurora сможет показать, когда, как и на чём вы слушаете. Ничего не записывается, пока вы не завершите эту настройку.</string>
+    <string name="insights_intro_body">Включите, чтобы записывать больше о каждом прослушивании — так Aetheria сможет показать, когда, как и на чём вы слушаете. Ничего не записывается, пока вы не завершите эту настройку.</string>
     <string name="insights_guide_title">Краткое руководство</string>
     <string name="insights_step_recorded_title">Что записывается</string>
     <string name="insights_step_recorded_body">Когда и сколько вы слушаете, дослушан ли трек или пропущен, его жанр и источник, а также был ли включён случайный порядок.</string>
@@ -84,9 +84,9 @@
     <string name="insights_open">Открыть аналитику</string>
     <string name="insights_places_toggle">Записывать места</string>
     <string name="insights_places_desc">Отмечать каждое прослушивание как Дом, Работа или Вне дома</string>
-    <string name="insights_places_guide">Пока играет музыка, Aurora проверяет местоположение не чаще раза в 10 минут, сравнивает его с Домом и Работой и сохраняет только метку. Сами точки Дом и Работа остаются на телефоне и не попадают в резервные копии.</string>
+    <string name="insights_places_guide">Пока играет музыка, Aetheria проверяет местоположение не чаще раза в 10 минут, сравнивает его с Домом и Работой и сохраняет только метку. Сами точки Дом и Работа остаются на телефоне и не попадают в резервные копии.</string>
     <string name="insights_radius">Радиус</string>
-    <string name="insights_background_needed">Чтобы отмечать прослушивания, начатые при закрытом Aurora, разрешите доступ к местоположению всегда.</string>
+    <string name="insights_background_needed">Чтобы отмечать прослушивания, начатые при закрытом Aetheria, разрешите доступ к местоположению всегда.</string>
     <string name="insights_allow_background">Разрешить всегда</string>
     <string name="insights_location_failed">Не удалось определить местоположение. Попробуйте снова с включёнными Wi-Fi или геолокацией.</string>
     <string name="insights_location_denied">Доступ к местоположению не предоставлен, поэтому места выключены.</string>

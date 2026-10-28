@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="spotify_web_intro">使用你的 Spotify 账号登录。Aurora 通过 Spotify 网页播放器读取你的音乐库，并通过 YouTube 播放音乐，因此不需要开发者应用。</string>
+    <string name="spotify_web_intro">使用你的 Spotify 账号登录。Aetheria 通过 Spotify 网页播放器读取你的音乐库，并通过 YouTube 播放音乐，因此不需要开发者应用。</string>
     <string name="spotify_web_login">使用 Spotify 登录</string>
     <string name="spotify_web_login_note">这里可能无法使用 Google、Apple 或 Facebook 登录。请改用邮箱和密码或登录验证码。</string>
-    <string name="spotify_web_browser_hint">登录 Spotify。网页播放器一打开，Aurora 就会立即连接。</string>
+    <string name="spotify_web_browser_hint">登录 Spotify。网页播放器一打开，Aetheria 就会立即连接。</string>
     <string name="spotify_web_failed">无法连接你的 Spotify 账号。请重新登录试试。</string>
     <string name="spotify_web_unsupported">Spotify 登录需要更新版本的 Android System WebView。请在 Play 商店更新后重试。</string>
 </resources>

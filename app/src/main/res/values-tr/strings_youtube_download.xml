@@ -3,11 +3,11 @@
     <string name="youtube_download_title">YouTube\'dan indir</string>
     <string name="youtube_download_tile_detail">Şarkıları bu cihaza kaydet</string>
     <string name="youtube_download_search_hint">YouTube Music\'te şarkı ara</string>
-    <string name="youtube_download_intro">Bir şarkı arayın ve dosya olarak kaydedin. İndirilenler Music/Aurora klasörüne gider ve yerel kitaplığınızda görünür.</string>
+    <string name="youtube_download_intro">Bir şarkı arayın ve dosya olarak kaydedin. İndirilenler Music/Aetheria klasörüne gider ve yerel kitaplığınızda görünür.</string>
     <string name="youtube_download_no_results">Şarkı bulunamadı. Başka bir arama deneyin.</string>
     <string name="youtube_download_search_failed">Arama başarısız oldu. Bağlantınızı denetleyip tekrar deneyin.</string>
     <string name="youtube_download_action">İndir</string>
-    <string name="youtube_download_saved">Music/Aurora klasörüne kaydedildi</string>
+    <string name="youtube_download_saved">Music/Aetheria klasörüne kaydedildi</string>
     <string name="youtube_download_failed">İndirme başarısız oldu. Tekrar denemek için dokunun.</string>
     <string name="youtube_download_saving">Kaydediliyor…</string>
     <string name="youtube_download_settings">YouTube indirmeleri</string>

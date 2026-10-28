@@ -3,11 +3,11 @@
     <string name="youtube_download_title">Von YouTube herunterladen</string>
     <string name="youtube_download_tile_detail">Titel auf diesem Gerät speichern</string>
     <string name="youtube_download_search_hint">Titel auf YouTube Music suchen</string>
-    <string name="youtube_download_intro">Suche nach einem Titel und speichere ihn als Datei. Downloads landen in Music/Aurora und erscheinen in deiner lokalen Bibliothek.</string>
+    <string name="youtube_download_intro">Suche nach einem Titel und speichere ihn als Datei. Downloads landen in Music/Aetheria und erscheinen in deiner lokalen Bibliothek.</string>
     <string name="youtube_download_no_results">Keine Titel gefunden. Versuch eine andere Suche.</string>
     <string name="youtube_download_search_failed">Suche fehlgeschlagen. Prüfe deine Verbindung und versuch es noch einmal.</string>
     <string name="youtube_download_action">Herunterladen</string>
-    <string name="youtube_download_saved">In Music/Aurora gespeichert</string>
+    <string name="youtube_download_saved">In Music/Aetheria gespeichert</string>
     <string name="youtube_download_failed">Download fehlgeschlagen. Tippe, um es erneut zu versuchen.</string>
     <string name="youtube_download_saving">Wird gespeichert…</string>
     <string name="youtube_download_settings">YouTube-Downloads</string>

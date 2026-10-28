@@ -17,9 +17,9 @@
     <string name="connect_preset">"Préréglage"</string>
     <string name="connect_sources_note">"Les titres sont lus depuis les sources de cet appareil."</string>
     <string name="connect_reachable_at">"Accessible à"</string>
-    <string name="connect_none_found">"Aucun autre appareil Aurora trouvé. Activez-y le contrôle à distance, puis relancez la recherche."</string>
-    <string name="connect_settings_title">"Aurora Connect"</string>
-    <string name="connect_settings_summary">"Contrôlez d'autres appareils Aurora ou laissez-les contrôler celui-ci"</string>
+    <string name="connect_none_found">"Aucun autre appareil Aetheria trouvé. Activez-y le contrôle à distance, puis relancez la recherche."</string>
+    <string name="connect_settings_title">"Aetheria Connect"</string>
+    <string name="connect_settings_summary">"Contrôlez d'autres appareils Aetheria ou laissez-les contrôler celui-ci"</string>
     <string name="connect_continue">"Continuer"</string>
     <string name="connect_this_key">"Clé de cet appareil : %1$s"</string>
 </resources>

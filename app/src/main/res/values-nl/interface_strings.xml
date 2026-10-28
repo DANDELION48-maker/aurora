@@ -51,7 +51,7 @@
     <string name="text_a_source_is_unavailable_reconnect_to_its_library_and_reopen_this_217820" formatted="false">"Een bron is niet beschikbaar. Maak opnieuw verbinding met de bibliotheek en open deze mix opnieuw."</string>
     <string name="text_a_track_downloaded_inside_the_app_8619cd" formatted="false">"Een nummer dat in de app is gedownload"</string>
     <string name="text_about_6b21fb" formatted="false">"Over"</string>
-    <string name="text_about_aurora_b4ed8c" formatted="false">"Over Aurora"</string>
+    <string name="text_about_aurora_b4ed8c" formatted="false">"Over Aetheria"</string>
     <string name="text_accent_233064" formatted="false">"Accent"</string>
     <string name="text_access_delivery_270b49" formatted="false">"Toegang en levering"</string>
     <string name="text_access_granted_for_8fb83b">"Toegang verleend voor %1$s"</string>
@@ -129,9 +129,9 @@
     <string name="text_all_tone_shaping_bypassed_a7e684" formatted="false">"Alle klankvorming is omzeild."</string>
     <string name="text_all_tracks_d1ccb9">"Alle %1$s nummers"</string>
     <string name="text_allow_access_in_the_browser_then_return_here_4c48b2" formatted="false">"Sta toegang toe in de browser en kom dan hier terug"</string>
-    <string name="text_allow_aurora_to_install_updates_then_return_here_38efd8" formatted="false">"Sta Aurora toe updates te installeren en kom dan hier terug."</string>
-    <string name="text_allow_music_access_in_settings_apps_aurora_permissions_to_use_fil_1503ac" formatted="false">"Sta muziektoegang toe via Instellingen → Apps → Aurora → Rechten om bestanden op dit apparaat te gebruiken."</string>
-    <string name="text_allow_other_apps_to_play_audio_calls_will_not_pause_aurora_1aac7c" formatted="false">"Laat andere apps audio afspelen. Gesprekken pauzeren Aurora niet."</string>
+    <string name="text_allow_aurora_to_install_updates_then_return_here_38efd8" formatted="false">"Sta Aetheria toe updates te installeren en kom dan hier terug."</string>
+    <string name="text_allow_music_access_in_settings_apps_aurora_permissions_to_use_fil_1503ac" formatted="false">"Sta muziektoegang toe via Instellingen → Apps → Aetheria → Rechten om bestanden op dit apparaat te gebruiken."</string>
+    <string name="text_allow_other_apps_to_play_audio_calls_will_not_pause_aurora_1aac7c" formatted="false">"Laat andere apps audio afspelen. Gesprekken pauzeren Aetheria niet."</string>
     <string name="text_allow_remote_control_0f0d85" formatted="false">"Bediening op afstand toestaan"</string>
     <string name="text_alphabetical_9d1260" formatted="false">"Alfabetisch"</string>
     <string name="text_already_downloaded_8acc8a" formatted="false">"Al gedownload"</string>
@@ -184,7 +184,7 @@
     <string name="text_applied_3d3cce">"%1$s toegepast."</string>
     <string name="text_applied_60aafc">"Toegepast: %1$s"</string>
     <string name="text_applied_bands_db_preamp_cf3937">"%1$s toegepast · %2$s banden, voorversterking %3$s dB"</string>
-    <string name="text_applies_aurora_s_effects_before_sending_audio_a462ad" formatted="false">"Past de effecten van Aurora toe voordat audio wordt verzonden."</string>
+    <string name="text_applies_aurora_s_effects_before_sending_audio_a462ad" formatted="false">"Past de effecten van Aetheria toe voordat audio wordt verzonden."</string>
     <string name="text_applies_to_this_session_check_signal_path_for_the_active_route_81fa8c" formatted="false">"Geldt voor deze sessie. Bekijk het Signaalpad voor de actieve route."</string>
     <string name="text_applies_when_replaygain_is_set_to_track_or_album_in_equalizer_vol_1cf41c" formatted="false">"Geldt wanneer ReplayGain op Nummer of Album staat onder Equalizer → Volumenivellering."</string>
     <string name="text_apply_app_processing_and_software_volume_crossfade_speed_pitch_an_1dad19" formatted="false">"Past app-verwerking en softwarevolume toe. Crossfade, snelheid/toonhoogte en stilte overslaan zijn niet beschikbaar."</string>
@@ -201,7 +201,7 @@
     <string name="text_artist_from_your_music_10b0e0" formatted="false">"Artiest uit je muziek"</string>
     <string name="text_artist_indexing_and_scrobbling_file_tags_stay_unchanged_def5b6" formatted="false">"Artiestindexering en scrobbelen. Bestandstags blijven ongewijzigd."</string>
     <string name="text_artist_information_d5c3fc" formatted="false">"Artiestinformatie"</string>
-    <string name="text_artist_names_are_sent_to_the_metadata_providers_only_when_aurora_2f1daa" formatted="false">"Artiestnamen worden alleen naar de metadataleveranciers gestuurd wanneer Aurora de extra informatie nodig heeft."</string>
+    <string name="text_artist_names_are_sent_to_the_metadata_providers_only_when_aurora_2f1daa" formatted="false">"Artiestnamen worden alleen naar de metadataleveranciers gestuurd wanneer Aetheria de extra informatie nodig heeft."</string>
     <string name="text_artist_replacement_rules_ff8fa3" formatted="false">"Regels voor artiestvervanging"</string>
     <string name="text_artist_separators_4a3dc4" formatted="false">"Artiestscheidingstekens"</string>
     <string name="text_artists_1528d8" formatted="false">"Artiesten"</string>
@@ -216,15 +216,15 @@
     <string name="text_audio_presets_fbf3f8" formatted="false">"Audiopresets"</string>
     <string name="text_audio_presets_library_sources_and_metadata_4155ea" formatted="false">"Audiopresets, bibliotheekbronnen en metadata"</string>
     <string name="text_audiotrack_underruns_6c9f5b">"AudioTrack-onderlopen: %1$s"</string>
-    <string name="text_aurora_currently_applies_attenuation_only_missing_or_positive_gai_20c829" formatted="false">" Aurora past momenteel alleen demping toe. Ontbrekende of positieve gain-waarden laten het volume ongewijzigd. Beschikbaarheid hangt af van het actieve afspeelpad."</string>
-    <string name="text_aurora_eeee9b" formatted="false">"Aurora"</string>
-    <string name="text_aurora_players_373351" formatted="false">"Aurora-spelers"</string>
-    <string name="text_aurora_signal_path_b2764e" formatted="false">"Aurora-signaalpad"</string>
-    <string name="text_aurora_software_dsp_works_on_any_device_overrides_bit_perfect_out_c3a42d" formatted="false">"Software-DSP van Aurora: werkt op elk apparaat. Heeft voorrang op bit-perfect uitvoer. Start het afspelen opnieuw na het wisselen van engine."</string>
-    <string name="text_aurora_streams_your_spotify_library_through_youtube_so_it_needs_y_23d0ad" formatted="false">"Aurora streamt je Spotify-bibliotheek via YouTube en heeft daarom je eigen gratis Spotify-app nodig:"</string>
-    <string name="text_aurora_tuning_5ee0b6" formatted="false">"Aurora-afstemming"</string>
-    <string name="text_aurora_uses_youtube_music_s_unofficial_web_interface_and_stores_y_28fcb3" formatted="false">"Aurora gebruikt de onofficiële webinterface van YouTube Music en bewaart je sessie versleuteld op dit apparaat. Streams zijn lossy; geüploade en door het account beperkte nummers spelen mogelijk niet af."</string>
-    <string name="text_aurora_your_recap_a6f4df">"AURORA / JE %1$s-OVERZICHT"</string>
+    <string name="text_aurora_currently_applies_attenuation_only_missing_or_positive_gai_20c829" formatted="false">" Aetheria past momenteel alleen demping toe. Ontbrekende of positieve gain-waarden laten het volume ongewijzigd. Beschikbaarheid hangt af van het actieve afspeelpad."</string>
+    <string name="text_aurora_eeee9b" formatted="false">"Aetheria"</string>
+    <string name="text_aurora_players_373351" formatted="false">"Aetheria-spelers"</string>
+    <string name="text_aurora_signal_path_b2764e" formatted="false">"Aetheria-signaalpad"</string>
+    <string name="text_aurora_software_dsp_works_on_any_device_overrides_bit_perfect_out_c3a42d" formatted="false">"Software-DSP van Aetheria: werkt op elk apparaat. Heeft voorrang op bit-perfect uitvoer. Start het afspelen opnieuw na het wisselen van engine."</string>
+    <string name="text_aurora_streams_your_spotify_library_through_youtube_so_it_needs_y_23d0ad" formatted="false">"Aetheria streamt je Spotify-bibliotheek via YouTube en heeft daarom je eigen gratis Spotify-app nodig:"</string>
+    <string name="text_aurora_tuning_5ee0b6" formatted="false">"Aetheria-afstemming"</string>
+    <string name="text_aurora_uses_youtube_music_s_unofficial_web_interface_and_stores_y_28fcb3" formatted="false">"Aetheria gebruikt de onofficiële webinterface van YouTube Music en bewaart je sessie versleuteld op dit apparaat. Streams zijn lossy; geüploade en door het account beperkte nummers spelen mogelijk niet af."</string>
+    <string name="text_aurora_your_recap_a6f4df">"AETHERIA / JE %1$s-OVERZICHT"</string>
     <string name="text_authorization_is_not_ready_allow_access_then_try_again_99dd5c" formatted="false">"Autorisatie is niet gereed. Sta toegang toe en probeer het opnieuw."</string>
     <string name="text_authorize_your_discord_account_a1f52f" formatted="false">"Autoriseer je Discord-account"</string>
     <string name="text_auto_50c3f1" formatted="false">"AUTO"</string>
@@ -297,7 +297,7 @@
     <string name="text_bottom_utilities_8b97ef" formatted="false">"Hulpmiddelen onderaan"</string>
     <string name="text_bpm_tempo_estimate_db_rms_652fe5">"≈ %1$s BPM · %2$s tempo-inschatting · %3$s dB RMS"</string>
     <string name="text_brightness_e1a2b6" formatted="false">"Helderheid"</string>
-    <string name="text_bring_your_playlists_and_saved_music_into_aurora_df697e" formatted="false">"Haal je playlists en opgeslagen muziek naar Aurora."</string>
+    <string name="text_bring_your_playlists_and_saved_music_into_aurora_df697e" formatted="false">"Haal je playlists en opgeslagen muziek naar Aetheria."</string>
     <string name="text_browse_files_524932" formatted="false">"Bestanden bladeren"</string>
     <string name="text_build_007156">"Build %1$s%2$s"</string>
     <string name="text_built_with_jetpack_compose_material_3_6a2228" formatted="false">"Gemaakt met Jetpack Compose en Material 3."</string>
@@ -322,7 +322,7 @@
     <string name="text_cannot_read_this_image_9a45ce" formatted="false">"Kan deze afbeelding niet lezen."</string>
     <string name="text_cap_streaming_to_96_kbps_on_mobile_data_4a7eaa" formatted="false">"Streaming beperken tot ~96 kbps op mobiele data"</string>
     <string name="text_cast_60745a" formatted="false">"Casten"</string>
-    <string name="text_cast_dlna_and_paired_aurora_devices_364cee" formatted="false">"Cast, DLNA en gekoppelde Aurora-apparaten"</string>
+    <string name="text_cast_dlna_and_paired_aurora_devices_364cee" formatted="false">"Cast, DLNA en gekoppelde Aetheria-apparaten"</string>
     <string name="text_cast_to_a_device_1c0bd6" formatted="false">"Casten naar een apparaat"</string>
     <string name="text_ceiling_e29db9" formatted="false">"Plafond"</string>
     <string name="text_ceiling_ef2e49">"Plafond %1$s"</string>
@@ -415,7 +415,7 @@
     <string name="text_connection_details_ab30a5" formatted="false">"Verbindingsgegevens"</string>
     <string name="text_connection_timed_out_647bf9" formatted="false">"Time-out van verbinding."</string>
     <string name="text_connections_8f3509" formatted="false">"Verbindingen"</string>
-    <string name="text_connections_are_optional_aurora_s_own_library_playback_history_an_d7c6c7" formatted="false">"Verbindingen zijn optioneel. De eigen bibliotheek, afspeelgeschiedenis en overzichten van Aurora werken ook zonder."</string>
+    <string name="text_connections_are_optional_aurora_s_own_library_playback_history_an_d7c6c7" formatted="false">"Verbindingen zijn optioneel. De eigen bibliotheek, afspeelgeschiedenis en overzichten van Aetheria werken ook zonder."</string>
     <string name="text_constellation_785bdc" formatted="false">"Sterrenbeeld"</string>
     <string name="text_container_e6443a" formatted="false">"Container"</string>
     <string name="text_context_cc11b3" formatted="false">"Context"</string>
@@ -605,7 +605,7 @@
     <string name="text_device_presets_ca72d3" formatted="false">"Apparaatpresets"</string>
     <string name="text_digital_sample_levels_eed86c" formatted="false">"Digitale sampleniveaus"</string>
     <string name="text_direct_bc8152" formatted="false">"Direct"</string>
-    <string name="text_direct_usb_bypasses_aurora_s_processing_switch_to_processed_mode_4a9301" formatted="false">"Direct USB slaat de verwerking van Aurora over. Schakel over naar de verwerkte modus om presets aan deze DAC te koppelen."</string>
+    <string name="text_direct_usb_bypasses_aurora_s_processing_switch_to_processed_mode_4a9301" formatted="false">"Direct USB slaat de verwerking van Aetheria over. Schakel over naar de verwerkte modus om presets aan deze DAC te koppelen."</string>
     <string name="text_direct_usb_requested_fe8923" formatted="false">"Directe USB aangevraagd"</string>
     <string name="text_discard_36fff6" formatted="false">"Negeren"</string>
     <string name="text_disconnect_discord_0939de" formatted="false">"Discord ontkoppelen"</string>
@@ -751,7 +751,7 @@
     <string name="text_exporting_preset_f23e43" formatted="false">"Preset exporteren…"</string>
     <string name="text_exporting_project_89978a" formatted="false">"Project exporteren…"</string>
     <string name="text_exporting_wav_501d1a" formatted="false">"WAV exporteren…"</string>
-    <string name="text_exports_aurora_eq_json_for_these_filter_types_368863" formatted="false">"Exporteert Aurora EQ JSON voor deze filtertypen."</string>
+    <string name="text_exports_aurora_eq_json_for_these_filter_types_368863" formatted="false">"Exporteert Aetheria EQ JSON voor deze filtertypen."</string>
     <string name="text_exports_parametric_filters_with_preamp_0_db_0ec77d">"Exporteert %1$s parametrische filters met Preamp: 0 dB."</string>
     <string name="text_extension_659087" formatted="false">"Extensie"</string>
     <string name="text_extension_f88c4d" formatted="false">"EXTENSIE"</string>
@@ -838,7 +838,7 @@
     <string name="text_gradient_36463c" formatted="false">"Kleurverloop"</string>
     <string name="text_gradient_intensity_84a1f5" formatted="false">"Intensiteit van kleurverloop"</string>
     <string name="text_grant_c02329" formatted="false">"Toestaan"</string>
-    <string name="text_grant_what_you_use_aurora_works_without_any_of_these_but_each_unl_7a03fb" formatted="false">"Sta toe wat je gebruikt. Aurora werkt zonder deze rechten, maar elk recht ontgrendelt een functie."</string>
+    <string name="text_grant_what_you_use_aurora_works_without_any_of_these_but_each_unl_7a03fb" formatted="false">"Sta toe wat je gebruikt. Aetheria werkt zonder deze rechten, maar elk recht ontgrendelt een functie."</string>
     <string name="text_granted_43b11e" formatted="false">"Toegestaan"</string>
     <string name="text_graphic_and_parametric_eq_including_this_stage_s_wet_dry_and_bypa_5f1367" formatted="false">"Grafische en parametrische EQ, inclusief de wet/dry- en omzeilinstellingen van deze stap."</string>
     <string name="text_graphic_eq_3df203" formatted="false">"Grafische EQ"</string>
@@ -1059,7 +1059,7 @@
     <string name="text_listening_levels_c1db13" formatted="false">"Luisterniveaus"</string>
     <string name="text_listening_sharing_ecf6a1" formatted="false">"Luisteren &amp; delen"</string>
     <string name="text_listening_stats_a760b2" formatted="false">"Luisterstatistieken"</string>
-    <string name="text_listening_to_aurora_24a92c" formatted="false">"Luistert naar Aurora"</string>
+    <string name="text_listening_to_aurora_24a92c" formatted="false">"Luistert naar Aetheria"</string>
     <string name="text_listening_to_midnight_drive_35328b" formatted="false">"Luistert naar Midnight Drive"</string>
     <string name="text_live_65c821" formatted="false">"Live"</string>
     <string name="text_live_6990f0" formatted="false">"LIVE"</string>
@@ -1087,7 +1087,7 @@
     <string name="text_local_mode_doesn_t_use_this_form_78c2dc" formatted="false">"Lokale modus gebruikt dit formulier niet"</string>
     <string name="text_local_network_0a1fc0" formatted="false">"Lokaal netwerk"</string>
     <string name="text_local_playback_f3fe4f" formatted="false">"Lokaal afspelen"</string>
-    <string name="text_log_in_to_discord_below_aurora_reads_your_token_locally_to_set_ri_8ae4f4" formatted="false">"Log hieronder in bij Discord — Aurora leest je token lokaal om Rich Presence in te stellen (het wordt nergens anders heen gestuurd dan naar Discord). Blijft de pagina leeg, plak dan een token."</string>
+    <string name="text_log_in_to_discord_below_aurora_reads_your_token_locally_to_set_ri_8ae4f4" formatted="false">"Log hieronder in bij Discord — Aetheria leest je token lokaal om Rich Presence in te stellen (het wordt nergens anders heen gestuurd dan naar Discord). Blijft de pagina leeg, plak dan een token."</string>
     <string name="text_log_out_6e78c9" formatted="false">"Uitloggen"</string>
     <string name="text_login_rejected_3f73ee" formatted="false">"Inloggen geweigerd"</string>
     <string name="text_longest_day_4ebbeb">"Langste: %1$s dag%2$s"</string>
@@ -1146,7 +1146,7 @@
     <string name="text_maximum_treble_boost_db_bfd6e9" formatted="false">"Maximale versterking hoge tonen · dB"</string>
     <string name="text_maximum_treble_cut_db_384290" formatted="false">"Maximale verlaging hoge tonen · dB"</string>
     <string name="text_maximum_treble_q_659c12" formatted="false">"Maximale Q hoge tonen"</string>
-    <string name="text_may_re_ask_on_reconnect_aurora_re_requests_automatically_when_bit_23facf" formatted="false">"kan de DAC bij opnieuw aansluiten opnieuw vragen — Aurora vraagt automatisch opnieuw aan wanneer bit-perfect aan staat."</string>
+    <string name="text_may_re_ask_on_reconnect_aurora_re_requests_automatically_when_bit_23facf" formatted="false">"kan de DAC bij opnieuw aansluiten opnieuw vragen — Aetheria vraagt automatisch opnieuw aan wanneer bit-perfect aan staat."</string>
     <string name="text_me_b4d362" formatted="false">"IK"</string>
     <string name="text_measure_loudness_ebu_r128_to_level_playback_volume_30f01c" formatted="false">"Luidheid meten (EBU R128) om het afspeelvolume gelijk te trekken"</string>
     <string name="text_measured_955037" formatted="false">"Gemeten"</string>
@@ -1202,7 +1202,7 @@
     <string name="text_mono_c5c553" formatted="false">"Mono"</string>
     <string name="text_monthly_d31edb" formatted="false">"Maandelijks"</string>
     <string name="text_more_4bab2d" formatted="false">"Meer"</string>
-    <string name="text_more_music_same_aurora_3ae62e" formatted="false">"Meer muziek. Dezelfde Aurora."</string>
+    <string name="text_more_music_same_aurora_3ae62e" formatted="false">"Meer muziek. Dezelfde Aetheria."</string>
     <string name="text_more_recommendations_5fd054" formatted="false">"Meer aanbevelingen"</string>
     <string name="text_more_than_f9c07b" formatted="false">"meer dan"</string>
     <string name="text_most_minutes_0d8b47" formatted="false">"Meeste minuten"</string>
@@ -1325,7 +1325,7 @@
     <string name="text_only_show_play_downloaded_music_c36019" formatted="false">"Alleen gedownloade muziek tonen &amp; afspelen"</string>
     <string name="text_open_a_project_with_measurements_first_5f1e78" formatted="false">"Open eerst een project met metingen."</string>
     <string name="text_open_eq_text_file_33f801" formatted="false">"EQ-tekstbestand openen"</string>
-    <string name="text_open_equalizer_apo_text_autoeq_peq_json_or_aurora_eq_json_9a6150" formatted="false">"Open Equalizer APO-tekst, AutoEq PEQ JSON of Aurora EQ JSON."</string>
+    <string name="text_open_equalizer_apo_text_autoeq_peq_json_or_aurora_eq_json_9a6150" formatted="false">"Open Equalizer APO-tekst, AutoEq PEQ JSON of Aetheria EQ JSON."</string>
     <string name="text_open_full_processing_presets_8abd2a" formatted="false">"Volledige verwerkingspresets openen"</string>
     <string name="text_open_measurement_file_30741a" formatted="false">"Meetbestand openen"</string>
     <string name="text_open_mix_studio_9ddf16" formatted="false">"Mixstudio openen"</string>
@@ -1362,7 +1362,7 @@
     <string name="text_overwrites_current_settings_playlists_40eadc" formatted="false">"Overschrijft huidige instellingen &amp; playlists"</string>
     <string name="text_packet_errors_timeouts_e3e49f">"Pakketfouten: %1$s · Time-outs: %2$s"</string>
     <string name="text_pair_2537f8" formatted="false">"Koppelen"</string>
-    <string name="text_pair_an_aurora_player_de78d4" formatted="false">"Een Aurora-speler koppelen"</string>
+    <string name="text_pair_an_aurora_player_de78d4" formatted="false">"Een Aetheria-speler koppelen"</string>
     <string name="text_paired_devices_can_control_playback_86f484" formatted="false">"Gekoppelde apparaten kunnen het afspelen bedienen."</string>
     <string name="text_pairing_address_0a7563" formatted="false">"Koppeladres"</string>
     <string name="text_pairing_code_309e30" formatted="false">"Koppelcode"</string>
@@ -1608,8 +1608,8 @@
     <string name="text_reset_graphic_eq_ace461" formatted="false">"Grafische EQ resetten"</string>
     <string name="text_reset_to_default_39c90e" formatted="false">"Standaard herstellen"</string>
     <string name="text_response_6e617e" formatted="false">"Respons"</string>
-    <string name="text_restart_aurora_to_activate_the_changed_output_or_engine_settings_b7046b" formatted="false">" Start Aurora opnieuw om de gewijzigde uitvoer- of engine-instellingen te activeren."</string>
-    <string name="text_restart_aurora_to_apply_usb_settings_2757a4" formatted="false">"Start Aurora opnieuw om de USB-instellingen toe te passen."</string>
+    <string name="text_restart_aurora_to_activate_the_changed_output_or_engine_settings_b7046b" formatted="false">" Start Aetheria opnieuw om de gewijzigde uitvoer- of engine-instellingen te activeren."</string>
+    <string name="text_restart_aurora_to_apply_usb_settings_2757a4" formatted="false">"Start Aetheria opnieuw om de USB-instellingen toe te passen."</string>
     <string name="text_restore_backup_a65eaa" formatted="false">"Back-up herstellen"</string>
     <string name="text_result_exported_771e11" formatted="false">"Resultaat geëxporteerd."</string>
     <string name="text_results_612e12" formatted="false">"Resultaten"</string>
@@ -1754,7 +1754,7 @@
     <string name="text_setting_saved_ac1563" formatted="false">"Instelling opgeslagen."</string>
     <string name="text_settings_c7f73b" formatted="false">"Instellingen"</string>
     <string name="text_settings_racks_presets_impulse_responses_playlists_and_history_22c4f0" formatted="false">"Instellingen, racks, presets, impulsresponsen, playlists en geschiedenis"</string>
-    <string name="text_shape_your_sound_with_aurora_s_eq_and_audio_effects_0b9ed1" formatted="false">"Vorm je geluid met de EQ en audio-effecten van Aurora."</string>
+    <string name="text_shape_your_sound_with_aurora_s_eq_and_audio_effects_0b9ed1" formatted="false">"Vorm je geluid met de EQ en audio-effecten van Aetheria."</string>
     <string name="text_share_your_current_track_and_artwork_11d20a" formatted="false">"Deel je huidige nummer en hoes"</string>
     <string name="text_shared_secret_4e19fd" formatted="false">"Gedeeld geheim"</string>
     <string name="text_sharp_cf3e9a" formatted="false">"Scherp"</string>
@@ -1917,7 +1917,7 @@
     <string name="text_text_6fc726" formatted="false">"Tekst…"</string>
     <string name="text_that_token_could_not_be_verified_check_it_and_try_again_6668f1" formatted="false">"Die token kon niet worden geverifieerd. Controleer hem en probeer het opnieuw."</string>
     <string name="text_the_android_volume_range_is_unavailable_577138" formatted="false">"Het Android-volumebereik is niet beschikbaar."</string>
-    <string name="text_the_apk_is_not_from_aurora_s_releases_d728ee" formatted="false">"De APK komt niet uit de releases van Aurora."</string>
+    <string name="text_the_apk_is_not_from_aurora_s_releases_d728ee" formatted="false">"De APK komt niet uit de releases van Aetheria."</string>
     <string name="text_the_download_could_not_be_verified_please_try_again_95c71d" formatted="false">"De download kon niet worden geverifieerd. Probeer het opnieuw."</string>
     <string name="text_the_download_is_incomplete_please_try_again_96c9cd" formatted="false">"De download is onvolledig. Probeer het opnieuw."</string>
     <string name="text_the_download_isn_t_a_valid_app_update_d50721" formatted="false">"De download is geen geldige app-update."</string>
@@ -1929,7 +1929,7 @@
     <string name="text_the_rack_does_not_have_enough_space_reduce_the_fit_s_band_budget_f8764d" formatted="false">"Het rack heeft niet genoeg ruimte. Verlaag het bandbudget van de aanpassing of verwijder eerst rackstappen."</string>
     <string name="text_the_rack_is_still_loading_0720e5" formatted="false">"Het rack wordt nog geladen."</string>
     <string name="text_the_rack_stays_inactive_until_you_select_rack_mode_44737b" formatted="false">"Het rack blijft inactief tot je de rackmodus kiest."</string>
-    <string name="text_the_receiver_plays_the_source_aurora_s_effects_are_bypassed_e273f5" formatted="false">"De ontvanger speelt de bron af. De effecten van Aurora worden omzeild."</string>
+    <string name="text_the_receiver_plays_the_source_aurora_s_effects_are_bypassed_e273f5" formatted="false">"De ontvanger speelt de bron af. De effecten van Aetheria worden omzeild."</string>
     <string name="text_the_release_apk_is_empty_38a3c2" formatted="false">"De release-APK is leeg."</string>
     <string name="text_the_release_has_no_version_745070" formatted="false">"De release heeft geen versie."</string>
     <string name="text_the_release_version_is_not_supported_0ce4b4" formatted="false">"De releaseversie wordt niet ondersteund."</string>
@@ -1947,7 +1947,7 @@
     <string name="text_this_collection_exceeds_the_10_000_track_mix_limit_b8885f" formatted="false">"Deze collectie overschrijdt de mixlimiet van 10.000 nummers."</string>
     <string name="text_this_collection_needs_at_least_two_tracks_to_mix_142509" formatted="false">"Deze collectie heeft minstens twee nummers nodig om te mixen."</string>
     <string name="text_this_device_fa5a6d" formatted="false">"Dit apparaat"</string>
-    <string name="text_this_file_is_not_a_valid_preset_archive_or_it_is_damaged_choose_a_fc090e" formatted="false">"Dit bestand is geen geldig presetarchief of is beschadigd. Kies een Aurora-presetexport."</string>
+    <string name="text_this_file_is_not_a_valid_preset_archive_or_it_is_damaged_choose_a_fc090e" formatted="false">"Dit bestand is geen geldig presetarchief of is beschadigd. Kies een Aetheria-presetexport."</string>
     <string name="text_this_ir_is_no_longer_in_the_library_7118f3" formatted="false">"Deze IR staat niet meer in de bibliotheek."</string>
     <string name="text_this_is_the_eq_s_group_delay_it_does_not_measure_device_or_playba_31e689" formatted="false">"Dit is de groepsvertraging van de EQ; het meet niet de latentie van apparaat of afspelen."</string>
     <string name="text_this_link_cannot_open_here_finish_verification_using_another_meth_0d1c6a" formatted="false">"Deze link kan hier niet worden geopend. Rond de verificatie op een andere manier af en tik daarna op Doorgaan naar YouTube Music."</string>
@@ -1962,7 +1962,7 @@
     <string name="text_this_removes_the_stage_and_its_settings_from_this_rack_03575f" formatted="false">"Hiermee worden de stap en de instellingen ervan uit dit rack verwijderd."</string>
     <string name="text_this_replaces_the_current_rack_saved_presets_stay_available_19c825" formatted="false">"Hiermee wordt het huidige rack vervangen. Opgeslagen presets blijven beschikbaar."</string>
     <string name="text_this_stage_has_nonzero_graphic_eq_settings_that_the_text_file_wil_878b50" formatted="false">"Deze stap heeft grafische EQ-instellingen die niet nul zijn en die het tekstbestand weglaat."</string>
-    <string name="text_this_style_includes_its_own_colors_and_corners_your_aurora_custom_9b4b82" formatted="false">"Deze stijl heeft eigen kleuren en hoeken. Je Aurora-aanpassingen blijven bewaard."</string>
+    <string name="text_this_style_includes_its_own_colors_and_corners_your_aurora_custom_9b4b82" formatted="false">"Deze stijl heeft eigen kleuren en hoeken. Je Aetheria-aanpassingen blijven bewaard."</string>
     <string name="text_this_update_doesn_t_match_the_installed_app_s_signing_key_install_5af2e9" formatted="false">"Deze update komt niet overeen met de ondertekeningssleutel van de geïnstalleerde app. Installeer updates uit dezelfde bron."</string>
     <string name="text_three_linked_stereo_bands_8f36e9" formatted="false">"Drie gekoppelde stereobanden"</string>
     <string name="text_threshold_c51f7b" formatted="false">"Drempel"</string>
@@ -2074,7 +2074,7 @@
     <string name="text_use_current_701bc0" formatted="false">"Huidige gebruiken"</string>
     <string name="text_use_current_track_5c31d5" formatted="false">"Huidig nummer gebruiken"</string>
     <string name="text_use_flat_ed2b5f" formatted="false">"Vlak gebruiken"</string>
-    <string name="text_use_float32_when_supported_restart_aurora_to_apply_79edcd" formatted="false">"Gebruik float32 wanneer ondersteund. Start Aurora opnieuw om toe te passen."</string>
+    <string name="text_use_float32_when_supported_restart_aurora_to_apply_79edcd" formatted="false">"Gebruik float32 wanneer ondersteund. Start Aetheria opnieuw om toe te passen."</string>
     <string name="text_use_lrclib_1d1cb5" formatted="false">"LRCLIB gebruiken"</string>
     <string name="text_use_notes_415641" formatted="false">"Notities gebruiken"</string>
     <string name="text_use_settings_39966a" formatted="false">"Instellingen gebruiken"</string>
@@ -2133,7 +2133,7 @@
     <string name="text_wet_1df0cd">"%1$s · %2$s%% wet"</string>
     <string name="text_wet_76d013">"%1$s%% wet"</string>
     <string name="text_wet_dry_6769a1" formatted="false">"Wet / dry"</string>
-    <string name="text_when_a_track_is_available_from_more_than_one_place_aurora_plays_i_99eef3" formatted="false">"Als een nummer op meerdere plekken beschikbaar is, speelt Aurora het af vanaf de eerste "</string>
+    <string name="text_when_a_track_is_available_from_more_than_one_place_aurora_plays_i_99eef3" formatted="false">"Als een nummer op meerdere plekken beschikbaar is, speelt Aetheria het af vanaf de eerste "</string>
     <string name="text_whole_word_6171b6" formatted="false">"Heel woord"</string>
     <string name="text_width_2f_276839" formatted="false">"Breedte %.2f×"</string>
     <string name="text_windows_7_inspired_blue_glass_glossy_panels_27d09a" formatted="false">"Geïnspireerd op Windows 7 · blauw glas · glanzende panelen"</string>

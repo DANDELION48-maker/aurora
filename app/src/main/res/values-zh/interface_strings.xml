@@ -51,7 +51,7 @@
     <string name="text_a_source_is_unavailable_reconnect_to_its_library_and_reopen_this_217820" formatted="false">"某个来源不可用。请重新连接其音乐库并重新打开此混音。"</string>
     <string name="text_a_track_downloaded_inside_the_app_8619cd" formatted="false">"在应用内下载的曲目"</string>
     <string name="text_about_6b21fb" formatted="false">"关于"</string>
-    <string name="text_about_aurora_b4ed8c" formatted="false">"关于 Aurora"</string>
+    <string name="text_about_aurora_b4ed8c" formatted="false">"关于 Aetheria"</string>
     <string name="text_accent_233064" formatted="false">"强调色"</string>
     <string name="text_access_delivery_270b49" formatted="false">"访问与传输"</string>
     <string name="text_access_granted_for_8fb83b">"已获得 %1$s 的访问权限"</string>
@@ -129,9 +129,9 @@
     <string name="text_all_tone_shaping_bypassed_a7e684" formatted="false">"所有音色塑造均已旁通。"</string>
     <string name="text_all_tracks_d1ccb9">"全部 %1$s 首曲目"</string>
     <string name="text_allow_access_in_the_browser_then_return_here_4c48b2" formatted="false">"在浏览器中允许访问，然后返回此处"</string>
-    <string name="text_allow_aurora_to_install_updates_then_return_here_38efd8" formatted="false">"允许 Aurora 安装更新，然后返回此处。"</string>
-    <string name="text_allow_music_access_in_settings_apps_aurora_permissions_to_use_fil_1503ac" formatted="false">"请在“设置 → 应用 → Aurora → 权限”中允许访问音乐，以使用此设备上的文件。"</string>
-    <string name="text_allow_other_apps_to_play_audio_calls_will_not_pause_aurora_1aac7c" formatted="false">"允许其他应用播放音频。来电不会暂停 Aurora。"</string>
+    <string name="text_allow_aurora_to_install_updates_then_return_here_38efd8" formatted="false">"允许 Aetheria 安装更新，然后返回此处。"</string>
+    <string name="text_allow_music_access_in_settings_apps_aurora_permissions_to_use_fil_1503ac" formatted="false">"请在“设置 → 应用 → Aetheria → 权限”中允许访问音乐，以使用此设备上的文件。"</string>
+    <string name="text_allow_other_apps_to_play_audio_calls_will_not_pause_aurora_1aac7c" formatted="false">"允许其他应用播放音频。来电不会暂停 Aetheria。"</string>
     <string name="text_allow_remote_control_0f0d85" formatted="false">"允许远程控制"</string>
     <string name="text_alphabetical_9d1260" formatted="false">"按字母顺序"</string>
     <string name="text_already_downloaded_8acc8a" formatted="false">"已下载"</string>
@@ -184,7 +184,7 @@
     <string name="text_applied_3d3cce">"已应用 %1$s。"</string>
     <string name="text_applied_60aafc">"已应用：%1$s"</string>
     <string name="text_applied_bands_db_preamp_cf3937">"已应用 %1$s · %2$s 个频段，前置放大 %3$s dB"</string>
-    <string name="text_applies_aurora_s_effects_before_sending_audio_a462ad" formatted="false">"在发送音频前应用 Aurora 的效果。"</string>
+    <string name="text_applies_aurora_s_effects_before_sending_audio_a462ad" formatted="false">"在发送音频前应用 Aetheria 的效果。"</string>
     <string name="text_applies_to_this_session_check_signal_path_for_the_active_route_81fa8c" formatted="false">"适用于本次会话。请在“信号路径”中查看当前路由。"</string>
     <string name="text_applies_when_replaygain_is_set_to_track_or_album_in_equalizer_vol_1cf41c" formatted="false">"当“均衡器 → 音量平衡”中的 ReplayGain 设为“曲目”或“专辑”时生效。"</string>
     <string name="text_apply_app_processing_and_software_volume_crossfade_speed_pitch_an_1dad19" formatted="false">"应用处理和软件音量会生效。淡入淡出、速度/音高和跳过静音不可用。"</string>
@@ -201,7 +201,7 @@
     <string name="text_artist_from_your_music_10b0e0" formatted="false">"来自你音乐的艺人"</string>
     <string name="text_artist_indexing_and_scrobbling_file_tags_stay_unchanged_def5b6" formatted="false">"艺人索引和 scrobble。文件标签保持不变。"</string>
     <string name="text_artist_information_d5c3fc" formatted="false">"艺人信息"</string>
-    <string name="text_artist_names_are_sent_to_the_metadata_providers_only_when_aurora_2f1daa" formatted="false">"只有在 Aurora 需要额外信息时，才会将艺人名称发送给元数据提供方。"</string>
+    <string name="text_artist_names_are_sent_to_the_metadata_providers_only_when_aurora_2f1daa" formatted="false">"只有在 Aetheria 需要额外信息时，才会将艺人名称发送给元数据提供方。"</string>
     <string name="text_artist_replacement_rules_ff8fa3" formatted="false">"艺人替换规则"</string>
     <string name="text_artist_separators_4a3dc4" formatted="false">"艺人分隔符"</string>
     <string name="text_artists_1528d8" formatted="false">"艺人"</string>
@@ -216,15 +216,15 @@
     <string name="text_audio_presets_fbf3f8" formatted="false">"音频预设"</string>
     <string name="text_audio_presets_library_sources_and_metadata_4155ea" formatted="false">"音频预设、音乐库来源和元数据"</string>
     <string name="text_audiotrack_underruns_6c9f5b">"AudioTrack 欠载：%1$s"</string>
-    <string name="text_aurora_currently_applies_attenuation_only_missing_or_positive_gai_20c829" formatted="false">"Aurora 目前只应用衰减。缺失或为正的增益值不会改变音量。是否可用取决于当前的播放路径。"</string>
-    <string name="text_aurora_eeee9b" formatted="false">"Aurora"</string>
-    <string name="text_aurora_players_373351" formatted="false">"Aurora 播放器"</string>
-    <string name="text_aurora_signal_path_b2764e" formatted="false">"Aurora 信号路径"</string>
-    <string name="text_aurora_software_dsp_works_on_any_device_overrides_bit_perfect_out_c3a42d" formatted="false">"Aurora 软件 DSP，适用于任何设备。会覆盖 bit-perfect 输出。切换引擎后请重新开始播放。"</string>
-    <string name="text_aurora_streams_your_spotify_library_through_youtube_so_it_needs_y_23d0ad" formatted="false">"Aurora 通过 YouTube 播放你的 Spotify 音乐库，因此需要你自己的免费 Spotify 应用："</string>
-    <string name="text_aurora_tuning_5ee0b6" formatted="false">"Aurora 调校"</string>
-    <string name="text_aurora_uses_youtube_music_s_unofficial_web_interface_and_stores_y_28fcb3" formatted="false">"Aurora 使用 YouTube Music 的非官方网页接口，并将你的会话加密存储在此设备上。流媒体为有损音质；上传的曲目和受账号限制的曲目可能无法播放。"</string>
-    <string name="text_aurora_your_recap_a6f4df">"AURORA / 你的%1$s回顾"</string>
+    <string name="text_aurora_currently_applies_attenuation_only_missing_or_positive_gai_20c829" formatted="false">"Aetheria 目前只应用衰减。缺失或为正的增益值不会改变音量。是否可用取决于当前的播放路径。"</string>
+    <string name="text_aurora_eeee9b" formatted="false">"Aetheria"</string>
+    <string name="text_aurora_players_373351" formatted="false">"Aetheria 播放器"</string>
+    <string name="text_aurora_signal_path_b2764e" formatted="false">"Aetheria 信号路径"</string>
+    <string name="text_aurora_software_dsp_works_on_any_device_overrides_bit_perfect_out_c3a42d" formatted="false">"Aetheria 软件 DSP，适用于任何设备。会覆盖 bit-perfect 输出。切换引擎后请重新开始播放。"</string>
+    <string name="text_aurora_streams_your_spotify_library_through_youtube_so_it_needs_y_23d0ad" formatted="false">"Aetheria 通过 YouTube 播放你的 Spotify 音乐库，因此需要你自己的免费 Spotify 应用："</string>
+    <string name="text_aurora_tuning_5ee0b6" formatted="false">"Aetheria 调校"</string>
+    <string name="text_aurora_uses_youtube_music_s_unofficial_web_interface_and_stores_y_28fcb3" formatted="false">"Aetheria 使用 YouTube Music 的非官方网页接口，并将你的会话加密存储在此设备上。流媒体为有损音质；上传的曲目和受账号限制的曲目可能无法播放。"</string>
+    <string name="text_aurora_your_recap_a6f4df">"AETHERIA / 你的%1$s回顾"</string>
     <string name="text_authorization_is_not_ready_allow_access_then_try_again_99dd5c" formatted="false">"授权尚未就绪。请允许访问，然后重试。"</string>
     <string name="text_authorize_your_discord_account_a1f52f" formatted="false">"授权你的 Discord 账号"</string>
     <string name="text_auto_50c3f1" formatted="false">"自动"</string>
@@ -297,7 +297,7 @@
     <string name="text_bottom_utilities_8b97ef" formatted="false">"底部工具"</string>
     <string name="text_bpm_tempo_estimate_db_rms_652fe5">"≈ %1$s BPM · 速度估计%2$s · %3$s dB RMS"</string>
     <string name="text_brightness_e1a2b6" formatted="false">"亮度"</string>
-    <string name="text_bring_your_playlists_and_saved_music_into_aurora_df697e" formatted="false">"将你的播放列表和收藏的音乐带到 Aurora。"</string>
+    <string name="text_bring_your_playlists_and_saved_music_into_aurora_df697e" formatted="false">"将你的播放列表和收藏的音乐带到 Aetheria。"</string>
     <string name="text_browse_files_524932" formatted="false">"浏览文件"</string>
     <string name="text_build_007156">"版本号 %1$s%2$s"</string>
     <string name="text_built_with_jetpack_compose_material_3_6a2228" formatted="false">"使用 Jetpack Compose 和 Material 3 构建。"</string>
@@ -322,7 +322,7 @@
     <string name="text_cannot_read_this_image_9a45ce" formatted="false">"无法读取此图片。"</string>
     <string name="text_cap_streaming_to_96_kbps_on_mobile_data_4a7eaa" formatted="false">"使用移动数据时将流媒体限制在约 96 kbps"</string>
     <string name="text_cast_60745a" formatted="false">"投放"</string>
-    <string name="text_cast_dlna_and_paired_aurora_devices_364cee" formatted="false">"Cast、DLNA 和已配对的 Aurora 设备"</string>
+    <string name="text_cast_dlna_and_paired_aurora_devices_364cee" formatted="false">"Cast、DLNA 和已配对的 Aetheria 设备"</string>
     <string name="text_cast_to_a_device_1c0bd6" formatted="false">"投放到设备"</string>
     <string name="text_ceiling_e29db9" formatted="false">"上限"</string>
     <string name="text_ceiling_ef2e49">"上限 %1$s"</string>
@@ -415,7 +415,7 @@
     <string name="text_connection_details_ab30a5" formatted="false">"连接详情"</string>
     <string name="text_connection_timed_out_647bf9" formatted="false">"连接超时。"</string>
     <string name="text_connections_8f3509" formatted="false">"连接"</string>
-    <string name="text_connections_are_optional_aurora_s_own_library_playback_history_an_d7c6c7" formatted="false">"连接是可选的。Aurora 自带的音乐库、播放历史和回顾无需连接即可使用。"</string>
+    <string name="text_connections_are_optional_aurora_s_own_library_playback_history_an_d7c6c7" formatted="false">"连接是可选的。Aetheria 自带的音乐库、播放历史和回顾无需连接即可使用。"</string>
     <string name="text_constellation_785bdc" formatted="false">"星座"</string>
     <string name="text_container_e6443a" formatted="false">"容器"</string>
     <string name="text_context_cc11b3" formatted="false">"上下文"</string>
@@ -605,7 +605,7 @@
     <string name="text_device_presets_ca72d3" formatted="false">"设备预设"</string>
     <string name="text_digital_sample_levels_eed86c" formatted="false">"数字采样电平"</string>
     <string name="text_direct_bc8152" formatted="false">"直通"</string>
-    <string name="text_direct_usb_bypasses_aurora_s_processing_switch_to_processed_mode_4a9301" formatted="false">"直通 USB 会绕过 Aurora 的处理。请切换到处理模式，以便将预设绑定到此 DAC。"</string>
+    <string name="text_direct_usb_bypasses_aurora_s_processing_switch_to_processed_mode_4a9301" formatted="false">"直通 USB 会绕过 Aetheria 的处理。请切换到处理模式，以便将预设绑定到此 DAC。"</string>
     <string name="text_direct_usb_requested_fe8923" formatted="false">"已请求 USB 直通"</string>
     <string name="text_discard_36fff6" formatted="false">"放弃"</string>
     <string name="text_disconnect_discord_0939de" formatted="false">"断开 Discord"</string>
@@ -751,7 +751,7 @@
     <string name="text_exporting_preset_f23e43" formatted="false">"正在导出预设…"</string>
     <string name="text_exporting_project_89978a" formatted="false">"正在导出项目…"</string>
     <string name="text_exporting_wav_501d1a" formatted="false">"正在导出 WAV…"</string>
-    <string name="text_exports_aurora_eq_json_for_these_filter_types_368863" formatted="false">"为这些滤波器类型导出 Aurora EQ JSON。"</string>
+    <string name="text_exports_aurora_eq_json_for_these_filter_types_368863" formatted="false">"为这些滤波器类型导出 Aetheria EQ JSON。"</string>
     <string name="text_exports_parametric_filters_with_preamp_0_db_0ec77d">"导出 %1$s 个参数滤波器，并附带 Preamp: 0 dB。"</string>
     <string name="text_extension_659087" formatted="false">"扩展"</string>
     <string name="text_extension_f88c4d" formatted="false">"扩展"</string>
@@ -838,7 +838,7 @@
     <string name="text_gradient_36463c" formatted="false">"渐变"</string>
     <string name="text_gradient_intensity_84a1f5" formatted="false">"渐变强度"</string>
     <string name="text_grant_c02329" formatted="false">"授予"</string>
-    <string name="text_grant_what_you_use_aurora_works_without_any_of_these_but_each_unl_7a03fb" formatted="false">"只授予你会用到的权限。没有这些权限 Aurora 也能使用，但每一项都会解锁一个功能。"</string>
+    <string name="text_grant_what_you_use_aurora_works_without_any_of_these_but_each_unl_7a03fb" formatted="false">"只授予你会用到的权限。没有这些权限 Aetheria 也能使用，但每一项都会解锁一个功能。"</string>
     <string name="text_granted_43b11e" formatted="false">"已授予"</string>
     <string name="text_graphic_and_parametric_eq_including_this_stage_s_wet_dry_and_bypa_5f1367" formatted="false">"图示和参数均衡器，包括此阶段的干湿比和旁通设置。"</string>
     <string name="text_graphic_eq_3df203" formatted="false">"图示均衡器"</string>
@@ -1059,7 +1059,7 @@
     <string name="text_listening_levels_c1db13" formatted="false">"聆听电平"</string>
     <string name="text_listening_sharing_ecf6a1" formatted="false">"聆听与分享"</string>
     <string name="text_listening_stats_a760b2" formatted="false">"聆听统计"</string>
-    <string name="text_listening_to_aurora_24a92c" formatted="false">"正在收听 Aurora"</string>
+    <string name="text_listening_to_aurora_24a92c" formatted="false">"正在收听 Aetheria"</string>
     <string name="text_listening_to_midnight_drive_35328b" formatted="false">"正在收听 Midnight Drive"</string>
     <string name="text_live_65c821" formatted="false">"直播"</string>
     <string name="text_live_6990f0" formatted="false">"直播"</string>
@@ -1087,7 +1087,7 @@
     <string name="text_local_mode_doesn_t_use_this_form_78c2dc" formatted="false">"本地模式不使用此表单"</string>
     <string name="text_local_network_0a1fc0" formatted="false">"本地网络"</string>
     <string name="text_local_playback_f3fe4f" formatted="false">"本地播放"</string>
-    <string name="text_log_in_to_discord_below_aurora_reads_your_token_locally_to_set_ri_8ae4f4" formatted="false">"请在下方登录 Discord。Aurora 会在本地读取你的令牌以设置 Rich Presence（只会发送给 Discord）。如果页面一直空白，请改为粘贴令牌。"</string>
+    <string name="text_log_in_to_discord_below_aurora_reads_your_token_locally_to_set_ri_8ae4f4" formatted="false">"请在下方登录 Discord。Aetheria 会在本地读取你的令牌以设置 Rich Presence（只会发送给 Discord）。如果页面一直空白，请改为粘贴令牌。"</string>
     <string name="text_log_out_6e78c9" formatted="false">"退出登录"</string>
     <string name="text_login_rejected_3f73ee" formatted="false">"登录被拒绝"</string>
     <string name="text_longest_day_4ebbeb">"最长：%1$s%2$s 天"</string>
@@ -1146,7 +1146,7 @@
     <string name="text_maximum_treble_boost_db_bfd6e9" formatted="false">"高音最大提升 · dB"</string>
     <string name="text_maximum_treble_cut_db_384290" formatted="false">"高音最大衰减 · dB"</string>
     <string name="text_maximum_treble_q_659c12" formatted="false">"高音最大 Q 值"</string>
-    <string name="text_may_re_ask_on_reconnect_aurora_re_requests_automatically_when_bit_23facf" formatted="false">"重新连接时可能会再次询问；开启 bit-perfect 时，Aurora 会自动重新请求。"</string>
+    <string name="text_may_re_ask_on_reconnect_aurora_re_requests_automatically_when_bit_23facf" formatted="false">"重新连接时可能会再次询问；开启 bit-perfect 时，Aetheria 会自动重新请求。"</string>
     <string name="text_me_b4d362" formatted="false">"我"</string>
     <string name="text_measure_loudness_ebu_r128_to_level_playback_volume_30f01c" formatted="false">"测量响度 (EBU R128) 以平衡播放音量"</string>
     <string name="text_measured_955037" formatted="false">"实测"</string>
@@ -1202,7 +1202,7 @@
     <string name="text_mono_c5c553" formatted="false">"单声道"</string>
     <string name="text_monthly_d31edb" formatted="false">"每月"</string>
     <string name="text_more_4bab2d" formatted="false">"更多"</string>
-    <string name="text_more_music_same_aurora_3ae62e" formatted="false">"更多音乐。同一个 Aurora。"</string>
+    <string name="text_more_music_same_aurora_3ae62e" formatted="false">"更多音乐。同一个 Aetheria。"</string>
     <string name="text_more_recommendations_5fd054" formatted="false">"更多推荐"</string>
     <string name="text_more_than_f9c07b" formatted="false">"大于"</string>
     <string name="text_most_minutes_0d8b47" formatted="false">"分钟数最多"</string>
@@ -1325,7 +1325,7 @@
     <string name="text_only_show_play_downloaded_music_c36019" formatted="false">"仅显示和播放已下载的音乐"</string>
     <string name="text_open_a_project_with_measurements_first_5f1e78" formatted="false">"请先打开一个包含测量数据的项目。"</string>
     <string name="text_open_eq_text_file_33f801" formatted="false">"打开均衡器文本文件"</string>
-    <string name="text_open_equalizer_apo_text_autoeq_peq_json_or_aurora_eq_json_9a6150" formatted="false">"打开 Equalizer APO 文本、AutoEq PEQ JSON 或 Aurora EQ JSON。"</string>
+    <string name="text_open_equalizer_apo_text_autoeq_peq_json_or_aurora_eq_json_9a6150" formatted="false">"打开 Equalizer APO 文本、AutoEq PEQ JSON 或 Aetheria EQ JSON。"</string>
     <string name="text_open_full_processing_presets_8abd2a" formatted="false">"打开完整的处理预设"</string>
     <string name="text_open_measurement_file_30741a" formatted="false">"打开测量文件"</string>
     <string name="text_open_mix_studio_9ddf16" formatted="false">"打开混音工作室"</string>
@@ -1362,7 +1362,7 @@
     <string name="text_overwrites_current_settings_playlists_40eadc" formatted="false">"覆盖当前的设置和播放列表"</string>
     <string name="text_packet_errors_timeouts_e3e49f">"数据包错误：%1$s · 超时：%2$s"</string>
     <string name="text_pair_2537f8" formatted="false">"配对"</string>
-    <string name="text_pair_an_aurora_player_de78d4" formatted="false">"配对 Aurora 播放器"</string>
+    <string name="text_pair_an_aurora_player_de78d4" formatted="false">"配对 Aetheria 播放器"</string>
     <string name="text_paired_devices_can_control_playback_86f484" formatted="false">"已配对的设备可以控制播放。"</string>
     <string name="text_pairing_address_0a7563" formatted="false">"配对地址"</string>
     <string name="text_pairing_code_309e30" formatted="false">"配对码"</string>
@@ -1608,8 +1608,8 @@
     <string name="text_reset_graphic_eq_ace461" formatted="false">"重置图示均衡器"</string>
     <string name="text_reset_to_default_39c90e" formatted="false">"恢复为默认值"</string>
     <string name="text_response_6e617e" formatted="false">"响应"</string>
-    <string name="text_restart_aurora_to_activate_the_changed_output_or_engine_settings_b7046b" formatted="false">" 重启 Aurora 以使更改后的输出或引擎设置生效。"</string>
-    <string name="text_restart_aurora_to_apply_usb_settings_2757a4" formatted="false">"重启 Aurora 以应用 USB 设置。"</string>
+    <string name="text_restart_aurora_to_activate_the_changed_output_or_engine_settings_b7046b" formatted="false">" 重启 Aetheria 以使更改后的输出或引擎设置生效。"</string>
+    <string name="text_restart_aurora_to_apply_usb_settings_2757a4" formatted="false">"重启 Aetheria 以应用 USB 设置。"</string>
     <string name="text_restore_backup_a65eaa" formatted="false">"恢复备份"</string>
     <string name="text_result_exported_771e11" formatted="false">"结果已导出。"</string>
     <string name="text_results_612e12" formatted="false">"结果"</string>
@@ -1754,7 +1754,7 @@
     <string name="text_setting_saved_ac1563" formatted="false">"设置已保存。"</string>
     <string name="text_settings_c7f73b" formatted="false">"设置"</string>
     <string name="text_settings_racks_presets_impulse_responses_playlists_and_history_22c4f0" formatted="false">"设置、机架、预设、脉冲响应、播放列表和历史记录"</string>
-    <string name="text_shape_your_sound_with_aurora_s_eq_and_audio_effects_0b9ed1" formatted="false">"使用 Aurora 的均衡器和音频效果塑造你的声音。"</string>
+    <string name="text_shape_your_sound_with_aurora_s_eq_and_audio_effects_0b9ed1" formatted="false">"使用 Aetheria 的均衡器和音频效果塑造你的声音。"</string>
     <string name="text_share_your_current_track_and_artwork_11d20a" formatted="false">"分享你当前播放的曲目和封面"</string>
     <string name="text_shared_secret_4e19fd" formatted="false">"共享密钥"</string>
     <string name="text_sharp_cf3e9a" formatted="false">"锐利"</string>
@@ -1917,7 +1917,7 @@
     <string name="text_text_6fc726" formatted="false">"文本…"</string>
     <string name="text_that_token_could_not_be_verified_check_it_and_try_again_6668f1" formatted="false">"无法验证该令牌。请检查后重试。"</string>
     <string name="text_the_android_volume_range_is_unavailable_577138" formatted="false">"Android 音量范围不可用。"</string>
-    <string name="text_the_apk_is_not_from_aurora_s_releases_d728ee" formatted="false">"该 APK 不是来自 Aurora 的发布版本。"</string>
+    <string name="text_the_apk_is_not_from_aurora_s_releases_d728ee" formatted="false">"该 APK 不是来自 Aetheria 的发布版本。"</string>
     <string name="text_the_download_could_not_be_verified_please_try_again_95c71d" formatted="false">"无法验证下载内容。请重试。"</string>
     <string name="text_the_download_is_incomplete_please_try_again_96c9cd" formatted="false">"下载不完整。请重试。"</string>
     <string name="text_the_download_isn_t_a_valid_app_update_d50721" formatted="false">"下载的内容不是有效的应用更新。"</string>
@@ -1929,7 +1929,7 @@
     <string name="text_the_rack_does_not_have_enough_space_reduce_the_fit_s_band_budget_f8764d" formatted="false">"机架空间不足。请先减少拟合的频段预算或移除机架阶段。"</string>
     <string name="text_the_rack_is_still_loading_0720e5" formatted="false">"机架仍在加载。"</string>
     <string name="text_the_rack_stays_inactive_until_you_select_rack_mode_44737b" formatted="false">"在你选择机架模式之前，机架保持未启用状态。"</string>
-    <string name="text_the_receiver_plays_the_source_aurora_s_effects_are_bypassed_e273f5" formatted="false">"由接收器播放音源。Aurora 的效果已旁通。"</string>
+    <string name="text_the_receiver_plays_the_source_aurora_s_effects_are_bypassed_e273f5" formatted="false">"由接收器播放音源。Aetheria 的效果已旁通。"</string>
     <string name="text_the_release_apk_is_empty_38a3c2" formatted="false">"发布的 APK 为空。"</string>
     <string name="text_the_release_has_no_version_745070" formatted="false">"该发布没有版本号。"</string>
     <string name="text_the_release_version_is_not_supported_0ce4b4" formatted="false">"不支持该发布版本。"</string>
@@ -1947,7 +1947,7 @@
     <string name="text_this_collection_exceeds_the_10_000_track_mix_limit_b8885f" formatted="false">"此合集超过了 10,000 首曲目的混音上限。"</string>
     <string name="text_this_collection_needs_at_least_two_tracks_to_mix_142509" formatted="false">"此合集至少需要两首曲目才能混音。"</string>
     <string name="text_this_device_fa5a6d" formatted="false">"此设备"</string>
-    <string name="text_this_file_is_not_a_valid_preset_archive_or_it_is_damaged_choose_a_fc090e" formatted="false">"此文件不是有效的预设存档，或已损坏。请选择 Aurora 导出的预设。"</string>
+    <string name="text_this_file_is_not_a_valid_preset_archive_or_it_is_damaged_choose_a_fc090e" formatted="false">"此文件不是有效的预设存档，或已损坏。请选择 Aetheria 导出的预设。"</string>
     <string name="text_this_ir_is_no_longer_in_the_library_7118f3" formatted="false">"此 IR 已不在库中。"</string>
     <string name="text_this_is_the_eq_s_group_delay_it_does_not_measure_device_or_playba_31e689" formatted="false">"这是均衡器的群延迟；并不衡量设备或播放的延迟。"</string>
     <string name="text_this_link_cannot_open_here_finish_verification_using_another_meth_0d1c6a" formatted="false">"此链接无法在这里打开。请使用其他方式完成验证，然后点按“继续前往 YouTube Music”。"</string>
@@ -1962,7 +1962,7 @@
     <string name="text_this_removes_the_stage_and_its_settings_from_this_rack_03575f" formatted="false">"这会从此机架中移除该阶段及其设置。"</string>
     <string name="text_this_replaces_the_current_rack_saved_presets_stay_available_19c825" formatted="false">"这会替换当前机架。已保存的预设仍然可用。"</string>
     <string name="text_this_stage_has_nonzero_graphic_eq_settings_that_the_text_file_wil_878b50" formatted="false">"此阶段包含非零的图示均衡器设置，文本文件会将其省略。"</string>
-    <string name="text_this_style_includes_its_own_colors_and_corners_your_aurora_custom_9b4b82" formatted="false">"此样式自带颜色和圆角。你对 Aurora 的自定义设置会被保存。"</string>
+    <string name="text_this_style_includes_its_own_colors_and_corners_your_aurora_custom_9b4b82" formatted="false">"此样式自带颜色和圆角。你对 Aetheria 的自定义设置会被保存。"</string>
     <string name="text_this_update_doesn_t_match_the_installed_app_s_signing_key_install_5af2e9" formatted="false">"此更新与已安装应用的签名密钥不匹配。请从同一来源安装更新。"</string>
     <string name="text_three_linked_stereo_bands_8f36e9" formatted="false">"三个关联的立体声频段"</string>
     <string name="text_threshold_c51f7b" formatted="false">"阈值"</string>
@@ -2074,7 +2074,7 @@
     <string name="text_use_current_701bc0" formatted="false">"使用当前值"</string>
     <string name="text_use_current_track_5c31d5" formatted="false">"使用当前曲目"</string>
     <string name="text_use_flat_ed2b5f" formatted="false">"使用平直响应"</string>
-    <string name="text_use_float32_when_supported_restart_aurora_to_apply_79edcd" formatted="false">"在支持时使用 float32。重启 Aurora 后生效。"</string>
+    <string name="text_use_float32_when_supported_restart_aurora_to_apply_79edcd" formatted="false">"在支持时使用 float32。重启 Aetheria 后生效。"</string>
     <string name="text_use_lrclib_1d1cb5" formatted="false">"使用 LRCLIB"</string>
     <string name="text_use_notes_415641" formatted="false">"使用备注"</string>
     <string name="text_use_settings_39966a" formatted="false">"使用设置"</string>
@@ -2133,7 +2133,7 @@
     <string name="text_wet_1df0cd">"%1$s · 湿声 %2$s%%"</string>
     <string name="text_wet_76d013">"湿声 %1$s%%"</string>
     <string name="text_wet_dry_6769a1" formatted="false">"干 / 湿"</string>
-    <string name="text_when_a_track_is_available_from_more_than_one_place_aurora_plays_i_99eef3" formatted="false">"当一首曲目可从多个位置获取时，Aurora 会从下方第一个拥有它的"</string>
+    <string name="text_when_a_track_is_available_from_more_than_one_place_aurora_plays_i_99eef3" formatted="false">"当一首曲目可从多个位置获取时，Aetheria 会从下方第一个拥有它的"</string>
     <string name="text_whole_word_6171b6" formatted="false">"全词匹配"</string>
     <string name="text_width_2f_276839" formatted="false">"宽度 %.2f×"</string>
     <string name="text_windows_7_inspired_blue_glass_glossy_panels_27d09a" formatted="false">"灵感来自 Windows 7 · 蓝色玻璃 · 光泽面板"</string>

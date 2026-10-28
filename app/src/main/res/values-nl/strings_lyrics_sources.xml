@@ -2,7 +2,7 @@
 <resources>
     <string name="lyrics_settings_summary">"Synchronisatie, vertaling en voorkeursbronnen"</string>
     <string name="lyrics_sources_title">"Songtekstbronnen"</string>
-    <string name="lyrics_sources_desc">"Aurora vraagt ze op volgorde. De eerste met gesynchroniseerde tekst wint, anders de eerste met een tekst."</string>
+    <string name="lyrics_sources_desc">"Aetheria vraagt ze op volgorde. De eerste met gesynchroniseerde tekst wint, anders de eerste met een tekst."</string>
     <string name="lyrics_source_own">"De eigen bron van het nummer"</string>
     <string name="lyrics_source_own_desc">"Songteksten van je server of dienst"</string>
     <string name="lyrics_source_spotify_desc">"Op Spotify gezocht zolang het is samengevoegd"</string>

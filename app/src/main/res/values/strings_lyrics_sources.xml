@@ -2,7 +2,7 @@
 <resources>
     <string name="lyrics_settings_summary">"Sync, translation and preferred sources"</string>
     <string name="lyrics_sources_title">"Lyrics sources"</string>
-    <string name="lyrics_sources_desc">"Aurora asks these in order. The first with synced lyrics wins, otherwise the first with any lyrics."</string>
+    <string name="lyrics_sources_desc">"Aetheria asks these in order. The first with synced lyrics wins, otherwise the first with any lyrics."</string>
     <string name="lyrics_source_own">"The song\'s own source"</string>
     <string name="lyrics_source_own_desc">"Lyrics your server or service provides"</string>
     <string name="lyrics_source_spotify_desc">"Matched on Spotify while it\'s merged"</string>

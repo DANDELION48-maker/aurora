@@ -3,5 +3,5 @@
     <string name="perm_location">Position</string>
     <string name="perm_location_desc">Lieux et carte d’écoute dans les statistiques détaillées</string>
     <string name="perm_location_background">Position en permanence</string>
-    <string name="perm_location_background_desc">Enregistre où ont lieu les écoutes quand Aurora est en arrière-plan</string>
+    <string name="perm_location_background_desc">Enregistre où ont lieu les écoutes quand Aetheria est en arrière-plan</string>
 </resources>

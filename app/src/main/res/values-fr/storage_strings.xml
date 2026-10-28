@@ -2,7 +2,7 @@
 <resources>
     <string name="storage_description">Téléchargements, caches, analyses et historique</string>
     <string name="storage_summary">%1$s utilisés · téléchargements, caches et historique</string>
-    <string name="storage_used">Aurora utilise %1$s</string>
+    <string name="storage_used">Aetheria utilise %1$s</string>
     <string name="storage_free">%1$s libres sur cet appareil</string>
     <string name="storage_measuring">Mesure du stockage…</string>
     <string name="storage_part_downloads">Téléchargements</string>
@@ -11,7 +11,7 @@
     <string name="storage_part_other">Données de l’app</string>
     <string name="storage_clear_caches">Vider tous les caches</string>
     <string name="storage_clear_caches_title">Vider tous les caches ?</string>
-    <string name="storage_clear_caches_message">Cela supprime le cache audio, les caches de pochettes, d’images et de cartes, la synchronisation vocale, les pistes séparées, les infos sur les artistes et les fichiers temporaires. Les téléchargements, les analyses, l’historique et les réglages sont conservés. Les caches se remplissent à nouveau à mesure que vous utilisez Aurora.</string>
+    <string name="storage_clear_caches_message">Cela supprime le cache audio, les caches de pochettes, d’images et de cartes, la synchronisation vocale, les pistes séparées, les infos sur les artistes et les fichiers temporaires. Les téléchargements, les analyses, l’historique et les réglages sont conservés. Les caches se remplissent à nouveau à mesure que vous utilisez Aetheria.</string>
     <string name="storage_caches_cleared">Caches vidés</string>
     <string name="storage_stems_busy">La séparation des voix est en cours, ses fichiers ont donc été conservés</string>
     <string name="storage_cleared">Vidé</string>
@@ -29,7 +29,7 @@
     <string name="storage_remove_source_title">Supprimer les téléchargements de %1$s ?</string>
     <string name="storage_remove_source_message">Les pistes téléchargées depuis cette source sont supprimées de cet appareil. Les téléchargements de vos autres sources sont conservés.</string>
     <string name="storage_source_unknown">Autres sources</string>
-    <string name="storage_youtube_note">Les téléchargements depuis YouTube sont enregistrés dans Music/Aurora sur votre téléphone et se gèrent avec votre gestionnaire de fichiers.</string>
+    <string name="storage_youtube_note">Les téléchargements depuis YouTube sont enregistrés dans Music/Aetheria sur votre téléphone et se gèrent avec votre gestionnaire de fichiers.</string>
 
     <string name="storage_section_images">Pochettes et images</string>
     <string name="storage_cover_cache">Cache de recherche de pochettes</string>

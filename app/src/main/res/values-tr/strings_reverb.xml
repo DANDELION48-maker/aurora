@@ -28,5 +28,5 @@
     <string name="reverb_value_ms">"%1$s ms"</string>
     <string name="reverb_value_hz">"%1$s Hz"</string>
     <string name="reverb_value_khz">"%1$s kHz"</string>
-    <string name="reverb_note">"Yankı, Aurora\'nın ses motoru içinde çalışır; bu yüzden tüm ekolayzer modlarıyla ve hız ile perde değişiklikleriyle birlikte çalışır. Bit-perfect USB çıkışında ve doğrudan yayında atlanır."</string>
+    <string name="reverb_note">"Yankı, Aetheria\'nın ses motoru içinde çalışır; bu yüzden tüm ekolayzer modlarıyla ve hız ile perde değişiklikleriyle birlikte çalışır. Bit-perfect USB çıkışında ve doğrudan yayında atlanır."</string>
 </resources>

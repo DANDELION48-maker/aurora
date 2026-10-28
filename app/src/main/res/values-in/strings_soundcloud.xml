@@ -4,12 +4,12 @@
     <string name="soundcloud_connect_title">"Hubungkan SoundCloud"</string>
     <string name="soundcloud_connect_subtitle">"Suka, playlist, dan artis yang Anda ikuti"</string>
     <string name="soundcloud_sign_in">"Masuk ke SoundCloud"</string>
-    <string name="soundcloud_sign_in_hint">"Masuk di halaman SoundCloud. Aurora terhubung begitu Anda masuk."</string>
+    <string name="soundcloud_sign_in_hint">"Masuk di halaman SoundCloud. Aetheria terhubung begitu Anda masuk."</string>
     <string name="soundcloud_waiting">"Masuk untuk melanjutkan. Jika login Google ditolak di sini, masuk dengan email Anda."</string>
-    <string name="soundcloud_details">"Aurora menggunakan antarmuka web tidak resmi SoundCloud dan menyimpan login Anda terenkripsi di perangkat ini."</string>
+    <string name="soundcloud_details">"Aetheria menggunakan antarmuka web tidak resmi SoundCloud dan menyimpan login Anda terenkripsi di perangkat ini."</string>
     <string name="soundcloud_connect_failed">"Tidak dapat menghubungkan SoundCloud. Coba lagi."</string>
     <string name="soundcloud_page_failed">"Halaman masuk tidak dapat dimuat. Periksa koneksi Anda lalu muat ulang."</string>
-    <string name="soundcloud_captcha_hint">"SoundCloud ingin memastikan Anda manusia sebelum menyimpan perubahan ini. Selesaikan sekali dan Aurora akan menyelesaikan perubahannya."</string>
+    <string name="soundcloud_captcha_hint">"SoundCloud ingin memastikan Anda manusia sebelum menyimpan perubahan ini. Selesaikan sekali dan Aetheria akan menyelesaikan perubahannya."</string>
     <string name="player_comments">"Komentar"</string>
     <string name="player_soundcloud_comments">"Komentar SoundCloud"</string>
     <string name="comments_empty">"Belum ada komentar. Jadilah yang pertama."</string>

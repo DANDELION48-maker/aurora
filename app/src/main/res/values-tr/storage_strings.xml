@@ -2,7 +2,7 @@
 <resources>
     <string name="storage_description">İndirilenler, önbellekler, analizler ve geçmiş</string>
     <string name="storage_summary">%1$s kullanılıyor · indirilenler, önbellekler ve geçmiş</string>
-    <string name="storage_used">Aurora %1$s kullanıyor</string>
+    <string name="storage_used">Aetheria %1$s kullanıyor</string>
     <string name="storage_free">Bu cihazda %1$s boş</string>
     <string name="storage_measuring">Depolama ölçülüyor…</string>
     <string name="storage_part_downloads">İndirilenler</string>
@@ -11,7 +11,7 @@
     <string name="storage_part_other">Uygulama verileri</string>
     <string name="storage_clear_caches">Tüm önbellekleri temizle</string>
     <string name="storage_clear_caches_title">Tüm önbellekler temizlensin mi?</string>
-    <string name="storage_clear_caches_message">Bu işlem ses önbelleğini, kapak, görsel ve harita önbelleklerini, vokal zamanlamasını, ayrılmış kanalları, sanatçı bilgilerini ve geçici dosyaları kaldırır. İndirilenler, analizler, geçmiş ve ayarlar kalır. Önbellekler Aurora’yı kullandıkça yeniden dolar.</string>
+    <string name="storage_clear_caches_message">Bu işlem ses önbelleğini, kapak, görsel ve harita önbelleklerini, vokal zamanlamasını, ayrılmış kanalları, sanatçı bilgilerini ve geçici dosyaları kaldırır. İndirilenler, analizler, geçmiş ve ayarlar kalır. Önbellekler Aetheria’yı kullandıkça yeniden dolar.</string>
     <string name="storage_caches_cleared">Önbellekler temizlendi</string>
     <string name="storage_stems_busy">Vokal ayırma sürüyor, bu yüzden dosyaları korundu</string>
     <string name="storage_cleared">Temizlendi</string>
@@ -29,7 +29,7 @@
     <string name="storage_remove_source_title">%1$s kaynağından indirilenler kaldırılsın mı?</string>
     <string name="storage_remove_source_message">Bu kaynaktan indirilen parçalar bu cihazdan silinir. Diğer kaynaklarınızdan indirilenler kalır.</string>
     <string name="storage_source_unknown">Diğer kaynaklar</string>
-    <string name="storage_youtube_note">YouTube’dan indirilenler telefonunuzda Music/Aurora klasörüne kaydedilir ve dosya yöneticinizle yönetilir.</string>
+    <string name="storage_youtube_note">YouTube’dan indirilenler telefonunuzda Music/Aetheria klasörüne kaydedilir ve dosya yöneticinizle yönetilir.</string>
 
     <string name="storage_section_images">Kapaklar ve görseller</string>
     <string name="storage_cover_cache">Kapak arama önbelleği</string>

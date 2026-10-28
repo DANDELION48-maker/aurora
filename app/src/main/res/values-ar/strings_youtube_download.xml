@@ -3,11 +3,11 @@
     <string name="youtube_download_title">\u2067التنزيل من YouTube\u2069</string>
     <string name="youtube_download_tile_detail">\u2067حفظ الأغاني على هذا الجهاز\u2069</string>
     <string name="youtube_download_search_hint">\u2067البحث عن أغانٍ في YouTube Music\u2069</string>
-    <string name="youtube_download_intro">\u2067ابحث عن أغنية واحفظها كملف. تُحفظ التنزيلات في Music/Aurora وتظهر في مكتبتك المحلية.\u2069</string>
+    <string name="youtube_download_intro">\u2067ابحث عن أغنية واحفظها كملف. تُحفظ التنزيلات في Music/Aetheria وتظهر في مكتبتك المحلية.\u2069</string>
     <string name="youtube_download_no_results">\u2067لم يُعثر على أغانٍ. جرّب بحثًا آخر.\u2069</string>
     <string name="youtube_download_search_failed">\u2067فشل البحث. تحقق من اتصالك وحاول مرة أخرى.\u2069</string>
     <string name="youtube_download_action">\u2067تنزيل\u2069</string>
-    <string name="youtube_download_saved">\u2067تم الحفظ في Music/Aurora\u2069</string>
+    <string name="youtube_download_saved">\u2067تم الحفظ في Music/Aetheria\u2069</string>
     <string name="youtube_download_failed">\u2067فشل التنزيل. انقر لإعادة المحاولة.\u2069</string>
     <string name="youtube_download_saving">\u2067جارٍ الحفظ…\u2069</string>
     <string name="youtube_download_settings">\u2067تنزيلات YouTube\u2069</string>

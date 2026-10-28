@@ -3,7 +3,7 @@
     <string name="insights_title">상세 통계</string>
     <string name="insights_description">이 기기에만 남는 선택형 청취 정보</string>
     <string name="insights_intro_title">기본값은 꺼짐</string>
-    <string name="insights_intro_body">켜면 재생할 때마다 더 많은 정보를 기록해 Aurora가 언제, 어떻게, 무엇으로 듣는지 보여 줄 수 있습니다. 이 설정을 마치기 전에는 아무것도 기록되지 않습니다.</string>
+    <string name="insights_intro_body">켜면 재생할 때마다 더 많은 정보를 기록해 Aetheria가 언제, 어떻게, 무엇으로 듣는지 보여 줄 수 있습니다. 이 설정을 마치기 전에는 아무것도 기록되지 않습니다.</string>
     <string name="insights_guide_title">빠른 안내</string>
     <string name="insights_step_recorded_title">기록되는 내용</string>
     <string name="insights_step_recorded_body">언제, 얼마나 오래 들었는지, 곡을 끝까지 들었는지 건너뛰었는지, 장르와 출처, 셔플이 켜져 있었는지 여부.</string>
@@ -84,9 +84,9 @@
     <string name="insights_open">인사이트 열기</string>
     <string name="insights_places_toggle">장소 기록</string>
     <string name="insights_places_desc">재생마다 집, 직장 또는 외출로 표시</string>
-    <string name="insights_places_guide">음악이 재생되는 동안 Aurora는 최대 10분에 한 번 위치를 확인해 집과 직장과 비교하고 라벨만 남깁니다. 집과 직장 위치 자체는 이 휴대폰에만 저장되며 어떤 백업에도 포함되지 않습니다.</string>
+    <string name="insights_places_guide">음악이 재생되는 동안 Aetheria는 최대 10분에 한 번 위치를 확인해 집과 직장과 비교하고 라벨만 남깁니다. 집과 직장 위치 자체는 이 휴대폰에만 저장되며 어떤 백업에도 포함되지 않습니다.</string>
     <string name="insights_radius">반경</string>
-    <string name="insights_background_needed">Aurora가 닫혀 있을 때 시작된 재생에도 표시하려면 위치 접근을 항상 허용하세요.</string>
+    <string name="insights_background_needed">Aetheria가 닫혀 있을 때 시작된 재생에도 표시하려면 위치 접근을 항상 허용하세요.</string>
     <string name="insights_allow_background">항상 허용</string>
     <string name="insights_location_failed">위치를 가져올 수 없습니다. Wi-Fi나 위치를 켠 후 다시 시도하세요.</string>
     <string name="insights_location_denied">위치 접근이 허용되지 않아 장소 기능이 꺼진 상태로 유지됩니다.</string>

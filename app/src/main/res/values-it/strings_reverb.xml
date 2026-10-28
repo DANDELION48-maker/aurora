@@ -28,5 +28,5 @@
     <string name="reverb_value_ms">"%1$s ms"</string>
     <string name="reverb_value_hz">"%1$s Hz"</string>
     <string name="reverb_value_khz">"%1$s kHz"</string>
-    <string name="reverb_note">"Il riverbero funziona all\'interno del motore audio di Aurora, quindi è compatibile con tutte le modalità dell\'equalizzatore e con le variazioni di velocità e intonazione. Viene saltato con l\'uscita USB bit-perfect e il casting diretto."</string>
+    <string name="reverb_note">"Il riverbero funziona all\'interno del motore audio di Aetheria, quindi è compatibile con tutte le modalità dell\'equalizzatore e con le variazioni di velocità e intonazione. Viene saltato con l\'uscita USB bit-perfect e il casting diretto."</string>
 </resources>

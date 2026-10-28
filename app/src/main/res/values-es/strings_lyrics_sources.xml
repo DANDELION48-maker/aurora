@@ -2,7 +2,7 @@
 <resources>
     <string name="lyrics_settings_summary">"Sincronización, traducción y fuentes preferidas"</string>
     <string name="lyrics_sources_title">"Fuentes de letras"</string>
-    <string name="lyrics_sources_desc">"Aurora las consulta en orden. Gana la primera con letra sincronizada; si no, la primera con letra."</string>
+    <string name="lyrics_sources_desc">"Aetheria las consulta en orden. Gana la primera con letra sincronizada; si no, la primera con letra."</string>
     <string name="lyrics_source_own">"La fuente propia de la canción"</string>
     <string name="lyrics_source_own_desc">"Letras que ofrece tu servidor o servicio"</string>
     <string name="lyrics_source_spotify_desc">"Encontrada en Spotify mientras está fusionado"</string>

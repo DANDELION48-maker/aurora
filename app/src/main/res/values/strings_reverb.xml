@@ -28,5 +28,5 @@
     <string name="reverb_value_ms">"%1$s ms"</string>
     <string name="reverb_value_hz">"%1$s Hz"</string>
     <string name="reverb_value_khz">"%1$s kHz"</string>
-    <string name="reverb_note">"Reverb runs inside Aurora\'s audio engine, so it works with every equalizer mode and with speed and pitch changes. It is skipped for bit-perfect USB output and direct casting."</string>
+    <string name="reverb_note">"Reverb runs inside Aetheria\'s audio engine, so it works with every equalizer mode and with speed and pitch changes. It is skipped for bit-perfect USB output and direct casting."</string>
 </resources>

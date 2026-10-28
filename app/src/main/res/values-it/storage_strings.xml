@@ -2,7 +2,7 @@
 <resources>
     <string name="storage_description">Download, cache, analisi e cronologia</string>
     <string name="storage_summary">%1$s in uso · download, cache e cronologia</string>
-    <string name="storage_used">Aurora usa %1$s</string>
+    <string name="storage_used">Aetheria usa %1$s</string>
     <string name="storage_free">%1$s liberi su questo dispositivo</string>
     <string name="storage_measuring">Misurazione dello spazio…</string>
     <string name="storage_part_downloads">Download</string>
@@ -11,7 +11,7 @@
     <string name="storage_part_other">Dati dell’app</string>
     <string name="storage_clear_caches">Svuota tutte le cache</string>
     <string name="storage_clear_caches_title">Svuotare tutte le cache?</string>
-    <string name="storage_clear_caches_message">Vengono rimossi la cache audio, le cache di copertine, immagini e mappe, la sincronizzazione vocale, le tracce separate, le informazioni sugli artisti e i file temporanei. Download, analisi, cronologia e impostazioni restano. Le cache si riempiono di nuovo mentre usi Aurora.</string>
+    <string name="storage_clear_caches_message">Vengono rimossi la cache audio, le cache di copertine, immagini e mappe, la sincronizzazione vocale, le tracce separate, le informazioni sugli artisti e i file temporanei. Download, analisi, cronologia e impostazioni restano. Le cache si riempiono di nuovo mentre usi Aetheria.</string>
     <string name="storage_caches_cleared">Cache svuotate</string>
     <string name="storage_stems_busy">La separazione vocale è in corso, quindi i suoi file sono stati mantenuti</string>
     <string name="storage_cleared">Svuotato</string>
@@ -29,7 +29,7 @@
     <string name="storage_remove_source_title">Rimuovere i download da %1$s?</string>
     <string name="storage_remove_source_message">I brani scaricati da questa fonte vengono eliminati da questo dispositivo. I download dalle altre fonti restano.</string>
     <string name="storage_source_unknown">Altre fonti</string>
-    <string name="storage_youtube_note">I download da YouTube vengono salvati in Music/Aurora sul telefono e si gestiscono con il file manager.</string>
+    <string name="storage_youtube_note">I download da YouTube vengono salvati in Music/Aetheria sul telefono e si gestiscono con il file manager.</string>
 
     <string name="storage_section_images">Copertine e immagini</string>
     <string name="storage_cover_cache">Cache ricerca copertine</string>

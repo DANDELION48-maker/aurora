@@ -3,11 +3,11 @@
     <string name="youtube_download_title">Unduh dari YouTube</string>
     <string name="youtube_download_tile_detail">Simpan lagu ke perangkat ini</string>
     <string name="youtube_download_search_hint">Cari lagu di YouTube Music</string>
-    <string name="youtube_download_intro">Cari lagu dan simpan sebagai file. Unduhan masuk ke Music/Aurora dan muncul di pustaka lokalmu.</string>
+    <string name="youtube_download_intro">Cari lagu dan simpan sebagai file. Unduhan masuk ke Music/Aetheria dan muncul di pustaka lokalmu.</string>
     <string name="youtube_download_no_results">Lagu tidak ditemukan. Coba pencarian lain.</string>
     <string name="youtube_download_search_failed">Pencarian gagal. Periksa koneksimu lalu coba lagi.</string>
     <string name="youtube_download_action">Unduh</string>
-    <string name="youtube_download_saved">Disimpan ke Music/Aurora</string>
+    <string name="youtube_download_saved">Disimpan ke Music/Aetheria</string>
     <string name="youtube_download_failed">Unduhan gagal. Ketuk untuk mencoba lagi.</string>
     <string name="youtube_download_saving">Menyimpan…</string>
     <string name="youtube_download_settings">Unduhan YouTube</string>

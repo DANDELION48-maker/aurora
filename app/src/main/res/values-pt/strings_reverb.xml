@@ -28,5 +28,5 @@
     <string name="reverb_value_ms">"%1$s ms"</string>
     <string name="reverb_value_hz">"%1$s Hz"</string>
     <string name="reverb_value_khz">"%1$s kHz"</string>
-    <string name="reverb_note">"A reverberação roda dentro do mecanismo de áudio do Aurora, então funciona com todos os modos do equalizador e com mudanças de velocidade e tom. Ela é ignorada na saída USB bit-perfect e na transmissão direta."</string>
+    <string name="reverb_note">"A reverberação roda dentro do mecanismo de áudio do Aetheria, então funciona com todos os modos do equalizador e com mudanças de velocidade e tom. Ela é ignorada na saída USB bit-perfect e na transmissão direta."</string>
 </resources>

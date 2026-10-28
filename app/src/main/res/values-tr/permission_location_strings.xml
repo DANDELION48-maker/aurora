@@ -3,5 +3,5 @@
     <string name="perm_location">Konum</string>
     <string name="perm_location_desc">Ayrıntılı istatistiklerdeki yerler ve dinleme haritası</string>
     <string name="perm_location_background">Her zaman konum</string>
-    <string name="perm_location_background_desc">Aurora arka plandayken dinlemelerin nerede olduğunu kaydeder</string>
+    <string name="perm_location_background_desc">Aetheria arka plandayken dinlemelerin nerede olduğunu kaydeder</string>
 </resources>

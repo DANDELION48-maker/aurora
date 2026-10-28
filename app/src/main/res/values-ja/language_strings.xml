@@ -2,5 +2,5 @@
 <resources>
     <string name="language_title">アプリの言語</string>
     <string name="language_system">システムのデフォルト</string>
-    <string name="language_description">Aurora で使用する言語を選択します。曲名とアーティスト名はそのまま表示されます。</string>
+    <string name="language_description">Aetheria で使用する言語を選択します。曲名とアーティスト名はそのまま表示されます。</string>
 </resources>

@@ -3,7 +3,7 @@
     <string name="insights_title">Estadísticas detalladas</string>
     <string name="insights_description">Contexto de escucha opcional que se queda en este dispositivo</string>
     <string name="insights_intro_title">Desactivado por defecto</string>
-    <string name="insights_intro_body">Actívalo para registrar más datos de cada reproducción, de modo que Aurora pueda mostrar cuándo, cómo y con qué escuchas. No se registra nada hasta que termines esta configuración.</string>
+    <string name="insights_intro_body">Actívalo para registrar más datos de cada reproducción, de modo que Aetheria pueda mostrar cuándo, cómo y con qué escuchas. No se registra nada hasta que termines esta configuración.</string>
     <string name="insights_guide_title">Guía rápida</string>
     <string name="insights_step_recorded_title">Qué se registra</string>
     <string name="insights_step_recorded_body">Cuándo y cuánto escuchas, si una canción se terminó o se saltó, su género y su origen, y si el modo aleatorio estaba activado.</string>
@@ -84,9 +84,9 @@
     <string name="insights_open">Abrir información</string>
     <string name="insights_places_toggle">Registrar lugares</string>
     <string name="insights_places_desc">Etiqueta cada reproducción como Casa, Trabajo o Fuera</string>
-    <string name="insights_places_guide">Mientras suena música, Aurora comprueba tu ubicación como mucho cada 10 minutos, la compara con Casa y Trabajo y solo guarda la etiqueta. Casa y Trabajo se quedan en este teléfono y no entran en ninguna copia de seguridad.</string>
+    <string name="insights_places_guide">Mientras suena música, Aetheria comprueba tu ubicación como mucho cada 10 minutos, la compara con Casa y Trabajo y solo guarda la etiqueta. Casa y Trabajo se quedan en este teléfono y no entran en ninguna copia de seguridad.</string>
     <string name="insights_radius">Radio</string>
-    <string name="insights_background_needed">Para etiquetar reproducciones iniciadas con Aurora cerrado, permite el acceso a la ubicación todo el tiempo.</string>
+    <string name="insights_background_needed">Para etiquetar reproducciones iniciadas con Aetheria cerrado, permite el acceso a la ubicación todo el tiempo.</string>
     <string name="insights_allow_background">Permitir todo el tiempo</string>
     <string name="insights_location_failed">No se pudo obtener tu ubicación. Inténtalo de nuevo con el Wi-Fi o la ubicación activados.</string>
     <string name="insights_location_denied">No se concedió el acceso a la ubicación, así que los lugares siguen desactivados.</string>

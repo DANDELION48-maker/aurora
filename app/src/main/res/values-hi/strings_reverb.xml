@@ -28,5 +28,5 @@
     <string name="reverb_value_ms">"%1$s ms"</string>
     <string name="reverb_value_hz">"%1$s Hz"</string>
     <string name="reverb_value_khz">"%1$s kHz"</string>
-    <string name="reverb_note">"रीवर्ब Aurora के ऑडियो इंजन के अंदर चलता है, इसलिए यह हर इक्वलाइज़र मोड और स्पीड व पिच बदलाव के साथ काम करता है। बिट-परफ़ेक्ट USB आउटपुट और सीधी कास्टिंग में इसे छोड़ दिया जाता है।"</string>
+    <string name="reverb_note">"रीवर्ब Aetheria के ऑडियो इंजन के अंदर चलता है, इसलिए यह हर इक्वलाइज़र मोड और स्पीड व पिच बदलाव के साथ काम करता है। बिट-परफ़ेक्ट USB आउटपुट और सीधी कास्टिंग में इसे छोड़ दिया जाता है।"</string>
 </resources>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="spotify_web_intro">अपने Spotify खाते से लॉग इन करें। Aurora आपकी लाइब्रेरी Spotify के वेब प्लेयर से पढ़ता है और आपका संगीत YouTube से चलाता है, इसलिए डेवलपर ऐप की ज़रूरत नहीं है।</string>
+    <string name="spotify_web_intro">अपने Spotify खाते से लॉग इन करें। Aetheria आपकी लाइब्रेरी Spotify के वेब प्लेयर से पढ़ता है और आपका संगीत YouTube से चलाता है, इसलिए डेवलपर ऐप की ज़रूरत नहीं है।</string>
     <string name="spotify_web_login">Spotify से लॉग इन करें</string>
     <string name="spotify_web_login_note">Google, Apple या Facebook से साइन इन यहाँ शायद काम न करे। इसके बजाय अपना ईमेल और पासवर्ड या लॉग इन कोड इस्तेमाल करें।</string>
-    <string name="spotify_web_browser_hint">Spotify में लॉग इन करें। वेब प्लेयर खुलते ही Aurora कनेक्ट हो जाता है।</string>
+    <string name="spotify_web_browser_hint">Spotify में लॉग इन करें। वेब प्लेयर खुलते ही Aetheria कनेक्ट हो जाता है।</string>
     <string name="spotify_web_failed">आपका Spotify खाता कनेक्ट नहीं हो सका। फिर से लॉग इन करके देखें।</string>
     <string name="spotify_web_unsupported">Spotify लॉग इन के लिए नया Android System WebView चाहिए। इसे Play Store से अपडेट करके फिर से कोशिश करें।</string>
 </resources>

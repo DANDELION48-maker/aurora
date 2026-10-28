@@ -28,5 +28,5 @@
     <string name="reverb_value_ms">"%1$s ms"</string>
     <string name="reverb_value_hz">"%1$s Hz"</string>
     <string name="reverb_value_khz">"%1$s kHz"</string>
-    <string name="reverb_note">"Reverb berjalan di dalam mesin audio Aurora, sehingga berfungsi dengan semua mode equalizer serta perubahan kecepatan dan nada. Reverb dilewati pada output USB bit-perfect dan casting langsung."</string>
+    <string name="reverb_note">"Reverb berjalan di dalam mesin audio Aetheria, sehingga berfungsi dengan semua mode equalizer serta perubahan kecepatan dan nada. Reverb dilewati pada output USB bit-perfect dan casting langsung."</string>
 </resources>

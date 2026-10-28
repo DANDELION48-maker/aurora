@@ -3,11 +3,11 @@
     <string name="youtube_download_title">从 YouTube 下载</string>
     <string name="youtube_download_tile_detail">将歌曲保存到此设备</string>
     <string name="youtube_download_search_hint">在 YouTube Music 上搜索歌曲</string>
-    <string name="youtube_download_intro">搜索歌曲并将其保存为文件。下载内容会存入 Music/Aurora，并显示在你的本地音乐库中。</string>
+    <string name="youtube_download_intro">搜索歌曲并将其保存为文件。下载内容会存入 Music/Aetheria，并显示在你的本地音乐库中。</string>
     <string name="youtube_download_no_results">未找到歌曲。请尝试其他搜索。</string>
     <string name="youtube_download_search_failed">搜索失败。请检查网络连接后重试。</string>
     <string name="youtube_download_action">下载</string>
-    <string name="youtube_download_saved">已保存到 Music/Aurora</string>
+    <string name="youtube_download_saved">已保存到 Music/Aetheria</string>
     <string name="youtube_download_failed">下载失败。点按重试。</string>
     <string name="youtube_download_saving">正在保存…</string>
     <string name="youtube_download_settings">YouTube 下载</string>

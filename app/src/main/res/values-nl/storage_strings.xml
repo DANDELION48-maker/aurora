@@ -2,7 +2,7 @@
 <resources>
     <string name="storage_description">Downloads, caches, analyse en geschiedenis</string>
     <string name="storage_summary">%1$s gebruikt · downloads, caches en geschiedenis</string>
-    <string name="storage_used">Aurora gebruikt %1$s</string>
+    <string name="storage_used">Aetheria gebruikt %1$s</string>
     <string name="storage_free">%1$s vrij op dit apparaat</string>
     <string name="storage_measuring">Opslag meten…</string>
     <string name="storage_part_downloads">Downloads</string>
@@ -11,7 +11,7 @@
     <string name="storage_part_other">App-gegevens</string>
     <string name="storage_clear_caches">Alle caches wissen</string>
     <string name="storage_clear_caches_title">Alle caches wissen?</string>
-    <string name="storage_clear_caches_message">Hiermee worden de audiocache, de hoezen-, afbeeldings- en kaartcaches, zangtiming, gescheiden stems, artiestinformatie en tijdelijke bestanden verwijderd. Downloads, analyses, geschiedenis en instellingen blijven behouden. De caches vullen zich weer terwijl je Aurora gebruikt.</string>
+    <string name="storage_clear_caches_message">Hiermee worden de audiocache, de hoezen-, afbeeldings- en kaartcaches, zangtiming, gescheiden stems, artiestinformatie en tijdelijke bestanden verwijderd. Downloads, analyses, geschiedenis en instellingen blijven behouden. De caches vullen zich weer terwijl je Aetheria gebruikt.</string>
     <string name="storage_caches_cleared">Caches gewist</string>
     <string name="storage_stems_busy">Zangscheiding is bezig, dus de bestanden daarvan zijn bewaard</string>
     <string name="storage_cleared">Gewist</string>
@@ -29,7 +29,7 @@
     <string name="storage_remove_source_title">Downloads van %1$s verwijderen?</string>
     <string name="storage_remove_source_message">Nummers die van deze bron zijn gedownload, worden van dit apparaat verwijderd. Downloads van je andere bronnen blijven behouden.</string>
     <string name="storage_source_unknown">Andere bronnen</string>
-    <string name="storage_youtube_note">Downloads van YouTube worden op je telefoon opgeslagen in Music/Aurora en beheer je met je bestandsbeheerder.</string>
+    <string name="storage_youtube_note">Downloads van YouTube worden op je telefoon opgeslagen in Music/Aetheria en beheer je met je bestandsbeheerder.</string>
 
     <string name="storage_section_images">Hoezen &amp; afbeeldingen</string>
     <string name="storage_cover_cache">Cache voor hoezen zoeken</string>

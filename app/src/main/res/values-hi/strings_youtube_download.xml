@@ -3,11 +3,11 @@
     <string name="youtube_download_title">YouTube से डाउनलोड करें</string>
     <string name="youtube_download_tile_detail">गाने इस डिवाइस पर सहेजें</string>
     <string name="youtube_download_search_hint">YouTube Music पर गाने खोजें</string>
-    <string name="youtube_download_intro">कोई गाना खोजें और उसे फ़ाइल के रूप में सहेजें। डाउनलोड Music/Aurora में जाते हैं और आपकी लोकल लाइब्रेरी में दिखते हैं।</string>
+    <string name="youtube_download_intro">कोई गाना खोजें और उसे फ़ाइल के रूप में सहेजें। डाउनलोड Music/Aetheria में जाते हैं और आपकी लोकल लाइब्रेरी में दिखते हैं।</string>
     <string name="youtube_download_no_results">कोई गाना नहीं मिला। कोई और खोज आज़माएँ।</string>
     <string name="youtube_download_search_failed">खोज विफल रही। अपना कनेक्शन जाँचें और फिर से कोशिश करें।</string>
     <string name="youtube_download_action">डाउनलोड करें</string>
-    <string name="youtube_download_saved">Music/Aurora में सहेजा गया</string>
+    <string name="youtube_download_saved">Music/Aetheria में सहेजा गया</string>
     <string name="youtube_download_failed">डाउनलोड विफल रहा। फिर से कोशिश के लिए टैप करें।</string>
     <string name="youtube_download_saving">सहेजा जा रहा है…</string>
     <string name="youtube_download_settings">YouTube डाउनलोड</string>

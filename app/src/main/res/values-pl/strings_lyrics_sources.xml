@@ -2,7 +2,7 @@
 <resources>
     <string name="lyrics_settings_summary">"Synchronizacja, tłumaczenie i preferowane źródła"</string>
     <string name="lyrics_sources_title">"Źródła tekstów"</string>
-    <string name="lyrics_sources_desc">"Aurora sprawdza je po kolei. Wygrywa pierwsze z tekstem zsynchronizowanym, a jeśli go brak, pierwsze z jakimkolwiek tekstem."</string>
+    <string name="lyrics_sources_desc">"Aetheria sprawdza je po kolei. Wygrywa pierwsze z tekstem zsynchronizowanym, a jeśli go brak, pierwsze z jakimkolwiek tekstem."</string>
     <string name="lyrics_source_own">"Własne źródło utworu"</string>
     <string name="lyrics_source_own_desc">"Teksty z twojego serwera lub usługi"</string>
     <string name="lyrics_source_spotify_desc">"Dopasowane w Spotify, gdy jest scalone"</string>

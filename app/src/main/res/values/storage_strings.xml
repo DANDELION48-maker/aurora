@@ -2,7 +2,7 @@
 <resources>
     <string name="storage_description">Downloads, caches, analysis and history</string>
     <string name="storage_summary">%1$s used · downloads, caches and history</string>
-    <string name="storage_used">Aurora uses %1$s</string>
+    <string name="storage_used">Aetheria uses %1$s</string>
     <string name="storage_free">%1$s free on this device</string>
     <string name="storage_measuring">Measuring storage…</string>
     <string name="storage_part_downloads">Downloads</string>
@@ -11,7 +11,7 @@
     <string name="storage_part_other">App data</string>
     <string name="storage_clear_caches">Clear all caches</string>
     <string name="storage_clear_caches_title">Clear all caches?</string>
-    <string name="storage_clear_caches_message">This removes the audio cache, cover, image and map caches, vocal timing, separated stems, artist info and temporary files. Downloads, analysis, history and settings stay. Caches fill up again as you use Aurora.</string>
+    <string name="storage_clear_caches_message">This removes the audio cache, cover, image and map caches, vocal timing, separated stems, artist info and temporary files. Downloads, analysis, history and settings stay. Caches fill up again as you use Aetheria.</string>
     <string name="storage_caches_cleared">Caches cleared</string>
     <string name="storage_stems_busy">Vocal separation is running, so its files were kept</string>
     <string name="storage_cleared">Cleared</string>
@@ -29,7 +29,7 @@
     <string name="storage_remove_source_title">Remove downloads from %1$s?</string>
     <string name="storage_remove_source_message">Tracks downloaded from this source are deleted from this device. Downloads from your other sources stay.</string>
     <string name="storage_source_unknown">Other sources</string>
-    <string name="storage_youtube_note">Downloads from YouTube are saved to Music/Aurora on your phone and are managed by your file manager.</string>
+    <string name="storage_youtube_note">Downloads from YouTube are saved to Music/Aetheria on your phone and are managed by your file manager.</string>
 
     <string name="storage_section_images">Covers &amp; images</string>
     <string name="storage_cover_cache">Cover lookup cache</string>

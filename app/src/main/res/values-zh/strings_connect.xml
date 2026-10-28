@@ -17,9 +17,9 @@
     <string name="connect_preset">"预设"</string>
     <string name="connect_sources_note">"歌曲从该设备自己的音源播放。"</string>
     <string name="connect_reachable_at">"访问地址"</string>
-    <string name="connect_none_found">"未找到其他 Aurora 设备。请在那台设备上开启远程控制，然后重新搜索。"</string>
-    <string name="connect_settings_title">"Aurora Connect"</string>
-    <string name="connect_settings_summary">"控制其他 Aurora 设备，或让它们控制本设备"</string>
+    <string name="connect_none_found">"未找到其他 Aetheria 设备。请在那台设备上开启远程控制，然后重新搜索。"</string>
+    <string name="connect_settings_title">"Aetheria Connect"</string>
+    <string name="connect_settings_summary">"控制其他 Aetheria 设备，或让它们控制本设备"</string>
     <string name="connect_continue">"继续"</string>
     <string name="connect_this_key">"本设备密钥：%1$s"</string>
 </resources>

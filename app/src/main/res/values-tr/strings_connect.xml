@@ -17,9 +17,9 @@
     <string name="connect_preset">"Ön ayar"</string>
     <string name="connect_sources_note">"Şarkılar o cihazın kendi kaynaklarından çalınır."</string>
     <string name="connect_reachable_at">"Erişim adresi"</string>
-    <string name="connect_none_found">"Başka Aurora cihazı bulunamadı. Orada uzaktan kontrolü açın ve tekrar arayın."</string>
-    <string name="connect_settings_title">"Aurora Connect"</string>
-    <string name="connect_settings_summary">"Diğer Aurora cihazlarını kontrol edin veya onların bu cihazı kontrol etmesine izin verin"</string>
+    <string name="connect_none_found">"Başka Aetheria cihazı bulunamadı. Orada uzaktan kontrolü açın ve tekrar arayın."</string>
+    <string name="connect_settings_title">"Aetheria Connect"</string>
+    <string name="connect_settings_summary">"Diğer Aetheria cihazlarını kontrol edin veya onların bu cihazı kontrol etmesine izin verin"</string>
     <string name="connect_continue">"Devam"</string>
     <string name="connect_this_key">"Bu cihazın anahtarı: %1$s"</string>
 </resources>

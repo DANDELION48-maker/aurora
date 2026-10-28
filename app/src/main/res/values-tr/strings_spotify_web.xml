@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="spotify_web_intro">Spotify hesabınla giriş yap. Aurora kitaplığını Spotify web oynatıcısı üzerinden okur ve müziğini YouTube üzerinden çalar; bu yüzden bir geliştirici uygulamasına ihtiyacın yok.</string>
+    <string name="spotify_web_intro">Spotify hesabınla giriş yap. Aetheria kitaplığını Spotify web oynatıcısı üzerinden okur ve müziğini YouTube üzerinden çalar; bu yüzden bir geliştirici uygulamasına ihtiyacın yok.</string>
     <string name="spotify_web_login">Spotify ile giriş yap</string>
     <string name="spotify_web_login_note">Google, Apple veya Facebook ile giriş burada çalışmayabilir. Bunun yerine e-posta ve şifreni ya da bir giriş kodu kullan.</string>
-    <string name="spotify_web_browser_hint">Spotify\'a giriş yap. Web oynatıcı açılır açılmaz Aurora bağlanır.</string>
+    <string name="spotify_web_browser_hint">Spotify\'a giriş yap. Web oynatıcı açılır açılmaz Aetheria bağlanır.</string>
     <string name="spotify_web_failed">Spotify hesabın bağlanamadı. Yeniden giriş yapmayı dene.</string>
     <string name="spotify_web_unsupported">Spotify girişi için daha yeni bir Android System WebView gerekir. Play Store\'dan güncelleyip tekrar dene.</string>
 </resources>

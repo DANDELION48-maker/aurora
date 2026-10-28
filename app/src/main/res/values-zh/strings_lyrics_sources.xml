@@ -2,7 +2,7 @@
 <resources>
     <string name="lyrics_settings_summary">"同步、翻译和首选来源"</string>
     <string name="lyrics_sources_title">"歌词来源"</string>
-    <string name="lyrics_sources_desc">"Aurora 按顺序查询。最先有同步歌词的来源优先，否则使用最先有歌词的来源。"</string>
+    <string name="lyrics_sources_desc">"Aetheria 按顺序查询。最先有同步歌词的来源优先，否则使用最先有歌词的来源。"</string>
     <string name="lyrics_source_own">"歌曲自身的来源"</string>
     <string name="lyrics_source_own_desc">"你的服务器或服务提供的歌词"</string>
     <string name="lyrics_source_spotify_desc">"合并时在 Spotify 上匹配"</string>

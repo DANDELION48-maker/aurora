@@ -350,6 +350,7 @@ private fun ThemeStylePicker(prefs: UiPrefs, onSelect: (Int) -> Unit) {
                         }
                     }
                 }
+                if (row.size < 2) Box(Modifier.weight(1f))
             }
         }
         val current = ThemeIdentities.firstOrNull { it.id == prefs.themeStyle } ?: ThemeIdentities.first()
@@ -370,7 +371,7 @@ private fun ThemePreview(identity: ThemeIdentity, prefs: UiPrefs, dark: Boolean)
             shapes = auroraShapes(CornerStyle.DEFAULT, identity.id),
         ) {
             Column(Modifier.fillMaxWidth().height(122.dp).clip(MaterialTheme.shapes.small).auroraBackdrop().padding(10.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
-                Text("AURORA", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                Text("AETHERIA", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                     Box(Modifier.size(38.dp).clip(MaterialTheme.shapes.extraSmall).background(Brush.linearGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.tertiary))), contentAlignment = Alignment.Center) {
                         Box(Modifier.size(22.dp).border(4.dp, MaterialTheme.colorScheme.background.copy(alpha = 0.55f), CircleShape))

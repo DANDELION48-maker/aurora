@@ -3,7 +3,7 @@
     <string name="insights_title">Szczegółowe statystyki</string>
     <string name="insights_description">Opcjonalny kontekst słuchania, który zostaje na tym urządzeniu</string>
     <string name="insights_intro_title">Domyślnie wyłączone</string>
-    <string name="insights_intro_body">Włącz, aby zapisywać więcej informacji o każdym odtworzeniu, dzięki czemu Aurora pokaże, kiedy, jak i na czym słuchasz. Nic nie jest zapisywane, dopóki nie zakończysz tej konfiguracji.</string>
+    <string name="insights_intro_body">Włącz, aby zapisywać więcej informacji o każdym odtworzeniu, dzięki czemu Aetheria pokaże, kiedy, jak i na czym słuchasz. Nic nie jest zapisywane, dopóki nie zakończysz tej konfiguracji.</string>
     <string name="insights_guide_title">Krótki przewodnik</string>
     <string name="insights_step_recorded_title">Co jest zapisywane</string>
     <string name="insights_step_recorded_body">Kiedy i jak długo słuchasz, czy utwór został dosłuchany czy pominięty, jego gatunek i źródło oraz czy było włączone losowe odtwarzanie.</string>
@@ -84,7 +84,7 @@
     <string name="insights_open">Otwórz analizy</string>
     <string name="insights_places_toggle">Zapisuj miejsca</string>
     <string name="insights_places_desc">Oznaczaj każde odtworzenie jako Dom, Praca lub Poza domem</string>
-    <string name="insights_places_guide">Podczas odtwarzania Aurora sprawdza lokalizację najwyżej co 10 minut, porównuje ją z Domem i Pracą i zachowuje tylko etykietę. Same lokalizacje Domu i Pracy zostają na tym telefonie i nie trafiają do żadnej kopii zapasowej.</string>
+    <string name="insights_places_guide">Podczas odtwarzania Aetheria sprawdza lokalizację najwyżej co 10 minut, porównuje ją z Domem i Pracą i zachowuje tylko etykietę. Same lokalizacje Domu i Pracy zostają na tym telefonie i nie trafiają do żadnej kopii zapasowej.</string>
     <string name="insights_radius">Promień</string>
     <string name="insights_background_needed">Aby oznaczać odtworzenia rozpoczęte przy zamkniętej Aurorze, zezwól na dostęp do lokalizacji przez cały czas.</string>
     <string name="insights_allow_background">Zezwalaj zawsze</string>

@@ -31,6 +31,7 @@ val ThemeIdentities: List<ThemeIdentity> get() = listOf(
     ThemeIdentity(ThemeStyle.RETRO, appString(R.string.text_retro_hi_fi_a68d38), appString(R.string.text_a_little_analogue_soul_a0d7ac), appString(R.string.text_amber_displays_monospace_type_tactile_frames_27d627)),
     ThemeIdentity(ThemeStyle.AERO, "Aero", appString(R.string.text_a_desktop_classic_reimagined_18633f), appString(R.string.text_windows_7_inspired_blue_glass_glossy_panels_27d09a)),
     ThemeIdentity(ThemeStyle.GLASS, appString(R.string.text_liquid_glass_51a330), appString(R.string.text_light_flowing_luminous_6acb9b), appString(R.string.text_pearlescent_surfaces_spacious_curves_soft_light_b4c29d)),
+    ThemeIdentity(ThemeStyle.BLOOM, "Twilight Bloom", "Lavender, pink and sky blue", "Soft purple glow, pink accents, gentle night tones"),
 )
 
 fun styleColorScheme(style: Int, dark: Boolean): ColorScheme {
@@ -56,6 +57,13 @@ fun styleColorScheme(style: Int, dark: Boolean): ColorScheme {
         ) else listOf(
             Color(0xFFF2F2F7), Color(0xFFFFFFFF), Color(0xFFE5E5EA), Color(0xFF000000),
             Color(0xFF6C6C70), Color(0xFF007AFF), Color(0xFF32ADE6), Color(0xFFC6C6C8),
+        )
+        ThemeStyle.BLOOM -> if (dark) listOf(
+            Color(0xFF14101F), Color(0xFF1E1830), Color(0xFF2B2342), Color(0xFFF3EEFF),
+            Color(0xFFC4B8E0), Color(0xFFB794F6), Color(0xFFF29BC8), Color(0xFF6E6290),
+        ) else listOf(
+            Color(0xFFF6F1FF), Color(0xFFFFFBFF), Color(0xFFE9E0FA), Color(0xFF21183A),
+            Color(0xFF5A4C7C), Color(0xFF6B46C1), Color(0xFFC2477F), Color(0xFF9C8FC0),
         )
         else -> if (dark) listOf(
             DarkBackground, DarkSurface, DarkSurfaceElevated, TextPrimaryDark,

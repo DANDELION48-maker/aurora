@@ -3,7 +3,7 @@
     <string name="insights_title">Detaillierte Statistiken</string>
     <string name="insights_description">Optionaler Hörkontext, der auf diesem Gerät bleibt</string>
     <string name="insights_intro_title">Standardmäßig aus</string>
-    <string name="insights_intro_body">Schalte dies ein, um zu jeder Wiedergabe mehr aufzuzeichnen, damit Aurora zeigen kann, wann, wie und worüber du hörst. Bis du diese Einrichtung abschließt, wird nichts aufgezeichnet.</string>
+    <string name="insights_intro_body">Schalte dies ein, um zu jeder Wiedergabe mehr aufzuzeichnen, damit Aetheria zeigen kann, wann, wie und worüber du hörst. Bis du diese Einrichtung abschließt, wird nichts aufgezeichnet.</string>
     <string name="insights_guide_title">Kurzanleitung</string>
     <string name="insights_step_recorded_title">Was aufgezeichnet wird</string>
     <string name="insights_step_recorded_body">Wann und wie lange du hörst, ob ein Titel zu Ende gehört oder übersprungen wurde, sein Genre und seine Quelle und ob die Zufallswiedergabe an war.</string>
@@ -84,9 +84,9 @@
     <string name="insights_open">Einblicke öffnen</string>
     <string name="insights_places_toggle">Orte aufzeichnen</string>
     <string name="insights_places_desc">Jede Wiedergabe als Zuhause, Arbeit oder Unterwegs markieren</string>
-    <string name="insights_places_guide">Während Musik läuft, prüft Aurora deinen Standort höchstens alle 10 Minuten, vergleicht ihn mit Zuhause und Arbeit und behält nur die Bezeichnung. Zuhause und Arbeit selbst bleiben auf diesem Handy und sind von allen Backups ausgeschlossen.</string>
+    <string name="insights_places_guide">Während Musik läuft, prüft Aetheria deinen Standort höchstens alle 10 Minuten, vergleicht ihn mit Zuhause und Arbeit und behält nur die Bezeichnung. Zuhause und Arbeit selbst bleiben auf diesem Handy und sind von allen Backups ausgeschlossen.</string>
     <string name="insights_radius">Radius</string>
-    <string name="insights_background_needed">Um Wiedergaben zu markieren, die bei geschlossenem Aurora starten, erlaube den Standortzugriff immer.</string>
+    <string name="insights_background_needed">Um Wiedergaben zu markieren, die bei geschlossenem Aetheria starten, erlaube den Standortzugriff immer.</string>
     <string name="insights_allow_background">Immer erlauben</string>
     <string name="insights_location_failed">Standort konnte nicht ermittelt werden. Versuche es mit aktiviertem WLAN oder Standort erneut.</string>
     <string name="insights_location_denied">Der Standortzugriff wurde nicht erteilt, daher bleiben Orte aus.</string>

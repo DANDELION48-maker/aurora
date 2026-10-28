@@ -4,12 +4,12 @@
     <string name="soundcloud_connect_title">"SoundCloud koppelen"</string>
     <string name="soundcloud_connect_subtitle">"Je likes, playlists en de artiesten die je volgt"</string>
     <string name="soundcloud_sign_in">"Inloggen bij SoundCloud"</string>
-    <string name="soundcloud_sign_in_hint">"Log in op de pagina van SoundCloud. Aurora koppelt zodra je bent ingelogd."</string>
+    <string name="soundcloud_sign_in_hint">"Log in op de pagina van SoundCloud. Aetheria koppelt zodra je bent ingelogd."</string>
     <string name="soundcloud_waiting">"Log in om verder te gaan. Wordt inloggen met Google hier geweigerd, log dan in met je e-mailadres."</string>
-    <string name="soundcloud_details">"Aurora gebruikt de onofficiële webinterface van SoundCloud en bewaart je login versleuteld op dit apparaat."</string>
+    <string name="soundcloud_details">"Aetheria gebruikt de onofficiële webinterface van SoundCloud en bewaart je login versleuteld op dit apparaat."</string>
     <string name="soundcloud_connect_failed">"SoundCloud kon niet worden gekoppeld. Probeer het opnieuw."</string>
     <string name="soundcloud_page_failed">"De inlogpagina kon niet laden. Controleer je verbinding en laad opnieuw."</string>
-    <string name="soundcloud_captcha_hint">"SoundCloud wil controleren of je een mens bent voordat deze wijziging wordt opgeslagen. Los het één keer op en Aurora rondt de wijziging af."</string>
+    <string name="soundcloud_captcha_hint">"SoundCloud wil controleren of je een mens bent voordat deze wijziging wordt opgeslagen. Los het één keer op en Aetheria rondt de wijziging af."</string>
     <string name="player_comments">"Reacties"</string>
     <string name="player_soundcloud_comments">"SoundCloud-reacties"</string>
     <string name="comments_empty">"Nog geen reacties. Wees de eerste."</string>

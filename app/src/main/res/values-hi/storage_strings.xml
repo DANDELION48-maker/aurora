@@ -2,7 +2,7 @@
 <resources>
     <string name="storage_description">डाउनलोड, कैश, विश्लेषण और इतिहास</string>
     <string name="storage_summary">%1$s उपयोग में · डाउनलोड, कैश और इतिहास</string>
-    <string name="storage_used">Aurora %1$s इस्तेमाल करता है</string>
+    <string name="storage_used">Aetheria %1$s इस्तेमाल करता है</string>
     <string name="storage_free">इस डिवाइस पर %1$s खाली</string>
     <string name="storage_measuring">स्टोरेज मापा जा रहा है…</string>
     <string name="storage_part_downloads">डाउनलोड</string>
@@ -11,7 +11,7 @@
     <string name="storage_part_other">ऐप डेटा</string>
     <string name="storage_clear_caches">सभी कैश साफ़ करें</string>
     <string name="storage_clear_caches_title">सभी कैश साफ़ करें?</string>
-    <string name="storage_clear_caches_message">इससे ऑडियो कैश, कवर, इमेज और मैप कैश, वोकल टाइमिंग, अलग किए गए स्टेम, कलाकार की जानकारी और अस्थायी फ़ाइलें हट जाती हैं। डाउनलोड, विश्लेषण, इतिहास और सेटिंग बनी रहती हैं। Aurora इस्तेमाल करते समय कैश फिर से भर जाते हैं।</string>
+    <string name="storage_clear_caches_message">इससे ऑडियो कैश, कवर, इमेज और मैप कैश, वोकल टाइमिंग, अलग किए गए स्टेम, कलाकार की जानकारी और अस्थायी फ़ाइलें हट जाती हैं। डाउनलोड, विश्लेषण, इतिहास और सेटिंग बनी रहती हैं। Aetheria इस्तेमाल करते समय कैश फिर से भर जाते हैं।</string>
     <string name="storage_caches_cleared">कैश साफ़ हो गए</string>
     <string name="storage_stems_busy">वोकल सेपरेशन चल रहा है, इसलिए उसकी फ़ाइलें रखी गईं</string>
     <string name="storage_cleared">साफ़ हो गया</string>
@@ -29,7 +29,7 @@
     <string name="storage_remove_source_title">%1$s से किए गए डाउनलोड हटाएँ?</string>
     <string name="storage_remove_source_message">इस स्रोत से डाउनलोड किए गए ट्रैक इस डिवाइस से हटा दिए जाते हैं। आपके दूसरे स्रोतों के डाउनलोड बने रहते हैं।</string>
     <string name="storage_source_unknown">अन्य स्रोत</string>
-    <string name="storage_youtube_note">YouTube से किए गए डाउनलोड आपके फ़ोन पर Music/Aurora में सहेजे जाते हैं और आपके फ़ाइल मैनेजर से मैनेज होते हैं।</string>
+    <string name="storage_youtube_note">YouTube से किए गए डाउनलोड आपके फ़ोन पर Music/Aetheria में सहेजे जाते हैं और आपके फ़ाइल मैनेजर से मैनेज होते हैं।</string>
 
     <string name="storage_section_images">कवर और इमेज</string>
     <string name="storage_cover_cache">कवर खोज कैश</string>

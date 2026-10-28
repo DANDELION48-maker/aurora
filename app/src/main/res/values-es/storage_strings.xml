@@ -2,7 +2,7 @@
 <resources>
     <string name="storage_description">Descargas, cachés, análisis e historial</string>
     <string name="storage_summary">%1$s en uso · descargas, cachés e historial</string>
-    <string name="storage_used">Aurora usa %1$s</string>
+    <string name="storage_used">Aetheria usa %1$s</string>
     <string name="storage_free">%1$s libres en este dispositivo</string>
     <string name="storage_measuring">Midiendo el almacenamiento…</string>
     <string name="storage_part_downloads">Descargas</string>
@@ -11,7 +11,7 @@
     <string name="storage_part_other">Datos de la app</string>
     <string name="storage_clear_caches">Borrar todas las cachés</string>
     <string name="storage_clear_caches_title">¿Borrar todas las cachés?</string>
-    <string name="storage_clear_caches_message">Se borran la caché de audio, las cachés de carátulas, imágenes y mapas, la sincronización vocal, las pistas separadas, la información de artistas y los archivos temporales. Las descargas, el análisis, el historial y los ajustes se conservan. Las cachés se vuelven a llenar mientras usas Aurora.</string>
+    <string name="storage_clear_caches_message">Se borran la caché de audio, las cachés de carátulas, imágenes y mapas, la sincronización vocal, las pistas separadas, la información de artistas y los archivos temporales. Las descargas, el análisis, el historial y los ajustes se conservan. Las cachés se vuelven a llenar mientras usas Aetheria.</string>
     <string name="storage_caches_cleared">Cachés borradas</string>
     <string name="storage_stems_busy">La separación de voces está en curso, así que se conservaron sus archivos</string>
     <string name="storage_cleared">Borrado</string>
@@ -29,7 +29,7 @@
     <string name="storage_remove_source_title">¿Quitar las descargas de %1$s?</string>
     <string name="storage_remove_source_message">Las pistas descargadas de esta fuente se eliminan de este dispositivo. Las descargas de tus otras fuentes se conservan.</string>
     <string name="storage_source_unknown">Otras fuentes</string>
-    <string name="storage_youtube_note">Las descargas de YouTube se guardan en Music/Aurora en tu teléfono y se gestionan con tu gestor de archivos.</string>
+    <string name="storage_youtube_note">Las descargas de YouTube se guardan en Music/Aetheria en tu teléfono y se gestionan con tu gestor de archivos.</string>
 
     <string name="storage_section_images">Carátulas e imágenes</string>
     <string name="storage_cover_cache">Caché de búsqueda de carátulas</string>

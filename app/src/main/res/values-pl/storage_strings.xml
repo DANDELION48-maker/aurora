@@ -2,7 +2,7 @@
 <resources>
     <string name="storage_description">Pobrane, pamięć podręczna, analizy i historia</string>
     <string name="storage_summary">Zajęte: %1$s · pobrane, pamięć podręczna i historia</string>
-    <string name="storage_used">Aurora zajmuje %1$s</string>
+    <string name="storage_used">Aetheria zajmuje %1$s</string>
     <string name="storage_free">Wolne na tym urządzeniu: %1$s</string>
     <string name="storage_measuring">Mierzenie zajętego miejsca…</string>
     <string name="storage_part_downloads">Pobrane</string>
@@ -11,7 +11,7 @@
     <string name="storage_part_other">Dane aplikacji</string>
     <string name="storage_clear_caches">Wyczyść całą pamięć podręczną</string>
     <string name="storage_clear_caches_title">Wyczyścić całą pamięć podręczną?</string>
-    <string name="storage_clear_caches_message">Zostaną usunięte pamięć audio, pamięć okładek, obrazów i map, synchronizacja z wokalem, rozdzielone ścieżki, informacje o wykonawcach i pliki tymczasowe. Pobrane pliki, analizy, historia i ustawienia pozostaną. Pamięć podręczna zapełni się ponownie podczas korzystania z Aurora.</string>
+    <string name="storage_clear_caches_message">Zostaną usunięte pamięć audio, pamięć okładek, obrazów i map, synchronizacja z wokalem, rozdzielone ścieżki, informacje o wykonawcach i pliki tymczasowe. Pobrane pliki, analizy, historia i ustawienia pozostaną. Pamięć podręczna zapełni się ponownie podczas korzystania z Aetheria.</string>
     <string name="storage_caches_cleared">Pamięć podręczna wyczyszczona</string>
     <string name="storage_stems_busy">Trwa separacja wokalu, więc jej pliki zostały zachowane</string>
     <string name="storage_cleared">Wyczyszczono</string>
@@ -29,7 +29,7 @@
     <string name="storage_remove_source_title">Usunąć pobrane z %1$s?</string>
     <string name="storage_remove_source_message">Utwory pobrane z tego źródła zostaną usunięte z tego urządzenia. Pobrane z innych źródeł pozostaną.</string>
     <string name="storage_source_unknown">Inne źródła</string>
-    <string name="storage_youtube_note">Pliki pobrane z YouTube są zapisywane w Music/Aurora na telefonie i zarządza nimi menedżer plików.</string>
+    <string name="storage_youtube_note">Pliki pobrane z YouTube są zapisywane w Music/Aetheria na telefonie i zarządza nimi menedżer plików.</string>
 
     <string name="storage_section_images">Okładki i obrazy</string>
     <string name="storage_cover_cache">Pamięć wyszukiwania okładek</string>

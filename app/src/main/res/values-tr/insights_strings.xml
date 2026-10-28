@@ -3,7 +3,7 @@
     <string name="insights_title">Ayrıntılı istatistikler</string>
     <string name="insights_description">Cihazda kalan, isteğe bağlı dinleme bağlamı</string>
     <string name="insights_intro_title">Varsayılan olarak kapalı</string>
-    <string name="insights_intro_body">Her dinleme hakkında daha fazla bilgi kaydetmek için açın; böylece Aurora ne zaman, nasıl ve neyle dinlediğinizi gösterebilir. Bu kurulumu bitirene kadar hiçbir şey kaydedilmez.</string>
+    <string name="insights_intro_body">Her dinleme hakkında daha fazla bilgi kaydetmek için açın; böylece Aetheria ne zaman, nasıl ve neyle dinlediğinizi gösterebilir. Bu kurulumu bitirene kadar hiçbir şey kaydedilmez.</string>
     <string name="insights_guide_title">Hızlı rehber</string>
     <string name="insights_step_recorded_title">Neler kaydedilir</string>
     <string name="insights_step_recorded_body">Ne zaman ve ne kadar dinlediğiniz, parçanın bitirilip bitirilmediği veya atlandığı, türü ve kaynağı ve karıştırmanın açık olup olmadığı.</string>
@@ -84,9 +84,9 @@
     <string name="insights_open">İçgörüleri aç</string>
     <string name="insights_places_toggle">Yerleri kaydet</string>
     <string name="insights_places_desc">Her dinlemeyi Ev, İş veya Dışarıda olarak etiketle</string>
-    <string name="insights_places_guide">Müzik çalarken Aurora konumunuzu en fazla 10 dakikada bir kontrol eder, Ev ve İş ile karşılaştırır ve yalnızca etiketi saklar. Ev ve İş konumlarının kendisi bu telefonda kalır ve hiçbir yedeğe dahil edilmez.</string>
+    <string name="insights_places_guide">Müzik çalarken Aetheria konumunuzu en fazla 10 dakikada bir kontrol eder, Ev ve İş ile karşılaştırır ve yalnızca etiketi saklar. Ev ve İş konumlarının kendisi bu telefonda kalır ve hiçbir yedeğe dahil edilmez.</string>
     <string name="insights_radius">Yarıçap</string>
-    <string name="insights_background_needed">Aurora kapalıyken başlatılan dinlemeleri etiketlemek için konum erişimine her zaman izin verin.</string>
+    <string name="insights_background_needed">Aetheria kapalıyken başlatılan dinlemeleri etiketlemek için konum erişimine her zaman izin verin.</string>
     <string name="insights_allow_background">Her zaman izin ver</string>
     <string name="insights_location_failed">Konumunuz alınamadı. Wi-Fi veya konum açıkken tekrar deneyin.</string>
     <string name="insights_location_denied">Konum erişimi verilmedi, bu yüzden yerler kapalı kalıyor.</string>

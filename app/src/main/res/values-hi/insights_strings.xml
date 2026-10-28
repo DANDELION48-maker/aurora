@@ -3,7 +3,7 @@
     <string name="insights_title">विस्तृत आँकड़े</string>
     <string name="insights_description">वैकल्पिक सुनने का संदर्भ, जो इसी डिवाइस पर रहता है</string>
     <string name="insights_intro_title">डिफ़ॉल्ट रूप से बंद</string>
-    <string name="insights_intro_body">हर प्ले के बारे में ज़्यादा जानकारी रिकॉर्ड करने के लिए इसे चालू करें, ताकि Aurora दिखा सके कि आप कब, कैसे और किस पर सुनते हैं। यह सेटअप पूरा होने तक कुछ भी रिकॉर्ड नहीं होता।</string>
+    <string name="insights_intro_body">हर प्ले के बारे में ज़्यादा जानकारी रिकॉर्ड करने के लिए इसे चालू करें, ताकि Aetheria दिखा सके कि आप कब, कैसे और किस पर सुनते हैं। यह सेटअप पूरा होने तक कुछ भी रिकॉर्ड नहीं होता।</string>
     <string name="insights_guide_title">त्वरित गाइड</string>
     <string name="insights_step_recorded_title">क्या रिकॉर्ड होता है</string>
     <string name="insights_step_recorded_body">आप कब और कितनी देर सुनते हैं, ट्रैक पूरा सुना गया या छोड़ा गया, उसकी शैली और स्रोत, और शफ़ल चालू था या नहीं।</string>
@@ -84,9 +84,9 @@
     <string name="insights_open">इनसाइट्स खोलें</string>
     <string name="insights_places_toggle">जगहें रिकॉर्ड करें</string>
     <string name="insights_places_desc">हर प्ले को घर, काम या बाहर के रूप में चिह्नित करें</string>
-    <string name="insights_places_guide">संगीत चलते समय Aurora हर 10 मिनट में अधिकतम एक बार आपकी लोकेशन जाँचता है, उसे घर और काम से मिलाता है और केवल लेबल रखता है। घर और काम की जगहें इसी फ़ोन पर रहती हैं और किसी भी बैकअप में शामिल नहीं होतीं।</string>
+    <string name="insights_places_guide">संगीत चलते समय Aetheria हर 10 मिनट में अधिकतम एक बार आपकी लोकेशन जाँचता है, उसे घर और काम से मिलाता है और केवल लेबल रखता है। घर और काम की जगहें इसी फ़ोन पर रहती हैं और किसी भी बैकअप में शामिल नहीं होतीं।</string>
     <string name="insights_radius">दायरा</string>
-    <string name="insights_background_needed">Aurora बंद होने पर शुरू हुए प्ले चिह्नित करने के लिए लोकेशन को हमेशा की अनुमति दें।</string>
+    <string name="insights_background_needed">Aetheria बंद होने पर शुरू हुए प्ले चिह्नित करने के लिए लोकेशन को हमेशा की अनुमति दें।</string>
     <string name="insights_allow_background">हमेशा अनुमति दें</string>
     <string name="insights_location_failed">आपकी लोकेशन नहीं मिल सकी। वाई-फ़ाई या लोकेशन चालू करके फिर कोशिश करें।</string>
     <string name="insights_location_denied">लोकेशन की अनुमति नहीं मिली, इसलिए जगहें बंद रहेंगी।</string>
