@@ -33,7 +33,25 @@ jobs:
       - name: Setup FLAC
         run: bash decent/decent-media3-decoder-flac/setup.sh
 
-      - name: Build Debug APK
+      - name: Prepare signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          test -n "$KEYSTORE_BASE64" || { echo "Missing KEYSTORE_BASE64 secret"; exit 1; }
+          mkdir -p keystore
+          echo "$KEYSTORE_BASE64" | base64 -d > keystore/aetheria-release.jks
+
+      - name: Bump versionCode
+        run: |
+          sed -i "s/^versionCode=.*/versionCode=$((30200 + GITHUB_RUN_NUMBER))/" version.properties
+          cat version.properties
+
+      - name: Build Release APK
+        env:
+          AURORA_KEYSTORE_FILE: keystore/aetheria-release.jks
+          AURORA_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          AURORA_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          AURORA_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew :app:assembleRelease --no-daemon
 
       - name: Rename APK
