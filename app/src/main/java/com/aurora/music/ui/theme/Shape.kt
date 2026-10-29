@@ -30,6 +30,10 @@ fun auroraShapes(style: Int, themeStyle: Int = ThemeStyle.AURORA): Shapes = when
         extraSmall = RoundedCornerShape(12.dp), small = RoundedCornerShape(18.dp),
         medium = RoundedCornerShape(24.dp), large = RoundedCornerShape(30.dp), extraLarge = RoundedCornerShape(36.dp),
     )
+    ThemeStyle.BLOOM, ThemeStyle.PERI, ThemeStyle.ROSE, ThemeStyle.CANDY -> Shapes(
+        extraSmall = RoundedCornerShape(10.dp), small = RoundedCornerShape(16.dp),
+        medium = RoundedCornerShape(22.dp), large = RoundedCornerShape(28.dp), extraLarge = RoundedCornerShape(36.dp),
+    )
     else -> Shapes(
         extraSmall = RoundedCornerShape(cornerDp(style, 8.dp)),
         small = RoundedCornerShape(cornerDp(style, 12.dp)),

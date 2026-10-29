@@ -52,6 +52,7 @@ fun Artwork(
         ThemeStyle.RETRO -> 2.dp
         ThemeStyle.AERO -> 5.dp
         ThemeStyle.GLASS -> corner.coerceIn(10.dp, 16.dp)
+        ThemeStyle.BLOOM, ThemeStyle.PERI, ThemeStyle.ROSE, ThemeStyle.CANDY -> (corner * 1.5f).coerceIn(14.dp, 21.dp)
         else -> corner
     }
     val placeholder = remember(accent) { Brush.linearGradient(listOf(accent.copy(alpha = 0.55f), accent.copy(alpha = 0.12f))) }

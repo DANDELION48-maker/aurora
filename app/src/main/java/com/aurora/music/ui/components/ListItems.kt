@@ -278,7 +278,7 @@ fun PlaylistCard(
         modifier = modifier
             .width(width)
             .clip(if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(16.dp) else MaterialTheme.shapes.medium)
-            .then(if (LocalUiPrefs.current.themeStyle.let { it != ThemeStyle.AURORA && it != ThemeStyle.GLASS && it != ThemeStyle.BLOOM }) Modifier.auroraPanel(MaterialTheme.shapes.medium) else Modifier)
+            .then(if (LocalUiPrefs.current.themeStyle.let { it != ThemeStyle.AURORA && it != ThemeStyle.GLASS && it != ThemeStyle.BLOOM && it != ThemeStyle.PERI && it != ThemeStyle.ROSE && it != ThemeStyle.CANDY }) Modifier.auroraPanel(MaterialTheme.shapes.medium) else Modifier)
             .clickable(onClick = onClick)
             .padding(8.dp),
     ) {
@@ -308,7 +308,7 @@ fun AlbumCard(album: Album, onClick: () -> Unit, modifier: Modifier = Modifier) 
         modifier = modifier
             .width(156.dp)
             .clip(if (LocalUiPrefs.current.themeStyle == ThemeStyle.AURORA) RoundedCornerShape(16.dp) else MaterialTheme.shapes.medium)
-            .then(if (LocalUiPrefs.current.themeStyle.let { it != ThemeStyle.AURORA && it != ThemeStyle.GLASS && it != ThemeStyle.BLOOM }) Modifier.auroraPanel(MaterialTheme.shapes.medium) else Modifier)
+            .then(if (LocalUiPrefs.current.themeStyle.let { it != ThemeStyle.AURORA && it != ThemeStyle.GLASS && it != ThemeStyle.BLOOM && it != ThemeStyle.PERI && it != ThemeStyle.ROSE && it != ThemeStyle.CANDY }) Modifier.auroraPanel(MaterialTheme.shapes.medium) else Modifier)
             .clickable(onClick = onClick)
             .padding(8.dp),
     ) {

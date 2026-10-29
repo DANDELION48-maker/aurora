@@ -32,6 +32,9 @@ val ThemeIdentities: List<ThemeIdentity> get() = listOf(
     ThemeIdentity(ThemeStyle.AERO, "Aero", appString(R.string.text_a_desktop_classic_reimagined_18633f), appString(R.string.text_windows_7_inspired_blue_glass_glossy_panels_27d09a)),
     ThemeIdentity(ThemeStyle.GLASS, appString(R.string.text_liquid_glass_51a330), appString(R.string.text_light_flowing_luminous_6acb9b), appString(R.string.text_pearlescent_surfaces_spacious_curves_soft_light_b4c29d)),
     ThemeIdentity(ThemeStyle.BLOOM, "Twilight Bloom", "Lavender, pink and sky blue", "Soft purple glow, pink accents, gentle night tones"),
+    ThemeIdentity(ThemeStyle.PERI, "Periwinkle Dusk", "Blue-violet twilight", "Cool periwinkle and lilac with a calm night glow"),
+    ThemeIdentity(ThemeStyle.ROSE, "Rose Meadow", "Pink and green", "Soft rose with fresh mint accents"),
+    ThemeIdentity(ThemeStyle.CANDY, "Cotton Candy", "Sweet pastel mix", "Pink, sky blue and lavender pastels"),
 )
 
 fun styleColorScheme(style: Int, dark: Boolean): ColorScheme {
@@ -64,6 +67,27 @@ fun styleColorScheme(style: Int, dark: Boolean): ColorScheme {
         ) else listOf(
             Color(0xFFF6F1FF), Color(0xFFFFFBFF), Color(0xFFE9E0FA), Color(0xFF21183A),
             Color(0xFF5A4C7C), Color(0xFF6B46C1), Color(0xFFC2477F), Color(0xFF9C8FC0),
+        )
+        ThemeStyle.PERI -> if (dark) listOf(
+            Color(0xFF0F1220), Color(0xFF181C33), Color(0xFF242A4A), Color(0xFFEEF0FF),
+            Color(0xFFB8BEE6), Color(0xFF9DA8FF), Color(0xFFC9A8FF), Color(0xFF5E6598),
+        ) else listOf(
+            Color(0xFFF1F2FF), Color(0xFFFBFBFF), Color(0xFFE3E4FA), Color(0xFF1A1D3A),
+            Color(0xFF4F5585), Color(0xFF4F5BD5), Color(0xFF8E4FC9), Color(0xFF9A9FCF),
+        )
+        ThemeStyle.ROSE -> if (dark) listOf(
+            Color(0xFF140E12), Color(0xFF1F161A), Color(0xFF2E2127), Color(0xFFFFF0F4),
+            Color(0xFFE0BCC7), Color(0xFFFF9EBB), Color(0xFF9FE3BF), Color(0xFF8A5E6C),
+        ) else listOf(
+            Color(0xFFFFF3F6), Color(0xFFFFFBFC), Color(0xFFFBE2EA), Color(0xFF35141F),
+            Color(0xFF7A4A58), Color(0xFFC2335F), Color(0xFF1F8A5C), Color(0xFFD9A3B3),
+        )
+        ThemeStyle.CANDY -> if (dark) listOf(
+            Color(0xFF14111C), Color(0xFF1D1829), Color(0xFF2A2338), Color(0xFFFFF4FA),
+            Color(0xFFD6C3E0), Color(0xFFFFBBDA), Color(0xFFC0E4F6), Color(0xFF6E5C86),
+        ) else listOf(
+            Color(0xFFFFF7FB), Color(0xFFFFFFFF), Color(0xFFF6E8F8), Color(0xFF2A1830),
+            Color(0xFF6A4F78), Color(0xFFC93C86), Color(0xFF2F7FB0), Color(0xFFD4B8E0),
         )
         else -> if (dark) listOf(
             DarkBackground, DarkSurface, DarkSurfaceElevated, TextPrimaryDark,
